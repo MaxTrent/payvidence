@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../gen/assets.gen.dart';
 
 
 class AppTheme {
   ThemeData get light => ThemeData(
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (BuildContext context) => SvgPicture.asset(Assets.svg.backbutton)
+    ),
       appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
           scrolledUnderElevation: 0,
@@ -20,17 +26,20 @@ class AppTheme {
         displayLarge: TextStyle(
           fontFamily: 'Polysans',
           color: Colors.black,
-          fontSize: 24.sp,
+          fontSize: 28.sp,
+          fontWeight: FontWeight.w600,
         ),
         displayMedium: TextStyle(
           fontFamily: 'Polysans',
           color: Colors.black,
-          fontSize: 16.sp,
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w600,
         ),
         displaySmall: TextStyle(
           fontFamily: 'Polysans',
           color: Colors.black,
-          fontSize: 14.sp,
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w400,
         ),
       ));
 }

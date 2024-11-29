@@ -5,3 +5,6 @@ const Color primaryColor2 = Color(0xff4E38B2);
 const Color primaryColor3 = Color(0xff7767BD);
 const Color primaryColor4 = Color(0xff7767BD);
 const Color appGrey = Color(0xffD9D9D9);
+const Color scaffoldBackground = Color(0xffE3DDFF);
+const Color borderColor = Color(0xffB8B8B8);
+const Color hintTextColor = Color(0xff969696);
