@@ -1,24 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:payvidence/screens/nav_screens/homepage_vm.dart';
 
 import '../../gen/assets.gen.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends ConsumerWidget {
+  HomePage({super.key});
+
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final viewModel = HomePageViewModel(ref);
+
+    final List<Widget> _pages = [
+      SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('1234567'),
+          ),
+          body: Column(
+            children: [Text('hi')],
+          ),
+        ),
+      ),
+      Scaffold(
+        appBar: AppBar(
+          title: Text('2'),
+        ),
+      ),
+      Scaffold(
+        appBar: AppBar(
+          title: Text('3'),
+        ),
+      ),
+      Scaffold(
+        appBar: AppBar(
+          title: Text('4'),
+        ),
+      ),
+      Scaffold(
+        appBar: AppBar(
+          title: Text('5'),
+        ),
+      ),
+    ];
+
     return Scaffold(
+      body: _pages[viewModel.selectedIndex],
 
       bottomNavigationBar: BottomNavigationBar(
-          selectedLabelStyle: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 12.sp),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.black,
+          currentIndex: viewModel.selectedIndex,
+          onTap: viewModel.onItemTapped,
+          selectedLabelStyle: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w600),
           unselectedLabelStyle: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 12.sp),
           items: [
-        BottomNavigationBarItem(icon: SvgPicture.asset(Assets.svg.homeOl), label: 'Home'),
-        BottomNavigationBarItem(icon: SvgPicture.asset(Assets.svg.transactionOl), label: 'Transactions'),
-        BottomNavigationBarItem(icon: SvgPicture.asset(Assets.svg.walletOl), label: 'Sales'),
-        BottomNavigationBarItem(icon: SvgPicture.asset(Assets.svg.profileOl), label: 'Account'),
+        BottomNavigationBarItem(icon: viewModel.selectedIndex == 0 ? SvgPicture.asset(Assets.svg.home):SvgPicture.asset(Assets.svg.homeOl), label: 'Home'),
+        BottomNavigationBarItem(icon: viewModel.selectedIndex == 1 ? SvgPicture.asset(Assets.svg.transaction):SvgPicture.asset(Assets.svg.transactionOl), label: 'Transactions'),
+        BottomNavigationBarItem(icon:viewModel.selectedIndex == 2 ? SvgPicture.asset(Assets.svg.wallet):SvgPicture.asset(Assets.svg.walletOl), label: 'Sales'),
+        BottomNavigationBarItem(icon: viewModel.selectedIndex == 3 ? SvgPicture.asset(Assets.svg.profile):SvgPicture.asset(Assets.svg.profileOl), label: 'Account'),
       ]),
     );
   }
