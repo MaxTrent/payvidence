@@ -39,11 +39,54 @@ class $AssetsSvgGen {
   /// File path: assets/svg/backbutton.svg
   String get backbutton => 'assets/svg/backbutton.svg';
 
+  /// File path: assets/svg/home.svg
+  String get home => 'assets/svg/home.svg';
+
+  /// File path: assets/svg/home_ol.svg
+  String get homeOl => 'assets/svg/home_ol.svg';
+
+  /// File path: assets/svg/password.svg
+  String get password => 'assets/svg/password.svg';
+
+  /// File path: assets/svg/password_success.svg
+  String get passwordSuccess => 'assets/svg/password_success.svg';
+
+  /// File path: assets/svg/profile.svg
+  String get profile => 'assets/svg/profile.svg';
+
   /// File path: assets/svg/profile_confetti.svg
   String get profileConfetti => 'assets/svg/profile_confetti.svg';
 
+  /// File path: assets/svg/profile_ol.svg
+  String get profileOl => 'assets/svg/profile_ol.svg';
+
+  /// File path: assets/svg/transaction.svg
+  String get transaction => 'assets/svg/transaction.svg';
+
+  /// File path: assets/svg/transaction_ol.svg
+  String get transactionOl => 'assets/svg/transaction_ol.svg';
+
+  /// File path: assets/svg/wallet.svg
+  String get wallet => 'assets/svg/wallet.svg';
+
+  /// File path: assets/svg/wallet_ol.svg
+  String get walletOl => 'assets/svg/wallet_ol.svg';
+
   /// List of all assets
-  List<String> get values => [backbutton, profileConfetti];
+  List<String> get values => [
+        backbutton,
+        home,
+        homeOl,
+        password,
+        passwordSuccess,
+        profile,
+        profileConfetti,
+        profileOl,
+        transaction,
+        transactionOl,
+        wallet,
+        walletOl
+      ];
 }
 
 class Assets {

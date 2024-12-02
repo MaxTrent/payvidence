@@ -21,85 +21,92 @@ class OnboardingScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: scaffoldBackground,
-      body: Stack(
-        children: [
-          PageView(
-              allowImplicitScrolling: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              controller: _pageController,
-              onPageChanged: (index) {
-                viewModel.changeIndex(index);
-              },
-              children: [
-                OnboardingPage(
-                  text: 'Your digital transaction evidence',
-                  subtext:
-                      'Easily issue receipts, invoices, and purchase orders to clients on the go.',
-                  image: Assets.png.onboarding1.path,
-                ),
-                OnboardingPage(
-                  text: 'Simplify your inventory management',
-                  subtext:
-                      'Manage all your transactions, invoices, receipts, and sales reports in one centralized location.',
-                  image: Assets.png.onboarding2.path,
-                ),
-                OnboardingPage(
-                  text: 'Gain Insights with Analytics',
-                  subtext:
-                      'Access reports to understand sales performance and make smarter decisions.',
-                  image: Assets.png.onboarding3.path,
-                )
-              ]),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ClipPath(
-              clipper: CustomCurveClipper(),
-              child: Container(
-                height: 310.h,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: scaffoldBackground,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black, // Shadow color with transparency
-                      offset: Offset(0, -2.h), // Horizontal and vertical offset
-                      blurRadius: 4.r, // Amount of blur
-                      spreadRadius: 10, // Spread of the shadow
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 62.h,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            PageView(
+                allowImplicitScrolling: true,
+                physics: const AlwaysScrollableScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                controller: _pageController,
+                onPageChanged: (index) {
+                  viewModel.changeIndex(index);
+                },
+                children: [
+                  OnboardingPage(
+                    text: 'Your digital transaction evidence',
+                    subtext:
+                        'Easily issue receipts, invoices, and purchase orders to clients on the go.',
+                    image: Assets.png.onboarding1.path,
+                  ),
+                  OnboardingPage(
+                    text: 'Simplify your inventory management',
+                    subtext:
+                        'Manage all your transactions, invoices, receipts, and sales reports in one centralized location.',
+                    image: Assets.png.onboarding2.path,
+                  ),
+                  OnboardingPage(
+                    text: 'Gain Insights with Analytics',
+                    subtext:
+                        'Access reports to understand sales performance and make smarter decisions.',
+                    image: Assets.png.onboarding3.path,
+                  )
+                ]),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: ClipPath(
+                clipper: CustomCurveClipper(),
+                child: Container(
+                  height: 310.h,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: scaffoldBackground,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black, // Shadow color with transparency
+                        offset: Offset(0, -2.h), // Horizontal and vertical offset
+                        blurRadius: 4.r, // Amount of blur
+                        spreadRadius: 10, // Spread of the shadow
                       ),
-                      PageIndicator(
-                        viewModel: viewModel,
-                      ),
-                      SizedBox(
-                        height: 45.h,
-                      ),
-                      AppButton(buttonText: 'Get started', onPressed: () {
-                        context.go('/createAccount');
-                      },),
-                      SizedBox(height: 26.h),
-                      Text(
-                        'Log in instead',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayMedium!
-                            .copyWith(color: primaryColor2),
-                      )
                     ],
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 62.h,
+                        ),
+                        PageIndicator(
+                          viewModel: viewModel,
+                        ),
+                        SizedBox(
+                          height: 45.h,
+                        ),
+                        AppButton(buttonText: 'Get started', onPressed: () {
+                          context.go('/createAccount');
+                        },),
+                        SizedBox(height: 26.h),
+                        GestureDetector(
+                          onTap: (){
+                            context.go('/login');
+                          },
+                          child: Text(
+                            'Log in instead',
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(color: primaryColor2),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

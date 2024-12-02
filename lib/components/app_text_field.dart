@@ -7,11 +7,13 @@ class AppTextField extends StatelessWidget {
   AppTextField({
     required this.hintText,
     required this.controller,
+    this.suffixIcon,
     super.key,
   });
 
   String hintText;
 TextEditingController controller;
+Widget? suffixIcon;
 
 
   @override
@@ -32,7 +34,7 @@ TextEditingController controller;
           // fillColor: fillColor,
           hintText: hintText,
           // labelText: labelText,
-          // suffixIcon: suffixIcon,
+          suffixIcon: suffixIcon,
 
           hintStyle: Theme.of(context).textTheme.displaySmall!.copyWith(color: hintTextColor),
           labelStyle: Theme.of(context)
