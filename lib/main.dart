@@ -8,8 +8,10 @@ import 'package:payvidence/screens/account_success/account_success.dart';
 import 'package:payvidence/screens/change_password_success/change_password_success.dart';
 import 'package:payvidence/screens/create_account/create_account.dart';
 import 'package:payvidence/screens/create_new_password/create_new_password.dart';
+import 'package:payvidence/screens/empty_business/empty_business.dart';
 import 'package:payvidence/screens/forgot_password/forgot_password.dart';
 import 'package:payvidence/screens/login/login.dart';
+import 'package:payvidence/screens/nav_screens/home.dart';
 import 'package:payvidence/screens/nav_screens/home_page.dart';
 import 'package:payvidence/screens/onboarding/onboarding.dart';
 import 'package:payvidence/screens/otp/otp.dart';
@@ -61,6 +63,14 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/createNewPassword',
         builder: (context, state) => CreateNewPassword(),
+      ),
+      GoRoute(
+        path: '/emptyBusiness',
+        builder: (context, state) => EmptyBusiness(),
+      ),
+      GoRoute(
+        path: '/homescreen',
+        builder: (context, state) => HomeScreen(),
       ),
 GoRoute(
   path: '/home',

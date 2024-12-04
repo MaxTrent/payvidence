@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:payvidence/screens/nav_screens/home.dart';
 import 'package:payvidence/screens/nav_screens/homepage_vm.dart';
 
 import '../../gen/assets.gen.dart';
@@ -15,16 +16,7 @@ class HomePage extends ConsumerWidget {
     final viewModel = HomePageViewModel(ref);
 
     final List<Widget> _pages = [
-      SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('1234567'),
-          ),
-          body: Column(
-            children: [Text('hi')],
-          ),
-        ),
-      ),
+     HomeScreen(),
       Scaffold(
         appBar: AppBar(
           title: Text('2'),

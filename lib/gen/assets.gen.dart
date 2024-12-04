@@ -39,17 +39,32 @@ class $AssetsSvgGen {
   /// File path: assets/svg/backbutton.svg
   String get backbutton => 'assets/svg/backbutton.svg';
 
+  /// File path: assets/svg/client.svg
+  String get client => 'assets/svg/client.svg';
+
+  /// File path: assets/svg/empty briefcase.svg
+  String get emptyBriefcase => 'assets/svg/empty briefcase.svg';
+
+  /// File path: assets/svg/empty transaction.svg
+  String get emptyTransaction => 'assets/svg/empty transaction.svg';
+
   /// File path: assets/svg/home.svg
   String get home => 'assets/svg/home.svg';
 
   /// File path: assets/svg/home_ol.svg
   String get homeOl => 'assets/svg/home_ol.svg';
 
+  /// File path: assets/svg/invoice.svg
+  String get invoice => 'assets/svg/invoice.svg';
+
   /// File path: assets/svg/password.svg
   String get password => 'assets/svg/password.svg';
 
   /// File path: assets/svg/password_success.svg
   String get passwordSuccess => 'assets/svg/password_success.svg';
+
+  /// File path: assets/svg/product.svg
+  String get product => 'assets/svg/product.svg';
 
   /// File path: assets/svg/profile.svg
   String get profile => 'assets/svg/profile.svg';
@@ -59,6 +74,18 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/profile_ol.svg
   String get profileOl => 'assets/svg/profile_ol.svg';
+
+  /// File path: assets/svg/receipt.svg
+  String get receipt => 'assets/svg/receipt.svg';
+
+  /// File path: assets/svg/ribbon.svg
+  String get ribbon => 'assets/svg/ribbon.svg';
+
+  /// File path: assets/svg/store.svg
+  String get store => 'assets/svg/store.svg';
+
+  /// File path: assets/svg/subscribe.svg
+  String get subscribe => 'assets/svg/subscribe.svg';
 
   /// File path: assets/svg/transaction.svg
   String get transaction => 'assets/svg/transaction.svg';
@@ -75,13 +102,22 @@ class $AssetsSvgGen {
   /// List of all assets
   List<String> get values => [
         backbutton,
+        client,
+        emptyBriefcase,
+        emptyTransaction,
         home,
         homeOl,
+        invoice,
         password,
         passwordSuccess,
+        product,
         profile,
         profileConfetti,
         profileOl,
+        receipt,
+        ribbon,
+        store,
+        subscribe,
         transaction,
         transactionOl,
         wallet,
