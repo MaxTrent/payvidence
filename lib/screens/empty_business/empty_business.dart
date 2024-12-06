@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:payvidence/components/app_button.dart';
 
 import '../../gen/assets.gen.dart';
@@ -26,7 +27,9 @@ class EmptyBusiness extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: AppButton(buttonText: 'Set-up business', onPressed: (){}),
+      floatingActionButton: AppButton(buttonText: 'Set-up business', onPressed: (){
+        context.push('/addBusiness');
+      }),
     );
   }
 }

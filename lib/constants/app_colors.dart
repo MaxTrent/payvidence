@@ -5,6 +5,7 @@ const Color primaryColor2 = Color(0xff4E38B2);
 const Color primaryColor3 = Color(0xff7767BD);
 const Color primaryColor4 = Color(0xff7767BD);
 const Color appGrey = Color(0xffD9D9D9);
+const Color appGrey1 = Color(0xffF8F8F8);
 const Color appGrey2 = Color(0xffE8EBEE);
 const Color appGrey3 = Color(0xffEAE7F6);
 const Color borderGrey = Color(0xffE9E9E9)

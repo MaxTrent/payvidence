@@ -39,6 +39,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/backbutton.svg
   String get backbutton => 'assets/svg/backbutton.svg';
 
+  /// File path: assets/svg/briefcase confetti.svg
+  String get briefcaseConfetti => 'assets/svg/briefcase confetti.svg';
+
   /// File path: assets/svg/client.svg
   String get client => 'assets/svg/client.svg';
 
@@ -48,6 +51,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/empty transaction.svg
   String get emptyTransaction => 'assets/svg/empty transaction.svg';
 
+  /// File path: assets/svg/exclamation.svg
+  String get exclamation => 'assets/svg/exclamation.svg';
+
   /// File path: assets/svg/home.svg
   String get home => 'assets/svg/home.svg';
 
@@ -56,6 +62,9 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/invoice.svg
   String get invoice => 'assets/svg/invoice.svg';
+
+  /// File path: assets/svg/library.svg
+  String get library => 'assets/svg/library.svg';
 
   /// File path: assets/svg/password.svg
   String get password => 'assets/svg/password.svg';
@@ -93,6 +102,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/transaction_ol.svg
   String get transactionOl => 'assets/svg/transaction_ol.svg';
 
+  /// File path: assets/svg/upload image.svg
+  String get uploadImage => 'assets/svg/upload image.svg';
+
   /// File path: assets/svg/wallet.svg
   String get wallet => 'assets/svg/wallet.svg';
 
@@ -102,12 +114,15 @@ class $AssetsSvgGen {
   /// List of all assets
   List<String> get values => [
         backbutton,
+        briefcaseConfetti,
         client,
         emptyBriefcase,
         emptyTransaction,
+        exclamation,
         home,
         homeOl,
         invoice,
+        library,
         password,
         passwordSuccess,
         product,
@@ -120,6 +135,7 @@ class $AssetsSvgGen {
         subscribe,
         transaction,
         transactionOl,
+        uploadImage,
         wallet,
         walletOl
       ];

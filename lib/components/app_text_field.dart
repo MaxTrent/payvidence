@@ -7,14 +7,17 @@ class AppTextField extends StatelessWidget {
   AppTextField({
     required this.hintText,
     required this.controller,
+    this.fillColor,
     this.suffixIcon,
+    this.filled,
     super.key,
   });
 
   String hintText;
 TextEditingController controller;
 Widget? suffixIcon;
-
+Color? fillColor;
+bool? filled;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +33,8 @@ Widget? suffixIcon;
         focusNode: FocusNode(),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(8.h),
-          // filled: filled,
-          // fillColor: fillColor,
+          filled: filled,
+          fillColor: fillColor,
           hintText: hintText,
           // labelText: labelText,
           suffixIcon: suffixIcon,
