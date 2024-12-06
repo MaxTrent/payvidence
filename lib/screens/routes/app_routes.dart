@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:payvidence/screens/add_product/add_product.dart';
 import 'package:payvidence/screens/all_businesses/all_businesses.dart';
 import 'package:payvidence/screens/upgrade_subscription/upgrade_subscription.dart';
 
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String addBusinessSuccess = '/addBusinessSuccess';
   static const String allBusiness = '/allBusiness';
   static const String upgradeSubscription = '/upgradeSubscription';
+  static const String addProduct = '/addProduct';
 
   static GoRouter createRouter() {
     return GoRouter(
@@ -106,6 +108,10 @@ class AppRoutes {
         GoRoute(
           path: upgradeSubscription,
           builder: (context, state) =>  UpgradeSubscription(),
+        ),
+        GoRoute(
+          path: addProduct,
+          builder: (context, state) =>  AddProduct(),
         ),
       ],
     );

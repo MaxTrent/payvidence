@@ -8,6 +8,7 @@ import 'package:payvidence/constants/app_colors.dart';
 import '../../components/app_card.dart';
 import '../../components/transaction_tile.dart';
 import '../../gen/assets.gen.dart';
+import '../routes/app_routes.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -104,8 +105,13 @@ class HomeScreen extends StatelessWidget {
                   icon: Assets.svg.invoice,),
                 AppCard(text: 'Clients',
                   icon: Assets.svg.client,),
-                AppCard(text: 'Products',
-                  icon: Assets.svg.product,),
+                GestureDetector(
+                  onTap: (){
+                    context.push(AppRoutes.addProduct);
+                  },
+                  child: AppCard(text: 'Products',
+                    icon: Assets.svg.product,),
+                ),
               ],
             ),
             SizedBox(height: 38.h,),
@@ -118,7 +124,7 @@ class HomeScreen extends StatelessWidget {
                 Text('View all', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 12.sp ),),
               ],
             ),
-            SizedBox(height: 48.h,),
+            SizedBox(height: 12.h,),
             TransactionTile(),
             TransactionTile(),
             TransactionTile(),

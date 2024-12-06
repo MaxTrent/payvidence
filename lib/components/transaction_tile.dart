@@ -55,9 +55,11 @@ class TransactionTile extends StatelessWidget {
               ),
               SizedBox(height: 8.h,),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text('₦220,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 14.sp)),
+                  SizedBox(width: 80.w),
                   Container(
                     height: 23.h,
                     padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 5.h),
