@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:payvidence/screens/routes/app_routes.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
@@ -29,7 +30,11 @@ class AddProduct extends StatelessWidget {
               SizedBox(height: 32.h,),
               Text('Product category', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'Select category', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp),),
+              GestureDetector(
+                  onTap: (){
+                    context.push(AppRoutes.emptyCategory);
+                  },
+                  child: AppTextField(hintText: 'Select category', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
               SizedBox(height: 20.h,),
               Text('Product name', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
@@ -37,7 +42,7 @@ class AddProduct extends StatelessWidget {
               SizedBox(height: 20.h,),
               Text('Product brand', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'Select brand', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp),),
+              AppTextField(hintText: 'Select brand', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp), enabled: false,),
               SizedBox(height: 20.h,),
               Text('Product description', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),

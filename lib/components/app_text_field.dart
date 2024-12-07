@@ -11,7 +11,9 @@ class AppTextField extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.filled,
+    this.enabled,
     this.height = 56,
+    this.radius = 8,
     super.key,
   });
 
@@ -22,12 +24,15 @@ Widget? prefixIcon;
 Color? fillColor;
 bool? filled;
 double height;
+double radius;
+bool? enabled;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: height.h,
       child: TextFormField(
+        enabled: enabled,
         controller: controller,
         cursorColor: Colors.black,
         showCursor: true,
@@ -58,30 +63,30 @@ double height;
               .displaySmall!
               .copyWith(fontWeight: FontWeight.w400, color: Colors.red),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(radius.r),
             borderSide: const BorderSide(
               color: borderColor,
             ),),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(radius.r),
             borderSide: const BorderSide(
               color: borderColor,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(radius.r),
             borderSide: const BorderSide(
               color: borderColor,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(radius.r),
             borderSide: const BorderSide(
               color: Colors.red,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.r),
+            borderRadius: BorderRadius.circular(radius.r),
             borderSide: const BorderSide(
               color: Colors.red,
             ),

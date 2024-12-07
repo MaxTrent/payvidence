@@ -125,22 +125,22 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 12.h,),
-            TransactionTile(),
-            TransactionTile(),
-            TransactionTile(),
-            TransactionTile(),
-            TransactionTile(),
-            TransactionTile(),
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     SvgPicture.asset(Assets.svg.emptyTransaction),
-            //     SizedBox(height: 32.h,),
-            //     Text('No transaction yet!', style: Theme.of(context).textTheme.displayLarge,),
-            //               SizedBox(height: 10.h,),
-            //     Text('Start generating receipts and invoices for your business. All transactions will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
-            //   ],
-            // )
+            // TransactionTile(),
+            // TransactionTile(),
+            // TransactionTile(),
+            // TransactionTile(),
+            // TransactionTile(),
+            // TransactionTile(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(Assets.svg.emptyTransaction),
+                SizedBox(height: 32.h,),
+                Text('No transaction yet!', style: Theme.of(context).textTheme.displayLarge,),
+                          SizedBox(height: 10.h,),
+                Text('Start generating receipts and invoices for your business. All transactions will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
+              ],
+            )
           ],
         ),
       )),

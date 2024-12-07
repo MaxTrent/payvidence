@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:payvidence/screens/add_product/add_product.dart';
 import 'package:payvidence/screens/all_businesses/all_businesses.dart';
+import 'package:payvidence/screens/empty_category/empty_category.dart';
 import 'package:payvidence/screens/upgrade_subscription/upgrade_subscription.dart';
 
 import '../account_success/account_success.dart';
@@ -37,6 +38,7 @@ class AppRoutes {
   static const String allBusiness = '/allBusiness';
   static const String upgradeSubscription = '/upgradeSubscription';
   static const String addProduct = '/addProduct';
+  static const String emptyCategory = '/emptyCategory';
 
   static GoRouter createRouter() {
     return GoRouter(
@@ -47,27 +49,27 @@ class AppRoutes {
       routes: [
         GoRoute(
           path: onboarding,
-          builder: (context, state) =>  OnboardingScreen(),
+          builder: (context, state) => OnboardingScreen(),
         ),
         GoRoute(
           path: login,
-          builder: (context, state) =>  Login(),
+          builder: (context, state) => Login(),
         ),
         GoRoute(
           path: createAccount,
-          builder: (context, state) =>  CreateAccountScreen(),
+          builder: (context, state) => CreateAccountScreen(),
         ),
         GoRoute(
           path: forgotPassword,
-          builder: (context, state) =>  ForgotPassword(),
+          builder: (context, state) => ForgotPassword(),
         ),
         GoRoute(
           path: createNewPassword,
-          builder: (context, state) =>  CreateNewPassword(),
+          builder: (context, state) => CreateNewPassword(),
         ),
         GoRoute(
           path: emptyBusiness,
-          builder: (context, state) =>  EmptyBusiness(),
+          builder: (context, state) => EmptyBusiness(),
         ),
         GoRoute(
           path: homeScreen,
@@ -75,44 +77,46 @@ class AppRoutes {
         ),
         GoRoute(
           path: addBusiness,
-          builder: (context, state) =>  AddBusiness(),
+          builder: (context, state) => AddBusiness(),
         ),
         GoRoute(
           path: home,
-          builder: (context, state) =>  HomePage(),
+          builder: (context, state) => HomePage(),
         ),
         GoRoute(
           path: changePasswordSuccess,
-          builder: (context, state) =>  ChangePasswordSuccess(),
+          builder: (context, state) => ChangePasswordSuccess(),
         ),
         GoRoute(
           path: otpLogin,
-          builder: (context, state) =>  OtpLogin(),
+          builder: (context, state) => OtpLogin(),
         ),
         GoRoute(
           path: otp,
-          builder: (context, state) =>  OtpScreen(),
+          builder: (context, state) => OtpScreen(),
         ),
         GoRoute(
           path: accountSuccess,
-          builder: (context, state) =>  AccountSuccessScreen(),
+          builder: (context, state) => AccountSuccessScreen(),
         ),
         GoRoute(
           path: addBusinessSuccess,
-          builder: (context, state) =>  AddBusinessSuccess(),
+          builder: (context, state) => AddBusinessSuccess(),
         ),
         GoRoute(
           path: allBusiness,
-          builder: (context, state) =>  AllBusinesses(),
+          builder: (context, state) => AllBusinesses(),
         ),
         GoRoute(
           path: upgradeSubscription,
-          builder: (context, state) =>  UpgradeSubscription(),
+          builder: (context, state) => UpgradeSubscription(),
         ),
         GoRoute(
           path: addProduct,
-          builder: (context, state) =>  AddProduct(),
+          builder: (context, state) => AddProduct(),
         ),
+        GoRoute(
+            path: emptyCategory, builder: (context, state) => EmptyCategory()),
       ],
     );
   }
