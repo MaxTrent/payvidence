@@ -72,6 +72,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/password_success.svg
   String get passwordSuccess => 'assets/svg/password_success.svg';
 
+  /// File path: assets/svg/product success.svg
+  String get productSuccess => 'assets/svg/product success.svg';
+
   /// File path: assets/svg/product.svg
   String get product => 'assets/svg/product.svg';
 
@@ -128,6 +131,7 @@ class $AssetsSvgGen {
         library,
         password,
         passwordSuccess,
+        productSuccess,
         product,
         profile,
         profileConfetti,

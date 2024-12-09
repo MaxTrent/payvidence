@@ -29,7 +29,7 @@ class AppButton extends StatelessWidget {
               .displayMedium!
               .copyWith(
               fontWeight: FontWeight.w600,
-              color: scaffoldBackground),
+              color: Colors.white),
         ),
         style: ButtonStyle(
             backgroundColor:

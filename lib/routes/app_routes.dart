@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:payvidence/screens/add_brand/add_brand.dart';
+import 'package:payvidence/screens/brands/brands.dart';
 
 import '../screens/account_success/account_success.dart';
 import '../screens/add_business/add_business.dart';
@@ -42,6 +44,8 @@ class AppRoutes {
   static const String addProduct = '/addProduct';
   static const String emptyCategory = '/emptyCategory';
   static const String addCategory = '/addCategory';
+static const String brands = '/brands';
+static const String addBrand = '/addBrands';
 
   static GoRouter createRouter() {
     return GoRouter(
@@ -118,10 +122,15 @@ class AppRoutes {
           path: addProduct,
           builder: (context, state) => AddProduct(),
         ),
-        GoRoute(path: addProduct,
+        GoRoute(path: addCategory,
         builder: (context, state)=> AddCategory()),
         GoRoute(
             path: emptyCategory, builder: (context, state) => EmptyCategory()),
+        GoRoute(
+            path: brands, builder: (context, state) => Brands()),
+        GoRoute(
+            path: addBrand, builder: (context, state) => AddBrand()),
+
       ],
     );
   }

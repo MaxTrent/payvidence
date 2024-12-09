@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../routes/app_routes.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
-import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
 class AddProduct extends StatelessWidget {
@@ -42,7 +41,11 @@ class AddProduct extends StatelessWidget {
               SizedBox(height: 20.h,),
               Text('Product brand', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'Select brand', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp), enabled: false,),
+              GestureDetector(
+                onTap: (){
+                  context.push(AppRoutes.brands);
+                },
+                  child: AppTextField(hintText: 'Select brand', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
               SizedBox(height: 20.h,),
               Text('Product description', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
