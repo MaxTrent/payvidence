@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:payvidence/screens/routes/app_routes.dart';
 
+import '../../routes/app_routes.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
@@ -67,9 +67,13 @@ class AddProduct extends StatelessWidget {
               Text('Is VAT applicable to this product?', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
               AppTextField(hintText: 'Select option', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp),),
+              SizedBox(height: 20.h,),
+              Text('VAT rate', style: Theme.of(context).textTheme.displaySmall,),
+              SizedBox(height: 8.h,),
+              AppTextField(hintText: 'VAT rate', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp),),
               SizedBox(height: 32.h,),
               AppButton(buttonText: 'Add product', onPressed: (){
-                context.go('/addBusinessSuccess');
+                // context.go('/addBusinessSuccess');
               })
             ],
           ),

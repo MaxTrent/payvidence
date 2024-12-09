@@ -8,8 +8,8 @@ import 'package:payvidence/constants/app_colors.dart';
 import '../../components/app_card.dart';
 import '../../components/transaction_tile.dart';
 import '../../gen/assets.gen.dart';
-import '../routes/app_routes.dart';
 
+import '../../routes/app_routes.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 

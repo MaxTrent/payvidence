@@ -90,6 +90,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/ribbon.svg
   String get ribbon => 'assets/svg/ribbon.svg';
 
+  /// File path: assets/svg/shapes.svg
+  String get shapes => 'assets/svg/shapes.svg';
+
   /// File path: assets/svg/store.svg
   String get store => 'assets/svg/store.svg';
 
@@ -131,6 +134,7 @@ class $AssetsSvgGen {
         profileOl,
         receipt,
         ribbon,
+        shapes,
         store,
         subscribe,
         transaction,

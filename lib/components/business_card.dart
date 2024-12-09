@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
-import '../screens/routes/app_routes.dart';
+import '../routes/app_routes.dart';
 import 'app_button.dart';
 
 
