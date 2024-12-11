@@ -28,16 +28,39 @@ class $AssetsPngGen {
   AssetGenImage get payvidenceLogo =>
       const AssetGenImage('assets/png/payvidence_logo.png');
 
+  /// File path: assets/png/product picture.png
+  AssetGenImage get productPicture =>
+      const AssetGenImage('assets/png/product picture.png');
+
+  /// File path: assets/png/productpic.png
+  AssetGenImage get productpic =>
+      const AssetGenImage('assets/png/productpic.png');
+
   /// List of all assets
-  List<AssetGenImage> get values =>
-      [onboarding1, onboarding2, onboarding3, payvidenceLogo];
+  List<AssetGenImage> get values => [
+        onboarding1,
+        onboarding2,
+        onboarding3,
+        payvidenceLogo,
+        productPicture,
+        productpic
+      ];
 }
 
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/analytics.svg
+  String get analytics => 'assets/svg/analytics.svg';
+
+  /// File path: assets/svg/archive-book.svg
+  String get archiveBook => 'assets/svg/archive-book.svg';
+
   /// File path: assets/svg/backbutton.svg
   String get backbutton => 'assets/svg/backbutton.svg';
+
+  /// File path: assets/svg/box-tick.svg
+  String get boxTick => 'assets/svg/box-tick.svg';
 
   /// File path: assets/svg/briefcase confetti.svg
   String get briefcaseConfetti => 'assets/svg/briefcase confetti.svg';
@@ -45,14 +68,29 @@ class $AssetsSvgGen {
   /// File path: assets/svg/client.svg
   String get client => 'assets/svg/client.svg';
 
+  /// File path: assets/svg/delete.svg
+  String get delete => 'assets/svg/delete.svg';
+
+  /// File path: assets/svg/edit.svg
+  String get edit => 'assets/svg/edit.svg';
+
   /// File path: assets/svg/empty briefcase.svg
   String get emptyBriefcase => 'assets/svg/empty briefcase.svg';
+
+  /// File path: assets/svg/empty product.svg
+  String get emptyProduct => 'assets/svg/empty product.svg';
+
+  /// File path: assets/svg/empty receipt.svg
+  String get emptyReceipt => 'assets/svg/empty receipt.svg';
 
   /// File path: assets/svg/empty transaction.svg
   String get emptyTransaction => 'assets/svg/empty transaction.svg';
 
   /// File path: assets/svg/exclamation.svg
   String get exclamation => 'assets/svg/exclamation.svg';
+
+  /// File path: assets/svg/filter.svg
+  String get filter => 'assets/svg/filter.svg';
 
   /// File path: assets/svg/home.svg
   String get home => 'assets/svg/home.svg';
@@ -66,11 +104,17 @@ class $AssetsSvgGen {
   /// File path: assets/svg/library.svg
   String get library => 'assets/svg/library.svg';
 
+  /// File path: assets/svg/note-text.svg
+  String get noteText => 'assets/svg/note-text.svg';
+
   /// File path: assets/svg/password.svg
   String get password => 'assets/svg/password.svg';
 
   /// File path: assets/svg/password_success.svg
   String get passwordSuccess => 'assets/svg/password_success.svg';
+
+  /// File path: assets/svg/product picture.svg
+  String get productPicture => 'assets/svg/product picture.svg';
 
   /// File path: assets/svg/product success.svg
   String get productSuccess => 'assets/svg/product success.svg';
@@ -93,8 +137,14 @@ class $AssetsSvgGen {
   /// File path: assets/svg/ribbon.svg
   String get ribbon => 'assets/svg/ribbon.svg';
 
+  /// File path: assets/svg/search.svg
+  String get search => 'assets/svg/search.svg';
+
   /// File path: assets/svg/shapes.svg
   String get shapes => 'assets/svg/shapes.svg';
+
+  /// File path: assets/svg/status up.svg
+  String get statusUp => 'assets/svg/status up.svg';
 
   /// File path: assets/svg/store.svg
   String get store => 'assets/svg/store.svg';
@@ -119,18 +169,28 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
+        analytics,
+        archiveBook,
         backbutton,
+        boxTick,
         briefcaseConfetti,
         client,
+        delete,
+        edit,
         emptyBriefcase,
+        emptyProduct,
+        emptyReceipt,
         emptyTransaction,
         exclamation,
+        filter,
         home,
         homeOl,
         invoice,
         library,
+        noteText,
         password,
         passwordSuccess,
+        productPicture,
         productSuccess,
         product,
         profile,
@@ -138,7 +198,9 @@ class $AssetsSvgGen {
         profileOl,
         receipt,
         ribbon,
+        search,
         shapes,
+        statusUp,
         store,
         subscribe,
         transaction,

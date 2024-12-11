@@ -14,6 +14,7 @@ class AppTextField extends StatelessWidget {
     this.enabled,
     this.height = 56,
     this.radius = 8,
+    this.width,
     super.key,
   });
 
@@ -26,11 +27,13 @@ bool? filled;
 double height;
 double radius;
 bool? enabled;
+double? width;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: height.h,
+      width: width?.w,
       child: TextFormField(
         enabled: enabled,
         controller: controller,

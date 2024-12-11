@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:payvidence/routes/app_routes.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
@@ -32,7 +34,9 @@ class AddBrand extends StatelessWidget {
             AppTextField(
               height: 128, hintText: 'Brand description', controller: _controller, ),
             SizedBox(height: 32.h,),
-            AppButton(buttonText: 'Save brand', onPressed: (){})
+            AppButton(buttonText: 'Save brand', onPressed: (){
+              context.push(AppRoutes.productSuccess);
+            })
           ],
         ),
       ),

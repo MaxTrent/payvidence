@@ -99,15 +99,20 @@ class HomeScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppCard(text: 'Receipts',
-                icon: Assets.svg.receipt,),
+                GestureDetector(
+                  onTap: (){
+                    context.push(AppRoutes.allReceipts);
+                  },
+                  child: AppCard(text: 'Receipts',
+                  icon: Assets.svg.receipt,),
+                ),
                 AppCard(text: 'Invoices',
                   icon: Assets.svg.invoice,),
                 AppCard(text: 'Clients',
                   icon: Assets.svg.client,),
                 GestureDetector(
                   onTap: (){
-                    context.push(AppRoutes.addProduct);
+                    context.push(AppRoutes.emptyProduct);
                   },
                   child: AppCard(text: 'Products',
                     icon: Assets.svg.product,),
