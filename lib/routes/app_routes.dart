@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:payvidence/complete_draft/complete_draft.dart';
 import 'package:payvidence/screens/add_brand/add_brand.dart';
 import 'package:payvidence/screens/add_product_success/add_product_success.dart';
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
@@ -56,6 +57,7 @@ static const String emptyProduct = '/emptyProduct';
 static const String productDetails = '/productDetails';
 static const String allReceipts = '/allReceipts';
 static const String drafts = '/drafts';
+static const String completeDraft = '/completeDraft';
 
   static GoRouter createRouter() {
     return GoRouter(
@@ -153,6 +155,8 @@ static const String drafts = '/drafts';
             path: allReceipts, builder: (context, state) => AllReceipts()),
         GoRoute(
             path: drafts, builder: (context, state) => Drafts()),
+        GoRoute(
+            path: completeDraft, builder: (context, state) => CompleteDraft()),
 
       ],
     );

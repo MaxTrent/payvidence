@@ -28,7 +28,7 @@ class Drafts extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 32.h,),
                 AppTextField(
@@ -44,6 +44,8 @@ class Drafts extends StatelessWidget {
                   fillColor: appGrey5,
                 ),
                 SizedBox(height: 20.h,),
+                Text('You can click on specific draft to edit.', style: Theme.of(context).textTheme.displaySmall,),
+                SizedBox(height: 8.h,),
                 // SvgPicture.asset(Assets.svg.emptyReceipt),
                 // SizedBox(height: 40.h,),
                 // Text('No receipt yet!', style: Theme.of(context).textTheme.displayLarge,),
@@ -86,10 +88,11 @@ class DraftTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        context.push(AppRoutes.productDetails);
+        context.push(AppRoutes.completeDraft);
       },
       child: Container(
         height: 101.h,
+        width: double.infinity,
         decoration: BoxDecoration(
             color: Colors.transparent
         ),
@@ -131,7 +134,11 @@ class DraftTile extends StatelessWidget {
 
                       ],
                     ),
-                    SvgPicture.asset(Assets.svg.delete)
+                    Row(
+                      children: [
+                        SvgPicture.asset(Assets.svg.delete),
+                      ],
+                    )
                   ],
                 ),
                 SizedBox(height: 8.h,),
