@@ -7,6 +7,7 @@ import 'package:payvidence/screens/add_product_success/add_product_success.dart'
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
 import 'package:payvidence/screens/brands/brands.dart';
 import 'package:payvidence/screens/empty_product/empty_product.dart';
+import 'package:payvidence/screens/receipt/receipt.dart';
 
 import '../screens/account_success/account_success.dart';
 import '../screens/add_business/add_business.dart';
@@ -58,6 +59,8 @@ static const String productDetails = '/productDetails';
 static const String allReceipts = '/allReceipts';
 static const String drafts = '/drafts';
 static const String completeDraft = '/completeDraft';
+static const String receipt = '/receipt';
+
 
   static GoRouter createRouter() {
     return GoRouter(
@@ -157,6 +160,8 @@ static const String completeDraft = '/completeDraft';
             path: drafts, builder: (context, state) => Drafts()),
         GoRoute(
             path: completeDraft, builder: (context, state) => CompleteDraft()),
+        GoRoute(
+            path: receipt, builder: (context, state) => Receipt()),
 
       ],
     );

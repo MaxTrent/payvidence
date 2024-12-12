@@ -7,6 +7,7 @@ import '../components/app_button.dart';
 import '../components/app_text_field.dart';
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
+import '../routes/app_routes.dart';
 
 class CompleteDraft extends StatelessWidget {
   CompleteDraft({super.key});
@@ -70,7 +71,7 @@ class CompleteDraft extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   AppButton(buttonText: 'Generate receipt', onPressed: (){
-                    // context.go('/home');
+                    context.push(AppRoutes.receipt);
                   },),
                   SizedBox(height: 26.h,),
                   Text('Save as draft', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: primaryColor2),),

@@ -36,6 +36,9 @@ class $AssetsPngGen {
   AssetGenImage get productpic =>
       const AssetGenImage('assets/png/productpic.png');
 
+  /// File path: assets/png/receipts.png
+  AssetGenImage get receipts => const AssetGenImage('assets/png/receipts.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
         onboarding1,
@@ -43,7 +46,8 @@ class $AssetsPngGen {
         onboarding3,
         payvidenceLogo,
         productPicture,
-        productpic
+        productpic,
+        receipts
       ];
 }
 
