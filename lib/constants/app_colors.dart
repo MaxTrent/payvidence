@@ -14,3 +14,4 @@ const Color borderGrey = Color(0xffE9E9E9);
 const Color scaffoldBackground = Color(0xffE3DDFF);
 const Color borderColor = Color(0xffB8B8B8);
 const Color hintTextColor = Color(0xff969696);
+const Color appRed = Color(0xffCA0F10);

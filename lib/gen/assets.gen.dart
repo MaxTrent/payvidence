@@ -54,6 +54,12 @@ class $AssetsPngGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/Payvidence (1).zip
+  String get payvidence1 => 'assets/svg/Payvidence (1).zip';
+
+  /// File path: assets/svg/Payvidence (2).zip
+  String get payvidence2 => 'assets/svg/Payvidence (2).zip';
+
   /// File path: assets/svg/analytics.svg
   String get analytics => 'assets/svg/analytics.svg';
 
@@ -69,14 +75,26 @@ class $AssetsSvgGen {
   /// File path: assets/svg/briefcase confetti.svg
   String get briefcaseConfetti => 'assets/svg/briefcase confetti.svg';
 
+  /// File path: assets/svg/chart.svg
+  String get chart => 'assets/svg/chart.svg';
+
   /// File path: assets/svg/client.svg
   String get client => 'assets/svg/client.svg';
 
   /// File path: assets/svg/contact.svg
   String get contact => 'assets/svg/contact.svg';
 
+  /// File path: assets/svg/default profilepic.svg
+  String get defaultProfilepic => 'assets/svg/default profilepic.svg';
+
   /// File path: assets/svg/delete.svg
   String get delete => 'assets/svg/delete.svg';
+
+  /// File path: assets/svg/document-text.svg
+  String get documentText => 'assets/svg/document-text.svg';
+
+  /// File path: assets/svg/edit image.svg
+  String get editImage => 'assets/svg/edit image.svg';
 
   /// File path: assets/svg/edit.svg
   String get edit => 'assets/svg/edit.svg';
@@ -114,8 +132,20 @@ class $AssetsSvgGen {
   /// File path: assets/svg/library.svg
   String get library => 'assets/svg/library.svg';
 
+  /// File path: assets/svg/like.svg
+  String get like => 'assets/svg/like.svg';
+
+  /// File path: assets/svg/logout.svg
+  String get logout => 'assets/svg/logout.svg';
+
+  /// File path: assets/svg/medal-star.svg
+  String get medalStar => 'assets/svg/medal-star.svg';
+
   /// File path: assets/svg/note-text.svg
   String get noteText => 'assets/svg/note-text.svg';
+
+  /// File path: assets/svg/notification.svg
+  String get notification => 'assets/svg/notification.svg';
 
   /// File path: assets/svg/password.svg
   String get password => 'assets/svg/password.svg';
@@ -150,6 +180,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/search.svg
   String get search => 'assets/svg/search.svg';
 
+  /// File path: assets/svg/setting-2.svg
+  String get setting2 => 'assets/svg/setting-2.svg';
+
   /// File path: assets/svg/shapes.svg
   String get shapes => 'assets/svg/shapes.svg';
 
@@ -171,6 +204,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/upload image.svg
   String get uploadImage => 'assets/svg/upload image.svg';
 
+  /// File path: assets/svg/user-square.svg
+  String get userSquare => 'assets/svg/user-square.svg';
+
   /// File path: assets/svg/wallet.svg
   String get wallet => 'assets/svg/wallet.svg';
 
@@ -179,14 +215,20 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
+        payvidence1,
+        payvidence2,
         analytics,
         archiveBook,
         backbutton,
         boxTick,
         briefcaseConfetti,
+        chart,
         client,
         contact,
+        defaultProfilepic,
         delete,
+        documentText,
+        editImage,
         edit,
         emptyBriefcase,
         emptyInvoice,
@@ -199,7 +241,11 @@ class $AssetsSvgGen {
         homeOl,
         invoice,
         library,
+        like,
+        logout,
+        medalStar,
         noteText,
+        notification,
         password,
         passwordSuccess,
         productPicture,
@@ -211,6 +257,7 @@ class $AssetsSvgGen {
         receipt,
         ribbon,
         search,
+        setting2,
         shapes,
         statusUp,
         store,
@@ -218,6 +265,7 @@ class $AssetsSvgGen {
         transaction,
         transactionOl,
         uploadImage,
+        userSquare,
         wallet,
         walletOl
       ];
