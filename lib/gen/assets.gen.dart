@@ -75,6 +75,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/client.svg
   String get client => 'assets/svg/client.svg';
 
+  /// File path: assets/svg/contact us.svg
+  String get contactUs => 'assets/svg/contact us.svg';
+
   /// File path: assets/svg/contact.svg
   String get contact => 'assets/svg/contact.svg';
 
@@ -147,6 +150,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/password_success.svg
   String get passwordSuccess => 'assets/svg/password_success.svg';
 
+  /// File path: assets/svg/privacy.svg
+  String get privacy => 'assets/svg/privacy.svg';
+
   /// File path: assets/svg/product picture.svg
   String get productPicture => 'assets/svg/product picture.svg';
 
@@ -192,6 +198,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/subscribe.svg
   String get subscribe => 'assets/svg/subscribe.svg';
 
+  /// File path: assets/svg/terms.svg
+  String get terms => 'assets/svg/terms.svg';
+
   /// File path: assets/svg/transaction.svg
   String get transaction => 'assets/svg/transaction.svg';
 
@@ -219,6 +228,7 @@ class $AssetsSvgGen {
         briefcaseConfetti,
         chart,
         client,
+        contactUs,
         contact,
         defaultProfilepic,
         delete,
@@ -243,6 +253,7 @@ class $AssetsSvgGen {
         notification,
         password,
         passwordSuccess,
+        privacy,
         productPicture,
         productSuccess,
         product,
@@ -258,6 +269,7 @@ class $AssetsSvgGen {
         statusUp,
         store,
         subscribe,
+        terms,
         transaction,
         transactionOl,
         uploadImage,

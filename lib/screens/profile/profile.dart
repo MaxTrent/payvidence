@@ -152,7 +152,7 @@ class Profile extends StatelessWidget {
               height: 24.h,
             ),
             ProfileOptionTile(
-              navigateTo: '',
+              navigateTo: AppRoutes.payvidenceInfo,
                 icon: Assets.svg.documentText,
                 title: 'View Payvidence information'),
             SizedBox(
