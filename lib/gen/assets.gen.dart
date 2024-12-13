@@ -72,6 +72,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/client.svg
   String get client => 'assets/svg/client.svg';
 
+  /// File path: assets/svg/contact.svg
+  String get contact => 'assets/svg/contact.svg';
+
   /// File path: assets/svg/delete.svg
   String get delete => 'assets/svg/delete.svg';
 
@@ -80,6 +83,9 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/empty briefcase.svg
   String get emptyBriefcase => 'assets/svg/empty briefcase.svg';
+
+  /// File path: assets/svg/empty invoice.svg
+  String get emptyInvoice => 'assets/svg/empty invoice.svg';
 
   /// File path: assets/svg/empty product.svg
   String get emptyProduct => 'assets/svg/empty product.svg';
@@ -179,9 +185,11 @@ class $AssetsSvgGen {
         boxTick,
         briefcaseConfetti,
         client,
+        contact,
         delete,
         edit,
         emptyBriefcase,
+        emptyInvoice,
         emptyProduct,
         emptyReceipt,
         emptyTransaction,

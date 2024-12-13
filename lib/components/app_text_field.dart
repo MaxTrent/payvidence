@@ -12,6 +12,7 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.filled,
     this.enabled,
+    this.appBorderColor = borderColor,
     this.height = 56,
     this.radius = 8,
     this.width,
@@ -23,6 +24,7 @@ TextEditingController controller;
 Widget? suffixIcon;
 Widget? prefixIcon;
 Color? fillColor;
+Color appBorderColor;
 bool? filled;
 double height;
 double radius;
@@ -67,19 +69,24 @@ double? width;
               .copyWith(fontWeight: FontWeight.w400, color: Colors.red),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
-            borderSide: const BorderSide(
-              color: borderColor,
+            borderSide: BorderSide(
+              color: appBorderColor,
             ),),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
-            borderSide: const BorderSide(
-              color: borderColor,
+            borderSide: BorderSide(
+              color: appBorderColor,
             ),
           ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radius.r),
+            borderSide: BorderSide(
+              color: appBorderColor,
+            ),),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
-            borderSide: const BorderSide(
-              color: borderColor,
+            borderSide: BorderSide(
+              color: appBorderColor,
             ),
           ),
           errorBorder: OutlineInputBorder(

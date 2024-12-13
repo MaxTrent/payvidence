@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:payvidence/complete_draft/complete_draft.dart';
 import 'package:payvidence/screens/add_brand/add_brand.dart';
 import 'package:payvidence/screens/add_product_success/add_product_success.dart';
+import 'package:payvidence/screens/all_invoices/all_invoices.dart';
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
 import 'package:payvidence/screens/brands/brands.dart';
 import 'package:payvidence/screens/empty_product/empty_product.dart';
 import 'package:payvidence/screens/generate_receipt/generate_receipt.dart';
 import 'package:payvidence/screens/receipt/receipt.dart';
+import 'package:payvidence/screens/select_client/select_client.dart';
 
 import '../screens/account_success/account_success.dart';
 import '../screens/add_business/add_business.dart';
@@ -23,6 +25,7 @@ import '../screens/drafts/drafts.dart';
 import '../screens/empty_business/empty_business.dart';
 import '../screens/empty_category/empty_category.dart';
 import '../screens/forgot_password/forgot_password.dart';
+import '../screens/generate_invoices/generate_invoices.dart';
 import '../screens/login/login.dart';
 import '../screens/nav_screens/home.dart';
 import '../screens/nav_screens/home_page.dart';
@@ -62,6 +65,9 @@ static const String drafts = '/drafts';
 static const String completeDraft = '/completeDraft';
 static const String receipt = '/receipt';
 static const String generateReceipt = '/generateReceipt';
+static const String selectClient = '/selectClient';
+static const String generateInvoices = '/generateInvoices';
+static const String allInvoices = '/allInvoices';
 
 
   static GoRouter createRouter() {
@@ -167,6 +173,13 @@ static const String generateReceipt = '/generateReceipt';
 
         GoRoute(
             path: generateReceipt, builder: (context, state) => GenerateReceipt()),
+        GoRoute(
+            path: selectClient, builder: (context, state) => SelectClient()),
+        GoRoute(
+            path: generateInvoices, builder: (context, state) => GenerateInvoices()),
+        GoRoute(
+            path: allInvoices, builder: (context, state) => AllInvoices()),
+
 
       ],
     );

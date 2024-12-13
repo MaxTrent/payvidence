@@ -7,8 +7,8 @@ import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../routes/app_routes.dart';
 
-class GenerateReceipt extends StatelessWidget {
-  GenerateReceipt({super.key});
+class Invoice extends StatelessWidget {
+  Invoice({super.key});
 
   final _controller = TextEditingController();
 
@@ -76,7 +76,7 @@ class GenerateReceipt extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-      Icon(Icons.add, color: primaryColor2,),
+                    Icon(Icons.add, color: primaryColor2,),
                     Text('Add another product', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: primaryColor2, fontSize: 14.sp), ),
                   ],
                 ),
