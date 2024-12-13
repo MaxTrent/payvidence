@@ -54,12 +54,6 @@ class $AssetsPngGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
-  /// File path: assets/svg/Payvidence (1).zip
-  String get payvidence1 => 'assets/svg/Payvidence (1).zip';
-
-  /// File path: assets/svg/Payvidence (2).zip
-  String get payvidence2 => 'assets/svg/Payvidence (2).zip';
-
   /// File path: assets/svg/analytics.svg
   String get analytics => 'assets/svg/analytics.svg';
 
@@ -186,6 +180,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/shapes.svg
   String get shapes => 'assets/svg/shapes.svg';
 
+  /// File path: assets/svg/shop.svg
+  String get shop => 'assets/svg/shop.svg';
+
   /// File path: assets/svg/status up.svg
   String get statusUp => 'assets/svg/status up.svg';
 
@@ -215,8 +212,6 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
-        payvidence1,
-        payvidence2,
         analytics,
         archiveBook,
         backbutton,
@@ -259,6 +254,7 @@ class $AssetsSvgGen {
         search,
         setting2,
         shapes,
+        shop,
         statusUp,
         store,
         subscribe,

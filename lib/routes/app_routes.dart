@@ -1,17 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:payvidence/complete_draft/complete_draft.dart';
 import 'package:payvidence/screens/add_brand/add_brand.dart';
 import 'package:payvidence/screens/add_product_success/add_product_success.dart';
 import 'package:payvidence/screens/all_invoices/all_invoices.dart';
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
 import 'package:payvidence/screens/brands/brands.dart';
+import 'package:payvidence/screens/business_data/business_data.dart';
 import 'package:payvidence/screens/empty_product/empty_product.dart';
 import 'package:payvidence/screens/generate_receipt/generate_receipt.dart';
 import 'package:payvidence/screens/receipt/receipt.dart';
 import 'package:payvidence/screens/select_client/select_client.dart';
-
+import 'package:payvidence/screens/update_personal_details/update_personal_details.dart';
 import '../screens/account_success/account_success.dart';
 import '../screens/add_business/add_business.dart';
 import '../screens/add_business_success/add_business_success.dart';
@@ -19,6 +18,7 @@ import '../screens/add_category/add_category.dart';
 import '../screens/add_product/add_product.dart';
 import '../screens/all_businesses/all_businesses.dart';
 import '../screens/change_password_success/change_password_success.dart';
+import '../screens/complete_draft/complete_draft.dart';
 import '../screens/create_account/create_account.dart';
 import '../screens/create_new_password/create_new_password.dart';
 import '../screens/drafts/drafts.dart';
@@ -34,6 +34,10 @@ import '../screens/otp/otp.dart';
 import '../screens/otp_login/otp_login.dart';
 import '../screens/product_details/product_details.dart';
 import '../screens/upgrade_subscription/upgrade_subscription.dart';
+
+
+
+
 
 class AppRoutes {
   static const String onboarding = '/onboarding';
@@ -68,6 +72,9 @@ static const String generateReceipt = '/generateReceipt';
 static const String selectClient = '/selectClient';
 static const String generateInvoices = '/generateInvoices';
 static const String allInvoices = '/allInvoices';
+static const String updatePersonalDetails = '/updatePersonalDetails';
+static const String businessData = '/businessData';
+
 
 
   static GoRouter createRouter() {
@@ -155,13 +162,10 @@ static const String allInvoices = '/allInvoices';
             path: addBrand, builder: (context, state) => AddBrand()),
         GoRoute(
             path: productSuccess, builder: (context, state) => AddProductSuccess()),
-
         GoRoute(
             path: emptyProduct, builder: (context, state) => EmptyProduct()),
-
         GoRoute(
             path: productDetails, builder: (context, state) => ProductDetails()),
-
         GoRoute(
             path: allReceipts, builder: (context, state) => AllReceipts()),
         GoRoute(
@@ -179,7 +183,10 @@ static const String allInvoices = '/allInvoices';
             path: generateInvoices, builder: (context, state) => GenerateInvoices()),
         GoRoute(
             path: allInvoices, builder: (context, state) => AllInvoices()),
-
+        GoRoute(
+            path: updatePersonalDetails, builder: (context, state) => UpdatePersonalDetails()),
+        GoRoute(
+            path: businessData, builder: (context, state) => BusinessData()),
 
       ],
     );

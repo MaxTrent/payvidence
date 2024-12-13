@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:payvidence/constants/app_colors.dart';
 
 import '../../gen/assets.gen.dart';
+import '../../routes/app_routes.dart';
 
 class Profile extends StatelessWidget {
   Profile({super.key});
@@ -130,6 +132,7 @@ class Profile extends StatelessWidget {
               height: 40.h,
             ),
             ProfileOptionTile(
+              navigateTo: AppRoutes.updatePersonalDetails,
               title: 'Update personal details',
               icon: Assets.svg.userSquare,
             ),
@@ -137,26 +140,32 @@ class Profile extends StatelessWidget {
               height: 24.h,
             ),
             ProfileOptionTile(
+                navigateTo: '',
                 icon: Assets.svg.medalStar, title: 'Manage subscription plan'),
             SizedBox(
               height: 24.h,
             ),
             ProfileOptionTile(
+                navigateTo: AppRoutes.businessData,
                 icon: Assets.svg.chart, title: 'Access business data'),
             SizedBox(
               height: 24.h,
             ),
             ProfileOptionTile(
+              navigateTo: '',
                 icon: Assets.svg.documentText,
                 title: 'View Payvidence information'),
             SizedBox(
               height: 24.h,
             ),
-            ProfileOptionTile(icon: Assets.svg.like, title: 'Rate app'),
+            ProfileOptionTile(
+                navigateTo: '',
+                icon: Assets.svg.like, title: 'Rate app'),
             SizedBox(
               height: 24.h,
             ),
             ProfileOptionTile(
+              navigateTo: '',
               icon: Assets.svg.logout,
               title: 'Log out',
               showTrailing: false,
@@ -174,6 +183,7 @@ class ProfileOptionTile extends StatelessWidget {
     required this.icon,
     required this.title,
     this.showTrailing = true,
+    required this.navigateTo,
     this.color,
     super.key,
   });
@@ -182,23 +192,29 @@ class ProfileOptionTile extends StatelessWidget {
   String icon;
   bool showTrailing;
   Color? color;
+  String navigateTo;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ListTile(
-          title: Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .displaySmall!
-                .copyWith(fontSize: 18.sp, color: color),
+        GestureDetector(
+          onTap: (){
+            context.push(navigateTo);
+          },
+          child: ListTile(
+            title: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .displaySmall!
+                  .copyWith(fontSize: 18.sp, color: color),
+            ),
+            leading: SvgPicture.asset(icon, height: 32.h, width: 32.w,),
+            trailing: showTrailing
+                ? const Icon(Icons.keyboard_arrow_right)
+                : const SizedBox(),
           ),
-          leading: SvgPicture.asset(icon),
-          trailing: showTrailing
-              ? const Icon(Icons.keyboard_arrow_right)
-              : const SizedBox(),
         ),
         Divider(
           thickness: 1.h,
