@@ -56,13 +56,18 @@ class Profile extends StatelessWidget {
                               Positioned(
                                 bottom: 0.h,
                                 right: 0.w,
-                                child: CircleAvatar(
-                                  radius: 14.r,
-                                  backgroundColor: Colors.white,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(7.h),
-                                    child:
-                                        SvgPicture.asset(Assets.svg.editImage),
+                                child: GestureDetector(
+                                  onTap: (){
+                                    context.push(AppRoutes.changeProfilePicture);
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 14.r,
+                                    backgroundColor: Colors.white,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(7.h),
+                                      child:
+                                          SvgPicture.asset(Assets.svg.editImage),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -71,7 +76,11 @@ class Profile extends StatelessWidget {
                           Row(
                             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SvgPicture.asset(Assets.svg.notification),
+                              GestureDetector(
+                                  onTap: (){
+                                    context.push(AppRoutes.notifications);
+                                  },
+                                  child: SvgPicture.asset(Assets.svg.notification)),
                               SizedBox(
                                 width: 12.w,
                               ),

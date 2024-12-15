@@ -6,8 +6,10 @@ import 'package:payvidence/screens/all_invoices/all_invoices.dart';
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
 import 'package:payvidence/screens/brands/brands.dart';
 import 'package:payvidence/screens/business_data/business_data.dart';
+import 'package:payvidence/screens/change_profile_picture/change_profile_picture.dart';
 import 'package:payvidence/screens/empty_product/empty_product.dart';
 import 'package:payvidence/screens/generate_receipt/generate_receipt.dart';
+import 'package:payvidence/screens/notifications/notifications.dart';
 import 'package:payvidence/screens/payvidence_info/payvidence_info.dart';
 import 'package:payvidence/screens/receipt/receipt.dart';
 import 'package:payvidence/screens/select_client/select_client.dart';
@@ -76,7 +78,8 @@ static const String allInvoices = '/allInvoices';
 static const String updatePersonalDetails = '/updatePersonalDetails';
 static const String businessData = '/businessData';
 static const String payvidenceInfo = '/payvidenceInfo';
-
+static const String changeProfilePicture = '/changeProfilePicture';
+static const String notifications = '/notifications';
 
 
   static GoRouter createRouter() {
@@ -191,6 +194,10 @@ static const String payvidenceInfo = '/payvidenceInfo';
             path: businessData, builder: (context, state) => BusinessData()),
         GoRoute(
             path: payvidenceInfo, builder: (context, state) => PayvidenceInfo()),
+        GoRoute(
+            path: changeProfilePicture, builder: (context, state) => ChangeProfilePicture()),
+        GoRoute(
+            path: notifications, builder: (context, state) => Notifications()),
 
       ],
     );
