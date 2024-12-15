@@ -36,6 +36,7 @@ import '../screens/onboarding/onboarding.dart';
 import '../screens/otp/otp.dart';
 import '../screens/otp_login/otp_login.dart';
 import '../screens/product_details/product_details.dart';
+import '../screens/settings/settings.dart';
 import '../screens/upgrade_subscription/upgrade_subscription.dart';
 
 
@@ -80,6 +81,7 @@ static const String businessData = '/businessData';
 static const String payvidenceInfo = '/payvidenceInfo';
 static const String changeProfilePicture = '/changeProfilePicture';
 static const String notifications = '/notifications';
+static const String settings = '/settings';
 
 
   static GoRouter createRouter() {
@@ -198,6 +200,8 @@ static const String notifications = '/notifications';
             path: changeProfilePicture, builder: (context, state) => ChangeProfilePicture()),
         GoRoute(
             path: notifications, builder: (context, state) => Notifications()),
+        GoRoute(
+            path: settings, builder: (context, state) => Settings()),
 
       ],
     );

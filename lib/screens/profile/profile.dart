@@ -84,7 +84,11 @@ class Profile extends StatelessWidget {
                               SizedBox(
                                 width: 12.w,
                               ),
-                              SvgPicture.asset(Assets.svg.setting2),
+                              GestureDetector(
+                                  onTap: (){
+                                    context.push(AppRoutes.settings);
+                                  },
+                                  child: SvgPicture.asset(Assets.svg.setting2)),
                             ],
                           ),
                         ],

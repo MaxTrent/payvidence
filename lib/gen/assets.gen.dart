@@ -72,6 +72,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/chart.svg
   String get chart => 'assets/svg/chart.svg';
 
+  /// File path: assets/svg/check.svg
+  String get check => 'assets/svg/check.svg';
+
   /// File path: assets/svg/client.svg
   String get client => 'assets/svg/client.svg';
 
@@ -132,6 +135,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/like.svg
   String get like => 'assets/svg/like.svg';
 
+  /// File path: assets/svg/lock-circle.svg
+  String get lockCircle => 'assets/svg/lock-circle.svg';
+
   /// File path: assets/svg/logout.svg
   String get logout => 'assets/svg/logout.svg';
 
@@ -141,8 +147,14 @@ class $AssetsSvgGen {
   /// File path: assets/svg/note-text.svg
   String get noteText => 'assets/svg/note-text.svg';
 
+  /// File path: assets/svg/notification-bing.svg
+  String get notificationBing => 'assets/svg/notification-bing.svg';
+
   /// File path: assets/svg/notification.svg
   String get notification => 'assets/svg/notification.svg';
+
+  /// File path: assets/svg/password-check.svg
+  String get passwordCheck => 'assets/svg/password-check.svg';
 
   /// File path: assets/svg/password.svg
   String get password => 'assets/svg/password.svg';
@@ -227,6 +239,7 @@ class $AssetsSvgGen {
         boxTick,
         briefcaseConfetti,
         chart,
+        check,
         client,
         contactUs,
         contact,
@@ -247,10 +260,13 @@ class $AssetsSvgGen {
         invoice,
         library,
         like,
+        lockCircle,
         logout,
         medalStar,
         noteText,
+        notificationBing,
         notification,
+        passwordCheck,
         password,
         passwordSuccess,
         privacy,
