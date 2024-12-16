@@ -1,0 +1,112 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:payvidence/constants/app_colors.dart';
+
+import '../../gen/assets.gen.dart';
+
+class MySubscription extends StatelessWidget {
+  const MySubscription({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Padding(
+        padding:  EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('My subscription', style: Theme.of(context).textTheme.displayLarge,),
+          SizedBox(height: 24.h,),
+            Container(
+            height: 108.h,
+            decoration: BoxDecoration(
+              color: Color(0xffE3DDFF),
+              borderRadius: BorderRadius.circular(12.r)
+            ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          SvgPicture.asset(Assets.svg.ribbon),
+                          SizedBox(width: 8.w,),
+                          Text('Premium subscription plan'),
+                        ],
+                      ),
+
+                      Container(height: 34.h,
+                      width: 84.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(40.r),
+                      ),
+                        child: Center(child: Padding(
+                          padding:  EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(Icons.check, size: 12.h,),
+                              Text('Active', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
+                            ],
+                          ),
+                        )),
+                      )
+                    ],
+                  ),
+                  // SizedBox(height: 4.h,),
+                    Text.rich(TextSpan(
+                      text: '₦50,000 ',
+                      style: Theme.of(context).textTheme.displayLarge,
+                      children: [
+                        TextSpan(
+                          text: '/year',
+                          style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Color(0xff444444)),
+
+                        )
+                      ]
+                    )),
+                    // Text('₦50,000 /year', style: Theme.of(context).textTheme.displayLarge,),
+
+
+                  ],
+                ),
+              ),
+
+          ),
+            SizedBox(height: 32.h,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Current plan', style: Theme.of(context).textTheme.displaySmall,),
+                Row(
+                  children: [
+                    Container(
+                      height: 12.h,
+                      width: 12.h,
+                      decoration: BoxDecoration(
+                        color: primaryColor2,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(width: 6.w,),
+                    Text('Premium', style: Theme.of(context).textTheme.displaySmall,),
+                  ],
+                ),
+
+              ],
+            )
+
+          ],
+        ),
+      ),
+    );
+  }
+}

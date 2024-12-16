@@ -153,7 +153,7 @@ class Profile extends StatelessWidget {
               height: 24.h,
             ),
             ProfileOptionTile(
-                navigateTo: '',
+                navigateTo: AppRoutes.mySubscription,
                 icon: Assets.svg.medalStar, title: 'Manage subscription plan'),
             SizedBox(
               height: 24.h,
