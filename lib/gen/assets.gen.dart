@@ -186,6 +186,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/receipt.svg
   String get receipt => 'assets/svg/receipt.svg';
 
+  /// File path: assets/svg/ribbon white.svg
+  String get ribbonWhite => 'assets/svg/ribbon white.svg';
+
   /// File path: assets/svg/ribbon.svg
   String get ribbon => 'assets/svg/ribbon.svg';
 
@@ -277,6 +280,7 @@ class $AssetsSvgGen {
         profileConfetti,
         profileOl,
         receipt,
+        ribbonWhite,
         ribbon,
         search,
         setting2,

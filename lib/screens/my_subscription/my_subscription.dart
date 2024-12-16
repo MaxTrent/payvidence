@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
 
 import '../../gen/assets.gen.dart';
@@ -102,8 +103,80 @@ crossAxisAlignment: CrossAxisAlignment.start,
                 ),
 
               ],
-            )
+            ),
+            SizedBox(height: 18.h,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Subscription date', style: Theme.of(context).textTheme.displaySmall,),
+                Text('September 2, 2024', style: Theme.of(context).textTheme.displaySmall,),
 
+              ],
+            ),
+            SizedBox(height: 18.h,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Expiration date', style: Theme.of(context).textTheme.displaySmall,),
+                Text('September 2, 2025', style: Theme.of(context).textTheme.displaySmall,),
+              ],
+            ),
+            SizedBox(height: 40.h,),
+            Text('Subscription history', style: Theme.of(context).textTheme.displayMedium,),
+            SizedBox(height: 12.h,),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                height: 56.h,
+                width: 56.w,
+                decoration: BoxDecoration(
+                  color: primaryColor4,
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding:  EdgeInsets.all(14.h),
+                  child: SvgPicture.asset(Assets.svg.ribbon),
+                ),
+              ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Premium Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                  SizedBox(height: 8.h,),
+                  Text('₦50,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                ],
+              ),
+              trailing: Text('Sept. 2, 2024', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Color(0xff979797)),),
+            ),
+            SizedBox(height: 36.h,),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Container(
+                height: 56.h,
+                width: 56.w,
+                decoration: BoxDecoration(
+                  color: primaryColor4,
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding:  EdgeInsets.all(14.h),
+                  child: SvgPicture.asset(Assets.svg.ribbon),
+                ),
+              ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Business Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                  SizedBox(height: 8.h,),
+                  Text('₦10,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                ],
+              ),
+              trailing: Text('Sept. 2, 2023', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Color(0xff979797)),),
+            ),
+            SizedBox(height: 60.h,),
+            AppButton(buttonText: 'Manage subscription', onPressed: (){}),
+            SizedBox(height: 26.h,),
+            Center(child: Text('Cancel subscription', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: appRed),))
           ],
         ),
       ),
