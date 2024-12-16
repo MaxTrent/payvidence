@@ -6,12 +6,14 @@ import 'package:payvidence/screens/all_invoices/all_invoices.dart';
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
 import 'package:payvidence/screens/brands/brands.dart';
 import 'package:payvidence/screens/business_data/business_data.dart';
+import 'package:payvidence/screens/change_password/change_password.dart';
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture.dart';
 import 'package:payvidence/screens/empty_product/empty_product.dart';
 import 'package:payvidence/screens/generate_receipt/generate_receipt.dart';
 import 'package:payvidence/screens/my_subscription/my_subscription.dart';
 import 'package:payvidence/screens/notifications/notifications.dart';
 import 'package:payvidence/screens/payvidence_info/payvidence_info.dart';
+import 'package:payvidence/screens/privacy_and_security/privacy_and_security.dart';
 import 'package:payvidence/screens/receipt/receipt.dart';
 import 'package:payvidence/screens/select_client/select_client.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details.dart';
@@ -84,6 +86,8 @@ static const String changeProfilePicture = '/changeProfilePicture';
 static const String notifications = '/notifications';
 static const String settings = '/settings';
 static const String mySubscription = '/mySubscription';
+static const String changePassword = '/changePassword';
+static const String privacyAndSecurity = '/privacyAndSecurity';
 
 
   static GoRouter createRouter() {
@@ -206,6 +210,10 @@ static const String mySubscription = '/mySubscription';
             path: settings, builder: (context, state) => Settings()),
         GoRoute(
             path: mySubscription, builder: (context, state) => MySubscription()),
+        GoRoute(
+            path: changePassword, builder: (context, state) => ChangePassword()),
+        GoRoute(
+            path: privacyAndSecurity, builder: (context, state) => PrivacyAndSecurity()),
 
       ],
     );

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 
 import '../../gen/assets.gen.dart';
+import '../../routes/app_routes.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -26,9 +27,9 @@ class Settings extends StatelessWidget {
               style: Theme.of(context).textTheme.displayLarge,
             ),
             SizedBox(height: 28.h,),
-            ProfileOptionTile(icon: Assets.svg.passwordCheck, title: 'Change password', navigateTo: ''),
+            ProfileOptionTile(icon: Assets.svg.passwordCheck, title: 'Change password', navigateTo: AppRoutes.changePassword),
             ProfileOptionTile(icon: Assets.svg.check, title: 'Reset password', navigateTo: ''),
-            ProfileOptionTile(icon: Assets.svg.lockCircle, title: 'Privacy and security', navigateTo: ''),
+            ProfileOptionTile(icon: Assets.svg.lockCircle, title: 'Privacy and security', navigateTo: AppRoutes.privacyAndSecurity),
             ProfileOptionTile(icon: Assets.svg.notificationBing, title: 'Notifications setting', navigateTo: ''),
          SizedBox(height: 28.h,),
             Row(
