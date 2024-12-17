@@ -28,9 +28,9 @@ class Settings extends StatelessWidget {
             ),
             SizedBox(height: 28.h,),
             ProfileOptionTile(icon: Assets.svg.passwordCheck, title: 'Change password', navigateTo: AppRoutes.changePassword),
-            ProfileOptionTile(icon: Assets.svg.check, title: 'Reset password', navigateTo: ''),
+            ProfileOptionTile(icon: Assets.svg.check, title: 'Reset password', navigateTo: AppRoutes.resetPassword),
             ProfileOptionTile(icon: Assets.svg.lockCircle, title: 'Privacy and security', navigateTo: AppRoutes.privacyAndSecurity),
-            ProfileOptionTile(icon: Assets.svg.notificationBing, title: 'Notifications setting', navigateTo: ''),
+            ProfileOptionTile(icon: Assets.svg.notificationBing, title: 'Notifications setting', navigateTo: AppRoutes.notificationSettings),
          SizedBox(height: 28.h,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

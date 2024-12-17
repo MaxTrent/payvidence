@@ -11,10 +11,12 @@ import 'package:payvidence/screens/change_profile_picture/change_profile_picture
 import 'package:payvidence/screens/empty_product/empty_product.dart';
 import 'package:payvidence/screens/generate_receipt/generate_receipt.dart';
 import 'package:payvidence/screens/my_subscription/my_subscription.dart';
+import 'package:payvidence/screens/notification_settings/notification_settings.dart';
 import 'package:payvidence/screens/notifications/notifications.dart';
 import 'package:payvidence/screens/payvidence_info/payvidence_info.dart';
 import 'package:payvidence/screens/privacy_and_security/privacy_and_security.dart';
 import 'package:payvidence/screens/receipt/receipt.dart';
+import 'package:payvidence/screens/reset_password/reset_password.dart';
 import 'package:payvidence/screens/select_client/select_client.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details.dart';
 import '../screens/account_success/account_success.dart';
@@ -88,6 +90,8 @@ static const String settings = '/settings';
 static const String mySubscription = '/mySubscription';
 static const String changePassword = '/changePassword';
 static const String privacyAndSecurity = '/privacyAndSecurity';
+static const String resetPassword = '/resetPassword';
+static const String notificationSettings = '/notificationSettings';
 
 
   static GoRouter createRouter() {
@@ -214,6 +218,10 @@ static const String privacyAndSecurity = '/privacyAndSecurity';
             path: changePassword, builder: (context, state) => ChangePassword()),
         GoRoute(
             path: privacyAndSecurity, builder: (context, state) => PrivacyAndSecurity()),
+        GoRoute(
+            path: resetPassword, builder: (context, state) => ResetPassword()),
+        GoRoute(
+            path: notificationSettings, builder: (context, state) => NotificationSettings()),
 
       ],
     );
