@@ -60,6 +60,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/archive-book.svg
   String get archiveBook => 'assets/svg/archive-book.svg';
 
+  /// File path: assets/svg/arrow-right.svg
+  String get arrowRight => 'assets/svg/arrow-right.svg';
+
   /// File path: assets/svg/backbutton.svg
   String get backbutton => 'assets/svg/backbutton.svg';
 
@@ -68,6 +71,9 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/briefcase confetti.svg
   String get briefcaseConfetti => 'assets/svg/briefcase confetti.svg';
+
+  /// File path: assets/svg/call.svg
+  String get call => 'assets/svg/call.svg';
 
   /// File path: assets/svg/chart.svg
   String get chart => 'assets/svg/chart.svg';
@@ -204,6 +210,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/shop.svg
   String get shop => 'assets/svg/shop.svg';
 
+  /// File path: assets/svg/sms.svg
+  String get sms => 'assets/svg/sms.svg';
+
   /// File path: assets/svg/status up.svg
   String get statusUp => 'assets/svg/status up.svg';
 
@@ -234,13 +243,18 @@ class $AssetsSvgGen {
   /// File path: assets/svg/wallet_ol.svg
   String get walletOl => 'assets/svg/wallet_ol.svg';
 
+  /// File path: assets/svg/whatsapp.svg
+  String get whatsapp => 'assets/svg/whatsapp.svg';
+
   /// List of all assets
   List<String> get values => [
         analytics,
         archiveBook,
+        arrowRight,
         backbutton,
         boxTick,
         briefcaseConfetti,
+        call,
         chart,
         check,
         client,
@@ -286,6 +300,7 @@ class $AssetsSvgGen {
         setting2,
         shapes,
         shop,
+        sms,
         statusUp,
         store,
         subscribe,
@@ -295,7 +310,8 @@ class $AssetsSvgGen {
         uploadImage,
         userSquare,
         wallet,
-        walletOl
+        walletOl,
+        whatsapp
       ];
 }
 

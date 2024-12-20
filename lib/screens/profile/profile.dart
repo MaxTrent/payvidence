@@ -145,7 +145,10 @@ class Profile extends StatelessWidget {
               height: 40.h,
             ),
             ProfileOptionTile(
-              navigateTo: AppRoutes.updatePersonalDetails,
+              onTap: (){
+                context.push(AppRoutes.updatePersonalDetails);
+              },
+              // navigateTo: AppRoutes.updatePersonalDetails,
               title: 'Update personal details',
               icon: Assets.svg.userSquare,
             ),
@@ -153,32 +156,41 @@ class Profile extends StatelessWidget {
               height: 24.h,
             ),
             ProfileOptionTile(
-                navigateTo: AppRoutes.mySubscription,
+              onTap: (){
+                context.push(AppRoutes.mySubscription);
+              },
+                // navigateTo: AppRoutes.mySubscription,
                 icon: Assets.svg.medalStar, title: 'Manage subscription plan'),
             SizedBox(
               height: 24.h,
             ),
             ProfileOptionTile(
-                navigateTo: AppRoutes.businessData,
+              onTap: (){
+                context.push(AppRoutes.businessData);
+              },
+                // navigateTo: ,
                 icon: Assets.svg.chart, title: 'Access business data'),
             SizedBox(
               height: 24.h,
             ),
             ProfileOptionTile(
-              navigateTo: AppRoutes.payvidenceInfo,
+                onTap: (){
+                  context.push(AppRoutes.payvidenceInfo);
+                },
+              // navigateTo: AppRoutes.payvidenceInfo,
                 icon: Assets.svg.documentText,
                 title: 'View Payvidence information'),
             SizedBox(
               height: 24.h,
             ),
             ProfileOptionTile(
-                navigateTo: '',
+                // navigateTo: '',
                 icon: Assets.svg.like, title: 'Rate app'),
             SizedBox(
               height: 24.h,
             ),
             ProfileOptionTile(
-              navigateTo: '',
+              // navigateTo: '',
               icon: Assets.svg.logout,
               title: 'Log out',
               showTrailing: false,
@@ -196,8 +208,9 @@ class ProfileOptionTile extends StatelessWidget {
     required this.icon,
     required this.title,
     this.showTrailing = true,
-    required this.navigateTo,
+    // required this.navigateTo,
     this.color,
+    this.onTap,
     super.key,
   });
 
@@ -205,16 +218,18 @@ class ProfileOptionTile extends StatelessWidget {
   String icon;
   bool showTrailing;
   Color? color;
-  String navigateTo;
+  // String navigateTo;
+  VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
-          onTap: (){
-            context.push(navigateTo);
-          },
+          onTap: onTap,
+          //     (){
+          //   context.push(navigateTo);
+          // },
           child: ListTile(
             title: Text(
               title,
@@ -232,6 +247,7 @@ class ProfileOptionTile extends StatelessWidget {
         Divider(
           thickness: 1.h,
         ),
+
       ],
     );
   }
