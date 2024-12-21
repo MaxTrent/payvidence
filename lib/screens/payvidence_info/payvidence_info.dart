@@ -45,129 +45,7 @@ class PayvidenceInfo extends StatelessWidget {
             SizedBox(height: 28.h,),
             ProfileOptionTile(icon: Assets.svg.contactUs, title: 'Contact us',
                 onTap: (){
-                  showModalBottomSheet(
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      clipBehavior: Clip.none,
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          height: 398.h,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(40.r),
-                                  topLeft: Radius.circular(40.r))
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                            child: Stack(
-                              children: [
-                                ListView(
-                                  // crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding:  EdgeInsets.symmetric(horizontal: 140.w),
-                                      child: Container(height: 5.h, width: 67.w,
-
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffd9d9d9),
-                                          borderRadius: BorderRadius.circular(100.r),
-                                        ),),
-                                    ),
-                                    SizedBox(height: 38.h,),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SizedBox.shrink(),
-                                        Center(
-                                          child: Text(
-                                            'Contact us',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .displayLarge!
-                                                .copyWith(
-                                                fontSize: 22.sp,
-                                                fontWeight: FontWeight.w600,),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                            onTap: context.pop,
-                                            child: Icon(Icons.close,))
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 12.h,
-                                    ),
-                                    Center(
-                                      child: Text(
-                                        'You can reach us via the modes below.', style: Theme.of(context)
-                                          .textTheme
-                                          .displaySmall,
-                                      ),
-                                    ),
-                                    SizedBox(height: 40.h,),
-                                    Padding(
-                                      padding:  EdgeInsets.symmetric(vertical: 24.h),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SvgPicture.asset(Assets.svg.sms),
-                                              SizedBox(width: 16.w,),
-                                              Text('message@payvidence.com', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
-                                            ],
-                                          ),
-                                          SvgPicture.asset(Assets.svg.arrowRight),
-
-                                        ],
-                                      ),
-                                    ),
-                                    Divider(height: 1.h,),
-                                    Padding(
-                                      padding:  EdgeInsets.symmetric(vertical: 24.h),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SvgPicture.asset(Assets.svg.call),
-                                              SizedBox(width: 16.w,),
-                                              Text('0803 443 3434', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
-                                            ],
-                                          ),
-                                          SvgPicture.asset(Assets.svg.arrowRight),
-
-                                        ],
-                                      ),
-                                    ),
-                                    Divider(height: 1.h,),
-                                    Padding(
-                                      padding:  EdgeInsets.symmetric(vertical: 24.h),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SvgPicture.asset(Assets.svg.whatsapp),
-                                              SizedBox(width: 16.w,),
-                                              Text('0817 233 1900', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
-                                            ],
-                                          ),
-                                          SvgPicture.asset(Assets.svg.arrowRight),
-
-                                        ],
-                                      ),
-                                    ),
-                                    Divider(height: 1.h,),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
+                  buildContactInfoBottomSheet(context);
                 },
                 // navigateTo: ''
             ),
@@ -176,6 +54,132 @@ class PayvidenceInfo extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<dynamic> buildContactInfoBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    clipBehavior: Clip.none,
+                    context: context,
+                    builder: (context) {
+                      return Container(
+                        height: 398.h,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(40.r),
+                                topLeft: Radius.circular(40.r))
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                          child: Stack(
+                            children: [
+                              ListView(
+                                // crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding:  EdgeInsets.symmetric(horizontal: 140.w),
+                                    child: Container(height: 5.h, width: 67.w,
+
+                                      decoration: BoxDecoration(
+                                        color: Color(0xffd9d9d9),
+                                        borderRadius: BorderRadius.circular(100.r),
+                                      ),),
+                                  ),
+                                  SizedBox(height: 38.h,),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox.shrink(),
+                                      Center(
+                                        child: Text(
+                                          'Contact us',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayLarge!
+                                              .copyWith(
+                                              fontSize: 22.sp,
+                                              fontWeight: FontWeight.w600,),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                          onTap: context.pop,
+                                          child: Icon(Icons.close,))
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 12.h,
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'You can reach us via the modes below.', style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall,
+                                    ),
+                                  ),
+                                  SizedBox(height: 40.h,),
+                                  Padding(
+                                    padding:  EdgeInsets.symmetric(vertical: 24.h),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset(Assets.svg.sms),
+                                            SizedBox(width: 16.w,),
+                                            Text('message@payvidence.com', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
+                                          ],
+                                        ),
+                                        SvgPicture.asset(Assets.svg.arrowRight),
+
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(height: 1.h,),
+                                  Padding(
+                                    padding:  EdgeInsets.symmetric(vertical: 24.h),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset(Assets.svg.call),
+                                            SizedBox(width: 16.w,),
+                                            Text('0803 443 3434', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
+                                          ],
+                                        ),
+                                        SvgPicture.asset(Assets.svg.arrowRight),
+
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(height: 1.h,),
+                                  Padding(
+                                    padding:  EdgeInsets.symmetric(vertical: 24.h),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset(Assets.svg.whatsapp),
+                                            SizedBox(width: 16.w,),
+                                            Text('0817 233 1900', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
+                                          ],
+                                        ),
+                                        SvgPicture.asset(Assets.svg.arrowRight),
+
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(height: 1.h,),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
   }
 
   Future<dynamic> buildBottomSheet(BuildContext context, String title, String body) {

@@ -9,6 +9,16 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsJpgGen {
+  const $AssetsJpgGen();
+
+  /// File path: assets/jpg/keekee.jpeg
+  AssetGenImage get keekee => const AssetGenImage('assets/jpg/keekee.jpeg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [keekee];
+}
+
 class $AssetsPngGen {
   const $AssetsPngGen();
 
@@ -39,6 +49,10 @@ class $AssetsPngGen {
   /// File path: assets/png/receipts.png
   AssetGenImage get receipts => const AssetGenImage('assets/png/receipts.png');
 
+  /// File path: assets/png/signature.png
+  AssetGenImage get signature =>
+      const AssetGenImage('assets/png/signature.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
         onboarding1,
@@ -47,7 +61,8 @@ class $AssetsPngGen {
         payvidenceLogo,
         productPicture,
         productpic,
-        receipts
+        receipts,
+        signature
       ];
 }
 
@@ -143,6 +158,9 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/like.svg
   String get like => 'assets/svg/like.svg';
+
+  /// File path: assets/svg/location.svg
+  String get location => 'assets/svg/location.svg';
 
   /// File path: assets/svg/lock-circle.svg
   String get lockCircle => 'assets/svg/lock-circle.svg';
@@ -284,6 +302,7 @@ class $AssetsSvgGen {
         invoice,
         library,
         like,
+        location,
         lockCircle,
         logout,
         medalStar,
@@ -326,6 +345,7 @@ class $AssetsSvgGen {
 class Assets {
   Assets._();
 
+  static const $AssetsJpgGen jpg = $AssetsJpgGen();
   static const $AssetsPngGen png = $AssetsPngGen();
   static const $AssetsSvgGen svg = $AssetsSvgGen();
 }

@@ -6,6 +6,7 @@ import 'package:payvidence/screens/all_invoices/all_invoices.dart';
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
 import 'package:payvidence/screens/brands/brands.dart';
 import 'package:payvidence/screens/business_data/business_data.dart';
+import 'package:payvidence/screens/business_detail/business_detail.dart';
 import 'package:payvidence/screens/change_password/change_password.dart';
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture.dart';
 import 'package:payvidence/screens/empty_product/empty_product.dart';
@@ -19,6 +20,7 @@ import 'package:payvidence/screens/receipt/receipt.dart';
 import 'package:payvidence/screens/reset_password/reset_password.dart';
 import 'package:payvidence/screens/select_client/select_client.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details.dart';
+import 'package:payvidence/screens/update_quantity/update_quantity.dart';
 import '../screens/account_success/account_success.dart';
 import '../screens/add_business/add_business.dart';
 import '../screens/add_business_success/add_business_success.dart';
@@ -92,6 +94,8 @@ static const String changePassword = '/changePassword';
 static const String privacyAndSecurity = '/privacyAndSecurity';
 static const String resetPassword = '/resetPassword';
 static const String notificationSettings = '/notificationSettings';
+static const String updateQuantity = '/updateQuantity';
+static const String businessDetail = '/businessDetail';
 
 
   static GoRouter createRouter() {
@@ -222,6 +226,10 @@ static const String notificationSettings = '/notificationSettings';
             path: resetPassword, builder: (context, state) => ResetPassword()),
         GoRoute(
             path: notificationSettings, builder: (context, state) => NotificationSettings()),
+        GoRoute(
+            path: updateQuantity, builder: (context, state) => UpdateQuantity()),
+        GoRoute(
+            path: businessDetail, builder: (context, state) => BusinessDetail()),
 
       ],
     );

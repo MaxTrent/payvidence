@@ -7,6 +7,7 @@ import 'package:payvidence/components/app_button.dart';
 import '../../components/app_dot.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/app_routes.dart';
 
 class ProductDetails extends StatelessWidget {
   const ProductDetails({super.key});
@@ -53,16 +54,21 @@ class ProductDetails extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Container(
-                          height: 48.h,
-                          width: 48.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(56.r),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(12.h),
-                            child: SvgPicture.asset(Assets.svg.delete),
+                        GestureDetector(
+                          onTap: () {
+                            _buildConfirmDeleteBottomSheet(context);
+                          },
+                          child: Container(
+                            height: 48.h,
+                            width: 48.h,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(56.r),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(12.h),
+                              child: SvgPicture.asset(Assets.svg.delete),
+                            ),
                           ),
                         )
                       ],
@@ -166,22 +172,142 @@ class ProductDetails extends StatelessWidget {
                 SizedBox(
                   height: 32.h,
                 ),
-                Text(
-                  'Update quantity',
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      color: primaryColor2,
-                      decoration: TextDecoration.underline),
+                GestureDetector(
+                  onTap: (){
+                context.push(AppRoutes.updateQuantity);
+                },
+                  child: Text(
+                    'Update quantity',
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                        color: primaryColor2,
+                        decoration: TextDecoration.underline),
+                  ),
                 ),
-                SizedBox(height: 73.h,),
-                AppButton(buttonText: 'Record sale', onPressed: (){},),
-                SizedBox(height: 8.h,),
-                AppButton(buttonText: 'Generate invoice', onPressed: (){},backgroundColor: Colors.white, textColor: primaryColor2,),
-
+                SizedBox(
+                  height: 73.h,
+                ),
+                AppButton(
+                  buttonText: 'Record sale',
+                  onPressed: () {},
+                ),
+                SizedBox(
+                  height: 8.h,
+                ),
+                AppButton(
+                  buttonText: 'Generate invoice',
+                  onPressed: () {},
+                  backgroundColor: Colors.white,
+                  textColor: primaryColor2,
+                ),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<dynamic> _buildConfirmDeleteBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              clipBehavior: Clip.none,
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  height: 398.h,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(40.r),
+                                          topLeft: Radius.circular(40.r))),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20.w, vertical: 10.h),
+                                    child: Stack(
+                                      children: [
+                                        ListView(
+                                          // crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 140.w),
+                                              child: Container(
+                                                height: 5.h,
+                                                width: 67.w,
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xffd9d9d9),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100.r),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 38.h,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                SizedBox.shrink(),
+                                                Center(
+                                                  child: Text(
+                                                    'Confirm delete',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .displayLarge!
+                                                        .copyWith(
+                                                          fontSize: 22.sp,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                    onTap: context.pop,
+                                                    child: Icon(
+                                                      Icons.close,
+                                                    ))
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 12.h,
+                                            ),
+                                            Center(
+                                              child: Text(
+                                                'Are you sure you want to delete this product?\n\nAll details and statistics will be gone.',
+                                                textAlign: TextAlign.center,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displaySmall,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 47.h,
+                                            ),
+                                            AppButton(
+                                              buttonText: 'Delete product',
+                                              onPressed: () {},
+                                              backgroundColor: appRed,
+                                              textColor: Colors.white,
+                                            ),
+                                            SizedBox(
+                                              height: 8.h,
+                                            ),
+                                            AppButton(
+                                              buttonText: 'Cancel',
+                                              onPressed: () {},
+                                              backgroundColor: Colors.transparent,
+                                              textColor: Colors.black,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              });
   }
 }

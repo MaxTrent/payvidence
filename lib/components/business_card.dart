@@ -64,7 +64,7 @@ class BusinessCard extends StatelessWidget {
               ],
             ),
             AppButton(buttonText: 'Switch to business', onPressed: (){
-              context.push(AppRoutes.upgradeSubscription);
+              context.push(AppRoutes.businessDetail);
             })
           ],
         ),
