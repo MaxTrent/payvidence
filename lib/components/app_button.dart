@@ -9,12 +9,16 @@ class AppButton extends StatelessWidget {
     required this.buttonText,
     required this.onPressed,
     this.height,
+    this.backgroundColor = primaryColor2,
+    this.textColor = Colors.white,
     super.key,
   });
 
   String buttonText;
   VoidCallback onPressed;
   double? height;
+  Color backgroundColor;
+  Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +33,14 @@ class AppButton extends StatelessWidget {
               .displayMedium!
               .copyWith(
               fontWeight: FontWeight.w600,
-              color: Colors.white),
+              color: textColor),
         ),
         style: ButtonStyle(
             backgroundColor:
-            WidgetStateProperty.all(primaryColor2),
+            WidgetStateProperty.all(backgroundColor),
             foregroundColor:
-            WidgetStateProperty.all(Colors.white),
+            WidgetStateProperty.all(textColor),
+            elevation: WidgetStateProperty.all(0),
             minimumSize:
             WidgetStateProperty.all(Size(350.w, 60.h)),
             shape:
@@ -44,7 +49,9 @@ class AppButton extends StatelessWidget {
                 color: Colors.transparent,
               ),
               borderRadius: BorderRadius.circular(40.r),
-            ))),
+            ),
+
+            )),
       ),
     );
   }

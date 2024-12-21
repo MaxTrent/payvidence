@@ -63,6 +63,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/arrow-right.svg
   String get arrowRight => 'assets/svg/arrow-right.svg';
 
+  /// File path: assets/svg/back arrow.svg
+  String get backArrow => 'assets/svg/back arrow.svg';
+
   /// File path: assets/svg/backbutton.svg
   String get backbutton => 'assets/svg/backbutton.svg';
 
@@ -213,6 +216,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/sms.svg
   String get sms => 'assets/svg/sms.svg';
 
+  /// File path: assets/svg/star.svg
+  String get star => 'assets/svg/star.svg';
+
   /// File path: assets/svg/status up.svg
   String get statusUp => 'assets/svg/status up.svg';
 
@@ -251,6 +257,7 @@ class $AssetsSvgGen {
         analytics,
         archiveBook,
         arrowRight,
+        backArrow,
         backbutton,
         boxTick,
         briefcaseConfetti,
@@ -301,6 +308,7 @@ class $AssetsSvgGen {
         shapes,
         shop,
         sms,
+        star,
         statusUp,
         store,
         subscribe,
