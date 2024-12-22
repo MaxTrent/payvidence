@@ -108,6 +108,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/contact.svg
   String get contact => 'assets/svg/contact.svg';
 
+  /// File path: assets/svg/copy.svg
+  String get copy => 'assets/svg/copy.svg';
+
   /// File path: assets/svg/default profilepic.svg
   String get defaultProfilepic => 'assets/svg/default profilepic.svg';
 
@@ -285,6 +288,7 @@ class $AssetsSvgGen {
         client,
         contactUs,
         contact,
+        copy,
         defaultProfilepic,
         delete,
         documentText,

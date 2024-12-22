@@ -113,8 +113,13 @@ class HomeScreen extends StatelessWidget {
                   child: AppCard(text: 'Invoices',
                     icon: Assets.svg.invoice,),
                 ),
-                AppCard(text: 'Clients',
-                  icon: Assets.svg.client,),
+                GestureDetector(
+                  onTap: (){
+                    context.push(AppRoutes.clients);
+                  },
+                  child: AppCard(text: 'Clients',
+                    icon: Assets.svg.client,),
+                ),
                 GestureDetector(
                   onTap: (){
                     context.push(AppRoutes.emptyProduct);

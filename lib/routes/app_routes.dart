@@ -28,6 +28,7 @@ import '../screens/add_category/add_category.dart';
 import '../screens/add_product/add_product.dart';
 import '../screens/all_businesses/all_businesses.dart';
 import '../screens/change_password_success/change_password_success.dart';
+import '../screens/clients/clients.dart';
 import '../screens/complete_draft/complete_draft.dart';
 import '../screens/create_account/create_account.dart';
 import '../screens/create_new_password/create_new_password.dart';
@@ -96,6 +97,7 @@ static const String resetPassword = '/resetPassword';
 static const String notificationSettings = '/notificationSettings';
 static const String updateQuantity = '/updateQuantity';
 static const String businessDetail = '/businessDetail';
+static const String clients = '/clients';
 
 
   static GoRouter createRouter() {
@@ -230,6 +232,8 @@ static const String businessDetail = '/businessDetail';
             path: updateQuantity, builder: (context, state) => UpdateQuantity()),
         GoRoute(
             path: businessDetail, builder: (context, state) => BusinessDetail()),
+        GoRoute(
+            path: clients, builder: (context, state) => Clients()),
 
       ],
     );
