@@ -26,7 +26,7 @@ class Clients extends StatelessWidget {
                   padding: EdgeInsets.only(right: 20.w),
                   child: GestureDetector(
                       onTap: () {
-                        // context.push(AppRoutes.drafts);
+                        context.push(AppRoutes.addClient);
                       },
                       child: Text('+ Add New',
                           style: Theme.of(context)

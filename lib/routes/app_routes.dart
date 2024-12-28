@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:payvidence/screens/add_brand/add_brand.dart';
+import 'package:payvidence/screens/add_client/add_client.dart';
 import 'package:payvidence/screens/add_product_success/add_product_success.dart';
 import 'package:payvidence/screens/all_invoices/all_invoices.dart';
 import 'package:payvidence/screens/all_receipts/all_receipts.dart';
@@ -100,6 +101,7 @@ static const String updateQuantity = '/updateQuantity';
 static const String businessDetail = '/businessDetail';
 static const String clients = '/clients';
 static const String clientDetails = '/clientDetails';
+static const String addClient = '/addClient';
 
 
   static GoRouter createRouter() {
@@ -238,6 +240,8 @@ static const String clientDetails = '/clientDetails';
             path: clients, builder: (context, state) => Clients()),
         GoRoute(
             path: clientDetails, builder: (context, state) => ClientDetails()),
+        GoRoute(
+            path: addClient, builder: (context, state) => AddClient()),
 
       ],
     );
