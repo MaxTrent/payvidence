@@ -9,6 +9,7 @@ import 'package:payvidence/screens/business_data/business_data.dart';
 import 'package:payvidence/screens/business_detail/business_detail.dart';
 import 'package:payvidence/screens/change_password/change_password.dart';
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture.dart';
+import 'package:payvidence/screens/client_details/client_details.dart';
 import 'package:payvidence/screens/empty_product/empty_product.dart';
 import 'package:payvidence/screens/generate_receipt/generate_receipt.dart';
 import 'package:payvidence/screens/my_subscription/my_subscription.dart';
@@ -98,6 +99,7 @@ static const String notificationSettings = '/notificationSettings';
 static const String updateQuantity = '/updateQuantity';
 static const String businessDetail = '/businessDetail';
 static const String clients = '/clients';
+static const String clientDetails = '/clientDetails';
 
 
   static GoRouter createRouter() {
@@ -234,6 +236,8 @@ static const String clients = '/clients';
             path: businessDetail, builder: (context, state) => BusinessDetail()),
         GoRoute(
             path: clients, builder: (context, state) => Clients()),
+        GoRoute(
+            path: clientDetails, builder: (context, state) => ClientDetails()),
 
       ],
     );
