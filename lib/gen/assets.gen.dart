@@ -102,6 +102,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/client.svg
   String get client => 'assets/svg/client.svg';
 
+  /// File path: assets/svg/client_success.svg
+  String get clientSuccess => 'assets/svg/client_success.svg';
+
   /// File path: assets/svg/contact us.svg
   String get contactUs => 'assets/svg/contact us.svg';
 
@@ -286,6 +289,7 @@ class $AssetsSvgGen {
         chart,
         check,
         client,
+        clientSuccess,
         contactUs,
         contact,
         copy,

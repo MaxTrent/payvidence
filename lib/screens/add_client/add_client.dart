@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
+import '../../routes/app_routes.dart';
 
 class AddClient extends StatelessWidget {
    AddClient({super.key});
@@ -86,7 +87,7 @@ class AddClient extends StatelessWidget {
                   AppButton(
                     buttonText: 'Add client',
                     onPressed: () {
-                      // context.push(AppRoutes.generateReceipt);
+                      context.push(AppRoutes.clientSuccess);
                     },
                   ),
                   SizedBox(

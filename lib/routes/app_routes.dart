@@ -30,6 +30,7 @@ import '../screens/add_category/add_category.dart';
 import '../screens/add_product/add_product.dart';
 import '../screens/all_businesses/all_businesses.dart';
 import '../screens/change_password_success/change_password_success.dart';
+import '../screens/client_success/client_success.dart';
 import '../screens/clients/clients.dart';
 import '../screens/complete_draft/complete_draft.dart';
 import '../screens/create_account/create_account.dart';
@@ -48,6 +49,8 @@ import '../screens/otp_login/otp_login.dart';
 import '../screens/product_details/product_details.dart';
 import '../screens/settings/settings.dart';
 import '../screens/upgrade_subscription/upgrade_subscription.dart';
+
+
 
 
 
@@ -102,6 +105,7 @@ static const String businessDetail = '/businessDetail';
 static const String clients = '/clients';
 static const String clientDetails = '/clientDetails';
 static const String addClient = '/addClient';
+static const String clientSuccess = '/clientSuccess';
 
 
   static GoRouter createRouter() {
@@ -242,6 +246,8 @@ static const String addClient = '/addClient';
             path: clientDetails, builder: (context, state) => ClientDetails()),
         GoRoute(
             path: addClient, builder: (context, state) => AddClient()),
+        GoRoute(
+            path: clientSuccess, builder: (context, state) => ClientSuccess()),
 
       ],
     );

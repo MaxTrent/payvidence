@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/screens/create_account/create_account_vm.dart';
 
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 
-class CreateAccountScreen extends StatelessWidget {
+class CreateAccountScreen extends ConsumerWidget {
    CreateAccountScreen({super.key});
 
   final _firstNameController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final _viewModel = CreateAccountViewModel(ref);
+
     return Scaffold(
       // appBar: AppBar(),
       body: Padding(
@@ -51,6 +55,14 @@ class CreateAccountScreen extends StatelessWidget {
                 child: SvgPicture.asset(Assets.svg.password),
               ),),
               SizedBox(height: 20.h,),
+              Text('Confirm Password', style: Theme.of(context).textTheme.displaySmall,),
+              SizedBox(height: 8.h,),
+              AppTextField(hintText: 'Confirm Password', controller: _firstNameController, suffixIcon: Padding(
+                padding: EdgeInsets.all(16.h),
+                child: SvgPicture.asset(Assets.svg.password),
+              ),),
+              SizedBox(height: 20.h,),
+
               Text.rich(TextSpan(
                 text: 'By continuing, you agree to Payvidence’s ',
                 style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
