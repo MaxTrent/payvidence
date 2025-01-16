@@ -12,7 +12,9 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.filled,
     this.enabled,
+    this.obscureText = false,
     this.appBorderColor = borderColor,
+    this.validator,
     this.height = 56,
     this.radius = 8,
     this.width,
@@ -21,6 +23,7 @@ class AppTextField extends StatelessWidget {
 
   String hintText;
 TextEditingController controller;
+String? Function(String?)? validator;
 Widget? suffixIcon;
 Widget? prefixIcon;
 Color? fillColor;
@@ -30,6 +33,7 @@ double height;
 double radius;
 bool? enabled;
 double? width;
+bool obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,9 @@ double? width;
         enabled: enabled,
         controller: controller,
         cursorColor: Colors.black,
+        validator: validator,
         showCursor: true,
+        obscureText: obscureText,
         style: Theme.of(context)
             .textTheme
             .displaySmall!,
