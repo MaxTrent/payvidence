@@ -15,7 +15,7 @@ class AppButton extends StatelessWidget {
   });
 
   String buttonText;
-  VoidCallback onPressed;
+  void Function()? onPressed;
   double? height;
   Color backgroundColor;
   Color textColor;
