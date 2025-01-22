@@ -23,7 +23,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
             Container(
             height: 108.h,
             decoration: BoxDecoration(
-              color: Color(0xffE3DDFF),
+              color: const Color(0xffE3DDFF),
               borderRadius: BorderRadius.circular(12.r)
             ),
               child: Padding(
@@ -39,7 +39,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SvgPicture.asset(Assets.svg.ribbon),
                           SizedBox(width: 8.w,),
-                          Text('Premium subscription plan'),
+                          const Text('Premium subscription plan'),
                         ],
                       ),
 
@@ -69,7 +69,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextSpan(
                           text: '/year',
-                          style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Color(0xff444444)),
+                          style: Theme.of(context).textTheme.displayMedium!.copyWith(color: const Color(0xff444444)),
 
                         )
                       ]
@@ -92,7 +92,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
                     Container(
                       height: 12.h,
                       width: 12.h,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: primaryColor2,
                         shape: BoxShape.circle,
                       ),
@@ -129,7 +129,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
               leading: Container(
                 height: 56.h,
                 width: 56.w,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: primaryColor4,
                   shape: BoxShape.circle,
                 ),
@@ -146,7 +146,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
                   Text('₦50,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
                 ],
               ),
-              trailing: Text('Sept. 2, 2024', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Color(0xff979797)),),
+              trailing: Text('Sept. 2, 2024', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
             ),
             SizedBox(height: 36.h,),
             ListTile(
@@ -154,7 +154,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
               leading: Container(
                 height: 56.h,
                 width: 56.w,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: primaryColor4,
                   shape: BoxShape.circle,
                 ),
@@ -171,7 +171,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
                   Text('₦10,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
                 ],
               ),
-              trailing: Text('Sept. 2, 2023', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Color(0xff979797)),),
+              trailing: Text('Sept. 2, 2023', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
             ),
             SizedBox(height: 60.h,),
             AppButton(buttonText: 'Manage subscription', onPressed: (){}),

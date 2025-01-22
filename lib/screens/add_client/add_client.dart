@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
-import '../../constants/app_colors.dart';
 import '../../routes/app_routes.dart';
 
 class AddClient extends StatelessWidget {

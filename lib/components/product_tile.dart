@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:payvidence/components/app_button.dart';
 
 import '../constants/app_colors.dart';
-import '../gen/assets.gen.dart';
 import '../routes/app_routes.dart';
 
 class ProductTile extends StatelessWidget {
@@ -19,7 +16,7 @@ class ProductTile extends StatelessWidget {
       },
       child: Container(
         height: 101.h,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: Colors.transparent
         ),
         child: Row(
@@ -28,7 +25,7 @@ class ProductTile extends StatelessWidget {
             Container(
               height: 72.h,
               width: 72.h,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.black
               ),
             ),
@@ -73,6 +70,6 @@ class ProductTile extends StatelessWidget {
           ],
         ),
       ),
-    );;
+    );
   }
 }

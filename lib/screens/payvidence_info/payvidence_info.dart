@@ -9,7 +9,7 @@ import '../../gen/assets.gen.dart';
 import '../profile/profile.dart';
 
 class PayvidenceInfo extends StatelessWidget {
-  PayvidenceInfo({super.key});
+  const PayvidenceInfo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +83,7 @@ class PayvidenceInfo extends StatelessWidget {
                                     child: Container(height: 5.h, width: 67.w,
 
                                       decoration: BoxDecoration(
-                                        color: Color(0xffd9d9d9),
+                                        color: const Color(0xffd9d9d9),
                                         borderRadius: BorderRadius.circular(100.r),
                                       ),),
                                   ),
@@ -91,7 +91,7 @@ class PayvidenceInfo extends StatelessWidget {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      SizedBox.shrink(),
+                                      const SizedBox.shrink(),
                                       Center(
                                         child: Text(
                                           'Contact us',
@@ -105,7 +105,7 @@ class PayvidenceInfo extends StatelessWidget {
                                       ),
                                       GestureDetector(
                                           onTap: context.pop,
-                                          child: Icon(Icons.close,))
+                                          child: const Icon(Icons.close,))
                                     ],
                                   ),
                                   SizedBox(
@@ -209,7 +209,7 @@ class PayvidenceInfo extends StatelessWidget {
                                   child: Container(height: 5.h, width: 67.w,
 
                                     decoration: BoxDecoration(
-                                      color: Color(0xffd9d9d9),
+                                      color: const Color(0xffd9d9d9),
                                       borderRadius: BorderRadius.circular(100.r),
                                     ),),
                                 ),
@@ -229,7 +229,7 @@ class PayvidenceInfo extends StatelessWidget {
                                     ),
                                     GestureDetector(
                                         onTap: context.pop,
-                                        child: Icon(Icons.close,))
+                                        child: const Icon(Icons.close,))
                                   ],
                                 ),
                                 SizedBox(

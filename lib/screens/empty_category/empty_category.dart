@@ -7,7 +7,6 @@ import 'package:payvidence/components/app_text_field.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/app_routes.dart';
 
-import '../../components/category_tile.dart';
 import '../../gen/assets.gen.dart';
 
 class EmptyCategory extends StatelessWidget {

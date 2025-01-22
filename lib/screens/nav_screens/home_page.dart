@@ -10,27 +10,27 @@ import 'package:payvidence/screens/sales/sales.dart';
 import '../../gen/assets.gen.dart';
 
 class HomePage extends ConsumerWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
 
   @override
   Widget build(BuildContext context, ref) {
     final viewModel = HomePageViewModel(ref);
 
-    final List<Widget> _pages = [
-     HomeScreen(),
+    final List<Widget> pages = [
+     const HomeScreen(),
       Scaffold(
         appBar: AppBar(
-          title: Text('2'),
+          title: const Text('2'),
         ),
       ),
       Sales(),
-      Profile(),
+      const Profile(),
 
     ];
 
     return Scaffold(
-      body: _pages[viewModel.selectedIndex],
+      body: pages[viewModel.selectedIndex],
 
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,

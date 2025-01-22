@@ -3,9 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
-import '../../components/product_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/app_routes.dart';
@@ -60,13 +58,13 @@ class AllReceipts extends StatelessWidget {
                 // SizedBox(height: 10.h,),
                 // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
 
-                ReceiptTile(),
-                ReceiptTile(),
-                ReceiptTile(),
-                ReceiptTile(),
-                ReceiptTile(),
-                ReceiptTile(),
-                ReceiptTile(),
+                const ReceiptTile(),
+                const ReceiptTile(),
+                const ReceiptTile(),
+                const ReceiptTile(),
+                const ReceiptTile(),
+                const ReceiptTile(),
+                const ReceiptTile(),
               ],
             ),
           ],
@@ -90,13 +88,13 @@ class AllReceipts extends StatelessWidget {
 }
 
 class ReceiptTile extends StatelessWidget {
-  ReceiptTile({super.key});
+  const ReceiptTile({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 101.h,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           color: Colors.transparent
       ),
       child: Row(
@@ -105,7 +103,7 @@ class ReceiptTile extends StatelessWidget {
           Container(
             height: 72.h,
             width: 72.h,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: Colors.black
             ),
           ),
@@ -149,7 +147,7 @@ class ReceiptTile extends StatelessWidget {
 
         ],
       ),
-    );;
+    );
   }
 }
 

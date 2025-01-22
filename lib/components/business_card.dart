@@ -26,7 +26,7 @@ class BusinessCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 184.h,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           color: appGrey1
       ),
       child: Padding(

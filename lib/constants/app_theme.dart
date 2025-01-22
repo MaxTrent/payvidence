@@ -10,7 +10,7 @@ class AppTheme {
     actionIconTheme: ActionIconThemeData(
       backButtonIconBuilder: (BuildContext context) => SvgPicture.asset(Assets.svg.backbutton)
     ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           scrolledUnderElevation: 0,
           elevation: 0.0

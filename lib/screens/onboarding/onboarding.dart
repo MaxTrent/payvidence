@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:payvidence/constants/app_colors.dart';
-import 'package:payvidence/main.dart';
 
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
@@ -175,7 +174,7 @@ class OnboardingPage extends StatelessWidget {
           Text(subtext,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  fontWeight: FontWeight.w400, color: Color(0xff333030))),
+                  fontWeight: FontWeight.w400, color: const Color(0xff333030))),
           SizedBox(
             height: 85.h,
           ),

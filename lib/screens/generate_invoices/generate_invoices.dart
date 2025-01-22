@@ -35,11 +35,11 @@ class GenerateInvoices extends StatelessWidget {
                     onTap: (){
                       context.push(AppRoutes.selectClient);
                     },
-                    child: AppTextField(enabled: false, hintText: 'Select client', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down),)),
+                    child: AppTextField(enabled: false, hintText: 'Select client', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down),)),
                 SizedBox(height: 20.h,),
                 Text('Product name', style: Theme.of(context).textTheme.displaySmall,),
                 SizedBox(height: 8.h,),
-                AppTextField(hintText: 'Select product', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down)),
+                AppTextField(hintText: 'Select product', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down)),
                 SizedBox(height: 20.h,),
                 Text('Quantity available', style: Theme.of(context).textTheme.displaySmall,),
                 SizedBox(height: 8.h,),
@@ -71,12 +71,12 @@ class GenerateInvoices extends StatelessWidget {
                 SizedBox(height: 20.h,),
                 Text('Mode of payment', style: Theme.of(context).textTheme.displaySmall,),
                 SizedBox(height: 8.h,),
-                AppTextField(hintText: 'Select mode of payment', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down),),
+                AppTextField(hintText: 'Select mode of payment', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down),),
                 SizedBox(height: 28.h,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(Icons.add, color: primaryColor2,),
+                    const Icon(Icons.add, color: primaryColor2,),
                     Text('Add another product', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: primaryColor2, fontSize: 14.sp), ),
                   ],
                 ),

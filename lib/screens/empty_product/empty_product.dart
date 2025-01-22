@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:payvidence/components/product_tile.dart';
 
-import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
@@ -69,13 +68,13 @@ class EmptyProduct extends StatelessWidget {
             // Text('No product yet!', style: Theme.of(context).textTheme.displayLarge,),
             // SizedBox(height: 10.h,),
             // Text('Add products to your business account. All products added will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, ))
-          ProductTile(),
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
+          const ProductTile(),
+            const ProductTile(),
+            const ProductTile(),
+            const ProductTile(),
+            const ProductTile(),
+            const ProductTile(),
+            const ProductTile(),
           ],
         ),
       ),
@@ -121,7 +120,7 @@ class EmptyProduct extends StatelessWidget {
                                         child: Container(height: 5.h, width: 67.w,
 
                                           decoration: BoxDecoration(
-                                            color: Color(0xffd9d9d9),
+                                            color: const Color(0xffd9d9d9),
                                             borderRadius: BorderRadius.circular(100.r),
                                           ),),
                                       ),
@@ -129,7 +128,7 @@ class EmptyProduct extends StatelessWidget {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          SizedBox.shrink(),
+                                          const SizedBox.shrink(),
                                           Center(
                                             child: Text(
                                               'Filter products',
@@ -143,7 +142,7 @@ class EmptyProduct extends StatelessWidget {
                                           ),
                                           GestureDetector(
                                               onTap: context.pop,
-                                              child: Icon(Icons.close,))
+                                              child: const Icon(Icons.close,))
                                         ],
                                       ),
                                       SizedBox(

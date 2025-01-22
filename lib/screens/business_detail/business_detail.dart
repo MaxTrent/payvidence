@@ -4,10 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../components/app_button.dart';
-import '../../components/app_dot.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.dart';
 
 class BusinessDetail extends StatelessWidget {
   const BusinessDetail({super.key});
@@ -232,7 +230,7 @@ class BusinessDetail extends StatelessWidget {
                           height: 5.h,
                           width: 67.w,
                           decoration: BoxDecoration(
-                            color: Color(0xffd9d9d9),
+                            color: const Color(0xffd9d9d9),
                             borderRadius:
                             BorderRadius.circular(
                                 100.r),
@@ -247,7 +245,7 @@ class BusinessDetail extends StatelessWidget {
                         MainAxisAlignment
                             .spaceBetween,
                         children: [
-                          SizedBox.shrink(),
+                          const SizedBox.shrink(),
                           Center(
                             child: Text(
                               'Confirm delete',
@@ -263,7 +261,7 @@ class BusinessDetail extends StatelessWidget {
                           ),
                           GestureDetector(
                               onTap: context.pop,
-                              child: Icon(
+                              child: const Icon(
                                 Icons.close,
                               ))
                         ],

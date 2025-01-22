@@ -16,34 +16,25 @@ Future<void> main() async {
   }
 }
 
-class MyApp extends StatefulWidget {
+final appRoutes = AppRoutes();
+
+class MyApp extends ConsumerWidget {
   final AppTheme appTheme;
 
   const MyApp({super.key, required this.appTheme});
 
   @override
-  _MyAppState createState() => _MyAppState();
-}
+  Widget build(BuildContext context, ref) {
+    final goRouter = ref.watch(appRoutes.goRouterProvider);
 
-class _MyAppState extends State<MyApp> {
-  late final router;
-
-  @override
-  void initState() {
-    super.initState();
-    router = AppRoutes.createRouter();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(390, 844),
       minTextAdapt: true,
       builder: (_, child) => MaterialApp.router(
         title: 'Payvidence',
         debugShowCheckedModeBanner: false,
-        theme: widget.appTheme.light,
-        routerConfig: router,
+        theme: appTheme.light,
+        routerConfig: goRouter,
       ),
     );
   }

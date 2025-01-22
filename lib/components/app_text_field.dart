@@ -18,22 +18,26 @@ class AppTextField extends StatelessWidget {
     this.height = 56,
     this.radius = 8,
     this.width,
+    this.focusNode,
+    this.keyboardType,
     super.key,
   });
 
-  String hintText;
-TextEditingController controller;
-String? Function(String?)? validator;
-Widget? suffixIcon;
-Widget? prefixIcon;
-Color? fillColor;
-Color appBorderColor;
-bool? filled;
-double height;
-double radius;
-bool? enabled;
-double? width;
-bool obscureText;
+ final String hintText;
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final Color? fillColor;
+  final Color appBorderColor;
+  final bool? filled;
+  final double height;
+  final double radius;
+  final bool? enabled;
+  final double? width;
+  final bool obscureText;
+  final FocusNode? focusNode;
+  final TextInputType? keyboardType; 
 
   @override
   Widget build(BuildContext context) {
@@ -45,39 +49,38 @@ bool obscureText;
         controller: controller,
         cursorColor: Colors.black,
         validator: validator,
+        keyboardType: keyboardType,
         showCursor: true,
         obscureText: obscureText,
         style: Theme.of(context)
             .textTheme
             .displaySmall!,
-        focusNode: FocusNode(),
+        focusNode: focusNode,
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(
-            vertical: (height / 2.5).h, // Dynamically adjust vertical padding
-            horizontal: 16.w, // Horizontal padding
-          ),
+          contentPadding: EdgeInsets.all(8.h),
           filled: filled,
           fillColor: fillColor,
           hintText: hintText,
-          // labelText: labelText,
           suffixIcon: suffixIcon,
-
           prefixIcon: prefixIcon,
-
+          errorMaxLines: 2,
+          // isDense: true,
+          // helperText: '',
           hintStyle: Theme.of(context).textTheme.displaySmall!.copyWith(color: hintTextColor),
           labelStyle: Theme.of(context)
               .textTheme
               .displaySmall!
-              .copyWith(fontWeight: FontWeight.w400),
+              .copyWith(fontWeight: FontWeight.w400,),
           errorStyle: Theme.of(context)
               .textTheme
               .displaySmall!
-              .copyWith(fontWeight: FontWeight.w400, color: Colors.red),
+              .copyWith(fontWeight: FontWeight.w400, color: Colors.red, height: 0.3, fontSize: 12.sp),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
             borderSide: BorderSide(
               color: appBorderColor,
-            ),),
+            ),
+          ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
             borderSide: BorderSide(
@@ -88,7 +91,8 @@ bool obscureText;
             borderRadius: BorderRadius.circular(radius.r),
             borderSide: BorderSide(
               color: appBorderColor,
-            ),),
+            ),
+          ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
             borderSide: BorderSide(
@@ -97,14 +101,17 @@ bool obscureText;
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
-            borderSide: const BorderSide(
+            borderSide: BorderSide(
               color: Colors.red,
+              width: 1,
             ),
           ),
+          
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
-            borderSide: const BorderSide(
+            borderSide: BorderSide(
               color: Colors.red,
+              width: 1,
             ),
           ),
         ),

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/routes/app_routes.dart';
 
-import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
 class AccountSuccessScreen extends StatelessWidget {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../components/app_button.dart';
@@ -30,11 +29,11 @@ class CompleteDraft extends StatelessWidget {
               SizedBox(height: 32.h,),
               Text('Client name', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'Client name', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down),),
+              AppTextField(hintText: 'Client name', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down),),
               SizedBox(height: 20.h,),
               Text('Product name', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'Select product', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down)),
+              AppTextField(hintText: 'Select product', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down)),
               SizedBox(height: 20.h,),
               Text('Quantity available', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
@@ -63,7 +62,7 @@ class CompleteDraft extends StatelessWidget {
               SizedBox(height: 20.h,),
               Text('Mode of payment', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'Select mode of payment', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down),),
+              AppTextField(hintText: 'Select mode of payment', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down),),
 
               SizedBox(height: 32.h,),
               Column(

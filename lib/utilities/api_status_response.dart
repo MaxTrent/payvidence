@@ -10,17 +10,19 @@ class Failure {
   Failure(this.code, this.errorResponse);
 }
 
-class NetWorkFailure {
+class NetworkFailure {
   int code = 500;
   String message = "Network Failure";
 }
+
+
 
 class ForbiddenAccess {
   int code = 403;
   String message = "Forbidden Access";
 }
 
-class UnExpectedError {
+class UnexpectedError {
   int code = 0;
   String message = "An unexpected error occurred";
 }

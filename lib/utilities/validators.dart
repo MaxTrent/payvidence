@@ -7,9 +7,9 @@ extension ExtString on String {
   }
 
   bool get isValidPassword {
-    // Minimum 8 characters, at least one letter and one number
+    // Minimum 8 characters, at least one letter and one number, special characters allowed
     final passwordRegExp =
-    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
+    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$');
     return passwordRegExp.hasMatch(this);
   }
 

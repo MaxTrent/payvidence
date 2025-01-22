@@ -22,7 +22,7 @@ class CategoryTile extends StatelessWidget {
       decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(
-                  color: Color(0xffF0F0F0),
+                  color: const Color(0xffF0F0F0),
                   width: 1.h
               )
           )

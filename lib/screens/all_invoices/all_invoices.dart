@@ -89,13 +89,13 @@ class AllInvoices extends StatelessWidget {
 }
 
 class ReceiptTile extends StatelessWidget {
-  ReceiptTile({super.key});
+  const ReceiptTile({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 101.h,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           color: Colors.transparent
       ),
       child: Row(
@@ -104,7 +104,7 @@ class ReceiptTile extends StatelessWidget {
           Container(
             height: 72.h,
             width: 72.h,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: Colors.black
             ),
           ),
@@ -148,7 +148,7 @@ class ReceiptTile extends StatelessWidget {
 
         ],
       ),
-    );;
+    );
   }
 }
 

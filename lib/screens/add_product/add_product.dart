@@ -33,7 +33,7 @@ class AddProduct extends StatelessWidget {
                   onTap: (){
                     context.push(AppRoutes.emptyCategory);
                   },
-                  child: AppTextField(hintText: 'Select category', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
+                  child: AppTextField(hintText: 'Select category', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
               SizedBox(height: 20.h,),
               Text('Product name', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
@@ -45,7 +45,7 @@ class AddProduct extends StatelessWidget {
                 onTap: (){
                   context.push(AppRoutes.brands);
                 },
-                  child: AppTextField(hintText: 'Select brand', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
+                  child: AppTextField(hintText: 'Select brand', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
               SizedBox(height: 20.h,),
               Text('Product description', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
@@ -69,11 +69,11 @@ class AddProduct extends StatelessWidget {
               SizedBox(height: 20.h,),
               Text('Is VAT applicable to this product?', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'Select option', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp),),
+              AppTextField(hintText: 'Select option', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),),
               SizedBox(height: 20.h,),
               Text('VAT rate', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'VAT rate', controller: _controller, suffixIcon: Icon(Icons.keyboard_arrow_down_sharp),),
+              AppTextField(hintText: 'VAT rate', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),),
               SizedBox(height: 32.h,),
               AppButton(buttonText: 'Add product', onPressed: (){
                 // context.go('/addBusinessSuccess');

@@ -72,7 +72,7 @@ class Sales extends StatelessWidget {
               AppTextField(
                 hintText: '08 / 09 / 2024',
                 controller: _controller,
-                suffixIcon: Icon(Icons.keyboard_arrow_down),
+                suffixIcon: const Icon(Icons.keyboard_arrow_down),
               ),
               SizedBox(
                 height: 36.h,
@@ -140,7 +140,7 @@ class SalesInfoTile extends StatelessWidget {
       height: 98.h,
       width: 167.w,
       decoration: BoxDecoration(
-        color: Color(0xffE3DDFF),
+        color: const Color(0xffE3DDFF),
         borderRadius: BorderRadius.circular(6.r),
       ),
       child: Padding(

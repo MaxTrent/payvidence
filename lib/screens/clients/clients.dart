@@ -81,7 +81,7 @@ class Clients extends StatelessWidget {
                         Container(
                           height: 56.h,
                           width: 56.h,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               shape: BoxShape.circle, color: Colors.lightGreen),
                           child: Center(
                               child: Text(
@@ -158,7 +158,7 @@ class Clients extends StatelessWidget {
                       Container(
                         height: 56.h,
                         width: 56.h,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.lightGreen),
                         child: Center(
                             child: Text(
@@ -234,7 +234,7 @@ class Clients extends StatelessWidget {
                       Container(
                         height: 56.h,
                         width: 56.h,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.lightGreen),
                         child: Center(
                             child: Text(
@@ -310,7 +310,7 @@ class Clients extends StatelessWidget {
                       Container(
                         height: 56.h,
                         width: 56.h,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.lightGreen),
                         child: Center(
                             child: Text(
@@ -386,7 +386,7 @@ class Clients extends StatelessWidget {
                       Container(
                         height: 56.h,
                         width: 56.h,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.lightGreen),
                         child: Center(
                             child: Text(
@@ -462,7 +462,7 @@ class Clients extends StatelessWidget {
                       Container(
                         height: 56.h,
                         width: 56.h,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.lightGreen),
                         child: Center(
                             child: Text(
@@ -538,7 +538,7 @@ class Clients extends StatelessWidget {
                       Container(
                         height: 56.h,
                         width: 56.h,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.lightGreen),
                         child: Center(
                             child: Text(
@@ -614,7 +614,7 @@ class Clients extends StatelessWidget {
                       Container(
                         height: 56.h,
                         width: 56.h,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: Colors.lightGreen),
                         child: Center(
                             child: Text(

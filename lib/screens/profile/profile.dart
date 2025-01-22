@@ -8,7 +8,7 @@ import '../../gen/assets.gen.dart';
 import '../../routes/app_routes.dart';
 
 class Profile extends StatelessWidget {
-  Profile({super.key});
+  const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {

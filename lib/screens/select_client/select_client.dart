@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.dart';
 
 class SelectClient extends StatelessWidget {
   SelectClient({super.key});
@@ -86,7 +85,7 @@ class ClientTile extends StatelessWidget {
       decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(
-                  color: Color(0xffF0F0F0),
+                  color: const Color(0xffF0F0F0),
                   width: 1.h
               )
           )

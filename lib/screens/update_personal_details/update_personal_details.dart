@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
-import '../../constants/app_colors.dart';
-import '../../gen/assets.gen.dart';
 
 class UpdatePersonalDetails extends StatelessWidget {
   UpdatePersonalDetails({super.key});

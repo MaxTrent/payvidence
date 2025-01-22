@@ -236,7 +236,7 @@ class ProductDetails extends StatelessWidget {
                                                 height: 5.h,
                                                 width: 67.w,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xffd9d9d9),
+                                                  color: const Color(0xffd9d9d9),
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           100.r),
@@ -251,7 +251,7 @@ class ProductDetails extends StatelessWidget {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                SizedBox.shrink(),
+                                                const SizedBox.shrink(),
                                                 Center(
                                                   child: Text(
                                                     'Confirm delete',
@@ -267,7 +267,7 @@ class ProductDetails extends StatelessWidget {
                                                 ),
                                                 GestureDetector(
                                                     onTap: context.pop,
-                                                    child: Icon(
+                                                    child: const Icon(
                                                       Icons.close,
                                                     ))
                                               ],

@@ -52,13 +52,13 @@ class Drafts extends StatelessWidget {
                 // SizedBox(height: 10.h,),
                 // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
 
-                DraftTile(),
-                DraftTile(),
-                DraftTile(),
-                DraftTile(),
-                DraftTile(),
-                DraftTile(),
-                DraftTile(),
+                const DraftTile(),
+                const DraftTile(),
+                const DraftTile(),
+                const DraftTile(),
+                const DraftTile(),
+                const DraftTile(),
+                const DraftTile(),
               ],
             ),
           ],
@@ -82,7 +82,7 @@ class Drafts extends StatelessWidget {
 }
 
 class DraftTile extends StatelessWidget {
-  DraftTile({super.key});
+  const DraftTile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class DraftTile extends StatelessWidget {
       child: Container(
         height: 101.h,
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color: Colors.transparent
         ),
         child: Row(
@@ -102,7 +102,7 @@ class DraftTile extends StatelessWidget {
             Container(
               height: 72.h,
               width: 72.h,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.black
               ),
             ),
@@ -157,7 +157,7 @@ class DraftTile extends StatelessWidget {
           ],
         ),
       ),
-    );;
+    );
   }
 }
 

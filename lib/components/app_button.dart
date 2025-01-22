@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 import '../constants/app_colors.dart';
 
@@ -26,15 +25,6 @@ class AppButton extends StatelessWidget {
       height: height ?? 56.h,
       child: ElevatedButton(
         onPressed: onPressed,
-        child: Text(
-          buttonText,
-          style: Theme.of(context)
-              .textTheme
-              .displayMedium!
-              .copyWith(
-              fontWeight: FontWeight.w600,
-              color: textColor),
-        ),
         style: ButtonStyle(
             backgroundColor:
             WidgetStateProperty.all(backgroundColor),
@@ -45,13 +35,22 @@ class AppButton extends StatelessWidget {
             WidgetStateProperty.all(Size(350.w, 60.h)),
             shape:
             WidgetStateProperty.all(RoundedRectangleBorder(
-              side: BorderSide(
+              side: const BorderSide(
                 color: Colors.transparent,
               ),
               borderRadius: BorderRadius.circular(40.r),
             ),
 
             )),
+        child: Text(
+          buttonText,
+          style: Theme.of(context)
+              .textTheme
+              .displayMedium!
+              .copyWith(
+              fontWeight: FontWeight.w600,
+              color: textColor),
+        ),
       ),
     );
   }

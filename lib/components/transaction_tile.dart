@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,7 +14,7 @@ class TransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 101.h,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           color: Colors.transparent
       ),
       child: Row(
@@ -24,7 +23,7 @@ class TransactionTile extends StatelessWidget {
           Container(
             height: 72.h,
             width: 72.h,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: Colors.black
             ),
           ),
@@ -72,7 +71,7 @@ class TransactionTile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       // crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(Assets.svg.receipt, colorFilter: ColorFilter.mode(primaryColor2, BlendMode.dstIn),),
+                        SvgPicture.asset(Assets.svg.receipt, colorFilter: const ColorFilter.mode(primaryColor2, BlendMode.dstIn),),
                         Text('Receipt', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 12.sp, color: primaryColor2),),
                       ],
                     ),

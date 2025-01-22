@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
-import '../../routes/app_routes.dart';
 
 class ClientDetails extends StatelessWidget {
   ClientDetails({super.key});
@@ -125,7 +124,7 @@ class ClientDetails extends StatelessWidget {
                                             height: 5.h,
                                             width: 67.w,
                                             decoration: BoxDecoration(
-                                              color: Color(0xffd9d9d9),
+                                              color: const Color(0xffd9d9d9),
                                               borderRadius:
                                                   BorderRadius.circular(100.r),
                                             ),
@@ -138,7 +137,7 @@ class ClientDetails extends StatelessWidget {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            SizedBox.shrink(),
+                                            const SizedBox.shrink(),
                                             Center(
                                               child: Text(
                                                 'Confirm remove',
@@ -154,7 +153,7 @@ class ClientDetails extends StatelessWidget {
                                             ),
                                             GestureDetector(
                                                 onTap: context.pop,
-                                                child: Icon(
+                                                child: const Icon(
                                                   Icons.close,
                                                 ))
                                           ],

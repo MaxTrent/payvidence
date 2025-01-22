@@ -2,31 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/loading_indicator.dart';
 import 'package:payvidence/screens/create_account/create_account_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
-
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 
 class CreateAccountScreen extends ConsumerWidget {
-  CreateAccountScreen({super.key});
+  const CreateAccountScreen({super.key});
 
-  final _formKey = GlobalObjectKey<FormState>('form');
+  final _formKey = const GlobalObjectKey<FormState>('form');
 
   @override
   Widget build(BuildContext context, ref) {
     final viewModel = CreateAccountViewModel(ref);
 
-    final fieldNames = [
-      'firstName',
-      'lastName',
-      'email',
-      'phone',
-      'password',
-      'confirmPassword'
-    ];
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -66,7 +57,8 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'First Name',
-                    controller: viewModel.textEditingController('firstName'),
+                    controller: viewModel.textEditingController(
+                        CreateAccountViewModel.firstName),
                     validator: (val) {
                       if (!val!.isValidName || val.isEmpty) {
                         return 'Enter a valid name';
@@ -86,9 +78,10 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Last Name',
-                    controller: viewModel.textEditingController('lastName'),
+                    controller: viewModel
+                        .textEditingController(CreateAccountViewModel.lastName),
                     validator: (val) {
-                      if (!val!.isValidPassword || val.isEmpty) {
+                      if (!val!.isValidName || val.isEmpty) {
                         return 'Enter a valid password';
                       }
                       return null;
@@ -106,7 +99,8 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Email address',
-                    controller: viewModel.textEditingController('email'),
+                    controller: viewModel
+                        .textEditingController(CreateAccountViewModel.email),
                     validator: (val) {
                       if (!val!.isValidEmail || val.isEmpty) {
                         return 'Enter valid email address';
@@ -126,10 +120,12 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Phone number',
-                    controller: viewModel.textEditingController('phone'),
+                    keyboardType: TextInputType.number,
+                    controller: viewModel
+                        .textEditingController(CreateAccountViewModel.phone),
                     validator: (val) {
                       if (!val!.isValidPhone || val.isEmpty) {
-                        return 'Enter a valid password';
+                        return 'Enter a valid phone number';
                       }
                       return null;
                     },
@@ -152,12 +148,15 @@ class CreateAccountScreen extends ConsumerWidget {
                       }
                       return null;
                     },
-                    controller: viewModel.textEditingController('password'),
-                    obscureText: viewModel.obscureText('password'),
+                    controller: viewModel
+                        .textEditingController(CreateAccountViewModel.password),
+                    obscureText:
+                        viewModel.obscureText(CreateAccountViewModel.password),
                     suffixIcon: Padding(
                       padding: EdgeInsets.all(16.h),
                       child: GestureDetector(
-                          onTap: () => viewModel.switchVisibility('password'),
+                          onTap: () => viewModel.switchVisibility(
+                              CreateAccountViewModel.password),
                           child: SvgPicture.asset(Assets.svg.password)),
                     ),
                   ),
@@ -173,12 +172,20 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Confirm Password',
-                    controller:
-                        viewModel.textEditingController('confirmPassword'),
-                    obscureText: viewModel.obscureText('confirmPassword'),
+                    controller: viewModel.textEditingController(
+                        CreateAccountViewModel.passwordConfirm),
+                    obscureText: viewModel
+                        .obscureText(CreateAccountViewModel.passwordConfirm),
                     validator: (val) {
+                      final password = viewModel
+                          .textEditingController(
+                              CreateAccountViewModel.password)
+                          .text;
                       if (!val!.isValidPassword || val.isEmpty) {
                         return 'Enter a valid password';
+                      }
+                      if (val != password) {
+                        return 'Passwords do not match';
                       }
                       return null;
                     },
@@ -194,7 +201,7 @@ class CreateAccountScreen extends ConsumerWidget {
                     height: 20.h,
                   ),
                   Text.rich(TextSpan(
-                      text: 'By continuing, you agree to Payvidence’s ',
+                      text: 'By continuing, you agree to Payvidence\'s ',
                       style: Theme.of(context)
                           .textTheme
                           .displaySmall!
@@ -208,7 +215,7 @@ class CreateAccountScreen extends ConsumerWidget {
                                 .copyWith(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w700)),
-                        TextSpan(text: ' and '),
+                        const TextSpan(text: ' and '),
                         TextSpan(
                             text: 'Privacy Policy',
                             style: Theme.of(context)
@@ -221,14 +228,27 @@ class CreateAccountScreen extends ConsumerWidget {
                   SizedBox(
                     height: 32.h,
                   ),
-                  AppButton(
-                      buttonText: 'Create account',
-                      onPressed: (viewModel.areAllFieldsFilled(fieldNames) && _formKey.currentState!.validate())
-                          ? () {
-
-                              context.push('/otp');
+                  viewModel.createAccountState.isLoading
+                      ? LoadingIndicator()
+                      : AppButton(
+                          buttonText: 'Create account',
+                          onPressed: () {
+                            print("Button pressed");
+                            if (viewModel.areAllFieldsFilled()) {
+                              print("All fields are filled");
+                              if (_formKey.currentState!.validate()) {
+                                print("Form is valid");
+                                viewModel.createAccount();
+                              } else {
+                                print("Form is not valid");
+                              }
+                            } else {
+                              print("Not all fields are filled");
                             }
-                          : null),
+                          },
+                        ),
+
+                  
                 ],
               ),
             ),

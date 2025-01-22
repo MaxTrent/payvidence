@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:payvidence/screens/add_brand/add_brand.dart';
 import 'package:payvidence/screens/add_client/add_client.dart';
@@ -50,8 +51,6 @@ import '../screens/product_details/product_details.dart';
 import '../screens/settings/settings.dart';
 import '../screens/upgrade_subscription/upgrade_subscription.dart';
 
-
-
 class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String login = '/login';
@@ -72,39 +71,38 @@ class AppRoutes {
   static const String addProduct = '/addProduct';
   static const String emptyCategory = '/emptyCategory';
   static const String addCategory = '/addCategory';
-static const String brands = '/brands';
-static const String addBrand = '/addBrands';
-static const String productSuccess = '/productSuccess';
-static const String emptyProduct = '/emptyProduct';
-static const String productDetails = '/productDetails';
-static const String allReceipts = '/allReceipts';
-static const String drafts = '/drafts';
-static const String completeDraft = '/completeDraft';
-static const String receipt = '/receipt';
-static const String generateReceipt = '/generateReceipt';
-static const String selectClient = '/selectClient';
-static const String generateInvoices = '/generateInvoices';
-static const String allInvoices = '/allInvoices';
-static const String updatePersonalDetails = '/updatePersonalDetails';
-static const String businessData = '/businessData';
-static const String payvidenceInfo = '/payvidenceInfo';
-static const String changeProfilePicture = '/changeProfilePicture';
-static const String notifications = '/notifications';
-static const String settings = '/settings';
-static const String mySubscription = '/mySubscription';
-static const String changePassword = '/changePassword';
-static const String privacyAndSecurity = '/privacyAndSecurity';
-static const String resetPassword = '/resetPassword';
-static const String notificationSettings = '/notificationSettings';
-static const String updateQuantity = '/updateQuantity';
-static const String businessDetail = '/businessDetail';
-static const String clients = '/clients';
-static const String clientDetails = '/clientDetails';
-static const String addClient = '/addClient';
-static const String clientSuccess = '/clientSuccess';
+  static const String brands = '/brands';
+  static const String addBrand = '/addBrands';
+  static const String productSuccess = '/productSuccess';
+  static const String emptyProduct = '/emptyProduct';
+  static const String productDetails = '/productDetails';
+  static const String allReceipts = '/allReceipts';
+  static const String drafts = '/drafts';
+  static const String completeDraft = '/completeDraft';
+  static const String receipt = '/receipt';
+  static const String generateReceipt = '/generateReceipt';
+  static const String selectClient = '/selectClient';
+  static const String generateInvoices = '/generateInvoices';
+  static const String allInvoices = '/allInvoices';
+  static const String updatePersonalDetails = '/updatePersonalDetails';
+  static const String businessData = '/businessData';
+  static const String payvidenceInfo = '/payvidenceInfo';
+  static const String changeProfilePicture = '/changeProfilePicture';
+  static const String notifications = '/notifications';
+  static const String settings = '/settings';
+  static const String mySubscription = '/mySubscription';
+  static const String changePassword = '/changePassword';
+  static const String privacyAndSecurity = '/privacyAndSecurity';
+  static const String resetPassword = '/resetPassword';
+  static const String notificationSettings = '/notificationSettings';
+  static const String updateQuantity = '/updateQuantity';
+  static const String businessDetail = '/businessDetail';
+  static const String clients = '/clients';
+  static const String clientDetails = '/clientDetails';
+  static const String addClient = '/addClient';
+  static const String clientSuccess = '/clientSuccess';
 
-
-  static GoRouter createRouter() {
+  final goRouterProvider = Provider<GoRouter>((ref) {
     return GoRouter(
       initialLocation: onboarding,
       errorBuilder: (context, state) => const Scaffold(
@@ -121,7 +119,7 @@ static const String clientSuccess = '/clientSuccess';
         ),
         GoRoute(
           path: createAccount,
-          builder: (context, state) => CreateAccountScreen(),
+          builder: (context, state) => const CreateAccountScreen(),
         ),
         GoRoute(
           path: forgotPassword,
@@ -133,11 +131,11 @@ static const String clientSuccess = '/clientSuccess';
         ),
         GoRoute(
           path: emptyBusiness,
-          builder: (context, state) => EmptyBusiness(),
+          builder: (context, state) => const EmptyBusiness(),
         ),
         GoRoute(
           path: homeScreen,
-          builder: (context, state) => HomeScreen(),
+          builder: (context, state) => const HomeScreen(),
         ),
         GoRoute(
           path: addBusiness,
@@ -145,107 +143,108 @@ static const String clientSuccess = '/clientSuccess';
         ),
         GoRoute(
           path: home,
-          builder: (context, state) => HomePage(),
+          builder: (context, state) => const HomePage(),
         ),
         GoRoute(
           path: changePasswordSuccess,
-          builder: (context, state) => ChangePasswordSuccess(),
+          builder: (context, state) => const ChangePasswordSuccess(),
         ),
         GoRoute(
           path: otpLogin,
-          builder: (context, state) => OtpLogin(),
+          builder: (context, state) => const OtpLogin(),
         ),
         GoRoute(
           path: otp,
-          builder: (context, state) => OtpScreen(),
+          builder: (context, state) => const OtpScreen(),
         ),
         GoRoute(
           path: accountSuccess,
-          builder: (context, state) => AccountSuccessScreen(),
+          builder: (context, state) => const AccountSuccessScreen(),
         ),
         GoRoute(
           path: addBusinessSuccess,
-          builder: (context, state) => AddBusinessSuccess(),
+          builder: (context, state) => const AddBusinessSuccess(),
         ),
         GoRoute(
           path: allBusiness,
-          builder: (context, state) => AllBusinesses(),
+          builder: (context, state) => const AllBusinesses(),
         ),
         GoRoute(
           path: upgradeSubscription,
-          builder: (context, state) => UpgradeSubscription(),
+          builder: (context, state) => const UpgradeSubscription(),
         ),
         GoRoute(
           path: addProduct,
           builder: (context, state) => AddProduct(),
         ),
-        GoRoute(path: addCategory,
-        builder: (context, state)=> AddCategory()),
+        GoRoute(path: addCategory, builder: (context, state) => AddCategory()),
         GoRoute(
             path: emptyCategory, builder: (context, state) => EmptyCategory()),
+        GoRoute(path: brands, builder: (context, state) => Brands()),
+        GoRoute(path: addBrand, builder: (context, state) => AddBrand()),
         GoRoute(
-            path: brands, builder: (context, state) => Brands()),
-        GoRoute(
-            path: addBrand, builder: (context, state) => AddBrand()),
-        GoRoute(
-            path: productSuccess, builder: (context, state) => AddProductSuccess()),
+            path: productSuccess,
+            builder: (context, state) => const AddProductSuccess()),
         GoRoute(
             path: emptyProduct, builder: (context, state) => EmptyProduct()),
         GoRoute(
-            path: productDetails, builder: (context, state) => ProductDetails()),
-        GoRoute(
-            path: allReceipts, builder: (context, state) => AllReceipts()),
-        GoRoute(
-            path: drafts, builder: (context, state) => Drafts()),
+            path: productDetails,
+            builder: (context, state) => const ProductDetails()),
+        GoRoute(path: allReceipts, builder: (context, state) => AllReceipts()),
+        GoRoute(path: drafts, builder: (context, state) => Drafts()),
         GoRoute(
             path: completeDraft, builder: (context, state) => CompleteDraft()),
+        GoRoute(path: receipt, builder: (context, state) => const Receipt()),
         GoRoute(
-            path: receipt, builder: (context, state) => Receipt()),
-
-        GoRoute(
-            path: generateReceipt, builder: (context, state) => GenerateReceipt()),
+            path: generateReceipt,
+            builder: (context, state) => GenerateReceipt()),
         GoRoute(
             path: selectClient, builder: (context, state) => SelectClient()),
         GoRoute(
-            path: generateInvoices, builder: (context, state) => GenerateInvoices()),
+            path: generateInvoices,
+            builder: (context, state) => GenerateInvoices()),
+        GoRoute(path: allInvoices, builder: (context, state) => AllInvoices()),
         GoRoute(
-            path: allInvoices, builder: (context, state) => AllInvoices()),
+            path: updatePersonalDetails,
+            builder: (context, state) => UpdatePersonalDetails()),
         GoRoute(
-            path: updatePersonalDetails, builder: (context, state) => UpdatePersonalDetails()),
+            path: businessData, builder: (context, state) => const BusinessData()),
         GoRoute(
-            path: businessData, builder: (context, state) => BusinessData()),
+            path: payvidenceInfo,
+            builder: (context, state) => const PayvidenceInfo()),
         GoRoute(
-            path: payvidenceInfo, builder: (context, state) => PayvidenceInfo()),
+            path: changeProfilePicture,
+            builder: (context, state) => const ChangeProfilePicture()),
         GoRoute(
-            path: changeProfilePicture, builder: (context, state) => ChangeProfilePicture()),
+            path: notifications, builder: (context, state) => const Notifications()),
+        GoRoute(path: settings, builder: (context, state) => const Settings()),
         GoRoute(
-            path: notifications, builder: (context, state) => Notifications()),
+            path: mySubscription,
+            builder: (context, state) => const MySubscription()),
         GoRoute(
-            path: settings, builder: (context, state) => Settings()),
+            path: changePassword,
+            builder: (context, state) => ChangePassword()),
         GoRoute(
-            path: mySubscription, builder: (context, state) => MySubscription()),
-        GoRoute(
-            path: changePassword, builder: (context, state) => ChangePassword()),
-        GoRoute(
-            path: privacyAndSecurity, builder: (context, state) => PrivacyAndSecurity()),
+            path: privacyAndSecurity,
+            builder: (context, state) => const PrivacyAndSecurity()),
         GoRoute(
             path: resetPassword, builder: (context, state) => ResetPassword()),
         GoRoute(
-            path: notificationSettings, builder: (context, state) => NotificationSettings()),
+            path: notificationSettings,
+            builder: (context, state) => const NotificationSettings()),
         GoRoute(
-            path: updateQuantity, builder: (context, state) => UpdateQuantity()),
+            path: updateQuantity,
+            builder: (context, state) => UpdateQuantity()),
         GoRoute(
-            path: businessDetail, builder: (context, state) => BusinessDetail()),
-        GoRoute(
-            path: clients, builder: (context, state) => Clients()),
+            path: businessDetail,
+            builder: (context, state) => const BusinessDetail()),
+        GoRoute(path: clients, builder: (context, state) => Clients()),
         GoRoute(
             path: clientDetails, builder: (context, state) => ClientDetails()),
+        GoRoute(path: addClient, builder: (context, state) => AddClient()),
         GoRoute(
-            path: addClient, builder: (context, state) => AddClient()),
-        GoRoute(
-            path: clientSuccess, builder: (context, state) => ClientSuccess()),
-
+            path: clientSuccess, builder: (context, state) => const ClientSuccess()),
       ],
     );
-  }
+  });
 }

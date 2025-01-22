@@ -7,7 +7,7 @@ import 'package:pinput/pinput.dart';
 import '../../constants/app_colors.dart';
 
 class OtpScreen extends StatelessWidget {
-  OtpScreen({super.key});
+  const OtpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class OtpScreen extends StatelessWidget {
                 onChanged: (value) {
                   debugPrint('onChanged: $value');
                 },
-                cursor: Column(
+                cursor: const Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [],
                 ),

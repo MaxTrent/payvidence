@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../components/app_button.dart';
-import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
 class ChangePasswordSuccess extends StatelessWidget {
