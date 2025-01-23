@@ -20,6 +20,7 @@ class OtpScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     // final viewModel = OtpViewModel(ref);
+    final isComplete = ref.watch(OtpViewModel.isOtpCompleteProvider);
      final state = ref.watch(otpViewModelProvider);
     final viewModel = ref.read(otpViewModelProvider.notifier);
 
@@ -57,7 +58,11 @@ class OtpScreen extends ConsumerWidget {
               textDirection: TextDirection.ltr,
               child: Pinput(
                 showCursor: true,
-                controller: TextEditingController(),
+                controller: ref.watch(OtpViewModel.otpController),
+                 onChanged: (value) {
+      ref.read(OtpViewModel.otpTextProvider.notifier).state = value;
+       debugPrint('onChanged: $value');
+    },
                 // focusNode: viewModel.focusNode,
                 length: 5,
                 defaultPinTheme: PinTheme(
@@ -80,9 +85,6 @@ class OtpScreen extends ConsumerWidget {
                 onCompleted: (pin) {
                   debugPrint('onCompleted: $pin');
                 },
-                onChanged: (value) {
-                  debugPrint('onChanged: $value');
-                },
                 cursor: const Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [],
@@ -92,9 +94,10 @@ class OtpScreen extends ConsumerWidget {
             SizedBox(
               height: 32.h,
             ),
-            AppButton(buttonText: 'Submit', onPressed: () {
+            AppButton(buttonText: 'Submit', onPressed:  isComplete ? () {
               context.push('/accountSuccess');
-            }),
+            }:null,
+            backgroundColor: isComplete ? primaryColor2 : primaryColor2.withOpacity(0.4),),
             SizedBox(
               height: 58.h,
             ),

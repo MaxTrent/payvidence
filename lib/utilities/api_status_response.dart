@@ -1,28 +1,23 @@
-class Success {
-  int code;
-  String body;
-  Success(this.code, this.body);
+// api_status_response.dart
+abstract class ApiStatusResponse {}
+
+class Success extends ApiStatusResponse {
+  final int statusCode;
+  final String body;
+  
+  Success(this.statusCode, this.body);
 }
 
-class Failure {
-  int code;
-  String errorResponse;
-  Failure(this.code, this.errorResponse);
+class Failure extends ApiStatusResponse {
+  final int statusCode;
+  final String errorResponse;
+  
+  Failure(this.statusCode, this.errorResponse);
 }
 
-class NetworkFailure {
-  int code = 500;
-  String message = "Network Failure";
-}
-
-
-
-class ForbiddenAccess {
-  int code = 403;
-  String message = "Forbidden Access";
-}
-
-class UnexpectedError {
-  int code = 0;
-  String message = "An unexpected error occurred";
+class UnexpectedError extends ApiStatusResponse {
+  final String message;
+  final StackTrace? stackTrace;
+  
+  UnexpectedError(this.message, [this.stackTrace]);
 }

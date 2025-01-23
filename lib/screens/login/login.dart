@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:payvidence/screens/login/login_vm.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
-class Login extends StatelessWidget {
+class Login extends ConsumerWidget {
   Login({super.key});
 
   final _emailController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+final viewModel = LoginViewModel(ref);
+
     return Scaffold(
       body: Padding(
         padding:  EdgeInsets.symmetric(horizontal: 20.w),
@@ -29,7 +33,7 @@ class Login extends StatelessWidget {
               SizedBox(height: 32.h,),
               Text('Email address', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),
-              AppTextField(hintText: 'First Name', controller: _emailController,),
+              AppTextField(hintText: 'Email address', controller: _emailController,),
               SizedBox(height: 20.h,),
               Text('Password', style: Theme.of(context).textTheme.displaySmall,),
               SizedBox(height: 8.h,),

@@ -104,7 +104,7 @@ class AppRoutes {
 
   final goRouterProvider = Provider<GoRouter>((ref) {
     return GoRouter(
-      initialLocation: otp,
+      initialLocation: login,
       errorBuilder: (context, state) => const Scaffold(
         body: Center(child: Text('Page Not Found')),
       ),
