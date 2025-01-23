@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:payvidence/constants/app_colors.dart';
 
 class LoadingIndicator extends StatelessWidget {
-  LoadingIndicator({
+  const LoadingIndicator({
     super.key,
     this.color = primaryColor2,
   });

@@ -2,15 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/screens/otp/otp_vm.dart';
 import 'package:pinput/pinput.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../constants/app_colors.dart';
 
-class OtpScreen extends StatelessWidget {
+
+final otpViewModelProvider = StateNotifierProvider.autoDispose<OtpViewModel, OtpState>(
+  (ref) => OtpViewModel(),
+);
+
+
+class OtpScreen extends ConsumerWidget {
   const OtpScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    // final viewModel = OtpViewModel(ref);
+     final state = ref.watch(otpViewModelProvider);
+    final viewModel = ref.read(otpViewModelProvider.notifier);
+
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+      // viewModel.startCountdown();
+    // });
+
+
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -80,18 +98,47 @@ class OtpScreen extends StatelessWidget {
             SizedBox(
               height: 58.h,
             ),
-            Text.rich(TextSpan(
-                text: 'Resend code in ',
-                style: Theme.of(context)
+             GestureDetector(
+              onTap: state.seconds == 0 ? viewModel.resendCode : null,
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    if (state.seconds > 0) ...[
+                      TextSpan(
+                        text: 'Resend code in ',
+                        style:Theme.of(context)
                     .textTheme
                     .displayMedium!
                     .copyWith(fontWeight: FontWeight.w400),
-                children: [
-                  TextSpan(text: '17', style: Theme.of(context)
-                      .textTheme
-                      .displayMedium!
-                      .copyWith(fontWeight: FontWeight.w700))
-                ]))
+                      ),
+                      TextSpan(
+                        text: '${state.seconds} ',
+                        style: Theme.of(context)
+                    .textTheme
+                    .displayMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: 'seconds',
+                        style: Theme.of(context)
+                    .textTheme
+                    .displayMedium!
+                    .copyWith(fontWeight: FontWeight.w400),
+                      ),
+                    ] else
+                      TextSpan(
+                        text: 'Resend code',
+                        style: Theme.of(context)
+                    .textTheme
+                    .displayMedium!
+                    .copyWith(fontWeight: FontWeight.w400,
+                              color: Color(0xff4E38B2),
+                            ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants/app_colors.dart';
 
 class AppTextField extends StatelessWidget {
-  AppTextField({
+  const AppTextField({
     required this.hintText,
     required this.controller,
     this.fillColor,
@@ -101,7 +101,7 @@ class AppTextField extends StatelessWidget {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
-            borderSide: BorderSide(
+            borderSide: const BorderSide(
               color: Colors.red,
               width: 1,
             ),
@@ -109,7 +109,7 @@ class AppTextField extends StatelessWidget {
           
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
-            borderSide: BorderSide(
+            borderSide: const BorderSide(
               color: Colors.red,
               width: 1,
             ),
