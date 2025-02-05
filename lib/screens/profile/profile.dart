@@ -1,12 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/constants/app_colors.dart';
+ import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/routes/app_routes.gr.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../routes/app_routes.dart';
 
+
+@RoutePage(name: 'ProfileRoute')
 class Profile extends StatelessWidget {
   const Profile({super.key});
 
@@ -58,7 +61,7 @@ class Profile extends StatelessWidget {
                                 right: 0.w,
                                 child: GestureDetector(
                                   onTap: (){
-                                    context.push(AppRoutes.changeProfilePicture);
+                                    context.router.push(ChangeProfilePictureRoute());
                                   },
                                   child: CircleAvatar(
                                     radius: 14.r,
@@ -78,7 +81,7 @@ class Profile extends StatelessWidget {
                             children: [
                               GestureDetector(
                                   onTap: (){
-                                    context.push(AppRoutes.notifications);
+                                    context.router.push(NotificationsRoute());
                                   },
                                   child: SvgPicture.asset(Assets.svg.notification)),
                               SizedBox(
@@ -86,7 +89,7 @@ class Profile extends StatelessWidget {
                               ),
                               GestureDetector(
                                   onTap: (){
-                                    context.push(AppRoutes.settings);
+                                    context.router.push(SettingsRoute());
                                   },
                                   child: SvgPicture.asset(Assets.svg.setting2)),
                             ],
@@ -146,7 +149,7 @@ class Profile extends StatelessWidget {
             ),
             ProfileOptionTile(
               onTap: (){
-                context.push(AppRoutes.updatePersonalDetails);
+                context.router.push(UpdatePersonalDetailsRoute());
               },
               // navigateTo: AppRoutes.updatePersonalDetails,
               title: 'Update personal details',
@@ -157,7 +160,7 @@ class Profile extends StatelessWidget {
             ),
             ProfileOptionTile(
               onTap: (){
-                context.push(AppRoutes.mySubscription);
+                context.router.push(MySubscriptionRoute());
               },
                 // navigateTo: AppRoutes.mySubscription,
                 icon: Assets.svg.medalStar, title: 'Manage subscription plan'),
@@ -166,7 +169,7 @@ class Profile extends StatelessWidget {
             ),
             ProfileOptionTile(
               onTap: (){
-                context.push(AppRoutes.businessData);
+                context.router.push(BusinessDataRoute());
               },
                 // navigateTo: ,
                 icon: Assets.svg.chart, title: 'Access business data'),
@@ -175,7 +178,7 @@ class Profile extends StatelessWidget {
             ),
             ProfileOptionTile(
                 onTap: (){
-                  context.push(AppRoutes.payvidenceInfo);
+                  context.router.push(PayvidenceInfoRoute());
                 },
               // navigateTo: AppRoutes.payvidenceInfo,
                 icon: Assets.svg.documentText,

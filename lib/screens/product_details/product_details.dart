@@ -1,14 +1,16 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/components/app_button.dart';
+ import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/routes/app_routes.gr.dart';
 
 import '../../components/app_dot.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.dart';
 
+
+@RoutePage(name: 'ProductDetailsRoute')
 class ProductDetails extends StatelessWidget {
   const ProductDetails({super.key});
 
@@ -39,7 +41,7 @@ class ProductDetails extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            context.pop();
+                            context.router.maybePop();
                           },
                           child: Container(
                             height: 48.h,
@@ -174,7 +176,7 @@ class ProductDetails extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: (){
-                context.push(AppRoutes.updateQuantity);
+                context.router.push(UpdateQuantityRoute());
                 },
                   child: Text(
                     'Update quantity',
@@ -266,7 +268,7 @@ class ProductDetails extends StatelessWidget {
                                                   ),
                                                 ),
                                                 GestureDetector(
-                                                    onTap: context.pop,
+                                                    onTap:()=> context.router.maybePop(),
                                                     child: const Icon(
                                                       Icons.close,
                                                     ))

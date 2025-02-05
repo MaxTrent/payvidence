@@ -30,10 +30,7 @@ class LoginData {
   final Account account;
   final String? token;
 
-  LoginData({
-    required this.account,
-    required this.token,
-  });
+  LoginData({required this.account, this.token});
 
   factory LoginData.fromJson(Map<String, dynamic> json) {
     return LoginData(

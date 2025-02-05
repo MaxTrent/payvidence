@@ -1,13 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/constants/app_colors.dart';
+ import 'package:payvidence/constants/app_colors.dart';
 
 import '../../components/app_card.dart';
 import '../../gen/assets.gen.dart';
 
 import '../../routes/app_routes.dart';
+import '../../routes/app_routes.gr.dart';
+
+
+@RoutePage(name: 'HomeScreenRoute')
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -67,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: (){
-                    context.push('/emptyBusiness');
+                    context.router.push(EmptyBusinessRoute());
                   },
                   child: Container(
                     height: 40.h,
@@ -99,28 +103,28 @@ class HomeScreen extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: (){
-                    context.push(AppRoutes.allReceipts);
+                    context.router.push(AllReceiptsRoute());
                   },
                   child: AppCard(text: 'Receipts',
                   icon: Assets.svg.receipt,),
                 ),
                 GestureDetector(
                   onTap: (){
-                    context.push(AppRoutes.allInvoices);
+                    context.router.push(AllInvoicesRoute());
                   },
                   child: AppCard(text: 'Invoices',
                     icon: Assets.svg.invoice,),
                 ),
                 GestureDetector(
                   onTap: (){
-                    context.push(AppRoutes.clients);
+                    context.router.push(ClientsRoute());
                   },
                   child: AppCard(text: 'Clients',
                     icon: Assets.svg.client,),
                 ),
                 GestureDetector(
                   onTap: (){
-                    context.push(AppRoutes.emptyProduct);
+                    context.router.push(EmptyProductRoute());
                   },
                   child: AppCard(text: 'Products',
                     icon: Assets.svg.product,),

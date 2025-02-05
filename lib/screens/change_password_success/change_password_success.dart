@@ -1,11 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:payvidence/routes/app_routes.gr.dart';
 
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
 
+
+
+@RoutePage(name: 'ChangePasswordSuccessRoute')
 class ChangePasswordSuccess extends StatelessWidget {
   const ChangePasswordSuccess({super.key});
 
@@ -15,7 +19,7 @@ class ChangePasswordSuccess extends StatelessWidget {
       floatingActionButton: AppButton(
           buttonText: 'Log in',
           onPressed: () {
-            context.go('/home');
+            context.router.replace(HomePageRoute());
           }),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),

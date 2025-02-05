@@ -1,14 +1,18 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/loading_indicator.dart';
+import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/screens/create_account/create_account_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 
+
+@RoutePage(name: 'CreateAccountRoute')
 class CreateAccountScreen extends ConsumerWidget {
   const CreateAccountScreen({super.key});
 
@@ -57,8 +61,8 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'First Name',
-                    controller: viewModel.textEditingController(
-                        CreateAccountViewModel.firstName),
+                    controller: ref.watch(
+                        CreateAccountViewModel.firstNameControllerProvider),
                     validator: (val) {
                       if (!val!.isValidName || val.isEmpty) {
                         return 'Enter a valid name';
@@ -78,8 +82,8 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Last Name',
-                    controller: viewModel
-                        .textEditingController(CreateAccountViewModel.lastName),
+                    controller: ref.watch(
+                        CreateAccountViewModel.lastNameControllerProvider),
                     validator: (val) {
                       if (!val!.isValidName || val.isEmpty) {
                         return 'Enter a valid password';
@@ -99,8 +103,8 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Email address',
-                    controller: viewModel
-                        .textEditingController(CreateAccountViewModel.email),
+                    controller: ref.watch(
+                        CreateAccountViewModel.emailControllerProvider),
                     validator: (val) {
                       if (!val!.isValidEmail || val.isEmpty) {
                         return 'Enter valid email address';
@@ -121,8 +125,9 @@ class CreateAccountScreen extends ConsumerWidget {
                   AppTextField(
                     hintText: 'Phone number',
                     keyboardType: TextInputType.number,
-                    controller: viewModel
-                        .textEditingController(CreateAccountViewModel.phone),
+                    controller: ref.watch(
+                        CreateAccountViewModel.phoneControllerProvider),
+
                     validator: (val) {
                       if (!val!.isValidPhone || val.isEmpty) {
                         return 'Enter a valid phone number';
@@ -148,15 +153,14 @@ class CreateAccountScreen extends ConsumerWidget {
                       }
                       return null;
                     },
-                    controller: viewModel
-                        .textEditingController(CreateAccountViewModel.password),
+                    controller: ref.watch(
+                        CreateAccountViewModel.passwordControllerProvider),
                     obscureText:
-                        viewModel.obscureText(CreateAccountViewModel.password),
+                        viewModel.obscurePasswordConfirm,
                     suffixIcon: Padding(
                       padding: EdgeInsets.all(16.h),
                       child: GestureDetector(
-                          onTap: () => viewModel.switchVisibility(
-                              CreateAccountViewModel.password),
+                          onTap: () => viewModel.switchPasswordVisibility,
                           child: SvgPicture.asset(Assets.svg.password)),
                     ),
                   ),
@@ -172,15 +176,14 @@ class CreateAccountScreen extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Confirm Password',
-                    controller: viewModel.textEditingController(
-                        CreateAccountViewModel.passwordConfirm),
+                    controller: ref.watch(
+                        CreateAccountViewModel.passwordConfirmControllerProvider),
                     obscureText: viewModel
-                        .obscureText(CreateAccountViewModel.passwordConfirm),
+                        .obscurePasswordConfirm,
                     validator: (val) {
-                      final password = viewModel
-                          .textEditingController(
-                              CreateAccountViewModel.password)
-                          .text;
+                      final password = ref.watch(
+                          CreateAccountViewModel.passwordControllerProvider)
+                      .text;
                       if (!val!.isValidPassword || val.isEmpty) {
                         return 'Enter a valid password';
                       }
@@ -192,8 +195,7 @@ class CreateAccountScreen extends ConsumerWidget {
                     suffixIcon: Padding(
                       padding: EdgeInsets.all(16.h),
                       child: GestureDetector(
-                          onTap: () =>
-                              viewModel.switchVisibility('confirmPassword'),
+                          onTap: () => viewModel.switchPasswordConfirmVisibility,
                           child: SvgPicture.asset(Assets.svg.password)),
                     ),
                   ),
@@ -207,7 +209,7 @@ class CreateAccountScreen extends ConsumerWidget {
                           .displaySmall!
                           .copyWith(fontSize: 14.sp),
                       children: [
-                        TextSpan(
+                       TextSpan(
                             text: 'Terms & Conditions',
                             style: Theme.of(context)
                                 .textTheme
@@ -229,9 +231,10 @@ class CreateAccountScreen extends ConsumerWidget {
                     height: 32.h,
                   ),
                   viewModel.createAccountState.isLoading
-                      ? LoadingIndicator()
+                      ? const LoadingIndicator()
                       : AppButton(
                           buttonText: 'Create account',
+                          backgroundColor: viewModel.areAllFieldsFilled() ? primaryColor2 : primaryColor2.withOpacity(0.4),
                           onPressed: () {
                             print("Button pressed");
                             if (viewModel.areAllFieldsFilled()) {

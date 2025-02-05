@@ -1,12 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import '../../components/app_text_field.dart';
+import 'package:payvidence/screens/add_client/add_client.dart';
+ import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/app_routes.dart';
+import '../../routes/app_routes.gr.dart';
 
+
+
+@RoutePage(name: 'ClientsRoute')
 class Clients extends StatelessWidget {
   Clients({super.key});
 
@@ -26,7 +31,7 @@ class Clients extends StatelessWidget {
                   padding: EdgeInsets.only(right: 20.w),
                   child: GestureDetector(
                       onTap: () {
-                        context.push(AppRoutes.addClient);
+                        context.router.push(AddClientRoute());
                       },
                       child: Text('+ Add New',
                           style: Theme.of(context)
@@ -70,7 +75,7 @@ class Clients extends StatelessWidget {
                 // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
                 GestureDetector(
                   onTap: (){
-                    context.push(AppRoutes.clientDetails);
+                    context.router.push(ClientDetailsRoute());
                   },
                   child: SizedBox(
                     height: 101.h,

@@ -1,12 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-
+ 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../routes/app_routes.dart';
+import '../../routes/app_routes.gr.dart';
 
+
+@RoutePage(name: 'GenerateInvoicesRoute')
 class GenerateInvoices extends StatelessWidget {
   GenerateInvoices({super.key});
 
@@ -33,7 +36,7 @@ class GenerateInvoices extends StatelessWidget {
                 SizedBox(height: 8.h,),
                 GestureDetector(
                     onTap: (){
-                      context.push(AppRoutes.selectClient);
+                      context.router.push(SelectClientRoute());
                     },
                     child: AppTextField(enabled: false, hintText: 'Select client', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down),)),
                 SizedBox(height: 20.h,),

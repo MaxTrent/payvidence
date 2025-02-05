@@ -22,6 +22,10 @@ class $AssetsJpgGen {
 class $AssetsPngGen {
   const $AssetsPngGen();
 
+  /// File path: assets/png/keekee 2.41.58 PM.png
+  AssetGenImage get keekee24158PM =>
+      const AssetGenImage('assets/png/keekee 2.41.58 PM.png');
+
   /// File path: assets/png/onboarding1.png
   AssetGenImage get onboarding1 =>
       const AssetGenImage('assets/png/onboarding1.png');
@@ -55,6 +59,7 @@ class $AssetsPngGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+        keekee24158PM,
         onboarding1,
         onboarding2,
         onboarding3,
@@ -68,6 +73,12 @@ class $AssetsPngGen {
 
 class $AssetsSvgGen {
   const $AssetsSvgGen();
+
+  /// File path: assets/svg/Payvidence (1) 2.13.51 AM.zip
+  String get payvidence121351AM => 'assets/svg/Payvidence (1) 2.13.51 AM.zip';
+
+  /// File path: assets/svg/Payvidence (2) 2.13.51 AM.zip
+  String get payvidence221351AM => 'assets/svg/Payvidence (2) 2.13.51 AM.zip';
 
   /// File path: assets/svg/analytics.svg
   String get analytics => 'assets/svg/analytics.svg';
@@ -198,8 +209,12 @@ class $AssetsSvgGen {
   /// File path: assets/svg/privacy.svg
   String get privacy => 'assets/svg/privacy.svg';
 
+  /// File path: assets/svg/product picture.png
+  AssetGenImage get productPicturePng =>
+      const AssetGenImage('assets/svg/product picture.png');
+
   /// File path: assets/svg/product picture.svg
-  String get productPicture => 'assets/svg/product picture.svg';
+  String get productPictureSvg => 'assets/svg/product picture.svg';
 
   /// File path: assets/svg/product success.svg
   String get productSuccess => 'assets/svg/product success.svg';
@@ -277,7 +292,9 @@ class $AssetsSvgGen {
   String get whatsapp => 'assets/svg/whatsapp.svg';
 
   /// List of all assets
-  List<String> get values => [
+  List<dynamic> get values => [
+        payvidence121351AM,
+        payvidence221351AM,
         analytics,
         archiveBook,
         arrowRight,
@@ -321,7 +338,8 @@ class $AssetsSvgGen {
         password,
         passwordSuccess,
         privacy,
-        productPicture,
+        productPicturePng,
+        productPictureSvg,
         productSuccess,
         product,
         profile,

@@ -1,13 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-
+ 
 import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../profile/profile.dart';
 
+
+@RoutePage(name: 'PayvidenceInfoRoute')
 class PayvidenceInfo extends StatelessWidget {
   const PayvidenceInfo({super.key});
 
@@ -104,7 +106,7 @@ class PayvidenceInfo extends StatelessWidget {
                                         ),
                                       ),
                                       GestureDetector(
-                                          onTap: context.pop,
+                                          onTap: ()=> context.router.maybePop(),
                                           child: const Icon(Icons.close,))
                                     ],
                                   ),
@@ -228,7 +230,7 @@ class PayvidenceInfo extends StatelessWidget {
                                           color: primaryColor2),
                                     ),
                                     GestureDetector(
-                                        onTap: context.pop,
+                                        onTap: ()=>context.router.maybePop(),
                                         child: const Icon(Icons.close,))
                                   ],
                                 ),

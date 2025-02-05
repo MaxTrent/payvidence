@@ -1,13 +1,16 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-
+import 'package:payvidence/screens/complete_draft/complete_draft.dart';
+ 
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/app_routes.dart';
 
+
+@RoutePage(name: 'DraftsRoute')
 class Drafts extends StatelessWidget {
    Drafts({super.key});
 
@@ -88,7 +91,7 @@ class DraftTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        context.push(AppRoutes.completeDraft);
+        context.router.push(CompleteDraftRoute());
       },
       child: Container(
         height: 101.h,

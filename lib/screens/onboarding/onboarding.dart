@@ -1,13 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/constants/app_colors.dart';
-
+//  import 'package:payvidence/constants/app_colors.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:payvidence/routes/app_routes.gr.dart';
 import '../../components/app_button.dart';
+import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import 'onboarding_vm.dart';
 
+
+@RoutePage(name: 'OnboardingScreenRoute')
 class OnboardingScreen extends ConsumerWidget {
   static String routeName = "/onboardingScreen";
   OnboardingScreen({super.key});
@@ -83,12 +87,12 @@ class OnboardingScreen extends ConsumerWidget {
                           height: 45.h,
                         ),
                         AppButton(buttonText: 'Get started', onPressed: () {
-                          context.go('/createAccount');
+                          context.router.push(const CreateAccountRoute());
                         },),
                         SizedBox(height: 26.h),
                         GestureDetector(
                           onTap: (){
-                            context.go('/login');
+                            context.router.push(const LoginRoute());
                           },
                           child: Text(
                             'Log in instead',

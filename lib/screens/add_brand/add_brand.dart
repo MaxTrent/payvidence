@@ -1,11 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/routes/app_routes.dart';
+ import 'package:payvidence/routes/app_routes.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../routes/app_routes.gr.dart';
 
+@RoutePage(name: 'AddBrandRoute')
 class AddBrand extends StatelessWidget {
   AddBrand({super.key});
 
@@ -35,7 +37,7 @@ class AddBrand extends StatelessWidget {
               height: 128, hintText: 'Brand description', controller: _controller, ),
             SizedBox(height: 32.h,),
             AppButton(buttonText: 'Save brand', onPressed: (){
-              context.push(AppRoutes.productSuccess);
+              context.router.push(const AddProductSuccessRoute());
             })
           ],
         ),

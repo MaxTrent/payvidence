@@ -1,12 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/screens/profile/profile.dart';
+ import 'package:payvidence/screens/profile/profile.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../routes/app_routes.dart';
+import '../../routes/app_routes.gr.dart';
 
+
+@RoutePage(name: 'SettingsRoute')
 class Settings extends StatelessWidget {
   const Settings({super.key});
 
@@ -33,7 +36,7 @@ class Settings extends StatelessWidget {
                 icon: Assets.svg.passwordCheck,
                 title: 'Change password',
                 onTap: (){
-                  context.push(AppRoutes.changePassword);
+                  context.router.push(ChangePasswordRoute());
                 },
                 // navigateTo: AppRoutes.changePassword
             ),
@@ -41,7 +44,7 @@ class Settings extends StatelessWidget {
                 icon: Assets.svg.check,
                 title: 'Reset password',
               onTap: (){
-                context.push(AppRoutes.resetPassword);
+                context.router.push(ResetPasswordRoute());
               },
                 // navigateTo: AppRoutes.resetPassword
             ),
@@ -50,7 +53,7 @@ class Settings extends StatelessWidget {
                 title: 'Privacy and security',
                 // navigateTo: AppRoutes.privacyAndSecurity,
               onTap: (){
-                context.push(AppRoutes.privacyAndSecurity);
+                context.router.push(PrivacyAndSecurityRoute());
               },
             ),
             ProfileOptionTile(
@@ -58,7 +61,7 @@ class Settings extends StatelessWidget {
                 title: 'Notifications setting',
                 // navigateTo: AppRoutes.notificationSettings
                 onTap: (){
-      context.push(AppRoutes.notificationSettings);
+                context.router.push(NotificationSettingsRoute());
       },
             ),
             SizedBox(

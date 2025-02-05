@@ -1,13 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.dart';
+import '../../routes/app_routes.gr.dart';
 
+@RoutePage(name: 'AllInvoicesRoute')
 class AllInvoices extends StatelessWidget {
   AllInvoices({super.key});
 
@@ -24,7 +25,7 @@ class AllInvoices extends StatelessWidget {
             padding:  EdgeInsets.only(right: 20.w),
             child: GestureDetector(
                 onTap: (){
-                  context.push(AppRoutes.drafts);
+                  context.router.push(DraftsRoute());
                 },
                 child: Text('View drafts', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 14.sp, color: primaryColor2))),
           ))

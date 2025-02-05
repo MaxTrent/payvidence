@@ -1,11 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-
+ 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 
+
+
+@RoutePage(name: 'ClientDetailsRoute')
 class ClientDetails extends StatelessWidget {
   ClientDetails({super.key});
   final _controller = TextEditingController();
@@ -152,7 +155,7 @@ class ClientDetails extends StatelessWidget {
                                               ),
                                             ),
                                             GestureDetector(
-                                                onTap: context.pop,
+                                                onTap: ()=>context.router.maybePop(),
                                                 child: const Icon(
                                                   Icons.close,
                                                 ))

@@ -1,11 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pinput/pinput.dart';
+ import 'package:pinput/pinput.dart';
 
 import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
+import '../../routes/app_routes.gr.dart';
 
+
+@RoutePage(name: 'OtpLoginRoute')
 class OtpLogin extends StatelessWidget {
   const OtpLogin({super.key});
 
@@ -75,7 +78,7 @@ class OtpLogin extends StatelessWidget {
               height: 32.h,
             ),
             AppButton(buttonText: 'Submit', onPressed: () {
-              context.push('/createNewPassword');
+              context.router.push(CreateNewPasswordRoute());
             }),
             SizedBox(
               height: 58.h,

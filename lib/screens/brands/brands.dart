@@ -1,14 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/routes/app_routes.dart';
+ import 'package:payvidence/routes/app_routes.dart';
 
 import '../../components/app_text_field.dart';
 import '../../components/category_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/app_routes.gr.dart';
 
+
+@RoutePage(name: 'BrandsRoute')
 class Brands extends StatelessWidget {
   Brands({super.key});
 
@@ -33,7 +36,7 @@ class Brands extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push(AppRoutes.addBrand);
+          context.router.push(AddBrandRoute());
         },
         backgroundColor: primaryColor2,
         child: Icon(

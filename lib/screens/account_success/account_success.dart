@@ -1,12 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/routes/app_routes.dart';
 
 import '../../gen/assets.gen.dart';
 
+@RoutePage(name: 'AccountSuccessRoute')
 class AccountSuccessScreen extends StatelessWidget {
   const AccountSuccessScreen({super.key});
 
@@ -16,7 +17,7 @@ class AccountSuccessScreen extends StatelessWidget {
       floatingActionButton: AppButton(
           buttonText: 'Go to Home',
           onPressed: (){
-            context.go(AppRoutes.login);
+            // context.go(AppRoutes.login);
           }),
       body: SafeArea(
         child: Padding(

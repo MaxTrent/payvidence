@@ -1,14 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:payvidence/components/app_button.dart';
+ import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/app_text_field.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/app_routes.dart';
 
 import '../../gen/assets.gen.dart';
+import '../../routes/app_routes.gr.dart';
 
+
+@RoutePage(name: 'EmptyCategoryRoute')
 class EmptyCategory extends StatelessWidget {
   EmptyCategory({super.key});
 
@@ -68,7 +71,7 @@ class EmptyCategory extends StatelessWidget {
                 Text('All added categories will appear here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
                 SizedBox(height: 48.h,),
                 AppButton(buttonText: 'Add category', onPressed: (){
-                  context.push(AppRoutes.addCategory);
+                  context.router.push(AddCategoryRoute());
                 })
               ],
             ),

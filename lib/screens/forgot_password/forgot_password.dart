@@ -1,10 +1,12 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 
+
+
+@RoutePage(name: 'ForgotPasswordRoute')
 class ForgotPassword extends StatelessWidget {
   ForgotPassword({super.key});
 
@@ -30,7 +32,7 @@ class ForgotPassword extends StatelessWidget {
               AppTextField(hintText: 'First Name', controller: _emailController,),
               SizedBox(height: 32.h,),
               AppButton(buttonText: 'Continue', onPressed: (){
-                context.push('/otpLogin');
+                // context.push('/otpLogin');
               },),
             ],
           ),

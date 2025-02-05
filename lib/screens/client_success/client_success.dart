@@ -1,12 +1,16 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-
+import 'package:payvidence/routes/app_routes.gr.dart';
+ 
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/app_routes.dart';
 
+
+
+@RoutePage(name: 'ClientSuccessRoute')
 class ClientSuccess extends StatelessWidget {
   const ClientSuccess({super.key});
 
@@ -16,7 +20,7 @@ class ClientSuccess extends StatelessWidget {
       floatingActionButton: AppButton(
           buttonText: 'Alright!',
           onPressed: (){
-            context.go(AppRoutes.login);
+            context.router.replace(LoginRoute());
           }),
       body: SafeArea(
         child: Padding(

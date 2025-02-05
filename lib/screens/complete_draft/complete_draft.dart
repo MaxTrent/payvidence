@@ -1,12 +1,16 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-
+import 'package:payvidence/routes/app_routes.gr.dart';
+ 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../routes/app_routes.dart';
 
+
+
+@RoutePage(name: 'CompleteDraftRoute')
 class CompleteDraft extends StatelessWidget {
   CompleteDraft({super.key});
 
@@ -69,7 +73,7 @@ class CompleteDraft extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   AppButton(buttonText: 'Generate receipt', onPressed: (){
-                    context.push(AppRoutes.generateReceipt);
+                    context.router.push(GenerateReceiptRoute());
                   },),
                   SizedBox(height: 26.h,),
                   Text('Save as draft', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: primaryColor2),),

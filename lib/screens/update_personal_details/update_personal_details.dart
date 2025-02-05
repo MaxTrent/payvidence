@@ -1,10 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-
+ 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../routes/app_routes.gr.dart';
 
+
+@RoutePage(name: 'UpdatePersonalDetailsRoute')
 class UpdatePersonalDetails extends StatelessWidget {
   UpdatePersonalDetails({super.key});
   final _emailController = TextEditingController();
@@ -42,7 +45,7 @@ class UpdatePersonalDetails extends StatelessWidget {
 
               SizedBox(height: 32.h,),
               AppButton(buttonText: 'Update details', onPressed: (){
-                context.go('/home');
+                context.router.replace(HomePageRoute());
               },),
             ],
           ),

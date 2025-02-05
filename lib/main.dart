@@ -16,7 +16,9 @@ Future<void> main() async {
   }
 }
 
-final appRoutes = AppRoutes();
+// final appRoutes = AppRoutes();
+
+final _appRouter = AppRouter();
 
 class MyApp extends ConsumerWidget {
   final AppTheme appTheme;
@@ -25,7 +27,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final goRouter = ref.watch(appRoutes.goRouterProvider);
+    // final goRouter = ref.watch(appRoutes.goRouterProvider);
 
     return ScreenUtilInit(
       designSize: const Size(390, 844),
@@ -34,7 +36,7 @@ class MyApp extends ConsumerWidget {
         title: 'Payvidence',
         debugShowCheckedModeBanner: false,
         theme: appTheme.light,
-        routerConfig: goRouter,
+        routerConfig: _appRouter.config(),
       ),
     );
   }

@@ -1,7 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/components/app_button.dart';
 
+
+
+@RoutePage(name: 'ChangeProfilePictureRoute')
 class ChangeProfilePicture extends StatelessWidget {
   const ChangeProfilePicture({super.key});
 

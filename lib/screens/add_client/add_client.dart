@@ -1,11 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../routes/app_routes.dart';
+import '../../routes/app_routes.gr.dart';
 
+@RoutePage(name: 'AddClientRoute')
 class AddClient extends StatelessWidget {
    AddClient({super.key});
 
@@ -86,7 +88,7 @@ class AddClient extends StatelessWidget {
                   AppButton(
                     buttonText: 'Add client',
                     onPressed: () {
-                      context.push(AppRoutes.clientSuccess);
+                      context.router.push(const ClientSuccessRoute());
                     },
                   ),
                   SizedBox(
