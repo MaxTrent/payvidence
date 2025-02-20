@@ -5,8 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.dart';
-import '../../routes/app_routes.gr.dart';
+import '../../routes/payvidence_app_router.gr.dart';
+   
+    
 
 
 @RoutePage(name: 'ReceiptRoute')

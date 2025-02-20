@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
  import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
 
 import '../../components/app_card.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
-import '../../routes/app_routes.dart';
-import '../../routes/app_routes.gr.dart';
+   
+    
 
 
 @RoutePage(name: 'HomeScreenRoute')
@@ -40,7 +43,8 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Keekee Store',
+                          // 'Keekee Store',
+                          "...",
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
@@ -71,7 +75,8 @@ class HomeScreen extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: (){
-                    context.router.push(EmptyBusinessRoute());
+                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
+                    // context.router.push(EmptyBusinessRoute());
                   },
                   child: Container(
                     height: 40.h,

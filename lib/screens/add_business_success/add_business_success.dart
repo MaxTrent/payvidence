@@ -5,8 +5,7 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.dart';
-import '../../routes/app_routes.gr.dart';
+import '../../routes/payvidence_app_router.gr.dart';
 
 @RoutePage(name: 'AddBusinessSuccessRoute')
 class AddBusinessSuccess extends StatelessWidget {

@@ -7,7 +7,9 @@ import 'package:payvidence/screens/complete_draft/complete_draft.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.dart';
+import '../../routes/payvidence_app_router.gr.dart';
+   
+    
 
 
 @RoutePage(name: 'DraftsRoute')

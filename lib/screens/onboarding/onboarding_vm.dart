@@ -1,7 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class OnboardingScreenViewModel {
-  final WidgetRef ref;
+
+final onboardingScreenViewModelProvider =
+ChangeNotifierProvider<OnboardingScreenViewModel>((ref) {
+  return OnboardingScreenViewModel(ref);
+});
+
+class OnboardingScreenViewModel extends ChangeNotifier {
+  final Ref ref;
   OnboardingScreenViewModel(this.ref);
 
   static final currentPageProvider = StateProvider((ref) => 0);

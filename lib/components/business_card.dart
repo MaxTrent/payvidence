@@ -1,10 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
-import '../routes/app_routes.dart';
+import '../routes/payvidence_app_router.gr.dart';
 import 'app_button.dart';
 
 
@@ -63,7 +64,7 @@ class BusinessCard extends StatelessWidget {
               ],
             ),
             AppButton(buttonText: 'Switch to business', onPressed: (){
-              context.push(AppRoutes.businessDetail);
+              context.router.push(BusinessDetailRoute());
             })
           ],
         ),

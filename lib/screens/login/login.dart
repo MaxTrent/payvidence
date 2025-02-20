@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:payvidence/components/loading_indicator.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/login/login_vm.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/validators.dart';
 
 import '../../components/app_button.dart';
@@ -12,20 +14,47 @@ import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
-
 @RoutePage(name: 'LoginRoute')
-class Login extends ConsumerWidget {
+class Login extends HookConsumerWidget {
   const Login({super.key});
 
   final _formKey = const GlobalObjectKey<FormState>('form');
 
-
   @override
   Widget build(BuildContext context, ref) {
-    final viewModel = LoginViewModel(ref);
+    final viewModel = ref.watch(loginViewModelProvider);
+
+    final emailController = useTextEditingController();
+    final passwordController = useTextEditingController();
+
+    final _areFieldsEmpty = useState(true);
+    final obscureText = useState(true);
+
+    bool areFieldsEmpty() {
+      return emailController.text.toString().isEmpty ||
+          passwordController.text.toString().isEmpty;
+    }
+
+    useEffect(() {
+      void updateFieldsEmptyStatus() {
+        _areFieldsEmpty.value = areFieldsEmpty();
+        print("Fields empty: ${_areFieldsEmpty.value}");
+      }
+
+      emailController.addListener(updateFieldsEmptyStatus);
+      passwordController.addListener(updateFieldsEmptyStatus);
+
+      return () {
+        emailController.removeListener(updateFieldsEmptyStatus);
+        passwordController.removeListener(updateFieldsEmptyStatus);
+      };
+    }, [
+      emailController,
+      passwordController,
+    ]);
 
     return GestureDetector(
-      onTap: ()=> FocusManager.instance.primaryFocus!.unfocus,
+      onTap: () => FocusManager.instance.primaryFocus!.unfocus,
       child: Scaffold(
         body: Form(
           key: _formKey,
@@ -61,13 +90,14 @@ class Login extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Email address',
-                    controller: ref.watch(LoginViewModel.emailControllerProvider),
-                 validator:  (val) {
-                          if (!val!.isValidEmail || val.isEmpty) {
-                            return 'Enter valid email address';
-                          }
-                          return null;
-                        },
+                    controller:
+                        emailController,
+                    validator: (val) {
+                      if (!val!.isValidEmail || val.isEmpty) {
+                        return 'Enter valid email address';
+                      }
+                      return null;
+                    },
                   ),
 
                   SizedBox(
@@ -82,17 +112,17 @@ class Login extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Password',
-                    controller: ref.watch(LoginViewModel.passwordControllerProvider),
+                    controller:passwordController,
                     validator: (val) {
-                          if (!val!.isValidPassword || val.isEmpty) {
-                            return 'Enter a valid password';
-                          }
-                          return null;
-                        },
+                      if (!val!.isValidPassword || val.isEmpty) {
+                        return 'Enter a valid password';
+                      }
+                      return null;
+                    },
                     suffixIcon: Padding(
                       padding: EdgeInsets.all(16.h),
                       child: GestureDetector(
-                        onTap: ()=>viewModel.switchVisibility(),
+                        onTap: () => obscureText.value = !obscureText.value,
                         child: SvgPicture.asset(
                           Assets.svg.password,
                           height: 24.h,
@@ -100,14 +130,14 @@ class Login extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    obscureText: ref.watch(LoginViewModel.obscureTextProvider),
-
+                    obscureText: obscureText.value,
                   ),
                   SizedBox(
                     height: 20.h,
                   ),
                   GestureDetector(
                     onTap: () {
+                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.forgotPassword);
                       // context.push('/forgotPassword');
                     },
                     child: Text(
@@ -121,24 +151,33 @@ class Login extends ConsumerWidget {
                   SizedBox(
                     height: 32.h,
                   ),
-                  viewModel.loginState.isLoading ? const LoadingIndicator():
+                  // viewModel.loginState.isLoading ? const LoadingIndicator():
                   AppButton(
                     buttonText: 'Log in',
-                     backgroundColor:viewModel.areAllFieldsFilled() ? primaryColor2 : primaryColor2.withOpacity(0.4),
+
+                    isDisabled: _areFieldsEmpty.value,
+                    isProcessing: viewModel.isLoading,
+                    backgroundColor: !_areFieldsEmpty.value
+                        ? primaryColor2
+                        : primaryColor2.withOpacity(0.4),
                     onPressed: () {
-                                print("Button pressed");
-                                if (viewModel.areAllFieldsFilled()) {
-                                  print("All fields are filled");
-                                  if (_formKey.currentState!.validate()) {
-                                    print("Form is valid");
-                                    viewModel.login();
-                                  } else {
-                                    print("Form is not valid");
-                                  }
-                                } else {
-                                  print("Not all fields are filled");
-                                }
-                              },
+                      print("Button pressed");
+                      print("Fields empty: ${_areFieldsEmpty.value}");
+
+                      if (_formKey.currentState!.validate()) {
+                        print("Form is valid");
+                        FocusScope.of(context).unfocus();
+                        viewModel.login(
+                          email: emailController.text.trim(),
+                          password: passwordController.text.trim(),
+                          navigateOnSuccess: () {
+                            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+                          },
+                        );
+                      } else {
+                        print("Form is not valid");
+                      }
+                    },
                   ),
                 ],
               ),

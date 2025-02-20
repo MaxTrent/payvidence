@@ -1,170 +1,139 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:payvidence/model/create_account_model.dart';
-import 'package:payvidence/routes/app_routes.dart';
-import '../../data/api_services.dart';
-import '../../utilities/base_state.dart';
+import 'package:payvidence/utilities/base_notifier.dart';
 
 
-class CreateAccountViewModel {
-  final WidgetRef ref;
+final createAccountViewModelProvider =
+ChangeNotifierProvider<CreateAccountViewModel>((ref) {
+  return CreateAccountViewModel(ref);
+});
+
+
+class CreateAccountViewModel extends BaseChangeNotifier{
+  final Ref ref;
   CreateAccountViewModel(this.ref);
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
-  static final firstNameProvider = StateProvider.autoDispose((_) => '');
-  static final lastNameProvider = StateProvider.autoDispose((_) => '');
-  static final phoneProvider = StateProvider.autoDispose((_) => '');
-  static final emailProvider = StateProvider.autoDispose((_) => '');
-  static final passwordProvider = StateProvider.autoDispose((_) => '');
-  static final passwordConfirmProvider = StateProvider.autoDispose((_) => '');
+  Future<void> createAccount({
+  required String firstName,
+  required String lastName,
+  required String phone,
+  required String email,
+  required String password,
+  required String passwordConfirm,
+    required Function() navigateOnSuccess,
+  }) async {
+    try {
 
+      _isLoading = true;
+      notifyListeners();
+      final response = await apiServices.createAccount(
+          firstName: firstName,
+          lastName: lastName,
+          phone: phone,
+          email: email,
+          password: password,
+          passwordConfirm: passwordConfirm,
+      );
 
-  static final textEditingControllerProvider = 
-      Provider.family.autoDispose<TextEditingController, String>(
-    (ref, _) => TextEditingController()
-  );
+      if (response.success) {
+        _isLoading = false;
+        notifyListeners();
+        navigateOnSuccess();
 
-
-  static final firstNameControllerProvider =
-  Provider.autoDispose<TextEditingController>((ref) {
-    final controller = TextEditingController();
-    controller.addListener(() {
-      ref.read(firstNameProvider.notifier).state = controller.text;
-    });
-    return controller;
-  });
-
-
-  static final lastNameControllerProvider =
-  Provider.autoDispose<TextEditingController>((ref) {
-    final controller = TextEditingController();
-    controller.addListener(() {
-      ref.read(lastNameProvider.notifier).state = controller.text;
-    });
-    return controller;
-  });
-
-
-  static final phoneControllerProvider =
-  Provider.autoDispose<TextEditingController>((ref) {
-    final controller = TextEditingController();
-    controller.addListener(() {
-      ref.read(phoneProvider.notifier).state = controller.text;
-    });
-    return controller;
-  });
-
-
-  static final emailControllerProvider =
-  Provider.autoDispose<TextEditingController>((ref) {
-    final controller = TextEditingController();
-    controller.addListener(() {
-      ref.read(emailProvider.notifier).state = controller.text;
-    });
-    return controller;
-  });
+      } else {
+        _isLoading = false;
+        notifyListeners();
+        var errorMessage = response.error?.errors?.first.message ??
+            response.error?.message ??
+            "An error occurred!";
+        handleError(message: errorMessage);
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      throw Exception(e);
+    }
+  }}
 
 
-  static final passwordControllerProvider =
-  Provider.autoDispose<TextEditingController>((ref) {
-    final controller = TextEditingController();
-    controller.addListener(() {
-      ref.read(passwordProvider.notifier).state = controller.text;
-    });
-    return controller;
-  });
 
-  static final passwordConfirmControllerProvider =
-  Provider.autoDispose<TextEditingController>((ref) {
-    final controller = TextEditingController();
-    controller.addListener(() {
-      ref.read(passwordConfirmProvider.notifier).state = controller.text;
-    });
-    return controller;
-  });
+  // static final createAccountNotifierProvider =
+  //     StateNotifierProvider.autoDispose<CreateAccountNotifier, BaseState<CreateAccountModel>>(
+  //   (ref) => CreateAccountNotifier(
+  //     apiService: ref.read(apiServiceProvider),
+  //     onSuccess: () {
+  //       final router = ref.read(navigationProvider);
+  //       router.replace(const OtpScreenRoute());
+  //       print('Navigation Complete');
+  //       // ref.read(AppRoutes().goRouterProvider).go(AppRoutes.otp);
+  //     }
+  //   ),
+  // );
 
-  static final obscurePasswordProvider = StateProvider.autoDispose((ref) => false);
-  static final obscurePasswordConfirmProvider = StateProvider.autoDispose((ref) => false);
+  // bool get obscurePassword => ref.watch(obscurePasswordProvider);
+  // bool get obscurePasswordConfirm => ref.watch(obscurePasswordConfirmProvider);
 
 
-  static final createAccountNotifierProvider = 
-      StateNotifierProvider.autoDispose<CreateAccountNotifier, BaseState<CreateAccountModel>>(
-    (ref) => CreateAccountNotifier(
-      apiService: ref.read(apiServiceProvider),
-      onSuccess: () => ref.read(AppRoutes().goRouterProvider).go(AppRoutes.otp),
-    ),
-  );
-
-  bool get obscurePassword => ref.watch(obscurePasswordProvider);
-  bool get obscurePasswordConfirm => ref.watch(obscurePasswordConfirmProvider);
+  // BaseState<CreateAccountModel> get createAccountState => ref.watch(createAccountNotifierProvider);
 
 
-  BaseState<CreateAccountModel> get createAccountState => ref.watch(createAccountNotifierProvider);
+  // bool areAllFieldsFilled() =>
+  //     ref.watch(firstNameProvider).isNotEmpty &&
+  //         ref.watch(lastNameProvider).isNotEmpty &&
+  //         ref.watch(emailProvider).isNotEmpty &&
+  //         ref.watch(phoneProvider).isNotEmpty &&
+  //         ref.watch(passwordProvider).isNotEmpty &&
+  //         ref.watch(passwordConfirmProvider).isNotEmpty;
+
+  // Future<void> createAccount() async {
+  //
+  //   ref.read(createAccountNotifierProvider.notifier).createAccount(
+  //     ref.watch(firstNameControllerProvider).text,
+  //     ref.watch(lastNameControllerProvider).text,
+  //     ref.watch(phoneControllerProvider).text,
+  //     ref.watch(emailControllerProvider).text,
+  //     ref.watch(passwordControllerProvider).text,
+  //     ref.watch(passwordConfirmControllerProvider).text,
+  //   );
+  //
+  //   ref.read(firstNameControllerProvider).clear();
+  //   ref.read(lastNameControllerProvider).clear();
+  //   ref.read(phoneControllerProvider).clear();
+  //   ref.read(emailControllerProvider).clear();
+  //   ref.read(passwordControllerProvider).clear();
+  //   ref.read(passwordConfirmControllerProvider).clear();
+  //
+  // }
 
 
-  bool areAllFieldsFilled() =>
-      ref.watch(firstNameProvider).isNotEmpty &&
-          ref.watch(lastNameProvider).isNotEmpty &&
-          ref.watch(emailProvider).isNotEmpty &&
-          ref.watch(phoneProvider).isNotEmpty &&
-          ref.watch(passwordProvider).isNotEmpty &&
-          ref.watch(passwordConfirmProvider).isNotEmpty;
 
-  Future<void> createAccount() async {
-
-    ref.read(createAccountNotifierProvider.notifier).createAccount(
-      ref.watch(firstNameControllerProvider).text,
-      ref.watch(lastNameControllerProvider).text,
-      ref.watch(phoneControllerProvider).text,
-      ref.watch(emailControllerProvider).text,
-      ref.watch(passwordControllerProvider).text,
-      ref.watch(passwordConfirmControllerProvider).text,
-    );
-
-    ref.read(firstNameControllerProvider).clear();
-    ref.read(lastNameControllerProvider).clear();
-    ref.read(phoneControllerProvider).clear();
-    ref.read(emailControllerProvider).clear();
-    ref.read(passwordControllerProvider).clear();
-    ref.read(passwordConfirmControllerProvider).clear();
-
-  }
-
-  void switchPasswordVisibility() {
-    ref.read(obscurePasswordProvider.notifier).state =
-        !ref.read(obscurePasswordConfirmProvider.notifier).state;
-  }
-
-  void switchPasswordConfirmVisibility() {
-    ref.read(obscurePasswordConfirmProvider.notifier).state =
-    !ref.read(obscurePasswordConfirmProvider.notifier).state;
-  }
-}
-
-class CreateAccountNotifier extends BaseNotifier<CreateAccountModel> {
-  CreateAccountNotifier({
-    required super.apiService,
-    required super.onSuccess,
-  });
-
-  Future<void> createAccount(
-    String firstName,
-    String lastName,
-    String phone,
-    String email,
-    String password,
-    String passwordConfirm,
-  ) async {
-    await executeRequest(
-      () => apiService.createAccount(
-        firstName: firstName,
-        lastName: lastName,
-        phone: phone,
-        email: email,
-        password: password,
-        passwordConfirm: passwordConfirm,
-      ),
-      dataMapper: (json) => CreateAccountModel.fromJson(json),
-    );
-  }
-}
+// class CreateAccountNotifier extends BaseNotifier<CreateAccountModel> {
+//   CreateAccountNotifier({
+//     required super.apiService,
+//     required super.onSuccess,
+//   });
+//
+//   Future<void> createAccount(
+//     String firstName,
+//     String lastName,
+//     String phone,
+//     String email,
+//     String password,
+//     String passwordConfirm,
+//   ) async {
+//     await executeRequest(
+//       () => apiService.createAccount(
+//         firstName: firstName,
+//         lastName: lastName,
+//         phone: phone,
+//         email: email,
+//         password: password,
+//         passwordConfirm: passwordConfirm,
+//       ),
+//       dataMapper: (json) => CreateAccountModel.fromJson(json),
+//     );
+//   }
+// }

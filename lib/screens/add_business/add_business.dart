@@ -8,7 +8,8 @@ import 'package:payvidence/screens/add_business_success/add_business_success.dar
 
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/app_routes.gr.dart';
+import '../../routes/payvidence_app_router.gr.dart';
+    
 
 @RoutePage(name: 'AddBusinessRoute')
 class AddBusiness extends StatelessWidget {

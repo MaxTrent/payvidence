@@ -1,8 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_colors.dart';
-import '../routes/app_routes.dart';
+import '../routes/payvidence_app_router.gr.dart';
 
 class ProductTile extends StatelessWidget {
   const ProductTile({super.key});
@@ -11,7 +12,7 @@ class ProductTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        context.push(AppRoutes.productDetails);
+        context.router.push(ProductDetailsRoute());
       },
       child: Container(
         height: 101.h,

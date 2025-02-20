@@ -44,6 +44,16 @@ dependencies:
   fluttertoast: ^8.2.10
   device_info_plus: ^11.2.1
   auto_route: ^9.3.0+1
+  fpdart: ^1.1.1
+  equatable: ^2.0.7
+  dio: ^5.8.0+1
+  pretty_dio_logger: ^1.4.0
+  get_it: ^8.0.3
+  shared_preferences: ^2.5.1
+  internet_connection_checker: ^3.0.1
+  flutter_dotenv: ^5.2.1
+  hooks_riverpod: ^2.6.1
+  flutter_hooks: ^0.20.5
 
 
 
@@ -78,6 +88,7 @@ flutter:
     - assets/png/
     - assets/svg/
     - assets/jpg/
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,18 +1,18 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-//  import 'package:payvidence/constants/app_colors.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:payvidence/routes/app_routes.gr.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.gr.dart';
 import 'onboarding_vm.dart';
 
 
 @RoutePage(name: 'OnboardingScreenRoute')
-class OnboardingScreen extends ConsumerWidget {
+class OnboardingScreen extends HookConsumerWidget {
   static String routeName = "/onboardingScreen";
   OnboardingScreen({super.key});
 
@@ -20,7 +20,8 @@ class OnboardingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    final viewModel = OnboardingScreenViewModel(ref);
+    // final viewModel = OnboardingScreenViewModel(ref);
+    final viewModel = ref.watch(onboardingScreenViewModelProvider);
 
     return Scaffold(
       backgroundColor: scaffoldBackground,
@@ -92,7 +93,8 @@ class OnboardingScreen extends ConsumerWidget {
                         SizedBox(height: 26.h),
                         GestureDetector(
                           onTap: (){
-                            context.router.push(const LoginRoute());
+                            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
+                            // context.router.push(const LoginRoute());
                           },
                           child: Text(
                             'Log in instead',

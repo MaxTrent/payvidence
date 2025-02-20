@@ -1,63 +1,82 @@
+
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 
-import 'package:payvidence/routes/app_routes.gr.dart';
+@AutoRouterConfig()
+class PayvidenceAppRouter extends RootStackRouter {
 
 
-// class AppRoutes {
-//   static const String onboarding = '/onboarding';
-//   static const String login = '/login';
-//   static const String createAccount = '/createAccount';
-//   static const String forgotPassword = '/forgotPassword';
-//   static const String createNewPassword = '/createNewPassword';
-//   static const String emptyBusiness = '/emptyBusiness';
-//   static const String homeScreen = '/homescreen';
-//   static const String addBusiness = '/addBusiness';
-//   static const String home = '/home';
-//   static const String changePasswordSuccess = '/changePasswordSuccess';
-//   static const String otpLogin = '/otpLogin';
-//   static const String otp = '/otp';
-//   static const String accountSuccess = '/accountSuccess';
-//   static const String addBusinessSuccess = '/addBusinessSuccess';
-//   static const String allBusiness = '/allBusiness';
-//   static const String upgradeSubscription = '/upgradeSubscription';
-//   static const String addProduct = '/addProduct';
-//   static const String emptyCategory = '/emptyCategory';
-//   static const String addCategory = '/addCategory';
-//   static const String brands = '/brands';
-//   static const String addBrand = '/addBrands';
-//   static const String productSuccess = '/productSuccess';
-//   static const String emptyProduct = '/emptyProduct';
-//   static const String productDetails = '/productDetails';
-//   static const String allReceipts = '/allReceipts';
-//   static const String drafts = '/drafts';
-//   static const String completeDraft = '/completeDraft';
-//   static const String receipt = '/receipt';
-//   static const String generateReceipt = '/generateReceipt';
-//   static const String selectClient = '/selectClient';
-//   static const String generateInvoices = '/generateInvoices';
-//   static const String allInvoices = '/allInvoices';
-//   static const String updatePersonalDetails = '/updatePersonalDetails';
-//   static const String businessData = '/businessData';
-//   static const String payvidenceInfo = '/payvidenceInfo';
-//   static const String changeProfilePicture = '/changeProfilePicture';
-//   static const String notifications = '/notifications';
-//   static const String settings = '/settings';
-//   static const String mySubscription = '/mySubscription';
-//   static const String changePassword = '/changePassword';
-//   static const String privacyAndSecurity = '/privacyAndSecurity';
-//   static const String resetPassword = '/resetPassword';
-//   static const String notificationSettings = '/notificationSettings';
-//   static const String updateQuantity = '/updateQuantity';
-//   static const String businessDetail = '/businessDetail';
-//   static const String clients = '/clients';
-//   static const String clientDetails = '/clientDetails';
-//   static const String addClient = '/addClient';
-//   static const String clientSuccess = '/clientSuccess';
-//
-//
-//
+  @override
+  List<AutoRoute> get routes =>
+      [
+        AutoRoute(page: OnboardingScreenRoute.page, path: PayvidenceRoutes.onboarding, initial: true),
+        AutoRoute(page: HomePageRoute.page, path: PayvidenceRoutes.home),
+        AutoRoute(page: CreateAccountRoute.page, path: PayvidenceRoutes.createAccount),
+        AutoRoute(page: LoginRoute.page, path: PayvidenceRoutes.login),
+        AutoRoute(page: ForgotPasswordRoute.page, path: PayvidenceRoutes.forgotPassword),
+        AutoRoute(page: EmptyBusinessRoute.page, path: PayvidenceRoutes.emptyBusiness),
+
+
+      ];
+
+}
+
+class PayvidenceRoutes {
+  PayvidenceRoutes(): super();
+
+
+  static String get onboarding => '/onboarding';
+  static String get login => '/login';
+  static String get createAccount => '/createAccount';
+  static String get forgotPassword => '/forgotPassword';
+  static String get createNewPassword => '/createNewPassword';
+  static String get emptyBusiness => '/emptyBusiness';
+  static String get homeScreen => '/homescreen';
+  static String get addBusiness => '/addBusiness';
+  static String get home => '/home';
+  static String get changePasswordSuccess => '/changePasswordSuccess';
+  static String get otpLogin => '/otpLogin';
+  static String get otp => '/otp';
+  static String get accountSuccess => '/accountSuccess';
+  static String get addBusinessSuccess => '/addBusinessSuccess';
+  static String get allBusiness => '/allBusiness';
+  static String get upgradeSubscription => '/upgradeSubscription';
+  static String get addProduct => '/addProduct';
+  static String get emptyCategory => '/emptyCategory';
+  static String get addCategory => '/addCategory';
+  static String get brands => '/brands';
+  static String get addBrand => '/addBrands';
+  static String get productSuccess => '/productSuccess';
+  static String get emptyProduct => '/emptyProduct';
+  static String get productDetails => '/productDetails';
+  static String get allReceipts => '/allReceipts';
+  static String get drafts => '/drafts';
+  static String get completeDraft => '/completeDraft';
+  static String get receipt => '/receipt';
+  static String get generateReceipt => '/generateReceipt';
+  static String get selectClient => '/selectClient';
+  static String get generateInvoices => '/generateInvoices';
+  static String get allInvoices => '/allInvoices';
+  static String get updatePersonalDetails => '/updatePersonalDetails';
+  static String get businessData => '/businessData';
+  static String get payvidenceInfo => '/payvidenceInfo';
+  static String get changeProfilePicture => '/changeProfilePicture';
+  static String get notifications => '/notifications';
+  static String get settings => '/settings';
+  static String get mySubscription => '/mySubscription';
+  static String get changePassword => '/changePassword';
+  static String get privacyAndSecurity => '/privacyAndSecurity';
+  static String get resetPassword => '/resetPassword';
+  static String get notificationSettings => '/notificationSettings';
+  static String get updateQuantity => '/updateQuantity';
+  static String get businessDetail => '/businessDetail';
+  static String get clients => '/clients';
+  static String get clientDetails => '/clientDetails';
+  static String get addClient => '/addClient';
+  static String get clientSuccess => '/clientSuccess';
+
+
+
 //   final goRouterProvider = Provider<GoRouter>((ref) {
 //     return GoRouter(
 //       initialLocation: onboarding,
@@ -205,26 +224,15 @@ import 'package:payvidence/routes/app_routes.gr.dart';
 //   });
 // }
 
-final navigationProvider = Provider<AppRouter>((ref) {
-  return AppRouter();
-});
+  // final navigationProvider = Provider<PayvidenceAppRouter>((ref) {
+  //   return PayvidenceAppRouter();
+  // });
 
-@AutoRouterConfig()
-class AppRouter extends RootStackRouter{
-
+  // @AutoRouterConfig(generateForDir: ['lib'])
+  // class PayvidenceAppRouter extends $PayvidenceAppRouter {
+  //
   // @override
   // RouteType get defaultRouteType => RouteType.material();
 
-  @override
-  List<AutoRoute> get routes => [
-    AutoRoute(page: OnboardingScreenRoute.page, initial: true),
-    AutoRoute(page: HomePageRoute.page),
-    AutoRoute(page: CreateAccountRoute.page),
-    AutoRoute(page: LoginRoute.page),
 
-
-
-
-
-  ];
 }
