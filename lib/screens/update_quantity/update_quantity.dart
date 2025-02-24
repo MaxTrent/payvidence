@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
+import '../../routes/payvidence_app_router.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 
 @RoutePage(name: 'UpdateQuantityRoute')
@@ -43,7 +45,7 @@ class UpdateQuantity extends StatelessWidget {
 
               SizedBox(height: 32.h,),
               AppButton(buttonText: 'Update record', onPressed: (){
-                context.router.maybePop();
+                locator<PayvidenceAppRouter>().back();
               },),
             ],
           ),

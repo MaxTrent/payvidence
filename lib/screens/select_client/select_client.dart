@@ -6,6 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 
 @RoutePage(name: 'SelectClientRoute')
@@ -25,7 +27,7 @@ class SelectClient extends StatelessWidget {
             padding: EdgeInsets.all(16.h),
             child: GestureDetector(
                 onTap: (){
-                  context.router.maybePop();
+                  locator<PayvidenceAppRouter>().back();
                 },
                 child: SvgPicture.asset(Assets.svg.backbutton)),
           ),

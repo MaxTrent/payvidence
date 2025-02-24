@@ -972,7 +972,7 @@ class HomePageRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i31.HomePage();
+      return  _i31.HomePage();
     },
   );
 }
@@ -991,7 +991,7 @@ class HomeScreenRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i32.HomeScreen();
+      return  _i32.HomeScreen();
     },
   );
 }

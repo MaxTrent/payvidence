@@ -1,6 +1,8 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
+import '../data/local/session_constants.dart';
+import '../data/local/session_manager.dart';
+import '../shared_dependency/shared_dependency.dart';
 
 @AutoRouterConfig()
 class PayvidenceAppRouter extends RootStackRouter {
@@ -9,16 +11,55 @@ class PayvidenceAppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes =>
       [
-        AutoRoute(page: OnboardingScreenRoute.page, path: PayvidenceRoutes.onboarding, initial: true),
-        AutoRoute(page: HomePageRoute.page, path: PayvidenceRoutes.home),
+        AutoRoute(page: OnboardingScreenRoute.page, path: PayvidenceRoutes.onboarding),
+        AutoRoute(page: HomePageRoute.page, path: PayvidenceRoutes.home, initial: true,
+        guards: [
+          AuthRouteGuard(),
+        ],
+        children: [
+          AutoRoute(page: HomeScreenRoute.page, path: PayvidenceRoutes.homeScreen, initial: true),
+          AutoRoute(page: SalesRoute.page, path: PayvidenceRoutes.sales),
+          AutoRoute(page: ProfileRoute.page, path: PayvidenceRoutes.profile),
+
+        ]),
         AutoRoute(page: CreateAccountRoute.page, path: PayvidenceRoutes.createAccount),
         AutoRoute(page: LoginRoute.page, path: PayvidenceRoutes.login),
         AutoRoute(page: ForgotPasswordRoute.page, path: PayvidenceRoutes.forgotPassword),
         AutoRoute(page: EmptyBusinessRoute.page, path: PayvidenceRoutes.emptyBusiness),
-
-
+        AutoRoute(page: AddBusinessRoute.page, path: PayvidenceRoutes.addBusiness),
+        AutoRoute(page: AddCategoryRoute.page, path: PayvidenceRoutes.addCategory),
+        AutoRoute(page: CreateAccountRoute.page, path: PayvidenceRoutes.createAccount),
+        AutoRoute(page: BusinessDetailRoute.page, path: PayvidenceRoutes.businessDetail),
+        AutoRoute(page: ProductDetailsRoute.page, path: PayvidenceRoutes.productDetails),
+        AutoRoute(page: ChangePasswordRoute.page, path: PayvidenceRoutes.changePassword),
+        AutoRoute(page: AllBusinessesRoute.page, path: PayvidenceRoutes.allBusiness),
+        AutoRoute(page: CreateNewPasswordRoute.page, path: PayvidenceRoutes.createNewPassword),
+        AutoRoute(page: AddProductRoute.page, path: PayvidenceRoutes.addProduct),
+        AutoRoute(page: AllInvoicesRoute.page, path: PayvidenceRoutes.allInvoices),
+        AutoRoute(page: AllReceiptsRoute.page, path: PayvidenceRoutes.allReceipts),
+        AutoRoute(page: ReceiptRoute.page, path: PayvidenceRoutes.receipt),
+        AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
+        AutoRoute(page: ClientsRoute.page, path: PayvidenceRoutes.clients),
+        AutoRoute(page: EmptyProductRoute.page, path: PayvidenceRoutes.emptyProduct),
+        AutoRoute(page: DraftsRoute.page, path: PayvidenceRoutes.drafts),
+        AutoRoute(page: EmptyCategoryRoute.page, path: PayvidenceRoutes.emptyCategory),
+        AutoRoute(page: BrandsRoute.page, path: PayvidenceRoutes.brands),
       ];
 
+}
+
+class AuthRouteGuard extends AutoRouteGuard {
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) async {
+    var isUserLoggedIn =
+    locator<SessionManager>().get<bool>(SessionConstants.isUserLoggedIn);
+
+    if ((isUserLoggedIn ?? false) == true) {
+      resolver.next(true);
+    } else {
+      resolver.redirect(OnboardingScreenRoute());
+    }
+  }
 }
 
 class PayvidenceRoutes {
@@ -31,7 +72,7 @@ class PayvidenceRoutes {
   static String get forgotPassword => '/forgotPassword';
   static String get createNewPassword => '/createNewPassword';
   static String get emptyBusiness => '/emptyBusiness';
-  static String get homeScreen => '/homescreen';
+  static String get homeScreen => 'homeScreen';
   static String get addBusiness => '/addBusiness';
   static String get home => '/home';
   static String get changePasswordSuccess => '/changePasswordSuccess';
@@ -74,165 +115,8 @@ class PayvidenceRoutes {
   static String get clientDetails => '/clientDetails';
   static String get addClient => '/addClient';
   static String get clientSuccess => '/clientSuccess';
-
-
-
-//   final goRouterProvider = Provider<GoRouter>((ref) {
-//     return GoRouter(
-//       initialLocation: onboarding,
-//       errorBuilder: (context, state) => const Scaffold(
-//         body: Center(child: Text('Page Not Found')),
-//       ),
-//       routes: [
-//         GoRoute(
-//           path: onboarding,
-//           builder: (context, state) => OnboardingScreen(),
-//         ),
-//         // GoRoute(
-//         //   path: login,
-//         //   builder: (context, state) => Login(),
-//         // ),
-//         GoRoute(
-//           path: createAccount,
-//           builder: (context, state) => const CreateAccountScreen(),
-//         ),
-//         GoRoute(
-//           path: forgotPassword,
-//           builder: (context, state) => ForgotPassword(),
-//         ),
-//         GoRoute(
-//           path: createNewPassword,
-//           builder: (context, state) => CreateNewPassword(),
-//         ),
-//         GoRoute(
-//           path: emptyBusiness,
-//           builder: (context, state) => const EmptyBusiness(),
-//         ),
-//         GoRoute(
-//           path: homeScreen,
-//           builder: (context, state) => const HomeScreen(),
-//         ),
-//         GoRoute(
-//           path: addBusiness,
-//           builder: (context, state) => AddBusiness(),
-//         ),
-//         GoRoute(
-//           path: home,
-//           builder: (context, state) => const HomePage(),
-//         ),
-//         GoRoute(
-//           path: changePasswordSuccess,
-//           builder: (context, state) => const ChangePasswordSuccess(),
-//         ),
-//         GoRoute(
-//           path: otpLogin,
-//           builder: (context, state) => const OtpLogin(),
-//         ),
-//         GoRoute(
-//           path: otp,
-//           builder: (context, state) => const OtpScreen(),
-//         ),
-//         GoRoute(
-//           path: accountSuccess,
-//           builder: (context, state) => const AccountSuccessScreen(),
-//         ),
-//         GoRoute(
-//           path: addBusinessSuccess,
-//           builder: (context, state) => const AddBusinessSuccess(),
-//         ),
-//         GoRoute(
-//           path: allBusiness,
-//           builder: (context, state) => const AllBusinesses(),
-//         ),
-//         GoRoute(
-//           path: upgradeSubscription,
-//           builder: (context, state) => const UpgradeSubscription(),
-//         ),
-//         GoRoute(
-//           path: addProduct,
-//           builder: (context, state) => AddProduct(),
-//         ),
-//         GoRoute(path: addCategory, builder: (context, state) => AddCategory()),
-//         GoRoute(
-//             path: emptyCategory, builder: (context, state) => EmptyCategory()),
-//         GoRoute(path: brands, builder: (context, state) => Brands()),
-//         GoRoute(path: addBrand, builder: (context, state) => AddBrand()),
-//         GoRoute(
-//             path: productSuccess,
-//             builder: (context, state) => const AddProductSuccess()),
-//         GoRoute(
-//             path: emptyProduct, builder: (context, state) => EmptyProduct()),
-//         GoRoute(
-//             path: productDetails,
-//             builder: (context, state) => const ProductDetails()),
-//         GoRoute(path: allReceipts, builder: (context, state) => AllReceipts()),
-//         GoRoute(path: drafts, builder: (context, state) => Drafts()),
-//         GoRoute(
-//             path: completeDraft, builder: (context, state) => CompleteDraft()),
-//         GoRoute(path: receipt, builder: (context, state) => const Receipt()),
-//         GoRoute(
-//             path: generateReceipt,
-//             builder: (context, state) => GenerateReceipt()),
-//         GoRoute(
-//             path: selectClient, builder: (context, state) => SelectClient()),
-//         GoRoute(
-//             path: generateInvoices,
-//             builder: (context, state) => GenerateInvoices()),
-//         GoRoute(path: allInvoices, builder: (context, state) => AllInvoices()),
-//         GoRoute(
-//             path: updatePersonalDetails,
-//             builder: (context, state) => UpdatePersonalDetails()),
-//         GoRoute(
-//             path: businessData, builder: (context, state) => const BusinessData()),
-//         GoRoute(
-//             path: payvidenceInfo,
-//             builder: (context, state) => const PayvidenceInfo()),
-//         GoRoute(
-//             path: changeProfilePicture,
-//             builder: (context, state) => const ChangeProfilePicture()),
-//         GoRoute(
-//             path: notifications, builder: (context, state) => const Notifications()),
-//         GoRoute(path: settings, builder: (context, state) => const Settings()),
-//         GoRoute(
-//             path: mySubscription,
-//             builder: (context, state) => const MySubscription()),
-//         GoRoute(
-//             path: changePassword,
-//             builder: (context, state) => ChangePassword()),
-//         GoRoute(
-//             path: privacyAndSecurity,
-//             builder: (context, state) => const PrivacyAndSecurity()),
-//         GoRoute(
-//             path: resetPassword, builder: (context, state) => ResetPassword()),
-//         GoRoute(
-//             path: notificationSettings,
-//             builder: (context, state) => const NotificationSettings()),
-//         GoRoute(
-//             path: updateQuantity,
-//             builder: (context, state) => UpdateQuantity()),
-//         GoRoute(
-//             path: businessDetail,
-//             builder: (context, state) => const BusinessDetail()),
-//         GoRoute(path: clients, builder: (context, state) => Clients()),
-//         GoRoute(
-//             path: clientDetails, builder: (context, state) => ClientDetails()),
-//         GoRoute(path: addClient, builder: (context, state) => AddClient()),
-//         GoRoute(
-//             path: clientSuccess, builder: (context, state) => const ClientSuccess()),
-//       ],
-//     );
-//   });
-// }
-
-  // final navigationProvider = Provider<PayvidenceAppRouter>((ref) {
-  //   return PayvidenceAppRouter();
-  // });
-
-  // @AutoRouterConfig(generateForDir: ['lib'])
-  // class PayvidenceAppRouter extends $PayvidenceAppRouter {
-  //
-  // @override
-  // RouteType get defaultRouteType => RouteType.material();
+  static String get sales => 'sales';
+  static String get profile => 'profile';
 
 
 }

@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/screens/nav_screens/home.dart';
-import 'package:payvidence/screens/nav_screens/homepage_vm.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/screens/sales/sales.dart';
 
@@ -13,16 +13,22 @@ import '../../gen/assets.gen.dart';
 
 
 @RoutePage(name: 'HomePageRoute')
-class HomePage extends ConsumerWidget {
-  const HomePage({super.key});
+class HomePage extends HookConsumerWidget {
+  HomePage({super.key});
+
 
 
   @override
   Widget build(BuildContext context, ref) {
-    final viewModel = HomePageViewModel(ref);
+
+    final selectedIndex = useState(0);
+
+    void onItemTapped(int index) {
+      selectedIndex.value = index;
+      }
 
     final List<Widget> pages = [
-     const HomeScreen(),
+      HomeScreen(),
       Scaffold(
         appBar: AppBar(
           title: const Text('2'),
@@ -34,20 +40,20 @@ class HomePage extends ConsumerWidget {
     ];
 
     return Scaffold(
-      body: pages[viewModel.selectedIndex],
+      body: pages[selectedIndex.value],
 
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.black,
-          currentIndex: viewModel.selectedIndex,
-          onTap: viewModel.onItemTapped,
+          currentIndex: selectedIndex.value,
+          onTap: onItemTapped,
           selectedLabelStyle: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w600),
           unselectedLabelStyle: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 12.sp),
           items: [
-        BottomNavigationBarItem(icon: viewModel.selectedIndex == 0 ? SvgPicture.asset(Assets.svg.home):SvgPicture.asset(Assets.svg.homeOl), label: 'Home'),
-        BottomNavigationBarItem(icon: viewModel.selectedIndex == 1 ? SvgPicture.asset(Assets.svg.transaction):SvgPicture.asset(Assets.svg.transactionOl), label: 'Transactions'),
-        BottomNavigationBarItem(icon:viewModel.selectedIndex == 2 ? SvgPicture.asset(Assets.svg.wallet):SvgPicture.asset(Assets.svg.walletOl), label: 'Sales'),
-        BottomNavigationBarItem(icon: viewModel.selectedIndex == 3 ? SvgPicture.asset(Assets.svg.profile):SvgPicture.asset(Assets.svg.profileOl), label: 'Account'),
+        BottomNavigationBarItem(icon: selectedIndex.value == 0 ? SvgPicture.asset(Assets.svg.home):SvgPicture.asset(Assets.svg.homeOl), label: 'Home'),
+        BottomNavigationBarItem(icon: selectedIndex.value == 1 ? SvgPicture.asset(Assets.svg.transaction):SvgPicture.asset(Assets.svg.transactionOl), label: 'Transactions'),
+        BottomNavigationBarItem(icon:selectedIndex.value == 2 ? SvgPicture.asset(Assets.svg.wallet):SvgPicture.asset(Assets.svg.walletOl), label: 'Sales'),
+        BottomNavigationBarItem(icon: selectedIndex.value == 3 ? SvgPicture.asset(Assets.svg.profile):SvgPicture.asset(Assets.svg.profileOl), label: 'Account'),
       ]),
     );
   }

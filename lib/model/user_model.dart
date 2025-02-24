@@ -1,39 +1,11 @@
-class LoginModel {
-  final bool success;
-  final String message;
-  final LoginData data;
-
-  LoginModel({
-    required this.success,
-    required this.message,
-    required this.data,
-  });
-
-  factory LoginModel.fromJson(Map<String, dynamic> json) {
-    return LoginModel(
-      success: json['success'] as bool,
-      message: json['message'] as String,
-      data: LoginData.fromJson(json['data'] as Map<String, dynamic>),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toJson(),
-    };
-  }
-}
-
-class LoginData {
+class User {
   final Account account;
   final String? token;
 
-  LoginData({required this.account, this.token});
+  User({required this.account, this.token});
 
-  factory LoginData.fromJson(Map<String, dynamic> json) {
-    return LoginData(
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
       account: Account.fromJson(json['account'] as Map<String, dynamic>),
       token: json['token'] as String?,
     );

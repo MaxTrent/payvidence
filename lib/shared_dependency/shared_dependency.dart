@@ -18,8 +18,8 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   locator.registerLazySingleton<SessionManager>(
         () => SessionManager(sharedPreferences: locator()),
   );
-
   locator.registerLazySingleton(() => Dio());
+
   locator.registerLazySingleton<PayvidenceAppRouter>(() => PayvidenceAppRouter());
 
   locator.registerLazySingleton<NetworkService>(

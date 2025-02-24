@@ -88,13 +88,13 @@ class OnboardingScreen extends HookConsumerWidget {
                           height: 45.h,
                         ),
                         AppButton(buttonText: 'Get started', onPressed: () {
-                          context.router.push(const CreateAccountRoute());
+                          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.createAccount);
                         },),
                         SizedBox(height: 26.h),
                         GestureDetector(
                           onTap: (){
                             locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
-                            // context.router.push(const LoginRoute());
+
                           },
                           child: Text(
                             'Log in instead',

@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
     
 
 
@@ -79,7 +81,8 @@ class OtpLogin extends StatelessWidget {
               height: 32.h,
             ),
             AppButton(buttonText: 'Submit', onPressed: () {
-              context.router.push(CreateNewPasswordRoute());
+              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.createNewPassword);
+
             }),
             SizedBox(
               height: 58.h,

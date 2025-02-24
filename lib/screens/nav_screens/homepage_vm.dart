@@ -1,16 +1,38 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:payvidence/utilities/base_notifier.dart';
 
-class HomePageViewModel{
-  final WidgetRef ref;
+import '../../model/business_model.dart';
+
+final homePageViewModel = ChangeNotifierProvider((ref)=> HomePageViewModel(ref));
+
+class HomePageViewModel extends BaseChangeNotifier{
+  final Ref ref;
   HomePageViewModel(this.ref);
 
-  // int _selectedIndex = 0;
-
-  static final _selectedIndexProvider = StateProvider((ref)=>0);
-  int get selectedIndex => ref.watch(_selectedIndexProvider);
-
-  void onItemTapped(int index) {
-      ref.read(_selectedIndexProvider.notifier).state = index;
+  Business? _business;
+  Business? get businessInfo => _business;
+  set businessInfo(Business? business) {
+    _business = business;
+    notifyListeners();
   }
+
+  Future<void> getBusiness() async {
+  try {
+
+    final response = await apiServices.getBusiness();
+
+    if (response.success) {
+      businessInfo = Business.fromJson(response.data!["data"]);
+      notifyListeners();
+    } else {
+
+      var errorMessage = response.error?.errors?.first.message ??
+          response.error?.message ??
+          "An error occurred!";
+      handleError(message: errorMessage);
+    }
+  } catch (e) {
+  }
+}
 
 }

@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
+
+import '../../model/user_model.dart';
 
 
 final createAccountViewModelProvider =
@@ -41,6 +43,16 @@ class CreateAccountViewModel extends BaseChangeNotifier{
       if (response.success) {
         _isLoading = false;
         notifyListeners();
+        var user = User.fromJson(response.data!["data"]);
+        // saveUserCredentials(
+        //     firstName: user.account.firstName,
+        //     lastName: user.account.lastName,
+        //     email: user.account.email,
+        //     phoneNumber: user.account.phoneNumber,
+        //     profilePictureUrl: user.account.profilePictureUrl ?? "",
+        //     token: user.token ?? ""
+        // );
+
         navigateOnSuccess();
 
       } else {
@@ -59,81 +71,3 @@ class CreateAccountViewModel extends BaseChangeNotifier{
   }}
 
 
-
-  // static final createAccountNotifierProvider =
-  //     StateNotifierProvider.autoDispose<CreateAccountNotifier, BaseState<CreateAccountModel>>(
-  //   (ref) => CreateAccountNotifier(
-  //     apiService: ref.read(apiServiceProvider),
-  //     onSuccess: () {
-  //       final router = ref.read(navigationProvider);
-  //       router.replace(const OtpScreenRoute());
-  //       print('Navigation Complete');
-  //       // ref.read(AppRoutes().goRouterProvider).go(AppRoutes.otp);
-  //     }
-  //   ),
-  // );
-
-  // bool get obscurePassword => ref.watch(obscurePasswordProvider);
-  // bool get obscurePasswordConfirm => ref.watch(obscurePasswordConfirmProvider);
-
-
-  // BaseState<CreateAccountModel> get createAccountState => ref.watch(createAccountNotifierProvider);
-
-
-  // bool areAllFieldsFilled() =>
-  //     ref.watch(firstNameProvider).isNotEmpty &&
-  //         ref.watch(lastNameProvider).isNotEmpty &&
-  //         ref.watch(emailProvider).isNotEmpty &&
-  //         ref.watch(phoneProvider).isNotEmpty &&
-  //         ref.watch(passwordProvider).isNotEmpty &&
-  //         ref.watch(passwordConfirmProvider).isNotEmpty;
-
-  // Future<void> createAccount() async {
-  //
-  //   ref.read(createAccountNotifierProvider.notifier).createAccount(
-  //     ref.watch(firstNameControllerProvider).text,
-  //     ref.watch(lastNameControllerProvider).text,
-  //     ref.watch(phoneControllerProvider).text,
-  //     ref.watch(emailControllerProvider).text,
-  //     ref.watch(passwordControllerProvider).text,
-  //     ref.watch(passwordConfirmControllerProvider).text,
-  //   );
-  //
-  //   ref.read(firstNameControllerProvider).clear();
-  //   ref.read(lastNameControllerProvider).clear();
-  //   ref.read(phoneControllerProvider).clear();
-  //   ref.read(emailControllerProvider).clear();
-  //   ref.read(passwordControllerProvider).clear();
-  //   ref.read(passwordConfirmControllerProvider).clear();
-  //
-  // }
-
-
-
-// class CreateAccountNotifier extends BaseNotifier<CreateAccountModel> {
-//   CreateAccountNotifier({
-//     required super.apiService,
-//     required super.onSuccess,
-//   });
-//
-//   Future<void> createAccount(
-//     String firstName,
-//     String lastName,
-//     String phone,
-//     String email,
-//     String password,
-//     String passwordConfirm,
-//   ) async {
-//     await executeRequest(
-//       () => apiService.createAccount(
-//         firstName: firstName,
-//         lastName: lastName,
-//         phone: phone,
-//         email: email,
-//         password: password,
-//         passwordConfirm: passwordConfirm,
-//       ),
-//       dataMapper: (json) => CreateAccountModel.fromJson(json),
-//     );
-//   }
-// }

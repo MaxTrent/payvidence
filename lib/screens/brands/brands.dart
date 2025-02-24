@@ -8,7 +8,9 @@ import '../../components/app_text_field.dart';
 import '../../components/category_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
     
 
 
@@ -37,7 +39,7 @@ class Brands extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.router.push(AddBrandRoute());
+          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addCategory);
         },
         backgroundColor: primaryColor2,
         child: Icon(

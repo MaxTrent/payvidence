@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
  import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/app_text_field.dart';
-import 'package:payvidence/constants/app_colors.dart';  
+import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
@@ -71,7 +73,7 @@ class EmptyCategory extends StatelessWidget {
                 Text('All added categories will appear here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
                 SizedBox(height: 48.h,),
                 AppButton(buttonText: 'Add category', onPressed: (){
-                  context.router.push(AddCategoryRoute());
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addCategory);
                 })
               ],
             ),

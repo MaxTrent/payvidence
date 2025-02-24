@@ -14,16 +14,13 @@ Future<void> main() async {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   await loadEnvFile();
-  print('Env file loaded.');
-
   final baseUrl = dotenv.env['BASE_URL'] ?? '';
   if (baseUrl.isEmpty) {
     throw Exception("BASE_URL is missing or empty in .env file!");
   }
-  print('Base URL: $baseUrl');
+
   try {
     await initializeSharedDependencies(baseUrl: baseUrl);
-    print('Shared dependencies initialized.');
     runApp(ProviderScope(child: MyApp(appTheme: AppTheme())));
   } catch (e) {
     print(e);

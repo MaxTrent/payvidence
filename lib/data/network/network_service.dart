@@ -4,13 +4,12 @@ import 'package:fpdart/fpdart.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../shared_dependency/shared_dependency.dart';
-import '../../utilities/api_status_response.dart';
 import '../local/session_constants.dart';
 import '../local/session_manager.dart';
 import 'api_response.dart';
 import 'interceptors/connection_interceptor.dart';
 
-enum RequestMethod { get, post, patch }
+enum RequestMethod { get, post, patch, delete }
 
 class NetworkService {
   final Dio dio;
@@ -91,17 +90,40 @@ class NetworkService {
         requestMethod: RequestMethod.post);
   }
 
-  Future<Either<Failure, Success>> request(
-      {required dynamic requestData,
-        required Map<String, dynamic> headers,
-        required String path,
-        required RequestMethod requestMethod}) async {
+  Future<Either<Failure, Success>> delete(
+      String path, {
+        bool useToken = true,
+        dynamic data,
+        Map<String, dynamic> headers = const {},
+      }) async {
+    Map<String, dynamic> authorizedHeader = {};
+    if (useToken) {
+      authorizedHeader = await getAuthorizedHeader();
+    }
+
+    return request(
+      requestData: data,
+      headers: {...headers, ...authorizedHeader},
+      path: path,
+      requestMethod: RequestMethod.delete,
+    );
+  }
+
+  Future<Either<Failure, Success>> request({
+    required dynamic requestData,
+    required Map<String, dynamic> headers,
+    required String path,
+    required RequestMethod requestMethod,
+  }) async {
     try {
       Response? response;
       switch (requestMethod) {
         case RequestMethod.get:
-          response = await dio.get(path,
-              data: requestData, options: Options(headers: headers));
+          response = await dio.get(
+            path,
+            queryParameters: requestData,
+            options: Options(headers: headers),
+          );
           break;
         case RequestMethod.post:
           response = await dio.post(
@@ -112,11 +134,23 @@ class NetworkService {
               headers: headers,
             ),
           );
+          break;
         case RequestMethod.patch:
-          response = await dio.patch(path,
-              data: requestData,
-              options:
-              Options(contentType: 'application/json', headers: headers));
+          response = await dio.patch(
+            path,
+            data: requestData,
+            options: Options(
+              contentType: 'application/json',
+              headers: headers,
+            ),
+          );
+          break;
+        case RequestMethod.delete:
+          response = await dio.delete(
+            path,
+            data: requestData,
+            options: Options(headers: headers),
+          );
           break;
       }
 
@@ -136,17 +170,16 @@ class NetworkService {
       }
 
       if (e.response == null) {
-        return Left(Failure(ApiErrorResponseV2(
-            message:
-            "Service unavailable at the moment. \nplease try again later!")));
+        return Left(Failure(const ApiErrorResponseV2(
+            message: "Service unavailable at the moment. \nPlease try again later!")));
       }
 
       if (e.response!.statusCode == 401 &&
           e.response!.data is Map &&
           e.response!.data['message'] == 'Unauthenticated') {
         // await logOut();
-        return Left(Failure(ApiErrorResponseV2(
-            message: 'Session expired. Please log in again.')));
+        return Left(Failure(
+            const ApiErrorResponseV2(message: 'Session expired. Please log in again.')));
       }
 
       return Left(Failure.fromMap(e.response!.data as Map<String, dynamic>));

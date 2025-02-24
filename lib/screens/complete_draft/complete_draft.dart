@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
    
 
 
@@ -72,7 +74,7 @@ class CompleteDraft extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   AppButton(buttonText: 'Generate receipt', onPressed: (){
-                    context.router.push(GenerateReceiptRoute());
+                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.generateReceipt);
                   },),
                   SizedBox(height: 26.h,),
                   Text('Save as draft', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: primaryColor2),),

@@ -7,6 +7,8 @@ import 'package:flutter_svg/svg.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 
 @RoutePage(name: 'EmptyProductRoute')
@@ -143,7 +145,7 @@ class EmptyProduct extends StatelessWidget {
                                             ),
                                           ),
                                           GestureDetector(
-                                              onTap: ()=> context.router.maybePop(),
+                                              onTap: ()=> locator<PayvidenceAppRouter>().back(),
                                               child: const Icon(Icons.close,))
                                         ],
                                       ),

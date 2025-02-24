@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 
 @RoutePage(name: 'CreateNewPasswordRoute')
@@ -38,7 +40,7 @@ class CreateNewPassword extends StatelessWidget {
               ),
               SizedBox(height: 32.h,),
               AppButton(buttonText: 'Change password', onPressed: (){
-                context.router.replace(ChangePasswordSuccessRoute());
+                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.changePassword);
               },),
             ],
           ),

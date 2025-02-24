@@ -6,7 +6,9 @@ import 'package:flutter_svg/svg.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
    
     
 
@@ -27,7 +29,7 @@ class AllReceipts extends StatelessWidget {
          padding:  EdgeInsets.only(right: 20.w),
          child: GestureDetector(
              onTap: (){
-               context.router.push(DraftsRoute());
+               locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.drafts);
              },
              child: Text('View drafts', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 14.sp, color: primaryColor2))),
        ))

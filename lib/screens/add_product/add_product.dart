@@ -8,7 +8,9 @@ import 'package:payvidence/screens/empty_category/empty_category.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
     
 
 @RoutePage(name: 'AddProductRoute')
@@ -35,7 +37,7 @@ class AddProduct extends StatelessWidget {
               SizedBox(height: 8.h,),
               GestureDetector(
                   onTap: (){
-                    context.router.push(EmptyCategoryRoute());
+                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyCategory);
                   },
                   child: AppTextField(hintText: 'Select category', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
               SizedBox(height: 20.h,),
@@ -47,7 +49,7 @@ class AddProduct extends StatelessWidget {
               SizedBox(height: 8.h,),
               GestureDetector(
                 onTap: (){
-                  context.router.push(BrandsRoute());
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.brands);
                 },
                   child: AppTextField(hintText: 'Select brand', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp), enabled: false,)),
               SizedBox(height: 20.h,),

@@ -7,7 +7,9 @@ import 'package:payvidence/screens/complete_draft/complete_draft.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
    
     
 
@@ -93,7 +95,7 @@ class DraftTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        context.router.push(CompleteDraftRoute());
+        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.completeDraft);
       },
       child: Container(
         height: 101.h,

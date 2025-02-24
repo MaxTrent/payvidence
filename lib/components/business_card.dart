@@ -5,7 +5,9 @@ import 'package:flutter_svg/svg.dart';
 
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
+import '../routes/payvidence_app_router.dart';
 import '../routes/payvidence_app_router.gr.dart';
+import '../shared_dependency/shared_dependency.dart';
 import 'app_button.dart';
 
 
@@ -64,7 +66,7 @@ class BusinessCard extends StatelessWidget {
               ],
             ),
             AppButton(buttonText: 'Switch to business', onPressed: (){
-              context.router.push(BusinessDetailRoute());
+              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.businessDetail);
             })
           ],
         ),

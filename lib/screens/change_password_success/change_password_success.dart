@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 
 
@@ -18,7 +20,7 @@ class ChangePasswordSuccess extends StatelessWidget {
       floatingActionButton: AppButton(
           buttonText: 'Log in',
           onPressed: () {
-            context.router.replace(HomePageRoute());
+            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
           }),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),

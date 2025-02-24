@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 
@@ -30,7 +32,7 @@ class EmptyBusiness extends StatelessWidget {
         ),
       ),
       floatingActionButton: AppButton(buttonText: 'Set-up business', onPressed: (){
-        context.router.push(AddBusinessRoute());
+       locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addBusiness);
       }),
     );
   }

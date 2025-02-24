@@ -8,7 +8,7 @@ class SessionConstants {
   static const userLastName = "userLastName";
   static const userEmail = "userEmail";
   static const userPhone = "userPhone";
-
+  static const profilePictureUrl = 'profilePictureUrl';
   static const isUserLoggedIn = "isUserLoggedIn";
 
 }

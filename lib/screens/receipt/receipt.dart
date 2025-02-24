@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
    
     
 
@@ -26,7 +28,7 @@ class Receipt extends StatelessWidget {
               Image.asset(Assets.png.receipts.path),
               SizedBox(height: 40.h,),
               AppButton(buttonText: 'Share receipt', onPressed: (){
-                context.router.push(ReceiptRoute());
+                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.receipt);
               },),
               SizedBox(height: 26.h,),
               Text('Download receipt', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: primaryColor2),)

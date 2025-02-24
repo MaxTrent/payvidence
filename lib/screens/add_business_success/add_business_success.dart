@@ -5,7 +5,9 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'AddBusinessSuccessRoute')
 class AddBusinessSuccess extends StatelessWidget {
@@ -29,7 +31,7 @@ class AddBusinessSuccess extends StatelessWidget {
         ),
       ),
       floatingActionButton: AppButton(buttonText: 'Alright!', onPressed: (){
-        context.router.replace(const AllBusinessesRoute());
+        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allBusiness);
       }),
     );
   }

@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'AddBrandRoute')
 class AddBrand extends StatelessWidget {
@@ -37,7 +39,7 @@ class AddBrand extends StatelessWidget {
               height: 128, hintText: 'Brand description', controller: _controller, ),
             SizedBox(height: 32.h,),
             AppButton(buttonText: 'Save brand', onPressed: (){
-              context.router.push(const AddProductSuccessRoute());
+              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addProduct);
             })
           ],
         ),
