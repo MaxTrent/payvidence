@@ -211,10 +211,10 @@ class NetworkService {
   //
   //   Future.microtask(() {
   //     if (appFlavor == "user")
-  //       locator<UserAppRouter>().replaceAll([const WakaboyOnboardingScreen()]);
+  //       locator<UserAppRouter>().replaceAll([const OnboardingScreenRoute()]);
   //     else
   //       locator<RiderAppRouter>()
-  //           .replaceAll([const WakaboyRiderOnboardingScreen()]);
+  //           .replaceAll([const OnboardingScreenRoute()]);
   //   });
   // }
 }

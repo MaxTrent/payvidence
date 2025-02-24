@@ -12,6 +12,7 @@ import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
+import '../onboarding/onboarding.dart';
 
 
 @RoutePage(name: 'CreateAccountRoute')
@@ -290,7 +291,9 @@ class CreateAccountScreen extends HookConsumerWidget {
                                 print("Form is valid");
                                 FocusScope.of(context).unfocus();
                                 viewModel.createAccount(firstName: firstNameController.text, lastName: lastNameController.text, phone: phoneController.text, email: emailController.text, password: passwordController.text, passwordConfirm: passwordConfirmController.text, navigateOnSuccess: (){
-                                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+                                  locator<PayvidenceAppRouter>().popUntil(
+                                          (route) => route is OnboardingScreen);
+                                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otp);
                                 });
                               } else {
                                 print("Form is not valid");
