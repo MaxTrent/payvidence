@@ -10,6 +10,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i53;
 import 'package:flutter/material.dart' as _i54;
+import 'package:payvidence/model/business_model.dart' as _i55;
 import 'package:payvidence/screens/account_success/account_success.dart' as _i1;
 import 'package:payvidence/screens/add_brand/add_brand.dart' as _i2;
 import 'package:payvidence/screens/add_business/add_business.dart' as _i3;
@@ -43,29 +44,29 @@ import 'package:payvidence/screens/create_new_password/create_new_password.dart'
 import 'package:payvidence/screens/drafts/drafts.dart' as _i24;
 import 'package:payvidence/screens/empty_business/empty_business.dart' as _i25;
 import 'package:payvidence/screens/empty_category/empty_category.dart' as _i26;
-import 'package:payvidence/screens/empty_product/empty_product.dart' as _i27;
 import 'package:payvidence/screens/forgot_password/forgot_password.dart'
-    as _i28;
+    as _i27;
 import 'package:payvidence/screens/generate_invoices/generate_invoices.dart'
-    as _i29;
+    as _i28;
 import 'package:payvidence/screens/generate_receipt/generate_receipt.dart'
-    as _i30;
-import 'package:payvidence/screens/invoice/invoice.dart' as _i33;
-import 'package:payvidence/screens/login/login.dart' as _i34;
+    as _i29;
+import 'package:payvidence/screens/invoice/invoice.dart' as _i32;
+import 'package:payvidence/screens/login/login.dart' as _i33;
 import 'package:payvidence/screens/my_subscription/my_subscription.dart'
-    as _i35;
-import 'package:payvidence/screens/nav_screens/home.dart' as _i32;
-import 'package:payvidence/screens/nav_screens/home_page.dart' as _i31;
+    as _i34;
+import 'package:payvidence/screens/nav_screens/home.dart' as _i31;
+import 'package:payvidence/screens/nav_screens/home_page.dart' as _i30;
 import 'package:payvidence/screens/notification_settings/notification_settings.dart'
-    as _i36;
-import 'package:payvidence/screens/notifications/notifications.dart' as _i37;
-import 'package:payvidence/screens/onboarding/onboarding.dart' as _i38;
-import 'package:payvidence/screens/otp/otp.dart' as _i40;
-import 'package:payvidence/screens/otp_login/otp_login.dart' as _i39;
+    as _i35;
+import 'package:payvidence/screens/notifications/notifications.dart' as _i36;
+import 'package:payvidence/screens/onboarding/onboarding.dart' as _i37;
+import 'package:payvidence/screens/otp/otp.dart' as _i39;
+import 'package:payvidence/screens/otp_login/otp_login.dart' as _i38;
 import 'package:payvidence/screens/payvidence_info/payvidence_info.dart'
-    as _i41;
+    as _i40;
 import 'package:payvidence/screens/privacy_and_security/privacy_and_security.dart'
-    as _i42;
+    as _i41;
+import 'package:payvidence/screens/product/product.dart' as _i42;
 import 'package:payvidence/screens/product_details/product_details.dart'
     as _i43;
 import 'package:payvidence/screens/profile/profile.dart' as _i44;
@@ -315,10 +316,17 @@ class AddProductSuccessRoute extends _i53.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i9.AllBusinesses]
-class AllBusinessesRoute extends _i53.PageRouteInfo<void> {
-  const AllBusinessesRoute({List<_i53.PageRouteInfo>? children})
-      : super(
+class AllBusinessesRoute extends _i53.PageRouteInfo<AllBusinessesRouteArgs> {
+  AllBusinessesRoute({
+    required List<_i55.Business> allBusiness,
+    _i54.Key? key,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
           AllBusinessesRoute.name,
+          args: AllBusinessesRouteArgs(
+            allBusiness: allBusiness,
+            key: key,
+          ),
           initialChildren: children,
         );
 
@@ -327,9 +335,29 @@ class AllBusinessesRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i9.AllBusinesses();
+      final args = data.argsAs<AllBusinessesRouteArgs>();
+      return _i9.AllBusinesses(
+        args.allBusiness,
+        key: args.key,
+      );
     },
   );
+}
+
+class AllBusinessesRouteArgs {
+  const AllBusinessesRouteArgs({
+    required this.allBusiness,
+    this.key,
+  });
+
+  final List<_i55.Business> allBusiness;
+
+  final _i54.Key? key;
+
+  @override
+  String toString() {
+    return 'AllBusinessesRouteArgs{allBusiness: $allBusiness, key: $key}';
+  }
 }
 
 /// generated route for
@@ -817,42 +845,7 @@ class EmptyCategoryRouteArgs {
 }
 
 /// generated route for
-/// [_i27.EmptyProduct]
-class EmptyProductRoute extends _i53.PageRouteInfo<EmptyProductRouteArgs> {
-  EmptyProductRoute({
-    _i54.Key? key,
-    List<_i53.PageRouteInfo>? children,
-  }) : super(
-          EmptyProductRoute.name,
-          args: EmptyProductRouteArgs(key: key),
-          initialChildren: children,
-        );
-
-  static const String name = 'EmptyProductRoute';
-
-  static _i53.PageInfo page = _i53.PageInfo(
-    name,
-    builder: (data) {
-      final args = data.argsAs<EmptyProductRouteArgs>(
-          orElse: () => const EmptyProductRouteArgs());
-      return _i27.EmptyProduct(key: args.key);
-    },
-  );
-}
-
-class EmptyProductRouteArgs {
-  const EmptyProductRouteArgs({this.key});
-
-  final _i54.Key? key;
-
-  @override
-  String toString() {
-    return 'EmptyProductRouteArgs{key: $key}';
-  }
-}
-
-/// generated route for
-/// [_i28.ForgotPassword]
+/// [_i27.ForgotPassword]
 class ForgotPasswordRoute extends _i53.PageRouteInfo<ForgotPasswordRouteArgs> {
   ForgotPasswordRoute({
     _i54.Key? key,
@@ -870,7 +863,7 @@ class ForgotPasswordRoute extends _i53.PageRouteInfo<ForgotPasswordRouteArgs> {
     builder: (data) {
       final args = data.argsAs<ForgotPasswordRouteArgs>(
           orElse: () => const ForgotPasswordRouteArgs());
-      return _i28.ForgotPassword(key: args.key);
+      return _i27.ForgotPassword(key: args.key);
     },
   );
 }
@@ -887,7 +880,7 @@ class ForgotPasswordRouteArgs {
 }
 
 /// generated route for
-/// [_i29.GenerateInvoices]
+/// [_i28.GenerateInvoices]
 class GenerateInvoicesRoute
     extends _i53.PageRouteInfo<GenerateInvoicesRouteArgs> {
   GenerateInvoicesRoute({
@@ -906,7 +899,7 @@ class GenerateInvoicesRoute
     builder: (data) {
       final args = data.argsAs<GenerateInvoicesRouteArgs>(
           orElse: () => const GenerateInvoicesRouteArgs());
-      return _i29.GenerateInvoices(key: args.key);
+      return _i28.GenerateInvoices(key: args.key);
     },
   );
 }
@@ -923,7 +916,7 @@ class GenerateInvoicesRouteArgs {
 }
 
 /// generated route for
-/// [_i30.GenerateReceipt]
+/// [_i29.GenerateReceipt]
 class GenerateReceiptRoute
     extends _i53.PageRouteInfo<GenerateReceiptRouteArgs> {
   GenerateReceiptRoute({
@@ -942,7 +935,7 @@ class GenerateReceiptRoute
     builder: (data) {
       final args = data.argsAs<GenerateReceiptRouteArgs>(
           orElse: () => const GenerateReceiptRouteArgs());
-      return _i30.GenerateReceipt(key: args.key);
+      return _i29.GenerateReceipt(key: args.key);
     },
   );
 }
@@ -959,11 +952,14 @@ class GenerateReceiptRouteArgs {
 }
 
 /// generated route for
-/// [_i31.HomePage]
-class HomePageRoute extends _i53.PageRouteInfo<void> {
-  const HomePageRoute({List<_i53.PageRouteInfo>? children})
-      : super(
+/// [_i30.HomePage]
+class HomePageRoute extends _i53.PageRouteInfo<HomePageRouteArgs> {
+  HomePageRoute({
+    _i54.Key? key,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
           HomePageRoute.name,
+          args: HomePageRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -972,13 +968,26 @@ class HomePageRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return  _i31.HomePage();
+      final args = data.argsAs<HomePageRouteArgs>(
+          orElse: () => const HomePageRouteArgs());
+      return _i30.HomePage(key: args.key);
     },
   );
 }
 
+class HomePageRouteArgs {
+  const HomePageRouteArgs({this.key});
+
+  final _i54.Key? key;
+
+  @override
+  String toString() {
+    return 'HomePageRouteArgs{key: $key}';
+  }
+}
+
 /// generated route for
-/// [_i32.HomeScreen]
+/// [_i31.HomeScreen]
 class HomeScreenRoute extends _i53.PageRouteInfo<void> {
   const HomeScreenRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -991,13 +1000,13 @@ class HomeScreenRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return  _i32.HomeScreen();
+      return const _i31.HomeScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i33.Invoice]
+/// [_i32.Invoice]
 class InvoiceRoute extends _i53.PageRouteInfo<InvoiceRouteArgs> {
   InvoiceRoute({
     _i54.Key? key,
@@ -1015,7 +1024,7 @@ class InvoiceRoute extends _i53.PageRouteInfo<InvoiceRouteArgs> {
     builder: (data) {
       final args =
           data.argsAs<InvoiceRouteArgs>(orElse: () => const InvoiceRouteArgs());
-      return _i33.Invoice(key: args.key);
+      return _i32.Invoice(key: args.key);
     },
   );
 }
@@ -1032,7 +1041,7 @@ class InvoiceRouteArgs {
 }
 
 /// generated route for
-/// [_i34.Login]
+/// [_i33.Login]
 class LoginRoute extends _i53.PageRouteInfo<void> {
   const LoginRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1045,13 +1054,13 @@ class LoginRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i34.Login();
+      return const _i33.Login();
     },
   );
 }
 
 /// generated route for
-/// [_i35.MySubscription]
+/// [_i34.MySubscription]
 class MySubscriptionRoute extends _i53.PageRouteInfo<void> {
   const MySubscriptionRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1064,13 +1073,13 @@ class MySubscriptionRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i35.MySubscription();
+      return const _i34.MySubscription();
     },
   );
 }
 
 /// generated route for
-/// [_i36.NotificationSettings]
+/// [_i35.NotificationSettings]
 class NotificationSettingsRoute extends _i53.PageRouteInfo<void> {
   const NotificationSettingsRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1083,13 +1092,13 @@ class NotificationSettingsRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i36.NotificationSettings();
+      return const _i35.NotificationSettings();
     },
   );
 }
 
 /// generated route for
-/// [_i37.Notifications]
+/// [_i36.Notifications]
 class NotificationsRoute extends _i53.PageRouteInfo<void> {
   const NotificationsRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1102,13 +1111,13 @@ class NotificationsRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i37.Notifications();
+      return const _i36.Notifications();
     },
   );
 }
 
 /// generated route for
-/// [_i38.OnboardingScreen]
+/// [_i37.OnboardingScreen]
 class OnboardingScreenRoute
     extends _i53.PageRouteInfo<OnboardingScreenRouteArgs> {
   OnboardingScreenRoute({
@@ -1127,7 +1136,7 @@ class OnboardingScreenRoute
     builder: (data) {
       final args = data.argsAs<OnboardingScreenRouteArgs>(
           orElse: () => const OnboardingScreenRouteArgs());
-      return _i38.OnboardingScreen(key: args.key);
+      return _i37.OnboardingScreen(key: args.key);
     },
   );
 }
@@ -1144,7 +1153,7 @@ class OnboardingScreenRouteArgs {
 }
 
 /// generated route for
-/// [_i39.OtpLogin]
+/// [_i38.OtpLogin]
 class OtpLoginRoute extends _i53.PageRouteInfo<void> {
   const OtpLoginRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1157,13 +1166,13 @@ class OtpLoginRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i39.OtpLogin();
+      return const _i38.OtpLogin();
     },
   );
 }
 
 /// generated route for
-/// [_i40.OtpScreen]
+/// [_i39.OtpScreen]
 class OtpScreenRoute extends _i53.PageRouteInfo<void> {
   const OtpScreenRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1176,13 +1185,13 @@ class OtpScreenRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i40.OtpScreen();
+      return const _i39.OtpScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i41.PayvidenceInfo]
+/// [_i40.PayvidenceInfo]
 class PayvidenceInfoRoute extends _i53.PageRouteInfo<void> {
   const PayvidenceInfoRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1195,13 +1204,13 @@ class PayvidenceInfoRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i41.PayvidenceInfo();
+      return const _i40.PayvidenceInfo();
     },
   );
 }
 
 /// generated route for
-/// [_i42.PrivacyAndSecurity]
+/// [_i41.PrivacyAndSecurity]
 class PrivacyAndSecurityRoute extends _i53.PageRouteInfo<void> {
   const PrivacyAndSecurityRoute({List<_i53.PageRouteInfo>? children})
       : super(
@@ -1214,9 +1223,44 @@ class PrivacyAndSecurityRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i42.PrivacyAndSecurity();
+      return const _i41.PrivacyAndSecurity();
     },
   );
+}
+
+/// generated route for
+/// [_i42.Product]
+class ProductRoute extends _i53.PageRouteInfo<ProductRouteArgs> {
+  ProductRoute({
+    _i54.Key? key,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
+          ProductRoute.name,
+          args: ProductRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'ProductRoute';
+
+  static _i53.PageInfo page = _i53.PageInfo(
+    name,
+    builder: (data) {
+      final args =
+          data.argsAs<ProductRouteArgs>(orElse: () => const ProductRouteArgs());
+      return _i42.Product(key: args.key);
+    },
+  );
+}
+
+class ProductRouteArgs {
+  const ProductRouteArgs({this.key});
+
+  final _i54.Key? key;
+
+  @override
+  String toString() {
+    return 'ProductRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for
