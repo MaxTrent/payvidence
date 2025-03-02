@@ -33,7 +33,7 @@ class LoginViewModel extends BaseChangeNotifier {
         notifyListeners();
 
         var user = User.fromJson(response.data!["data"]);
-        saveUserCredentials(
+        await saveUserCredentials(
             firstName: user.account.firstName,
             lastName: user.account.lastName,
             email: user.account.email,
