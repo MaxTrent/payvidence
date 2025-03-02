@@ -9,10 +9,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
  import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/toast_service.dart';
+import 'add_business_vm.dart';
     
 
 @RoutePage(name: 'AddBusinessRoute')
@@ -23,11 +26,9 @@ class AddBusiness extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
 
-    final businessNameController = useTextEditingController();
-    final businessAddressController = useTextEditingController();
-    final phoneNumberController = useTextEditingController();
-    final issuerController = useTextEditingController();
-    final roleController = useTextEditingController();
+    AddBusinessViewModel vm = ref.watch(addBusinessViewModelProvider);
+
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final logoImage = useState<File?>(null);
     final signatureImage = useState<File?>(null);
 
@@ -37,33 +38,113 @@ class AddBusiness extends HookConsumerWidget {
       onTap: FocusManager.instance.primaryFocus?.unfocus,
       child: Scaffold(
         appBar: AppBar(),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: ListView(
-            children: [
-              Text('Set-up business', style: Theme.of(context).textTheme.displayLarge,),
-              SizedBox(height: 8.h,),
-              Text('Fill in all details to add your business.', style: Theme.of(context).textTheme.displaySmall!,),
-              SizedBox(height: 12.h,),
-              _buildSectionTitle(context, 'Business name'),
-              AppTextField(hintText: 'Business name', controller: businessNameController,),
-              _buildSectionTitle(context, 'Business address'),
-              AppTextField(hintText: 'Business address', controller: businessAddressController,),
-              _buildSectionTitle(context, 'Business phone number'),
-              AppTextField(hintText: 'Business phone number', controller: phoneNumberController,),
-              _buildSectionTitle(context, 'Business logo'),
-              SvgPicture.asset(Assets.svg.uploadImage),
-              _buildSectionTitle(context, 'Who issues receipts and invoices?'),
-              AppTextField(hintText: '', controller: issuerController, fillColor: borderColor, filled: true,),
-              _buildSectionTitle(context, 'What is the role of this issuer? '),
-              AppTextField(hintText: 'Role of issuer', controller: roleController,),
-              _buildSectionTitle(context, 'Issuer signature'),
-              SvgPicture.asset(Assets.svg.uploadImage),
-              SizedBox(height: 32.h,),
-              AppButton(buttonText: 'Add business', onPressed: (){
-                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addBusiness);
-              })
-            ],
+        body: Form(
+          key: formKey,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: ListView(
+              children: [
+                Text('Set-up business', style: Theme.of(context).textTheme.displayLarge,),
+                SizedBox(height: 8.h,),
+                Text('Fill in all details to add your business.', style: Theme.of(context).textTheme.displaySmall!,),
+                SizedBox(height: 12.h,),
+                _buildSectionTitle(context, 'Business name'),
+                AppTextField(hintText: 'Business name', controller: vm.businessNameController,
+                  validator: (val){
+                  return Validator.validateName(val);
+                  },
+                ),
+                _buildSectionTitle(context, 'Business address'),
+                AppTextField(hintText: 'Business address', controller: vm.businessAddressController,  validator: (val){
+                  return Validator.validateName(val);
+                },),
+                _buildSectionTitle(context, 'Business phone number'),
+                AppTextField(hintText: 'Business phone number', controller: vm.phoneNumberController,  validator: (val){
+                  return Validator.validatePhoneNumber(val);
+                },),
+                _buildSectionTitle(context, 'Business logo'),
+                GestureDetector(
+                  onTap: () async {
+                    vm.logo.value = await vm.pickImage();
+                  },
+                    child: ValueListenableBuilder(
+                      valueListenable: vm.logo,
+                      builder: (context, val, _) {
+                        if(val == null){
+                          return SvgPicture.asset(Assets.svg.uploadImage);
+
+                        }else{
+                          return Container(
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: Colors.grey)
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(val.name),
+                                  const Text("Change", style: TextStyle(color: Colors.purple, fontSize: 10),),
+
+                                ],
+                              ));                      }                    },
+                    )),
+                _buildSectionTitle(context, 'Who issues receipts and invoices?'),
+                AppTextField(hintText: '', controller: vm.issuerController, fillColor: borderColor, filled: true,  validator: (val){
+                  return Validator.validateName(val);
+                },),
+                _buildSectionTitle(context, 'What is the role of this issuer? '),
+                AppTextField(hintText: 'Role of issuer', controller: vm.roleController,  validator: (val){
+                  return Validator.validateName(val);
+                },
+                ),
+                _buildSectionTitle(context, 'Issuer signature'),
+                GestureDetector(
+                    onTap: () async {
+                      vm.signature.value = await vm.pickImage();
+                    },child:ValueListenableBuilder(
+                    valueListenable: vm.signature,
+                    builder: (context, val, _) {
+                        if(val == null){
+                          return SvgPicture.asset(Assets.svg.uploadImage);
+
+                        }else{
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: Colors.grey)
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(val.name),
+                                  const Text("Change", style: TextStyle(color: Colors.purple, fontSize: 10),),
+
+                                ],
+                              ));
+
+                        }
+                      }
+                    )),
+                SizedBox(height: 32.h,),
+                AppButton(buttonText: 'Add business', onPressed: (){
+                  if(formKey.currentState!.validate()){
+                    formKey.currentState!.save();
+                    if(vm.logo.value == null){
+                      ToastService.error(context, "Select a logo image");
+                    }else if(vm.signature.value == null){
+                      ToastService.error(context, "Select a signature image");
+
+                    }else{
+                      vm.createBusiness(context);
+                    }
+                  }
+                 // locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addBusiness);
+                }),
+                8.verticalSpace
+              ],
+            ),
           ),
         ),
       ),
