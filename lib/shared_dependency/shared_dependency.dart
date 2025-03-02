@@ -7,6 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/api_services.dart';
 import '../data/local/session_manager.dart';
 import '../data/network/network_service.dart';
+import '../datasource/data/category_datasource.dart';
+import '../datasource/data/product_datasource.dart';
+import '../repositories/repository/category_repository.dart';
+import '../repositories/repository/product_repository.dart';
 import '../routes/payvidence_app_router.dart';
 
 GetIt locator = GetIt.instance;
@@ -36,6 +40,19 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   );
   locator.registerLazySingleton<IBusinessRepository>(
         () => BusinessRepository(locator()),
+  );
+
+  locator.registerLazySingleton<IProductDatasource>(
+        () => ProductDatasource(locator()),
+  );
+  locator.registerLazySingleton<IProductRepository>(
+        () => ProductRepository(locator()),
+  );
+  locator.registerLazySingleton<ICategoryDatasource>(
+        () => CategoryDatasource(locator()),
+  );
+  locator.registerLazySingleton<ICategoryRepository>(
+        () => CategoryRepository(locator()),
   );
   print('Dependencies initialized successfully.');
 
