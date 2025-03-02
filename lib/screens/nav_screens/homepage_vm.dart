@@ -22,8 +22,10 @@ class HomePageViewModel extends BaseChangeNotifier{
     final response = await apiServices.getBusiness();
 
     if (response.success) {
-      businessInfo = Business.fromJson(response.data!["data"]);
-      notifyListeners();
+      if(response.data!["data"][0]){
+        businessInfo = Business.fromJson(response.data!["data"][0]);
+        notifyListeners();
+      }
     } else {
 
       var errorMessage = response.error?.errors?.first.message ??
