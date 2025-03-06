@@ -81,7 +81,14 @@ class Product extends ConsumerWidget {
             // Text('Add products to your business account. All products added will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, ))
             allProducts.when(data: (data) {
               if (data.isEmpty) {
-                return const Text("No products available");
+                return const Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("No products available"),
+                    ],
+                  ),
+                );
               }
               return ListView.separated(
                   shrinkWrap: true,
@@ -171,8 +178,7 @@ class Product extends ConsumerWidget {
                             ),
                           ),
                           GestureDetector(
-                              onTap: () =>
-                                  locator<PayvidenceAppRouter>().back(),
+                              onTap: () => Navigator.of(context).pop(),
                               child: const Icon(
                                 Icons.close,
                               ))
