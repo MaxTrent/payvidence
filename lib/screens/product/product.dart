@@ -22,12 +22,19 @@ class Product extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allProducts = ref.watch(getAllProductProvider);
+    ValueNotifier<int?> productNumber = ValueNotifier(null);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text(
-          'All products (0)',
-          style: Theme.of(context).textTheme.displayLarge!.copyWith(),
+        title: ValueListenableBuilder(
+          builder: (context, value, _) {
+            return Text(
+              'All products (${value ?? ''})',
+              style: Theme.of(context).textTheme.displayLarge!.copyWith(),
+            );
+          },
+          valueListenable: productNumber,
         ),
       ),
       body: Padding(
@@ -81,6 +88,8 @@ class Product extends ConsumerWidget {
             // Text('Add products to your business account. All products added will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, ))
             allProducts.when(data: (data) {
               if (data.isEmpty) {
+                productNumber.value = 0;
+
                 return const Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -90,10 +99,14 @@ class Product extends ConsumerWidget {
                   ),
                 );
               }
+              productNumber.value = data.length;
+
               return ListView.separated(
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return const ProductTile();
+                    return ProductTile(
+                      product: data[index],
+                    );
                   },
                   separatorBuilder: (ctx, idx) {
                     return SizedBox(
