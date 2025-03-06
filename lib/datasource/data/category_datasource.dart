@@ -11,7 +11,7 @@ abstract class ICategoryDatasource {
     String businessId,
   );
 
-  Future<CategoryModel> addCategory(String businessId, FormData requestData);
+  Future<CategoryModel> addCategory(String businessId, Map<String, dynamic>  requestData);
 }
 
 class CategoryDatasource extends ICategoryDatasource {
@@ -52,13 +52,12 @@ class CategoryDatasource extends ICategoryDatasource {
 
   @override
   Future<CategoryModel> addCategory(
-      String businessId, FormData requestData) async {
+      String businessId, Map<String, dynamic> requestData) async {
     //final NetworkService _networkService = locator<NetworkService>();
     try {
       final Either<Failure, Success> response = await networkService.post(
           '${PayvidenceEndpoints.business}$businessId/category',
-          data: requestData,
-          headers: {"Content-Type": "multipart/form-data"});
+          data: requestData);
       //LoggerService.info("Product Categories:: ${response.toString()}");
 
       return response.fold((fail) {
