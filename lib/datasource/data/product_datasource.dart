@@ -23,7 +23,7 @@ class ProductDatasource extends IProductDatasource {
       {String? brandId, String? name, String? categoryId}) async {
     try {
       final Either<Failure, Success> response = await networkService.get(
-        '${PayvidenceEndpoints.product}?business_id=$businessId&brand_id=$brandId&name=$name&category_id=$categoryId',
+        '${PayvidenceEndpoints.product}?business_id=$businessId&brand_id=${brandId ?? ''}&name=${name ?? ''}&category_id=${categoryId ?? ''}',
         //data: requestData,
         //headers: {"Content-Type": "multipart/form-data"}
       );
@@ -57,7 +57,7 @@ class ProductDatasource extends IProductDatasource {
           data: requestData,
           headers: {"Content-Type": "multipart/form-data"});
       //LoggerService.info("Product Categories:: ${response.toString()}");
-
+      print(response);
       return response.fold((fail) {
         throw fail.error;
       }, (success) {
