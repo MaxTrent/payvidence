@@ -24,8 +24,8 @@ class HomeScreen extends HookConsumerWidget {
     final viewModel = ref.watch(homePageViewModel);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
 
-    ref.listen(getAllBusinessProvider, (prev,next){
-      if(next.hasValue){
+    ref.listen(getAllBusinessProvider, (prev, next) {
+      if (next.hasValue) {
         ref
             .read(getCurrentBusinessProvider.notifier)
             .setCurrentBusiness(next.value!.last);
@@ -71,7 +71,8 @@ class HomeScreen extends HookConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            ref.watch(getCurrentBusinessProvider)?.name ?? '...',
+                            ref.watch(getCurrentBusinessProvider)?.name ??
+                                '...',
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
@@ -131,7 +132,7 @@ class HomeScreen extends HookConsumerWidget {
                 ],
               );
             }, error: (error, _) {
-              return const Text('An error has occured');
+              return const Text("Error fetching businesses");
             }, loading: () {
               return const CustomShimmer();
             }),
