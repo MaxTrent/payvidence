@@ -32,33 +32,27 @@ class AddBusinessViewModel extends BaseChangeNotifier{
   ValueNotifier<XFile?> logo = ValueNotifier(null);
   ValueNotifier<XFile?> signature = ValueNotifier(null);
 
-  Future<XFile?> pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    return pickedFile;
-  }
 
-
-  Future<String?> uploadImage(File? image, String folder) async {
-    if (image == null) return null;
-
-    try {
-      final formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(image.path, filename: image.path.split('/').last),
-      });
-
-      // final response = await Dio().post(
-      //   "",
-      //   data: formData,
-      //   options: Options(headers: {"Authorization": ""}),
-      // );
-      //
-      // return response.data["url"];
-    } catch (e) {
-      return null;
-    }
-
-}
+//   Future<String?> uploadImage(File? image, String folder) async {
+//     if (image == null) return null;
+//
+//     try {
+//       final formData = FormData.fromMap({
+//         "file": await MultipartFile.fromFile(image.path, filename: image.path.split('/').last),
+//       });
+//
+//       // final response = await Dio().post(
+//       //   "",
+//       //   data: formData,
+//       //   options: Options(headers: {"Authorization": ""}),
+//       // );
+//       //
+//       // return response.data["url"];
+//     } catch (e) {
+//       return null;
+//     }
+//
+// }
   Future<void> createBusiness(BuildContext context) async {
 
     FormData requestData = FormData.fromMap({
@@ -77,7 +71,7 @@ class AddBusinessViewModel extends BaseChangeNotifier{
       final Business response = await businessRepository.addBusiness(
           requestData);
       if(!context.mounted) return;
-      context.router.back();
+      Navigator.of(context).pop(); // pop loading dialog on success
       ToastService.success(context, "Business created successfully");
       Future.delayed(const Duration(seconds: 2), (){
         if(!context.mounted) return;
@@ -88,7 +82,7 @@ class AddBusinessViewModel extends BaseChangeNotifier{
         
       });
     }catch(e){
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(); // pop loading dialog on error
       ToastService.error(context, 'An error has occurred!');
     }
 
