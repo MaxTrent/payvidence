@@ -119,7 +119,7 @@ class EmptyCategory extends ConsumerWidget {
                           ref
                               .read(getCurrentCategoryProvider.notifier)
                               .setCurrentCategory(data[index]);
-                          locator<PayvidenceAppRouter>().back();
+                          Navigator.of(context).pop();
                         },
                       );
                     },

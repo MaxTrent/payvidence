@@ -101,7 +101,7 @@ class Brands extends ConsumerWidget {
                             ref
                                 .read(getCurrentBrandProvider.notifier)
                                 .setCurrentBrand(data[index]);
-                            locator<PayvidenceAppRouter>().back();
+                            Navigator.of(context).pop();
                           },
                         );
                       },
