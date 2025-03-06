@@ -44,6 +44,8 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: DraftsRoute.page, path: PayvidenceRoutes.drafts),
         AutoRoute(page: EmptyCategoryRoute.page, path: PayvidenceRoutes.emptyCategory),
         AutoRoute(page: BrandsRoute.page, path: PayvidenceRoutes.brands),
+        AutoRoute(page: AddBrandRoute.page, path: PayvidenceRoutes.addBrand),
+
       ];
 
 }
@@ -86,7 +88,7 @@ class PayvidenceRoutes {
   static String get emptyCategory => '/emptyCategory';
   static String get addCategory => '/addCategory';
   static String get brands => '/brands';
-  static String get addBrand => '/addBrands';
+  static String get addBrand => '/addBrand';
   static String get productSuccess => '/productSuccess';
   static String get product => '/product';
   static String get productDetails => '/productDetails';

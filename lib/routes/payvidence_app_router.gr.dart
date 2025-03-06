@@ -28,6 +28,7 @@ import 'package:payvidence/screens/brands/brands.dart' as _i12;
 import 'package:payvidence/screens/business_data/business_data.dart' as _i13;
 import 'package:payvidence/screens/business_detail/business_detail.dart'
     as _i14;
+import 'package:payvidence/screens/category/category.dart' as _i26;
 import 'package:payvidence/screens/change_password/change_password.dart'
     as _i15;
 import 'package:payvidence/screens/change_password_success/change_password_success.dart'
@@ -43,7 +44,6 @@ import 'package:payvidence/screens/create_new_password/create_new_password.dart'
     as _i23;
 import 'package:payvidence/screens/drafts/drafts.dart' as _i24;
 import 'package:payvidence/screens/empty_business/empty_business.dart' as _i25;
-import 'package:payvidence/screens/empty_category/empty_category.dart' as _i26;
 import 'package:payvidence/screens/forgot_password/forgot_password.dart'
     as _i27;
 import 'package:payvidence/screens/generate_invoices/generate_invoices.dart'
