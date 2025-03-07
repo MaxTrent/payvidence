@@ -371,9 +371,13 @@ class $AssetsSvgGen {
 class Assets {
   const Assets._();
 
+  static const String aEnv = '.env';
   static const $AssetsJpgGen jpg = $AssetsJpgGen();
   static const $AssetsPngGen png = $AssetsPngGen();
   static const $AssetsSvgGen svg = $AssetsSvgGen();
+
+  /// List of all assets
+  static List<String> get values => [aEnv];
 }
 
 class AssetGenImage {

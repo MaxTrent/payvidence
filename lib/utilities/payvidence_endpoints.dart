@@ -11,6 +11,12 @@ class PayvidenceEndpoints{
   static String get getAccount => '/api/account';
 
   // Business Endpoints //
-  static String get getBusiness => '/api/business/9db352d8-eb76-48da-8230-fcb79136e873';
-  static String get createBusiness => '/api/business';
+  static String get business => '/api/business/';
+  //static String get createBusiness => '/api/business';
+
+  // Product Endpoints
+  static String get product => '/api/product';
+
+  // Category Endpoints
+  //static String get category => '/api/category/';
 }

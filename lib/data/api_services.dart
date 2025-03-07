@@ -84,7 +84,7 @@ class ApiServices{
 
 
   Future<ApiResult> getBusiness() async {
-    var response = await locator<NetworkService>().get(PayvidenceEndpoints.getBusiness);
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.business);
 
     return ApiResult.fromJson(response);
   }

@@ -23,3 +23,37 @@ extension ExtString on String {
     return nameRegExp.hasMatch(this);
   }
 }
+class Validator{
+  Validator._();
+
+  static String? validateName(String? value) {
+    // Remove leading and trailing white spaces
+
+    if (value!.length <= 2) {
+      return 'Please enter at least 3 characters';
+    }
+
+    return null; // Return null if the full name is valid
+  }
+
+  static String? validatePhoneNumber(String? value) {
+    // Regular expression pattern for phone numbers (assumes 10 digits)
+    final RegExp regex = RegExp(r'^[0-9]{11}$');
+
+    if (!regex.hasMatch(value!)) {
+      return 'Please enter a valid 11-digit phone number';
+    }
+
+    return null; // Return null if the phone number is valid
+  }
+  static String? validateEmpty(String? value) {
+    // Remove leading and trailing white spaces
+
+    if (value!.isEmpty) {
+      return 'Please enter at value';
+    }
+
+    return null; // Return null if the full name is valid
+
+  }
+}

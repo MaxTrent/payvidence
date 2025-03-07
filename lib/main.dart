@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
+import 'package:payvidence/utilities/app_provider_observer.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
 
@@ -21,7 +22,7 @@ Future<void> main() async {
 
   try {
     await initializeSharedDependencies(baseUrl: baseUrl);
-    runApp(ProviderScope(child: MyApp(appTheme: AppTheme())));
+    runApp(ProviderScope(observers: [AppProviderObserver()],child: MyApp(appTheme: AppTheme(), ),));
   } catch (e) {
     print(e);
   }

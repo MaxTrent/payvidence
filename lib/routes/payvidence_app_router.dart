@@ -40,10 +40,12 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: ReceiptRoute.page, path: PayvidenceRoutes.receipt),
         AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
         AutoRoute(page: ClientsRoute.page, path: PayvidenceRoutes.clients),
-        AutoRoute(page: EmptyProductRoute.page, path: PayvidenceRoutes.emptyProduct),
+        AutoRoute(page: ProductRoute.page, path: PayvidenceRoutes.product),
         AutoRoute(page: DraftsRoute.page, path: PayvidenceRoutes.drafts),
         AutoRoute(page: EmptyCategoryRoute.page, path: PayvidenceRoutes.emptyCategory),
         AutoRoute(page: BrandsRoute.page, path: PayvidenceRoutes.brands),
+        AutoRoute(page: AddBrandRoute.page, path: PayvidenceRoutes.addBrand),
+
       ];
 
 }
@@ -86,9 +88,9 @@ class PayvidenceRoutes {
   static String get emptyCategory => '/emptyCategory';
   static String get addCategory => '/addCategory';
   static String get brands => '/brands';
-  static String get addBrand => '/addBrands';
+  static String get addBrand => '/addBrand';
   static String get productSuccess => '/productSuccess';
-  static String get emptyProduct => '/emptyProduct';
+  static String get product => '/product';
   static String get productDetails => '/productDetails';
   static String get allReceipts => '/allReceipts';
   static String get drafts => '/drafts';
@@ -117,6 +119,4 @@ class PayvidenceRoutes {
   static String get clientSuccess => '/clientSuccess';
   static String get sales => 'sales';
   static String get profile => 'profile';
-
-
 }
