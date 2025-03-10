@@ -7,8 +7,8 @@ import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
-class Transactions extends StatelessWidget {
-   Transactions({super.key});
+class AllTransactions extends StatelessWidget {
+   AllTransactions({super.key});
 final _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -52,9 +52,9 @@ final _searchController = TextEditingController();
                 SizedBox(height: 20.h,),
                 SvgPicture.asset(Assets.svg.emptyInvoice),
                 SizedBox(height: 40.h,),
-                Text('No invoice yet!', style: Theme.of(context).textTheme.displayLarge,),
+                Text('No transaction yet!', style: Theme.of(context).textTheme.displayLarge,),
                 SizedBox(height: 10.h,),
-                Text('Generate invoice for your business pending sales. All invoices generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
+                Text('Start generating receipts and invoices for your business. All transactions will show here.s',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
 
                 // ReceiptTile(),
                 // ReceiptTile(),
@@ -68,15 +68,15 @@ final _searchController = TextEditingController();
           ],
         ),
       ),
-      floatingActionButton:
-      FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: primaryColor2,
-        child: Icon(
-          Icons.add,
-          size: 40.h,
-        ),
-      ),
+      // floatingActionButton:
+      // FloatingActionButton(
+      //   onPressed: () {},
+      //   backgroundColor: primaryColor2,
+      //   child: Icon(
+      //     Icons.add,
+      //     size: 40.h,
+      //   ),
+      // ),
       // AppButton(buttonText: 'Generate invoice', onPressed: (){
       //   // context.push('/addBusiness');
       // }),
