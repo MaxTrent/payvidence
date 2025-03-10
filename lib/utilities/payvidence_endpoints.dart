@@ -19,4 +19,8 @@ class PayvidenceEndpoints{
 
   // Category Endpoints
   //static String get category => '/api/category/';
+
+//Notification Endpoints
+static String get getAllNotifications => '/api/notification';
+
 }

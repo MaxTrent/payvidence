@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
  import 'package:payvidence/constants/app_colors.dart';
-
+import 'package:payvidence/routes/payvidence_app_router.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
-   
-
-
+import '../../shared_dependency/shared_dependency.dart';
 @RoutePage(name: 'ProfileRoute')
+
+
 class Profile extends StatelessWidget {
   const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -64,7 +65,8 @@ class Profile extends StatelessWidget {
                                   right: 0.w,
                                   child: GestureDetector(
                                     onTap: (){
-                                      context.router.push(ChangeProfilePictureRoute());
+                                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.changeProfilePicture);
+                                      // context.router.push(ChangeProfilePictureRoute());
                                     },
                                     child: CircleAvatar(
                                       radius: 14.r,
@@ -84,7 +86,8 @@ class Profile extends StatelessWidget {
                               children: [
                                 GestureDetector(
                                     onTap: (){
-                                      context.router.push(NotificationsRoute());
+                                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.notifications);
+                                      // context.router.push(NotificationsRoute());
                                     },
                                     child: SvgPicture.asset(Assets.svg.notification)),
                                 SizedBox(
@@ -92,7 +95,9 @@ class Profile extends StatelessWidget {
                                 ),
                                 GestureDetector(
                                     onTap: (){
-                                      context.router.push(SettingsRoute());
+                                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.settings);
+
+                                      // context.router.push(SettingsRoute());
                                     },
                                     child: SvgPicture.asset(Assets.svg.setting2)),
                               ],
@@ -152,7 +157,8 @@ class Profile extends StatelessWidget {
               ),
               ProfileOptionTile(
                 onTap: (){
-                  context.router.push(UpdatePersonalDetailsRoute());
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.updatePersonalDetails);
+                  // context.router.push(UpdatePersonalDetailsRoute());
                 },
                 // navigateTo: AppRoutes.updatePersonalDetails,
                 title: 'Update personal details',
@@ -163,7 +169,9 @@ class Profile extends StatelessWidget {
               ),
               ProfileOptionTile(
                 onTap: (){
-                  context.router.push(MySubscriptionRoute());
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.mySubscription);
+
+                  // context.router.push(MySubscriptionRoute());
                 },
                   // navigateTo: AppRoutes.mySubscription,
                   icon: Assets.svg.medalStar, title: 'Manage subscription plan'),
@@ -172,7 +180,8 @@ class Profile extends StatelessWidget {
               ),
               ProfileOptionTile(
                 onTap: (){
-                  context.router.push(BusinessDataRoute());
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.businessData);
+                  // context.router.push(BusinessDataRoute());
                 },
                   // navigateTo: ,
                   icon: Assets.svg.chart, title: 'Access business data'),
@@ -181,7 +190,8 @@ class Profile extends StatelessWidget {
               ),
               ProfileOptionTile(
                   onTap: (){
-                    context.router.push(PayvidenceInfoRoute());
+                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.payvidenceInfo);
+                    // context.router.push(PayvidenceInfoRoute());
                   },
                 // navigateTo: AppRoutes.payvidenceInfo,
                   icon: Assets.svg.documentText,

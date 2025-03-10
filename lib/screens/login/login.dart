@@ -172,6 +172,7 @@ class Login extends HookConsumerWidget {
                           email: emailController.text.trim(),
                           password: passwordController.text.trim(),
                           navigateOnSuccess: () {
+                            print('navigating');
                             locator<PayvidenceAppRouter>().popUntil(
                                     (route) => route is OnboardingScreen);
                             locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);

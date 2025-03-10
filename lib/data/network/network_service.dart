@@ -189,7 +189,7 @@ class NetworkService {
   Future<Map<String, dynamic>> getAuthorizedHeader() async {
     var accessToken =
     locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
-
+    print('token: $accessToken');
     final accessData = {
       "Authorization": "Bearer $accessToken",
     };
