@@ -52,29 +52,58 @@ class ApiServices{
   }
 
 
-  Future<ApiResult> resendOtp() async {
+  Future<ApiResult> resendOtp(String userId) async {
 
     var response = await locator<NetworkService>().post(
-        PayvidenceEndpoints.resendOtp,
+        PayvidenceEndpoints.resendOtp(userId),
         useToken: false);
 
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> verifyOtp(String otp) async {
+  Future<ApiResult> verifyOtp(String otp, String userId) async {
 
     var requestData = {
       "otp": otp,
     };
 
     var response = await locator<NetworkService>().post(
-        PayvidenceEndpoints.verifyOtp,
+        PayvidenceEndpoints.verifyOtp(userId),
         data: requestData,
         useToken: false);
 
     return ApiResult.fromJson(response);
   }
 
+
+  Future<ApiResult> forgotPasswordInit(String email) async {
+
+    var requestData = {
+      "email": email,
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.forgotPasswordInit,
+        data: requestData,
+        useToken: false);
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> forgotPasswordComplete(String password, String confirmPassword, String userId) async {
+
+    var requestData = {
+      "password": password,
+      "password_confirmation": confirmPassword,
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.forgotPasswordComplete(userId),
+        data: requestData,
+        useToken: false);
+
+    return ApiResult.fromJson(response);
+  }
 
   Future<ApiResult> getAccount() async {
     var response = await locator<NetworkService>().get(PayvidenceEndpoints.getAccount);

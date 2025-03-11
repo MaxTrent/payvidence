@@ -1054,7 +1054,7 @@ class LoginRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i33.Login();
+      return _i33.Login();
     },
   );
 }
@@ -1166,7 +1166,7 @@ class OtpLoginRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i38.OtpLogin();
+      return _i38.OtpLogin();
     },
   );
 }
@@ -1185,7 +1185,7 @@ class OtpScreenRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i39.OtpScreen();
+      return _i39.OtpScreen();
     },
   );
 }

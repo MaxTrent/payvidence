@@ -34,6 +34,7 @@ class LoginViewModel extends BaseChangeNotifier {
 
         var user = User.fromJson(response.data!["data"]);
         await saveUserCredentials(
+          userId: user.account.id,
             firstName: user.account.firstName,
             lastName: user.account.lastName,
             email: user.account.email,
@@ -59,6 +60,7 @@ class LoginViewModel extends BaseChangeNotifier {
   }
 
   Future<void> saveUserCredentials({
+    required String userId,
     required String firstName,
     required String lastName,
     required String email,
@@ -66,6 +68,9 @@ class LoginViewModel extends BaseChangeNotifier {
     required String profilePictureUrl,
     required String token,
   }) async {
+    locator<SessionManager>()
+        .save(key: SessionConstants.userId, value: userId);
+
     await locator<SessionManager>()
         .save(key: SessionConstants.userFirstName, value: firstName);
 

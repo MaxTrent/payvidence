@@ -7,6 +7,7 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../onboarding/onboarding.dart';
 
 
 
@@ -20,7 +21,9 @@ class ChangePasswordSuccess extends StatelessWidget {
       floatingActionButton: AppButton(
           buttonText: 'Log in',
           onPressed: () {
-            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+            locator<PayvidenceAppRouter>().popUntil(
+                    (route) => route is OnboardingScreen);
+            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
           }),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),

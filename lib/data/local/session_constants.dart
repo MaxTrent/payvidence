@@ -4,6 +4,7 @@ class SessionConstants {
   SessionConstants._();
 
   static const accessTokenPref = "accessTokenPref";
+  static const userId = "userId";
   static const userFirstName = "userFirstName";
   static const userLastName = "userLastName";
   static const userEmail = "userEmail";

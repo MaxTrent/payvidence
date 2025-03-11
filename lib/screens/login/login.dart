@@ -17,29 +17,29 @@ import '../../gen/assets.gen.dart';
 
 @RoutePage(name: 'LoginRoute')
 class Login extends HookConsumerWidget {
-  const Login({super.key});
+  Login({super.key});
 
-  final _formKey = const GlobalObjectKey<FormState>('form');
 
   @override
   Widget build(BuildContext context, ref) {
+    final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final viewModel = ref.watch(loginViewModelProvider);
 
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
 
-    final _areFieldsEmpty = useState(true);
+    final areFieldsEmpty = useState(true);
     final obscureText = useState(true);
 
-    bool areFieldsEmpty() {
+    bool checkFieldsEmpty() {
       return emailController.text.toString().isEmpty ||
           passwordController.text.toString().isEmpty;
     }
 
     useEffect(() {
       void updateFieldsEmptyStatus() {
-        _areFieldsEmpty.value = areFieldsEmpty();
-        print("Fields empty: ${_areFieldsEmpty.value}");
+        areFieldsEmpty.value = checkFieldsEmpty();
+        print("Fields empty: ${areFieldsEmpty.value}");
       }
 
       emailController.addListener(updateFieldsEmptyStatus);
@@ -50,15 +50,13 @@ class Login extends HookConsumerWidget {
         passwordController.removeListener(updateFieldsEmptyStatus);
       };
     }, [
-      emailController,
-      passwordController,
     ]);
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus,
       child: Scaffold(
         body: Form(
-          key: _formKey,
+          key: formKey,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SafeArea(
@@ -139,7 +137,6 @@ class Login extends HookConsumerWidget {
                   GestureDetector(
                     onTap: () {
                       locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.forgotPassword);
-                      // context.push('/forgotPassword');
                     },
                     child: Text(
                       'Forgot password?',
@@ -155,17 +152,12 @@ class Login extends HookConsumerWidget {
                   // viewModel.loginState.isLoading ? const LoadingIndicator():
                   AppButton(
                     buttonText: 'Log in',
-
-                    isDisabled: _areFieldsEmpty.value,
+                    isDisabled: areFieldsEmpty.value,
                     isProcessing: viewModel.isLoading,
-                    backgroundColor: !_areFieldsEmpty.value
-                        ? primaryColor2
-                        : primaryColor2.withOpacity(0.4),
                     onPressed: () {
                       print("Button pressed");
-                      print("Fields empty: ${_areFieldsEmpty.value}");
-
-                      if (_formKey.currentState!.validate()) {
+                      print("Fields empty: ${areFieldsEmpty.value}");
+                      if (formKey.currentState!.validate()) {
                         print("Form is valid");
                         FocusScope.of(context).unfocus();
                         viewModel.login(
@@ -182,7 +174,10 @@ class Login extends HookConsumerWidget {
                         print("Form is not valid");
                       }
                     },
-                  ),
+
+
+
+    ),
                 ],
               ),
             ),
