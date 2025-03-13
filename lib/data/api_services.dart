@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:payvidence/utilities/payvidence_endpoints.dart';
 import '../screens/device_info.dart';
 import '../shared_dependency/shared_dependency.dart';
@@ -138,5 +141,31 @@ class ApiServices{
   }
 
 
+  Future<ApiResult> getTransactions() async {
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.business);
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> updateProfilePicture(
+      File profilePicture
+      ) async {
+
+    var formData = FormData.fromMap({
+      'profile_picture': await MultipartFile.fromFile(
+        profilePicture.path,
+        filename: profilePicture.path.split('/').last,
+      ),
+    });
+
+
+    final response = await locator<NetworkService>().post(
+      PayvidenceEndpoints.updateProfilePicture,
+      data: formData,
+      useToken: true,
+    );
+
+    return ApiResult.fromJson(response);
+  }
 
 }

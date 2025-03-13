@@ -93,7 +93,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     height: 8.h,
                   ),
                   AppTextField(
-                    hintText: '',
+                    hintText: 'Last Name',
                     enabled: false,
                     controller: lastNameController,
                   ),

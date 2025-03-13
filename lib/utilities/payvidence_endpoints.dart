@@ -12,6 +12,9 @@ class PayvidenceEndpoints{
   static String get forgotPasswordInit => '/api/account/forgot-password';
   static String forgotPasswordComplete(String userId) => '/api/account/$userId/forgot-password/new-password';
 
+  //Profile Endpoints
+  static String get updateProfilePicture => '/api/account/profile-picture';
+
 
   // Business Endpoints //
   static String get business => '/api/business/';
@@ -26,4 +29,15 @@ class PayvidenceEndpoints{
 //Notification Endpoints
 static String get getAllNotifications => '/api/notification';
 
+
+//Transaction Endpoints
+static String getAllTransactions(String businessId) => '/api/sale-record?business_id=9e2dcd00-da85-4888-b68e-a77e7ac3b3ed&record_type=invoice';
+
+
+//Client Endpoints
+static String createClient(String userId) => "/api/business/$userId/client";
+static String getClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
+static String listClients(String businessId) => "/api/business/$businessId/client";
+static String deleteClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
+static String updateClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
 }
