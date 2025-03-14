@@ -52,19 +52,30 @@ class Product extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppTextField(
-                  width: 282.w,
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(16.h),
-                    child: SvgPicture.asset(Assets.svg.search),
+                Expanded(
+                  child: AppTextField(
+                    //width: 282.w,
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(productFilterProvider.notifier)
+                            .setKey('name', _searchController.text);
+                        ref.read(getAllProductProvider.notifier).setFilter();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(16.h),
+                        child: SvgPicture.asset(Assets.svg.search),
+                      ),
+                    ),
+                    hintText: 'Search for product',
+                    controller: _searchController,
+                    radius: 80,
+                    filled: true,
+                    fillColor: appGrey5,
+                    appBorderColor: Colors.transparent,
                   ),
-                  hintText: 'Search for product',
-                  controller: _searchController,
-                  radius: 80,
-                  filled: true,
-                  fillColor: appGrey5,
-                  appBorderColor: Colors.transparent,
                 ),
+                12.horizontalSpace,
                 GestureDetector(
                   onTap: () {
                     FilterBottomSheet.show(context);

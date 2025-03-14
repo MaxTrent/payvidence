@@ -59,7 +59,8 @@ class GetAllProductNotifier extends AsyncNotifier<List<Product>> {
     print(filterData);
     state = AsyncData(await locator<IProductRepository>().fetchAllProduct(
         ref.watch(getCurrentBusinessProvider)!.id!,
-        categoryId: filterData['category_id'] ?? ''));
+        categoryId: filterData['category_id'] ?? '',
+        name: filterData['name'] ?? ''));
   }
 // Add methods to mutate the state
 }
