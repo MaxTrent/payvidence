@@ -14,4 +14,8 @@ extension NumberFormatting on String {
 
     return buffer.toString().split('').reversed.join('');
   }
+
+  String capitalize() {
+    return length < 2 ? toUpperCase() : '${this[0].toUpperCase()}${substring(1)}';
+  }
 }
