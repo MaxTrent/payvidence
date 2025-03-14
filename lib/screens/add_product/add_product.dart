@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:payvidence/data/network/api_response.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/category_providers/current_category_provider.dart';
+import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/repositories/repository/product_repository.dart';
 import '../../components/app_button.dart';
@@ -22,55 +26,127 @@ import '../../utilities/toast_service.dart';
 import '../../utilities/validators.dart';
 
 @RoutePage(name: 'AddProductRoute')
-class AddProduct extends ConsumerWidget {
-  AddProduct({super.key});
+class AddProduct extends ConsumerStatefulWidget {
+  final Product? product;
 
+  AddProduct({super.key, this.product});
+
+  @override
+  ConsumerState<AddProduct> createState() => _AddProductState();
+}
+
+class _AddProductState extends ConsumerState<AddProduct> {
   final _controller = TextEditingController();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   final productNameController = TextEditingController();
+
   final productDescController = TextEditingController();
+
   final productQtyController = TextEditingController();
+
   final productPriceController = TextEditingController();
+
   final vatRateController = TextEditingController();
+
   ValueNotifier<XFile?> productImage = ValueNotifier(null);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    // TODO: implement initState
+    if (widget.product != null) {
+      productNameController.text = widget.product?.name ?? '';
+      productDescController.text = widget.product?.description ?? '';
+      productQtyController.text =
+          widget.product?.quantityAvailable.toString() ?? '';
+      productPriceController.text = widget.product?.price ?? '';
+      vatRateController.text = widget.product?.vat ?? '';
+      Future.delayed(const Duration(milliseconds: 200), () {
+        ref
+            .read(getCurrentCategoryProvider.notifier)
+            .setCurrentCategory(widget.product!.category!);
+        ref
+            .read(getCurrentBrandProvider.notifier)
+            .setCurrentBrand(widget.product!.brand!);
+      });
+    }
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentCategory = ref.watch(getCurrentCategoryProvider);
     final currentBrand = ref.watch(getCurrentBrandProvider);
 
     Future<void> createProduct() async {
-      FormData requestData = FormData.fromMap({
+      Map<String, dynamic> data = {
         "name": productNameController.text,
         "description": productDescController.text,
         "price": productPriceController.text,
         "quantity": productQtyController.text,
-        "business_id": ref.read(getCurrentBusinessProvider)?.id,
         "brand_id": currentBrand?.id,
         "category_id": currentCategory?.id,
-        "logo_image": await MultipartFile.fromFile(productImage.value!.path,
-            filename: productImage.value!.path.split('/').last),
-        "vat": vatRateController.text,
-      });
+      };
+      if (widget.product == null) {
+        //if it is for create product and not update
+        data.addAll({
+          "logo_image": await MultipartFile.fromFile(productImage.value!.path,
+              filename: productImage.value!.path.split('/').last),
+          "business_id": ref.read(getCurrentBusinessProvider)?.id,
+          "vat": vatRateController.text,
+        });
+      } else {
+        data.addAll({"_method": "PATCH"});
+        // data.addAll({ "logo_image": await MultipartFile.fromFile(productImage.value!.path,
+        //     filename: productImage.value!
+        //         .path
+        //         .split('/')
+        //         .last),});
+      }
+      FormData requestData = FormData.fromMap(data);
+
       if (!context.mounted) return;
       LoadingDialog.show(context);
       try {
-        final Product response =
-            await locator<IProductRepository>().addProduct(requestData);
+        final Product response;
+        if (widget.product == null) {
+          //if it is for create product and not update
+          response =
+              await locator<IProductRepository>().addProduct(requestData);
+        } else {
+          response = await ref
+              .read(getAllProductProvider.notifier)
+              .updateProduct(requestData, widget.product?.id ?? '');
+        }
+
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.success(context, "Product created successfully");
+        ToastService.success(
+            context,
+            widget.product == null
+                ? "Product created successfully"
+                : "Product updated successfully");
         ref.invalidate(getAllProductProvider);
+        if (widget.product != null) {
+          ref
+              .read(getCurrentProductProvider.notifier)
+              .setCurrentProduct(response);
+        }
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
           Navigator.of(context).pop();
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
+      } on DioException catch (e) {
+        Navigator.of(context).pop(); // pop loading dialog on error
+        ToastService.error(context,
+            e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context, 'An error has occurred!');
+        ToastService.error(context, 'An unknown error has occurred!');
       }
     }
 
@@ -236,7 +312,41 @@ class AddProduct extends ConsumerWidget {
                         valueListenable: productImage,
                         builder: (context, val, _) {
                           if (val == null) {
-                            return SvgPicture.asset(Assets.svg.uploadImage);
+                            return Visibility(
+                                visible: widget.product == null,
+                                replacement: Container(
+                                    height: 200,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.withOpacity(.5),
+                                        borderRadius: BorderRadius.circular(12),
+                                        image: DecorationImage(
+                                            image: NetworkImage(
+                                                widget.product?.logoUrl ??
+                                                    ''))),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.all(12),
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: const Text(
+                                            "Change",
+                                            style: TextStyle(
+                                                color: Colors.purple,
+                                                fontSize: 10),
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                child:
+                                    SvgPicture.asset(Assets.svg.uploadImage));
                           } else {
                             return Container(
                                 padding: const EdgeInsets.all(12),
@@ -248,10 +358,18 @@ class AddProduct extends ConsumerWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(val.name),
-                                    const Text(
-                                      "Change",
-                                      style: TextStyle(
-                                          color: Colors.purple, fontSize: 10),
+                                    Container(
+                                      margin: const EdgeInsets.all(4),
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Text(
+                                        "Change",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 10),
+                                      ),
                                     ),
                                   ],
                                 ));
@@ -294,7 +412,9 @@ class AddProduct extends ConsumerWidget {
                   height: 32.h,
                 ),
                 AppButton(
-                    buttonText: 'Add product',
+                    buttonText: widget.product == null
+                        ? 'Add product'
+                        : 'Update details',
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
@@ -303,7 +423,8 @@ class AddProduct extends ConsumerWidget {
                         } else if (currentCategory == null) {
                           ToastService.error(context, "Select a category!");
                         }
-                        if (productImage.value == null) {
+                        if (productImage.value == null &&
+                            widget.product == null) {
                           ToastService.error(context, "Select a product image");
                         } else {
                           createProduct();
