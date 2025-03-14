@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -32,8 +34,12 @@ class Login extends HookConsumerWidget {
     final obscureText = useState(true);
 
     bool areFieldsEmpty() {
-      return emailController.text.toString().isEmpty ||
-          passwordController.text.toString().isEmpty;
+      return emailController.text
+          .toString()
+          .isEmpty ||
+          passwordController.text
+              .toString()
+              .isEmpty;
     }
 
     useEffect(() {
@@ -70,21 +76,30 @@ class Login extends HookConsumerWidget {
                   ),
                   Text(
                     'Log in',
-                    style: Theme.of(context).textTheme.displayLarge,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .displayLarge,
                   ),
                   SizedBox(
                     height: 8.h,
                   ),
                   Text(
                     'Log in with your email address and password',
-                    style: Theme.of(context).textTheme.displaySmall!,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .displaySmall!,
                   ),
                   SizedBox(
                     height: 32.h,
                   ),
                   Text(
                     'Email address',
-                    style: Theme.of(context).textTheme.displaySmall,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .displaySmall,
                   ),
                   SizedBox(
                     height: 8.h,
@@ -92,7 +107,7 @@ class Login extends HookConsumerWidget {
                   AppTextField(
                     hintText: 'Email address',
                     controller:
-                        emailController,
+                    emailController,
                     validator: (val) {
                       if (!val!.isValidEmail || val.isEmpty) {
                         return 'Enter valid email address';
@@ -106,14 +121,17 @@ class Login extends HookConsumerWidget {
                   ),
                   Text(
                     'Password',
-                    style: Theme.of(context).textTheme.displaySmall,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .displaySmall,
                   ),
                   SizedBox(
                     height: 8.h,
                   ),
                   AppTextField(
                     hintText: 'Password',
-                    controller:passwordController,
+                    controller: passwordController,
                     validator: (val) {
                       if (!val!.isValidPassword || val.isEmpty) {
                         return 'Enter a valid password';
@@ -138,12 +156,14 @@ class Login extends HookConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.forgotPassword);
+                      locator<PayvidenceAppRouter>().navigateNamed(
+                          PayvidenceRoutes.forgotPassword);
                       // context.push('/forgotPassword');
                     },
                     child: Text(
                       'Forgot password?',
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .displayMedium!
                           .copyWith(fontSize: 14.sp, color: primaryColor2),
@@ -166,7 +186,7 @@ class Login extends HookConsumerWidget {
                       print("Fields empty: ${_areFieldsEmpty.value}");
 
                       if (_formKey.currentState!.validate()) {
-                        print("Form is valid");
+                        log("Form is valid");
                         FocusScope.of(context).unfocus();
                         viewModel.login(
                           email: emailController.text.trim(),
@@ -174,11 +194,12 @@ class Login extends HookConsumerWidget {
                           navigateOnSuccess: () {
                             locator<PayvidenceAppRouter>().popUntil(
                                     (route) => route is OnboardingScreen);
-                            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+                            locator<PayvidenceAppRouter>().replaceNamed(
+                                PayvidenceRoutes.home);
                           },
                         );
                       } else {
-                        print("Form is not valid");
+                        log("Form is not valid");
                       }
                     },
                   ),

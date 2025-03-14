@@ -42,6 +42,8 @@ class LoginViewModel extends BaseChangeNotifier {
             token: user.token ?? "");
         await locator<SessionManager>()
             .save(key: SessionConstants.isUserLoggedIn, value: true);
+        notifyListeners();
+
         navigateOnSuccess();
       } else {
         _isLoading = false;
