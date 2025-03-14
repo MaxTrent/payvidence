@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'dart:io';
-
 
 class ConnectionStatusInterceptor extends InterceptorsWrapper {
   @override
@@ -31,7 +31,8 @@ class ConnectionStatusInterceptor extends InterceptorsWrapper {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (err.response?.statusCode == 401) {
       // Redirect to the login page
-      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
+      locator<PayvidenceAppRouter>()
+          .pushAndPopUntil(LoginRoute(), predicate: (_) => false);
       return;
     }
     handler.next(err);
