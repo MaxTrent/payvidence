@@ -38,7 +38,7 @@ class AddBrand extends ConsumerWidget {
         ref.invalidate(getAllBrandProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
-          context.router.back();
+          Navigator.of(context).pop();
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
       } catch (e) {
