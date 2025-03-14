@@ -37,11 +37,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> get(
-      path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -55,11 +55,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> patch(
-      path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -73,11 +73,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> post(
-      path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -91,11 +91,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> delete(
-      String path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    String path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -167,19 +167,23 @@ class NetworkService {
           e.type == DioExceptionType.receiveTimeout ||
           e.type == DioExceptionType.unknown) {
         return Left(Failure(ApiErrorResponseV2(message: e.message)));
+      } else if (e.type == DioExceptionType.badResponse) {
+        Map<String, dynamic> error = e.response?.data as Map<String, dynamic>;
+        rethrow;
       }
 
       if (e.response == null) {
         return Left(Failure(const ApiErrorResponseV2(
-            message: "Service unavailable at the moment. \nPlease try again later!")));
+            message:
+                "Service unavailable at the moment. \nPlease try again later!")));
       }
 
       if (e.response!.statusCode == 401 &&
           e.response!.data is Map &&
           e.response!.data['message'] == 'Unauthenticated') {
         // await logOut();
-        return Left(Failure(
-            const ApiErrorResponseV2(message: 'Session expired. Please log in again.')));
+        return Left(Failure(const ApiErrorResponseV2(
+            message: 'Session expired. Please log in again.')));
       }
 
       return Left(Failure.fromMap(e.response!.data as Map<String, dynamic>));
@@ -188,7 +192,7 @@ class NetworkService {
 
   Future<Map<String, dynamic>> getAuthorizedHeader() async {
     var accessToken =
-    locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
+        locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
 
     final accessData = {
       "Authorization": "Bearer $accessToken",
@@ -197,24 +201,24 @@ class NetworkService {
     return accessData;
   }
 
-  // Future<void> logOut() async {
-  //   await locator<SessionManager>().clear();
-  //
-  //   locator<DialogHandler>().showCustomTopToastDialog(
-  //     message: "Session Expired. Please log in again.",
-  //     toastMessageType: ToastMessageType.failure,
-  //   );
-  //
-  //   const String? appFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR') != ''
-  //       ? String.fromEnvironment('FLUTTER_APP_FLAVOR')
-  //       : null;
-  //
-  //   Future.microtask(() {
-  //     if (appFlavor == "user")
-  //       locator<UserAppRouter>().replaceAll([const OnboardingScreenRoute()]);
-  //     else
-  //       locator<RiderAppRouter>()
-  //           .replaceAll([const OnboardingScreenRoute()]);
-  //   });
-  // }
+// Future<void> logOut() async {
+//   await locator<SessionManager>().clear();
+//
+//   locator<DialogHandler>().showCustomTopToastDialog(
+//     message: "Session Expired. Please log in again.",
+//     toastMessageType: ToastMessageType.failure,
+//   );
+//
+//   const String? appFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR') != ''
+//       ? String.fromEnvironment('FLUTTER_APP_FLAVOR')
+//       : null;
+//
+//   Future.microtask(() {
+//     if (appFlavor == "user")
+//       locator<UserAppRouter>().replaceAll([const OnboardingScreenRoute()]);
+//     else
+//       locator<RiderAppRouter>()
+//           .replaceAll([const OnboardingScreenRoute()]);
+//   });
+// }
 }
