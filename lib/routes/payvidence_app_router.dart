@@ -45,6 +45,7 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: EmptyCategoryRoute.page, path: PayvidenceRoutes.emptyCategory),
         AutoRoute(page: BrandsRoute.page, path: PayvidenceRoutes.brands),
         AutoRoute(page: AddBrandRoute.page, path: PayvidenceRoutes.addBrand),
+        AutoRoute(page: UpdateQuantityRoute.page, path: PayvidenceRoutes.updateQuantity),
 
       ];
 

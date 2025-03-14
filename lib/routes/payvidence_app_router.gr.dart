@@ -10,7 +10,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i53;
 import 'package:flutter/material.dart' as _i54;
-import 'package:payvidence/model/business_model.dart' as _i55;
+import 'package:payvidence/model/business_model.dart' as _i56;
+import 'package:payvidence/model/product_model.dart' as _i55;
 import 'package:payvidence/screens/account_success/account_success.dart' as _i1;
 import 'package:payvidence/screens/add_brand/add_brand.dart' as _i2;
 import 'package:payvidence/screens/add_business/add_business.dart' as _i3;
@@ -265,10 +266,14 @@ class AddClientRouteArgs {
 class AddProductRoute extends _i53.PageRouteInfo<AddProductRouteArgs> {
   AddProductRoute({
     _i54.Key? key,
+    _i55.Product? product,
     List<_i53.PageRouteInfo>? children,
   }) : super(
           AddProductRoute.name,
-          args: AddProductRouteArgs(key: key),
+          args: AddProductRouteArgs(
+            key: key,
+            product: product,
+          ),
           initialChildren: children,
         );
 
@@ -279,19 +284,27 @@ class AddProductRoute extends _i53.PageRouteInfo<AddProductRouteArgs> {
     builder: (data) {
       final args = data.argsAs<AddProductRouteArgs>(
           orElse: () => const AddProductRouteArgs());
-      return _i7.AddProduct(key: args.key);
+      return _i7.AddProduct(
+        key: args.key,
+        product: args.product,
+      );
     },
   );
 }
 
 class AddProductRouteArgs {
-  const AddProductRouteArgs({this.key});
+  const AddProductRouteArgs({
+    this.key,
+    this.product,
+  });
 
   final _i54.Key? key;
 
+  final _i55.Product? product;
+
   @override
   String toString() {
-    return 'AddProductRouteArgs{key: $key}';
+    return 'AddProductRouteArgs{key: $key, product: $product}';
   }
 }
 
@@ -318,7 +331,7 @@ class AddProductSuccessRoute extends _i53.PageRouteInfo<void> {
 /// [_i9.AllBusinesses]
 class AllBusinessesRoute extends _i53.PageRouteInfo<AllBusinessesRouteArgs> {
   AllBusinessesRoute({
-    required List<_i55.Business> allBusiness,
+    required List<_i56.Business> allBusiness,
     _i54.Key? key,
     List<_i53.PageRouteInfo>? children,
   }) : super(
@@ -350,7 +363,7 @@ class AllBusinessesRouteArgs {
     this.key,
   });
 
-  final List<_i55.Business> allBusiness;
+  final List<_i56.Business> allBusiness;
 
   final _i54.Key? key;
 
@@ -1265,10 +1278,17 @@ class ProductRouteArgs {
 
 /// generated route for
 /// [_i43.ProductDetails]
-class ProductDetailsRoute extends _i53.PageRouteInfo<void> {
-  const ProductDetailsRoute({List<_i53.PageRouteInfo>? children})
-      : super(
+class ProductDetailsRoute extends _i53.PageRouteInfo<ProductDetailsRouteArgs> {
+  ProductDetailsRoute({
+    _i54.Key? key,
+    required _i55.Product product,
+    List<_i53.PageRouteInfo>? children,
+  }) : super(
           ProductDetailsRoute.name,
+          args: ProductDetailsRouteArgs(
+            key: key,
+            product: product,
+          ),
           initialChildren: children,
         );
 
@@ -1277,9 +1297,29 @@ class ProductDetailsRoute extends _i53.PageRouteInfo<void> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      return const _i43.ProductDetails();
+      final args = data.argsAs<ProductDetailsRouteArgs>();
+      return _i43.ProductDetails(
+        key: args.key,
+        product: args.product,
+      );
     },
   );
+}
+
+class ProductDetailsRouteArgs {
+  const ProductDetailsRouteArgs({
+    this.key,
+    required this.product,
+  });
+
+  final _i54.Key? key;
+
+  final _i55.Product product;
+
+  @override
+  String toString() {
+    return 'ProductDetailsRouteArgs{key: $key, product: $product}';
+  }
 }
 
 /// generated route for
@@ -1485,10 +1525,14 @@ class UpdatePersonalDetailsRouteArgs {
 class UpdateQuantityRoute extends _i53.PageRouteInfo<UpdateQuantityRouteArgs> {
   UpdateQuantityRoute({
     _i54.Key? key,
+    required _i55.Product product,
     List<_i53.PageRouteInfo>? children,
   }) : super(
           UpdateQuantityRoute.name,
-          args: UpdateQuantityRouteArgs(key: key),
+          args: UpdateQuantityRouteArgs(
+            key: key,
+            product: product,
+          ),
           initialChildren: children,
         );
 
@@ -1497,21 +1541,28 @@ class UpdateQuantityRoute extends _i53.PageRouteInfo<UpdateQuantityRouteArgs> {
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<UpdateQuantityRouteArgs>(
-          orElse: () => const UpdateQuantityRouteArgs());
-      return _i51.UpdateQuantity(key: args.key);
+      final args = data.argsAs<UpdateQuantityRouteArgs>();
+      return _i51.UpdateQuantity(
+        key: args.key,
+        product: args.product,
+      );
     },
   );
 }
 
 class UpdateQuantityRouteArgs {
-  const UpdateQuantityRouteArgs({this.key});
+  const UpdateQuantityRouteArgs({
+    this.key,
+    required this.product,
+  });
 
   final _i54.Key? key;
 
+  final _i55.Product product;
+
   @override
   String toString() {
-    return 'UpdateQuantityRouteArgs{key: $key}';
+    return 'UpdateQuantityRouteArgs{key: $key, product: $product}';
   }
 }
 
