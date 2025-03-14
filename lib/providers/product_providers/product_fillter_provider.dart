@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../model/business_model.dart';
-
 final productFilterProvider =
     NotifierProvider<ProductFilterNotifier, Map<String, dynamic>>(() {
   return ProductFilterNotifier();
