@@ -10,8 +10,8 @@ abstract class IBusinessDatasource {
   Future<Business> addBusiness(FormData requestData);
   Future<List<Business>> fetchAllBusiness();
   Future<Business> fetchBusiness(String id);
-
 }
+
 
 class BusinessDatasource extends IBusinessDatasource {
   final NetworkService networkService;
@@ -20,7 +20,7 @@ class BusinessDatasource extends IBusinessDatasource {
 
   @override
   Future<Business> addBusiness(FormData requestData) async {
-    //final NetworkService _networkService = locator<NetworkService>();
+    // final NetworkService _networkService = locator<NetworkService>();
     try {
       final Either<Failure, Success> response = await networkService.post(
           PayvidenceEndpoints.business,
@@ -37,7 +37,6 @@ class BusinessDatasource extends IBusinessDatasource {
       if (kDebugMode) {
         print("Error $e");
       }
-
       rethrow;
     }
   }

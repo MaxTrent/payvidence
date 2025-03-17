@@ -121,25 +121,6 @@ class ApiServices{
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> addBusiness(
-      String email, String password
-      ) async {
-    final deviceName = await getDeviceName();
-
-    var requestData = {
-      "email": email,
-      "password": password,
-      "device_name": deviceName
-    };
-
-    var response = await locator<NetworkService>().post(
-        PayvidenceEndpoints.login,
-        data: requestData,
-        useToken: true);
-
-    return ApiResult.fromJson(response);
-  }
-
 
   Future<ApiResult> getTransactions() async {
     var response = await locator<NetworkService>().get(PayvidenceEndpoints.business);
@@ -167,5 +148,70 @@ class ApiServices{
 
     return ApiResult.fromJson(response);
   }
+
+
+  Future<ApiResult> resetPasswordInit(String email) async {
+
+    var requestData = {
+      "email": email,
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.resetPasswordInit,
+        data: requestData,
+        useToken: true);
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> resetPasswordComplete(String password, String confirmPassword) async {
+
+    var requestData = {
+      "password": password,
+      "password_confirmation": confirmPassword,
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.resetPasswordComplete,
+        data: requestData,
+        useToken: true);
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> changePassword(String oldPassword, String password, String confirmPassword) async {
+
+    var requestData = {
+      "old_password": oldPassword,
+      "password": password,
+      "password_confirmation": confirmPassword
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.changePassword,
+        data: requestData,
+        useToken: true);
+
+    return ApiResult.fromJson(response);
+  }
+
+  // Future<ApiResult> addClient(
+  //     String name, String address, String phoneNumber
+  //     ) async {
+  //   final deviceName = await getDeviceName();
+  //
+  //   var requestData = {
+  //     "name": "Samson Okubanjo",
+  //     "address": "6, Jebba str, Yaba, Lagos",
+  //     "phone_number": "09035690829"
+  //   };
+  //
+  //   var response = await locator<NetworkService>().post(
+  //       PayvidenceEndpoints.a,
+  //       data: requestData,
+  //       useToken: true);
+  //
+  //   return ApiResult.fromJson(response);
+  // }
 
 }

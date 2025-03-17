@@ -55,10 +55,10 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: OtpLoginRoute.page, path: PayvidenceRoutes.otpLogin),
         AutoRoute(page: CreateNewPasswordRoute.page, path: PayvidenceRoutes.createNewPassword),
         AutoRoute(page: ChangePasswordSuccessRoute.page, path: PayvidenceRoutes.changePasswordSuccess),
-
-
-
-
+        AutoRoute(page: OtpResetRoute.page, path: PayvidenceRoutes.otpReset),
+        AutoRoute(page: ResetPasswordSuccessRoute.page, path: PayvidenceRoutes.resetPasswordSuccess),
+        AutoRoute(page: CreateNewPasswordResetRoute.page, path: PayvidenceRoutes.createNewPasswordReset),
+        AutoRoute(page: ResetPasswordRoute.page, path: PayvidenceRoutes.resetPassword),
       ];
 
 }
@@ -132,4 +132,7 @@ class PayvidenceRoutes {
   static String get clientSuccess => '/clientSuccess';
   static String get sales => 'sales';
   static String get profile => 'profile';
+  static String get otpReset => '/otpReset';
+  static String get resetPasswordSuccess => '/resetPasswordSuccess';
+  static String get createNewPasswordReset => '/createNewPasswordReset';
 }

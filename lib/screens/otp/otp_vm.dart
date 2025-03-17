@@ -60,5 +60,4 @@ class OtpViewModel extends BaseChangeNotifier {
       handleError(message: "Something went wrong.");
     }
   }
-
 }

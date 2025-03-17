@@ -64,6 +64,9 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   locator.registerLazySingleton<IBrandRepository>(
         () => BrandRepository(locator()),
   );
+
+  // locator.registerLazySingleton(() => DialogHandler());
+
   log('Dependencies initialized successfully.');
 
 }

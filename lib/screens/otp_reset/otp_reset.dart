@@ -14,15 +14,15 @@ import '../../shared_dependency/shared_dependency.dart';
 import '../onboarding/onboarding.dart';
 import '../otp/otp_vm.dart';
 
-@RoutePage(name: 'OtpLoginRoute')
-class OtpLogin extends HookConsumerWidget {
-  OtpLogin({super.key});
+@RoutePage(name: 'OtpResetRoute')
+class OtpReset extends HookConsumerWidget {
+  OtpReset({super.key});
 
 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
+    final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final email = locator<SessionManager>().get(SessionConstants.userEmail);
     final viewModel = ref.read(otpViewModelProvider);
     final pinController = useTextEditingController();
@@ -66,7 +66,7 @@ class OtpLogin extends HookConsumerWidget {
       child: Scaffold(
         appBar: AppBar(),
         body: Form(
-          key: _formKey,
+          key: formKey,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -118,7 +118,7 @@ class OtpLogin extends HookConsumerWidget {
                     //           .navigateNamed(PayvidenceRoutes.createNewPassword);
 
 
-                    if (_formKey.currentState!.validate()) {
+                    if (formKey.currentState!.validate()) {
                       print("Form is valid");
                       FocusScope.of(context).unfocus();
                       viewModel.verifyOtp(
@@ -127,7 +127,7 @@ class OtpLogin extends HookConsumerWidget {
                           locator<PayvidenceAppRouter>().popUntil(
                                   (route) => route is OnboardingScreen);
                           locator<PayvidenceAppRouter>()
-                              .navigateNamed(PayvidenceRoutes.createNewPassword);
+                              .navigateNamed(PayvidenceRoutes.createNewPasswordReset);
                         },
                       );
                     } else {
