@@ -648,10 +648,14 @@ class ClientSuccessRoute extends _i53.PageRouteInfo<void> {
 class ClientsRoute extends _i53.PageRouteInfo<ClientsRouteArgs> {
   ClientsRoute({
     _i54.Key? key,
+    bool? forSelection = false,
     List<_i53.PageRouteInfo>? children,
   }) : super(
           ClientsRoute.name,
-          args: ClientsRouteArgs(key: key),
+          args: ClientsRouteArgs(
+            key: key,
+            forSelection: forSelection,
+          ),
           initialChildren: children,
         );
 
@@ -662,19 +666,27 @@ class ClientsRoute extends _i53.PageRouteInfo<ClientsRouteArgs> {
     builder: (data) {
       final args =
           data.argsAs<ClientsRouteArgs>(orElse: () => const ClientsRouteArgs());
-      return _i20.Clients(key: args.key);
+      return _i20.Clients(
+        key: args.key,
+        forSelection: args.forSelection,
+      );
     },
   );
 }
 
 class ClientsRouteArgs {
-  const ClientsRouteArgs({this.key});
+  const ClientsRouteArgs({
+    this.key,
+    this.forSelection = false,
+  });
 
   final _i54.Key? key;
 
+  final bool? forSelection;
+
   @override
   String toString() {
-    return 'ClientsRouteArgs{key: $key}';
+    return 'ClientsRouteArgs{key: $key, forSelection: $forSelection}';
   }
 }
 
@@ -930,14 +942,10 @@ class GenerateInvoicesRouteArgs {
 
 /// generated route for
 /// [_i29.GenerateReceipt]
-class GenerateReceiptRoute
-    extends _i53.PageRouteInfo<GenerateReceiptRouteArgs> {
-  GenerateReceiptRoute({
-    _i54.Key? key,
-    List<_i53.PageRouteInfo>? children,
-  }) : super(
+class GenerateReceiptRoute extends _i53.PageRouteInfo<void> {
+  const GenerateReceiptRoute({List<_i53.PageRouteInfo>? children})
+      : super(
           GenerateReceiptRoute.name,
-          args: GenerateReceiptRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -946,22 +954,9 @@ class GenerateReceiptRoute
   static _i53.PageInfo page = _i53.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<GenerateReceiptRouteArgs>(
-          orElse: () => const GenerateReceiptRouteArgs());
-      return _i29.GenerateReceipt(key: args.key);
+      return const _i29.GenerateReceipt();
     },
   );
-}
-
-class GenerateReceiptRouteArgs {
-  const GenerateReceiptRouteArgs({this.key});
-
-  final _i54.Key? key;
-
-  @override
-  String toString() {
-    return 'GenerateReceiptRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -1246,10 +1241,14 @@ class PrivacyAndSecurityRoute extends _i53.PageRouteInfo<void> {
 class ProductRoute extends _i53.PageRouteInfo<ProductRouteArgs> {
   ProductRoute({
     _i54.Key? key,
+    bool? forProductSelection = false,
     List<_i53.PageRouteInfo>? children,
   }) : super(
           ProductRoute.name,
-          args: ProductRouteArgs(key: key),
+          args: ProductRouteArgs(
+            key: key,
+            forProductSelection: forProductSelection,
+          ),
           initialChildren: children,
         );
 
@@ -1260,19 +1259,27 @@ class ProductRoute extends _i53.PageRouteInfo<ProductRouteArgs> {
     builder: (data) {
       final args =
           data.argsAs<ProductRouteArgs>(orElse: () => const ProductRouteArgs());
-      return _i42.Product(key: args.key);
+      return _i42.Product(
+        key: args.key,
+        forProductSelection: args.forProductSelection,
+      );
     },
   );
 }
 
 class ProductRouteArgs {
-  const ProductRouteArgs({this.key});
+  const ProductRouteArgs({
+    this.key,
+    this.forProductSelection = false,
+  });
 
   final _i54.Key? key;
 
+  final bool? forProductSelection;
+
   @override
   String toString() {
-    return 'ProductRouteArgs{key: $key}';
+    return 'ProductRouteArgs{key: $key, forProductSelection: $forProductSelection}';
   }
 }
 
