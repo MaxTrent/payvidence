@@ -3,7 +3,11 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:payvidence/datasource/data/business_datasource.dart';
+import 'package:payvidence/datasource/data/client_datasource.dart';
+import 'package:payvidence/datasource/data/receipt_datasource.dart';
 import 'package:payvidence/repositories/repository/business_repository.dart';
+import 'package:payvidence/repositories/repository/client_repository.dart';
+import 'package:payvidence/repositories/repository/receipt_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/api_services.dart';
@@ -63,6 +67,18 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   );
   locator.registerLazySingleton<IBrandRepository>(
         () => BrandRepository(locator()),
+  );
+  locator.registerLazySingleton<IReceiptDatasource>(
+        () => ReceiptDatasource(locator()),
+  );
+  locator.registerLazySingleton<IReceiptRepository>(
+        () => ReceiptRepository(locator()),
+  );
+  locator.registerLazySingleton<IClientDatasource>(
+        () => ClientDatasource(locator()),
+  );
+  locator.registerLazySingleton<IClientRepository>(
+        () => ClientRepository(locator()),
   );
   log('Dependencies initialized successfully.');
 
