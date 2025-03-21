@@ -13,17 +13,14 @@ import '../shared_dependency/shared_dependency.dart';
 class ProductTile extends StatelessWidget {
   final Product product;
   final WidgetRef ref;
+  final void Function() onPressed;
 
-  const ProductTile({super.key, required this.product, required this.ref});
+  const ProductTile({super.key, required this.product, required this.ref, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        locator<PayvidenceAppRouter>()
-            .navigate(ProductDetailsRoute(product: product));
-        ref.read(getCurrentProductProvider.notifier).setCurrentProduct(product);
-      },
+      onTap: onPressed,
       child: Container(
         height: 101.h,
         decoration: const BoxDecoration(color: Colors.transparent),
