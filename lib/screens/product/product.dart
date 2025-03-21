@@ -13,12 +13,16 @@ import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../providers/product_providers/current_product_provider.dart';
 import '../../routes/payvidence_app_router.dart';
+import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'ProductRoute')
 class Product extends ConsumerWidget {
-  Product({super.key});
+  final bool? forProductSelection;
+
+  Product({super.key, this.forProductSelection = false});
 
   final _searchController = TextEditingController();
 
@@ -104,11 +108,35 @@ class Product extends ConsumerWidget {
               if (data.isEmpty) {
                 productNumber.value = 0;
 
-                return const Expanded(
+                return Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("No products available"),
+                      Text(
+                        'No product available!',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Text('All added products will appear here.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(
+                                fontSize: 14.sp,
+                              )),
+                      SizedBox(
+                        height: 48.h,
+                      ),
+                      AppButton(
+                          buttonText: 'Add product',
+                          onPressed: () {
+                            locator<PayvidenceAppRouter>()
+                                .navigateNamed(PayvidenceRoutes.addProduct);
+                          })
                     ],
                   ),
                 );
@@ -121,6 +149,17 @@ class Product extends ConsumerWidget {
                     return ProductTile(
                       product: data[index],
                       ref: ref,
+                      onPressed: () {
+                        if (forProductSelection == true) {
+                          Navigator.of(context).pop(data[index]);
+                        } else {
+                          locator<PayvidenceAppRouter>().navigate(
+                              ProductDetailsRoute(product: data[index]));
+                          ref
+                              .read(getCurrentProductProvider.notifier)
+                              .setCurrentProduct(data[index]);
+                        }
+                      },
                     );
                   },
                   separatorBuilder: (ctx, idx) {
