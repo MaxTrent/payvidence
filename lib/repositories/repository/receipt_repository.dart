@@ -10,6 +10,7 @@ abstract class IReceiptRepository {
 
   Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType);
 
+  Future<void> deleteReceipt(String receiptId);
 }
 
 class ReceiptRepository extends IReceiptRepository {
@@ -25,5 +26,11 @@ class ReceiptRepository extends IReceiptRepository {
   @override
   Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType) {
     return receiptDatasource.fetchAllReceipts(businessId, recordType);
+  }
+
+  @override
+  Future<void> deleteReceipt(String receiptId) {
+    return receiptDatasource.deleteReceipt(receiptId);
+
   }
 }

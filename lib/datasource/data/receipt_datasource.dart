@@ -9,6 +9,9 @@ abstract class IReceiptDatasource {
   Future<Receipt> createReceipt(Map<String, dynamic> requestData);
 
   Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType);
+
+  Future<void> deleteReceipt(String receiptId);
+
 }
 
 class ReceiptDatasource extends IReceiptDatasource {
@@ -64,6 +67,28 @@ class ReceiptDatasource extends IReceiptDatasource {
         print("Error $e");
       }
 
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteReceipt(String receiptId) async {
+    try {
+      final Either<Failure, Success> response = await networkService.delete(
+        '${PayvidenceEndpoints.saleRecord}/$receiptId',
+      );
+      //LoggerService.info("Product Categories:: ${response.toString()}");
+      return response.fold((fail) {
+        throw fail.error;
+      }, (success) {
+        return;
+      });
+    } catch (e) {
+      print(e);
+
+      if (kDebugMode) {
+        print("Error $e");
+      }
       rethrow;
     }
   }
