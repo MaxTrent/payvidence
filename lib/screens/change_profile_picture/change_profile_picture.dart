@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,8 +7,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture_vm.dart';
-import 'package:payvidence/routes/payvidence_app_router.gr.dart';
-
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
@@ -20,7 +17,7 @@ class ChangeProfilePicture extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(changeProfilePictureViewModelProvider);
-    final isImageSelected = useState(false);
+    final isImageSelected = useState(viewModel.selectedImage != null);
 
     useEffect(() {
       void listener() {
@@ -65,7 +62,7 @@ class ChangeProfilePicture extends HookConsumerWidget {
               SizedBox(height: 32.h),
               AppButton(
                 isProcessing: viewModel.isLoading,
-                isDisabled: viewModel.isLoading || !isImageSelected.value,
+                isDisabled: viewModel.isLoading ,
                 buttonText: viewModel.selectedImage == null ? 'Choose image' : 'Upload image',
                 onPressed: () {
                   if (viewModel.selectedImage == null) {

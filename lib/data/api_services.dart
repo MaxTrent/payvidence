@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:payvidence/utilities/payvidence_endpoints.dart';
 import '../screens/device_info.dart';
@@ -116,14 +115,17 @@ class ApiServices{
 
 
   Future<ApiResult> getBusiness() async {
-    var response = await locator<NetworkService>().get(PayvidenceEndpoints.business);
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.business,
+
+    );
 
     return ApiResult.fromJson(response);
   }
 
 
   Future<ApiResult> getTransactions() async {
-    var response = await locator<NetworkService>().get(PayvidenceEndpoints.business);
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.business,
+    );
 
     return ApiResult.fromJson(response);
   }
@@ -191,6 +193,30 @@ class ApiServices{
         PayvidenceEndpoints.changePassword,
         data: requestData,
         useToken: true);
+
+    return ApiResult.fromJson(response);
+  }
+
+
+  Future<ApiResult> getPendingSubscriptions() async {
+    var requestData = {
+      "status": "pending",
+    };
+
+    var response = await locator<NetworkService>().get(
+      PayvidenceEndpoints.listSubscriptions,
+      data: requestData,
+    );
+
+    return ApiResult.fromJson(response);
+  }
+
+
+
+
+  Future<ApiResult> logout() async {
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.logout);
 
     return ApiResult.fromJson(response);
   }

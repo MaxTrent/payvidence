@@ -25,7 +25,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
 
 
     useEffect(() {
-      print("Widget mounted, fetching user info");
+      print("fetching user info");
       useUpdatePersonalViewModelProvider.fetchUserInformation();
       return null;
     }, []);

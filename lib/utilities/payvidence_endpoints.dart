@@ -14,6 +14,7 @@ class PayvidenceEndpoints{
   static String get resetPasswordInit => '/api/account/reset-password';
   static String get resetPasswordComplete => '/api/account/reset-password/new-password';
   static String get changePassword => '/api/account/change-password';
+  static String get logout => '/api/account/logout';
 
   //Profile Endpoints
   static String get updateProfilePicture => '/api/account/profile-picture';
@@ -43,4 +44,10 @@ static String getClient(String businessId, String clientId) => "/api/business/$b
 static String listClients(String businessId) => "/api/business/$businessId/client";
 static String deleteClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
 static String updateClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
+
+//Subscription Endpoints
+static String get createSubscription => '/api/subscription';
+static String getSubcriptionById(String subId) => '/api/subscription/$subId';
+static String get listSubscriptions => '/api/subscription';
+
 }

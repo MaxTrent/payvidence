@@ -1,91 +1,45 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
-
+import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/screens/my_subscription/my_subscription_vm.dart';
+import 'package:payvidence/utilities/extensions.dart';
+import '../../components/subscription_card.dart';
 import '../../gen/assets.gen.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 
 
 @RoutePage(name: 'MySubscriptionRoute')
-class MySubscription extends StatelessWidget {
+class MySubscription extends HookConsumerWidget {
   const MySubscription({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final viewModel = ref.watch(mySubscriptionViewModel);
+    
+    useEffect((){
+      print("fetching user info");
+      viewModel.fetchSubscriptions();
+      return null;
+    }, []);
+
+    
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
         padding:  EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
-crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('My subscription', style: Theme.of(context).textTheme.displayLarge,),
           SizedBox(height: 24.h,),
-            Container(
-            height: 108.h,
-            decoration: BoxDecoration(
-              color: const Color(0xffE3DDFF),
-              borderRadius: BorderRadius.circular(12.r)
-            ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          SvgPicture.asset(Assets.svg.ribbon),
-                          SizedBox(width: 8.w,),
-                          const Text('Premium subscription plan'),
-                        ],
-                      ),
-
-                      Container(height: 34.h,
-                      width: 84.w,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(40.r),
-                      ),
-                        child: Center(child: Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(Icons.check, size: 12.h,),
-                              Text('Active', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
-                            ],
-                          ),
-                        )),
-                      )
-                    ],
-                  ),
-                  // SizedBox(height: 4.h,),
-                    Text.rich(TextSpan(
-                      text: '₦50,000 ',
-                      style: Theme.of(context).textTheme.displayLarge,
-                      children: [
-                        TextSpan(
-                          text: '/year',
-                          style: Theme.of(context).textTheme.displayMedium!.copyWith(color: const Color(0xff444444)),
-
-                        )
-                      ]
-                    )),
-                    // Text('₦50,000 /year', style: Theme.of(context).textTheme.displayLarge,),
-
-
-                  ],
-                ),
-              ),
-
-          ),
+            SubscriptionCard(subscriptionTier: 'Premium subscription plan', price: '50,000', checkOut: false, active: true,),
             SizedBox(height: 32.h,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,8 +67,7 @@ crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Subscription date', style: Theme.of(context).textTheme.displaySmall,),
-                Text('September 2, 2024', style: Theme.of(context).textTheme.displaySmall,),
-
+                Text(viewModel.subInfo?.startDate.toFormattedString() ?? "Not available", style: Theme.of(context).textTheme.displaySmall,),
               ],
             ),
             SizedBox(height: 18.h,),
@@ -122,68 +75,298 @@ crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Expiration date', style: Theme.of(context).textTheme.displaySmall,),
-                Text('September 2, 2025', style: Theme.of(context).textTheme.displaySmall,),
+                Text(viewModel.subInfo?.expiryDate.toFormattedString() ?? "Not available", style: Theme.of(context).textTheme.displaySmall,),
               ],
             ),
             SizedBox(height: 40.h,),
-            Text('Subscription history', style: Theme.of(context).textTheme.displayMedium,),
-            SizedBox(height: 12.h,),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Container(
-                height: 56.h,
-                width: 56.w,
-                decoration: const BoxDecoration(
-                  color: primaryColor4,
-                  shape: BoxShape.circle,
+            viewModel.subInfo == null ? const SizedBox.shrink():
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Subscription history', style: Theme.of(context).textTheme.displayMedium,),
+                SizedBox(height: 12.h,),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    height: 56.h,
+                    width: 56.w,
+                    decoration: const BoxDecoration(
+                      color: primaryColor4,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding:  EdgeInsets.all(14.h),
+                      child: SvgPicture.asset(Assets.svg.ribbon),
+                    ),
+                  ),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Premium Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                      SizedBox(height: 8.h,),
+                      Text(viewModel.subInfo?.plan.amount.toFormattedIsoDate() ?? " ", style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                    ],
+                  ),
+                  trailing: Text('Sept. 2, 2024', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
                 ),
-                child: Padding(
-                  padding:  EdgeInsets.all(14.h),
-                  child: SvgPicture.asset(Assets.svg.ribbon),
+                SizedBox(height: 36.h,),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    height: 56.h,
+                    width: 56.w,
+                    decoration: const BoxDecoration(
+                      color: primaryColor4,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding:  EdgeInsets.all(14.h),
+                      child: SvgPicture.asset(Assets.svg.ribbon),
+                    ),
+                  ),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Business Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                      SizedBox(height: 8.h,),
+                      Text('₦10,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                    ],
+                  ),
+                  trailing: Text('Sept. 2, 2023', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
                 ),
-              ),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Premium Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                  SizedBox(height: 8.h,),
-                  Text('₦50,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                ],
-              ),
-              trailing: Text('Sept. 2, 2024', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
+                SizedBox(height: 60.h,),
+              ],
             ),
-            SizedBox(height: 36.h,),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: Container(
-                height: 56.h,
-                width: 56.w,
-                decoration: const BoxDecoration(
-                  color: primaryColor4,
-                  shape: BoxShape.circle,
-                ),
-                child: Padding(
-                  padding:  EdgeInsets.all(14.h),
-                  child: SvgPicture.asset(Assets.svg.ribbon),
-                ),
-              ),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Business Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                  SizedBox(height: 8.h,),
-                  Text('₦10,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                ],
-              ),
-              trailing: Text('Sept. 2, 2023', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
-            ),
-            SizedBox(height: 60.h,),
-            AppButton(buttonText: 'Manage subscription', onPressed: (){}),
+            AppButton(buttonText: 'Manage subscription', onPressed: (){
+              _buildManageSubscriptionBottomSheet(context);
+            }),
             SizedBox(height: 26.h,),
-            Center(child: Text('Cancel subscription', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: appRed),))
+            GestureDetector(
+                onTap: (){
+                  _buildConfirmDeleteBottomSheet(context);
+                },
+                child: Center(child: Text('Cancel subscription', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: appRed),)))
           ],
         ),
       ),
     );
   }
-}
+
+  Future<dynamic> _buildManageSubscriptionBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        clipBehavior: Clip.none,
+        context: context,
+        builder: (context) {
+          return Container(
+            height: 398.h,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(40.r),
+                    topLeft: Radius.circular(40.r))
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              child: Stack(
+                children: [
+                  ListView(
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 140.w),
+                        child: Container(height: 5.h, width: 67.w,
+
+                          decoration: BoxDecoration(
+                            color: const Color(0xffd9d9d9),
+                            borderRadius: BorderRadius.circular(100.r),
+                          ),),
+                      ),
+                      SizedBox(height: 38.h,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox.shrink(),
+                          Center(
+                            child: Text(
+                              'Manage subscription',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayLarge!
+                                  .copyWith(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.w600,),
+                            ),
+                          ),
+                          GestureDetector(
+                              onTap: ()=> Navigator.of(context).pop(),
+                              child: const Icon(Icons.close,))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 12.h,
+                      ),
+                      Center(
+                        child: Text(
+                          'What will you like to do?', style: Theme.of(context)
+                            .textTheme
+                            .displaySmall,
+                        ),
+                      ),
+                      SizedBox(height: 40.h,),
+                      Padding(
+                        padding:  EdgeInsets.symmetric(vertical: 24.h),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(Assets.svg.upgradeplan),
+                            SizedBox(width: 16.w,),
+                            Text('Upgrade plan', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
+                          ],
+                        ),
+                      ),
+                      Divider(height: 1.h,),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.of(context).pop();
+                          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.chooseSubscriptionPlan);},
+                        child: Padding(
+                          padding:  EdgeInsets.symmetric(vertical: 24.h),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(Assets.svg.otherplans),
+                              SizedBox(width: 16.w,),
+                              Text('Check out other plans', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Divider(height: 1.h,),
+                      Padding(
+                        padding:  EdgeInsets.symmetric(vertical: 24.h),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(Assets.svg.renewplan),
+                            SizedBox(width: 16.w,),
+                            Text('Renew plan', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),),
+                          ],
+                        ),
+                      ),
+                      Divider(height: 1.h,),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+
+  Future<dynamic> _buildConfirmDeleteBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        clipBehavior: Clip.none,
+        context: context,
+        builder: (context) {
+          return Container(
+            height: 398.h,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(40.r),
+                    topLeft: Radius.circular(40.r))),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 20.w, vertical: 10.h),
+              child: Stack(
+                children: [
+                  ListView(
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 140.w),
+                        child: Container(
+                          height: 5.h,
+                          width: 67.w,
+                          decoration: BoxDecoration(
+                            color: const Color(0xffd9d9d9),
+                            borderRadius:
+                            BorderRadius.circular(
+                                100.r),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 38.h,
+                      ),
+                      Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment
+                            .spaceBetween,
+                        children: [
+                          const SizedBox.shrink(),
+                          Center(
+                            child: Text(
+                              'Cancel subscription',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayLarge!
+                                  .copyWith(
+                                fontSize: 22.sp,
+                                fontWeight:
+                                FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                              onTap:()=> Navigator.of(context).pop(),
+                              child: const Icon(
+                                Icons.close,
+                              ))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 12.h,
+                      ),
+                      Center(
+                        child: Text(
+                          'There will be no refund for cancelled\n\nsubscription. Are you sure you want to cancel?',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 47.h,
+                      ),
+                      AppButton(
+                        buttonText: 'Yes, cancel subscription',
+                        onPressed: () {},
+                        backgroundColor: appRed,
+                        textColor: Colors.white,
+                      ),
+                      SizedBox(
+                        height: 8.h,
+                      ),
+                      AppButton(
+                        buttonText: 'Cancel',
+                        onPressed: () {},
+                        backgroundColor: Colors.transparent,
+                        textColor: Colors.black,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+  }
+
+
+

@@ -2,19 +2,22 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
  import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/screens/profile/profile_vm.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../onboarding/onboarding.dart';
 @RoutePage(name: 'ProfileRoute')
 
 
-class Profile extends StatelessWidget {
+class Profile extends HookConsumerWidget {
   const Profile({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final viewModel = ref.watch(profileViewModelProvider);
 
     return SafeArea(
       child: Scaffold(
@@ -87,7 +90,6 @@ class Profile extends StatelessWidget {
                                 GestureDetector(
                                     onTap: (){
                                       locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.notifications);
-                                      // context.router.push(NotificationsRoute());
                                     },
                                     child: SvgPicture.asset(Assets.svg.notification)),
                                 SizedBox(
@@ -96,8 +98,6 @@ class Profile extends StatelessWidget {
                                 GestureDetector(
                                     onTap: (){
                                       locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.settings);
-
-                                      // context.router.push(SettingsRoute());
                                     },
                                     child: SvgPicture.asset(Assets.svg.setting2)),
                               ],
@@ -158,7 +158,6 @@ class Profile extends StatelessWidget {
               ProfileOptionTile(
                 onTap: (){
                   locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.updatePersonalDetails);
-                  // context.router.push(UpdatePersonalDetailsRoute());
                 },
                 // navigateTo: AppRoutes.updatePersonalDetails,
                 title: 'Update personal details',
@@ -207,6 +206,14 @@ class Profile extends StatelessWidget {
               ),
               ProfileOptionTile(
                 // navigateTo: '',
+                onTap: (){
+                  viewModel.logout(navigateOnSuccess: (){
+                    locator<PayvidenceAppRouter>().popUntil(
+                            (route) => route is OnboardingScreen);
+                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
+
+                  });
+                },
                 icon: Assets.svg.logout,
                 title: 'Log out',
                 showTrailing: false,
@@ -220,7 +227,7 @@ class Profile extends StatelessWidget {
   }
 }
 
-class ProfileOptionTile extends StatelessWidget {
+class ProfileOptionTile extends ConsumerWidget {
   ProfileOptionTile({
     required this.icon,
     required this.title,
@@ -239,11 +246,13 @@ class ProfileOptionTile extends StatelessWidget {
   VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final viewModel = ref.watch(profileViewModelProvider);
+
     return Column(
       children: [
         GestureDetector(
-          onTap: onTap,
+          onTap: viewModel.isLoading ? null : onTap,
           //     (){
           //   context.push(navigateTo);
           // },

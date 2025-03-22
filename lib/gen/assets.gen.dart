@@ -59,16 +59,16 @@ class $AssetsPngGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
-        keekee24158PM,
-        onboarding1,
-        onboarding2,
-        onboarding3,
-        payvidenceLogo,
-        productPicture,
-        productpic,
-        receipts,
-        signature
-      ];
+    keekee24158PM,
+    onboarding1,
+    onboarding2,
+    onboarding3,
+    payvidenceLogo,
+    productPicture,
+    productpic,
+    receipts,
+    signature,
+  ];
 }
 
 class $AssetsSvgGen {
@@ -197,6 +197,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/notification.svg
   String get notification => 'assets/svg/notification.svg';
 
+  /// File path: assets/svg/otherplans.svg
+  String get otherplans => 'assets/svg/otherplans.svg';
+
   /// File path: assets/svg/password-check.svg
   String get passwordCheck => 'assets/svg/password-check.svg';
 
@@ -233,6 +236,9 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/receipt.svg
   String get receipt => 'assets/svg/receipt.svg';
+
+  /// File path: assets/svg/renewplan.svg
+  String get renewplan => 'assets/svg/renewplan.svg';
 
   /// File path: assets/svg/ribbon white.svg
   String get ribbonWhite => 'assets/svg/ribbon white.svg';
@@ -276,6 +282,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/transaction_ol.svg
   String get transactionOl => 'assets/svg/transaction_ol.svg';
 
+  /// File path: assets/svg/upgradeplan.svg
+  String get upgradeplan => 'assets/svg/upgradeplan.svg';
+
   /// File path: assets/svg/upload image.svg
   String get uploadImage => 'assets/svg/upload image.svg';
 
@@ -293,79 +302,82 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<dynamic> get values => [
-        payvidence121351AM,
-        payvidence221351AM,
-        analytics,
-        archiveBook,
-        arrowRight,
-        backArrow,
-        backbutton,
-        boxTick,
-        briefcaseConfetti,
-        call,
-        chart,
-        check,
-        client,
-        clientSuccess,
-        contactUs,
-        contact,
-        copy,
-        defaultProfilepic,
-        delete,
-        documentText,
-        editImage,
-        edit,
-        emptyBriefcase,
-        emptyInvoice,
-        emptyProduct,
-        emptyReceipt,
-        emptyTransaction,
-        exclamation,
-        filter,
-        home,
-        homeOl,
-        invoice,
-        library,
-        like,
-        location,
-        lockCircle,
-        logout,
-        medalStar,
-        noteText,
-        notificationBing,
-        notification,
-        passwordCheck,
-        password,
-        passwordSuccess,
-        privacy,
-        productPicturePng,
-        productPictureSvg,
-        productSuccess,
-        product,
-        profile,
-        profileConfetti,
-        profileOl,
-        receipt,
-        ribbonWhite,
-        ribbon,
-        search,
-        setting2,
-        shapes,
-        shop,
-        sms,
-        star,
-        statusUp,
-        store,
-        subscribe,
-        terms,
-        transaction,
-        transactionOl,
-        uploadImage,
-        userSquare,
-        wallet,
-        walletOl,
-        whatsapp
-      ];
+    payvidence121351AM,
+    payvidence221351AM,
+    analytics,
+    archiveBook,
+    arrowRight,
+    backArrow,
+    backbutton,
+    boxTick,
+    briefcaseConfetti,
+    call,
+    chart,
+    check,
+    client,
+    clientSuccess,
+    contactUs,
+    contact,
+    copy,
+    defaultProfilepic,
+    delete,
+    documentText,
+    editImage,
+    edit,
+    emptyBriefcase,
+    emptyInvoice,
+    emptyProduct,
+    emptyReceipt,
+    emptyTransaction,
+    exclamation,
+    filter,
+    home,
+    homeOl,
+    invoice,
+    library,
+    like,
+    location,
+    lockCircle,
+    logout,
+    medalStar,
+    noteText,
+    notificationBing,
+    notification,
+    otherplans,
+    passwordCheck,
+    password,
+    passwordSuccess,
+    privacy,
+    productPicturePng,
+    productPictureSvg,
+    productSuccess,
+    product,
+    profile,
+    profileConfetti,
+    profileOl,
+    receipt,
+    renewplan,
+    ribbonWhite,
+    ribbon,
+    search,
+    setting2,
+    shapes,
+    shop,
+    sms,
+    star,
+    statusUp,
+    store,
+    subscribe,
+    terms,
+    transaction,
+    transactionOl,
+    upgradeplan,
+    uploadImage,
+    userSquare,
+    wallet,
+    walletOl,
+    whatsapp,
+  ];
 }
 
 class Assets {
@@ -381,11 +393,7 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(
-    this._assetName, {
-    this.size,
-    this.flavors = const {},
-  });
+  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
 
   final String _assetName;
 
@@ -445,15 +453,8 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({
-    AssetBundle? bundle,
-    String? package,
-  }) {
-    return AssetImage(
-      _assetName,
-      bundle: bundle,
-      package: package,
-    );
+  ImageProvider provider({AssetBundle? bundle, String? package}) {
+    return AssetImage(_assetName, bundle: bundle, package: package);
   }
 
   String get path => _assetName;

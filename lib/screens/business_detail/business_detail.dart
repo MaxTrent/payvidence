@@ -264,7 +264,7 @@ class BusinessDetail extends StatelessWidget {
                             ),
                           ),
                           GestureDetector(
-                              onTap: ()=> locator<PayvidenceAppRouter>().back(),
+                              onTap: ()=> Navigator.of(context).pop(),
                               child: const Icon(
                                 Icons.close,
                               ))
