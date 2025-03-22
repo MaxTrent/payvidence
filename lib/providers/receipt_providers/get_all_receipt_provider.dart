@@ -24,5 +24,9 @@ class GetAllReceiptNotifier extends AsyncNotifier<List<Receipt>> {
   Future<Receipt> addReceipt(Map<String, dynamic> data) {
     return locator<IReceiptRepository>().createReceipt(data);
   }
+
+  Future<void> deleteDraft(String id) async {
+    await locator<IReceiptRepository>().deleteReceipt(id);
+  }
 // Add methods to mutate the state
 }
