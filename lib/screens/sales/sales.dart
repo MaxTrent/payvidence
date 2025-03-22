@@ -22,6 +22,7 @@ class Sales extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: ListView(
             children: [
+              12.verticalSpace,
               Row(
                 children: [
                   Container(
