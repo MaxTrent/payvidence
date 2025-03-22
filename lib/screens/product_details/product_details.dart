@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,9 +43,14 @@ class ProductDetails extends ConsumerWidget {
           context.router.back();
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
+      } on DioException catch (e) {
+        Navigator.of(context).pop(); // pop loading dialog on error
+        ToastService.error(context,
+            e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
-        Navigator.of(context).pop(); //pop loading dialog on error
-        ToastService.error(context, 'An error has occurred!');
+        print(e);
+        Navigator.of(context).pop(); // pop loading dialog on error
+        ToastService.error(context, 'An unknown error has occurred!');
       }
     }
 
