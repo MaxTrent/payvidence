@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 import '../../model/subscription_model.dart';
@@ -9,15 +10,37 @@ class MySubscriptionViewModel extends BaseChangeNotifier{
   final Ref ref;
   MySubscriptionViewModel(this.ref);
 
-  Subscription? _subscription;
+  List<Subscription> _subscriptions = [];
 
-  Subscription? get subInfo => _subscription;
+  List<Subscription> get subscriptions => _subscriptions;
 
-  set subscriptionInfo(Subscription? subscription) {
-    _subscription = subscription;
-    notifyListeners();
-    print("ViewModel: subscriptionInfo set to $_subscription");
+
+
+
+  // set subscriptionInfo(Subscription? subscription) {
+  //   _subscription = subscription;
+  //   notifyListeners();
+  //   print("ViewModel: subscriptionInfo set to $_subscription");
+  // }
+
+  Subscription? get subInfo {
+   return _subscriptions.firstWhereOrNull((sub) => sub.status == "active");
   }
+
+  List<Subscription> get expiredSubscriptions {
+    return _subscriptions.where((sub) => sub.status == "expired").toList();
+  }
+
+  // List<Subscription> get pendingSubscriptions {
+  //   return _subscriptions.where((sub) => sub.status == "pending").toList();
+  // }
+
+  set subscriptionsInfo(List<Subscription> subscriptions) {
+    _subscriptions = subscriptions;
+    notifyListeners();
+    print("ViewModel: subscriptionsInfo set to $_subscriptions");
+  }
+
 
   Future<void> fetchSubscriptions() async {
     try {
@@ -26,11 +49,21 @@ class MySubscriptionViewModel extends BaseChangeNotifier{
       print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
-
         final subData = response.data!["data"];
-        // userInfo = User.fromJson(response.data!["data"]);
-        subscriptionInfo = Subscription.fromJson(subData as Map<String, dynamic>);
-        print("ViewModel: User info updated - $subInfo");
+        if (subData is List) {
+          subscriptionsInfo = subData
+              .map((item) => Subscription.fromJson(item as Map<String, dynamic>))
+              .toList();
+        } else if (subData is Map<String, dynamic>) {
+          subscriptionsInfo = [Subscription.fromJson(subData)];
+        } else {
+          print("ViewModel: Unexpected data format - $subData");
+          handleError(message: "Unexpected subscription data format");
+          return;
+        }
+        print("ViewModel: Subscriptions updated - $subscriptions");
+        print("ViewModel: Active or Pending subscription - $subInfo");
+        print("ViewModel: Expired subscriptions - $expiredSubscriptions");
       } else {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??

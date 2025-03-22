@@ -29,6 +29,7 @@ class MySubscription extends HookConsumerWidget {
       return null;
     }, []);
 
+    // final isActiveSubscription = viewModel.subInfo?.status == "active";
     
     return Scaffold(
       appBar: AppBar(),
@@ -39,7 +40,7 @@ class MySubscription extends HookConsumerWidget {
           children: [
             Text('My subscription', style: Theme.of(context).textTheme.displayLarge,),
           SizedBox(height: 24.h,),
-            SubscriptionCard(subscriptionTier: 'Premium subscription plan', price: '50,000', checkOut: false, active: true,),
+            SubscriptionCard(subscriptionTier: viewModel.subInfo?.plan.name ?? "Starter subscription plan", price: '50,000', checkOut: false, active: true,),
             SizedBox(height: 32.h,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,7 +57,7 @@ class MySubscription extends HookConsumerWidget {
                       ),
                     ),
                     SizedBox(width: 6.w,),
-                    Text('Premium', style: Theme.of(context).textTheme.displaySmall,),
+                    Text(viewModel.subInfo?.plan.name ?? 'Starter', style: Theme.of(context).textTheme.displaySmall,),
                   ],
                 ),
 
@@ -80,76 +81,83 @@ class MySubscription extends HookConsumerWidget {
             ),
             SizedBox(height: 40.h,),
             viewModel.subInfo == null ? const SizedBox.shrink():
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Subscription history', style: Theme.of(context).textTheme.displayMedium,),
-                SizedBox(height: 12.h,),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Container(
-                    height: 56.h,
-                    width: 56.w,
-                    decoration: const BoxDecoration(
-                      color: primaryColor4,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.all(14.h),
-                      child: SvgPicture.asset(Assets.svg.ribbon),
-                    ),
-                  ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Premium Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                      SizedBox(height: 8.h,),
-                      Text(viewModel.subInfo?.plan.amount.toFormattedIsoDate() ?? " ", style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                    ],
-                  ),
-                  trailing: Text('Sept. 2, 2024', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
-                ),
-                SizedBox(height: 36.h,),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Container(
-                    height: 56.h,
-                    width: 56.w,
-                    decoration: const BoxDecoration(
-                      color: primaryColor4,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding:  EdgeInsets.all(14.h),
-                      child: SvgPicture.asset(Assets.svg.ribbon),
-                    ),
-                  ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Business Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                      SizedBox(height: 8.h,),
-                      Text('₦10,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
-                    ],
-                  ),
-                  trailing: Text('Sept. 2, 2023', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
-                ),
-                SizedBox(height: 60.h,),
-              ],
-            ),
+            _buildSubscriptionHistory(context, viewModel),
             AppButton(buttonText: 'Manage subscription', onPressed: (){
               _buildManageSubscriptionBottomSheet(context);
             }),
             SizedBox(height: 26.h,),
             GestureDetector(
                 onTap: (){
-                  _buildConfirmDeleteBottomSheet(context);
+                  _buildCancelSubBottomSheet(context);
                 },
                 child: Center(child: Text('Cancel subscription', style: Theme.of(context).textTheme.displayMedium!.copyWith(color: appRed),)))
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildSubscriptionHistory(BuildContext context, MySubscriptionViewModel viewModel) {
+    return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Subscription history', style: Theme.of(context).textTheme.displayMedium,),
+              SizedBox(height: 12.h,),
+              ...viewModel.expiredSubscriptions.map((sub)=>
+                  ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  height: 56.h,
+                  width: 56.w,
+                  decoration: const BoxDecoration(
+                    color: primaryColor4,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding:  EdgeInsets.all(14.h),
+                    child: SvgPicture.asset(Assets.svg.ribbon),
+                  ),
+                ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(sub.plan.name, style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                    SizedBox(height: 8.h,),
+                    Text('₦${sub.plan.amount}', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+                  ],
+                ),
+                trailing: Text(sub.startDate.toFormattedString(), style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
+              ),),
+
+              // SizedBox(height: 36.h,),
+              //
+              // ListTile(
+              //   contentPadding: EdgeInsets.zero,
+              //   leading: Container(
+              //     height: 56.h,
+              //     width: 56.w,
+              //     decoration: const BoxDecoration(
+              //       color: primaryColor4,
+              //       shape: BoxShape.circle,
+              //     ),
+              //     child: Padding(
+              //       padding:  EdgeInsets.all(14.h),
+              //       child: SvgPicture.asset(Assets.svg.ribbon),
+              //     ),
+              //   ),
+              //   title: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text('Business Plan', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+              //       SizedBox(height: 8.h,),
+              //       Text('₦10,000.00', style: Theme.of(context).textTheme.displayMedium!.copyWith(fontSize: 16.sp),),
+              //     ],
+              //   ),
+              //   trailing: Text('Sept. 2, 2023', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: const Color(0xff979797)),),
+              // ),
+              SizedBox(height: 60.h,),
+            ],
+          );
   }
 
   Future<dynamic> _buildManageSubscriptionBottomSheet(BuildContext context) {
@@ -263,7 +271,7 @@ class MySubscription extends HookConsumerWidget {
   }
 
 
-  Future<dynamic> _buildConfirmDeleteBottomSheet(BuildContext context) {
+  Future<dynamic> _buildCancelSubBottomSheet(BuildContext context) {
     return showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
@@ -354,7 +362,7 @@ class MySubscription extends HookConsumerWidget {
                       ),
                       AppButton(
                         buttonText: 'Cancel',
-                        onPressed: () {},
+                        onPressed: () {Navigator.of(context).pop();},
                         backgroundColor: Colors.transparent,
                         textColor: Colors.black,
                       ),

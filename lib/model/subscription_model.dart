@@ -133,7 +133,7 @@ class Transaction {
     required this.status,
     required this.amount,
     required this.currency,
-    required this.gatewayResponse,
+    this.gatewayResponse,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -152,6 +152,17 @@ class Transaction {
     );
   }
 }
+
+
+List<Subscription> parseSubscriptionsList(dynamic data) {
+  if (data is List) {
+    return data.map((json) => Subscription.fromJson(json as Map<String, dynamic>)).toList();
+  } else if (data is Map<String, dynamic>) {
+    return [Subscription.fromJson(data)];
+  }
+  throw Exception("Expected a list or map of subscriptions");
+}
+
 
 List<Subscription> parseSubscriptions(String responseBody) {
   final parsed = jsonDecode(responseBody)['data'] as List;
