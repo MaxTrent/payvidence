@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/login/login_vm.dart';
 import 'package:payvidence/screens/onboarding/onboarding.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
@@ -174,9 +175,10 @@ class Login extends HookConsumerWidget {
                           password: passwordController.text.trim(),
                           navigateOnSuccess: () {
                             locator<PayvidenceAppRouter>()
-                                .popUntil((route) => route is OnboardingScreen);
-                            locator<PayvidenceAppRouter>()
-                                .replaceNamed(PayvidenceRoutes.home);
+                                .pushAndPopUntil(HomePageRoute(),
+                                    predicate: (Route<dynamic> route) {
+                              return false;
+                            });
                           },
                         );
                       } else {
