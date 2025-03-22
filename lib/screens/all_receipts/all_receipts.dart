@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
+import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 
 import '../../components/app_button.dart';
@@ -56,41 +58,45 @@ class AllReceipts extends ConsumerWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 32.h,
-            ),
-            AppTextField(
-              // width: 282.w,
-              prefixIcon: Padding(
-                padding: EdgeInsets.all(16.h),
-                child: SvgPicture.asset(Assets.svg.search),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 32.h,
               ),
-              hintText: 'Search for receipt',
-              controller: _searchController,
-              radius: 80,
-              filled: true,
-              fillColor: appGrey5,
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            // SvgPicture.asset(Assets.svg.emptyReceipt),
-            // SizedBox(height: 40.h,),
-            // Text('No receipt yet!', style: Theme.of(context).textTheme.displayLarge,),
-            // SizedBox(height: 10.h,),
-            // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
-            allReceipts.when(data: (data) {
-              if (data.isEmpty) {
-                productNumber.value = 0;
+              AppTextField(
+                // width: 282.w,
+                prefixIcon: Padding(
+                  padding: EdgeInsets.all(16.h),
+                  child: SvgPicture.asset(Assets.svg.search),
+                ),
+                hintText: 'Search for receipt',
+                controller: _searchController,
+                radius: 80,
+                filled: true,
+                fillColor: appGrey5,
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              // SvgPicture.asset(Assets.svg.emptyReceipt),
+              // SizedBox(height: 40.h,),
+              // Text('No receipt yet!', style: Theme.of(context).textTheme.displayLarge,),
+              // SizedBox(height: 10.h,),
+              // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
+              allReceipts.when(data: (data) {
+                final actualData =
+                data.where((data) => data.publishedAt != null).toList();
 
-                return Expanded(
-                  child: Column(
+                if (actualData.isEmpty) {
+                  productNumber.value = 0;
+
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SizedBox(height: ScreenUtil().screenHeight/4,),
                       Text(
                         'No receipts available!',
                         style: Theme.of(context).textTheme.displayLarge,
@@ -116,32 +122,33 @@ class AllReceipts extends ConsumerWidget {
                                 .navigateNamed(PayvidenceRoutes.generateReceipt);
                           })
                     ],
-                  ),
-                );
-              }
-              productNumber.value = data.length;
+                  );
+                }
+                productNumber.value = actualData.length;
 
-              return ListView.separated(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return const ReceiptTile();
-                  },
-                  separatorBuilder: (ctx, idx) {
-                    return Column(
-                      children: [
-                        SizedBox(
-                          height: 24.h,
-                        ),
-                      ],
-                    );
-                  },
-                  itemCount: data.length);
-            }, error: (error, _) {
-              return const Text('An error has occurred');
-            }, loading: () {
-              return const CustomShimmer();
-            })
-          ],
+                return ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ReceiptTile(receipt: actualData[index],);
+                    },
+                    physics: const NeverScrollableScrollPhysics(),
+                    separatorBuilder: (ctx, idx) {
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 24.h,
+                          ),
+                        ],
+                      );
+                    },
+                    itemCount: actualData.length);
+              }, error: (error, _) {
+                return const Text('An error has occurred');
+              }, loading: () {
+                return const CustomShimmer();
+              })
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -163,7 +170,8 @@ class AllReceipts extends ConsumerWidget {
 }
 
 class ReceiptTile extends StatelessWidget {
-  const ReceiptTile({super.key});
+  final Receipt receipt;
+  const ReceiptTile({super.key, required this.receipt});
 
   @override
   Widget build(BuildContext context) {
@@ -181,60 +189,64 @@ class ReceiptTile extends StatelessWidget {
           SizedBox(
             width: 14.w,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Lucas Dinner Gown',
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              SizedBox(
-                height: 6.h,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('15 units sold',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall!
-                          .copyWith(fontSize: 14.sp, color: appGrey4)),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Container(
-                    height: 6.h,
-                    width: 6.h,
-                    decoration: BoxDecoration(
-                        color: appGrey4,
-                        borderRadius: BorderRadius.circular(24.r)),
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Text('Today, 8:50PM',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall!
-                          .copyWith(fontSize: 14.sp, color: appGrey4)),
-                ],
-              ),
-              SizedBox(
-                height: 8.h,
-              ),
-              Row(
-                // mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('₦220,000.00',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(fontSize: 14.sp)),
-                ],
-              )
-            ],
+          Expanded( 
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  receipt.recordProductDetails?[0].product?.name??'',
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+                SizedBox(
+                  height: 6.h,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('${receipt.recordProductDetails?[0].quantity??''} units sold',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(fontSize: 14.sp, color: appGrey4)),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Container(
+                      height: 6.h,
+                      width: 6.h,
+                      decoration: BoxDecoration(
+                          color: appGrey4,
+                          borderRadius: BorderRadius.circular(24.r)),
+                    ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Expanded(
+                      child: Text(DateFormat.yMd().add_jm().format(DateTime.parse(receipt.createdAt!)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(fontSize: 14.sp, color: appGrey4)),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 8.h,
+                ),
+                Row(
+                  // mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('₦${receipt.recordProductDetails?[0].total??''} ',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(fontSize: 14.sp)),
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),
