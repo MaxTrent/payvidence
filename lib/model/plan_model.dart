@@ -26,8 +26,8 @@ class Plan {
   final String id;
   final String name;
   final int businessAccountsAllowed;
-  final String invoiceGenerationPerMonth;
-  final String receiptGenerationPerMonth;
+  final int invoiceGenerationPerMonth;
+  final int receiptGenerationPerMonth;
   final bool salesReport;
   final bool receiptSharing;
   final bool receiptPrinting;
@@ -41,7 +41,7 @@ class Plan {
   final int templates;
   final bool isRecommended;
   final String duration;
-  final double amount; // Using double to handle potential decimals
+  final double amount;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -74,22 +74,22 @@ class Plan {
       id: json['id'] as String,
       name: json['name'] as String,
       businessAccountsAllowed: json['business_accounts_allowed'] as int,
-      invoiceGenerationPerMonth: json['invoice_generation_per_month'] as String,
-      receiptGenerationPerMonth: json['receipt_generation_per_month'] as String,
-      salesReport: (json['sales_report'] as int) == 1,
-      receiptSharing: (json['receipt_sharing'] as int) == 1,
-      receiptPrinting: (json['receipt_printing'] as int) == 1,
-      inventoryManagement: (json['inventory_management'] as int) == 1,
-      pdfCsvExport: (json['pdf_csv_export'] as int) == 1,
-      clientManagement: (json['client_management'] as int) == 1,
-      brandManagement: (json['brand_management'] as int) == 1,
-      letterheadTransaction: (json['letterhead_transaction'] as int) == 1,
-      paymentInstructions: (json['payment_instructions'] as int) == 1,
-      advancedReportingAndAnalytics: (json['advanced_reporting_and_analytics'] as int) == 1,
+      invoiceGenerationPerMonth: int.parse(json['invoice_generation_per_month'] as String),
+      receiptGenerationPerMonth: int.parse(json['receipt_generation_per_month'] as String),
+      salesReport: json['sales_report'] as bool,
+      receiptSharing: json['receipt_sharing'] as bool,
+      receiptPrinting: json['receipt_printing'] as bool,
+      inventoryManagement: json['inventory_management'] as bool,
+      pdfCsvExport: json['pdf_csv_export'] as bool,
+      clientManagement: json['client_management'] as bool,
+      brandManagement: json['brand_management'] as bool,
+      letterheadTransaction: json['letterhead_transaction'] as bool,
+      paymentInstructions: json['payment_instructions'] as bool,
+      advancedReportingAndAnalytics: json['advanced_reporting_and_analytics'] as bool,
       templates: json['templates'] as int,
-      isRecommended: (json['is_recommended'] as int) == 1,
+      isRecommended: json['is_recommended'] as bool,
       duration: json['duration'] as String,
-      amount: (json['amount'] as num).toDouble(), // Convert to double for flexibility
+      amount: double.parse(json['amount'] as String),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -100,8 +100,8 @@ class Plan {
       'id': id,
       'name': name,
       'business_accounts_allowed': businessAccountsAllowed,
-      'invoice_generation_per_month': invoiceGenerationPerMonth,
-      'receipt_generation_per_month': receiptGenerationPerMonth,
+      'invoice_generation_per_month': invoiceGenerationPerMonth.toString(),
+      'receipt_generation_per_month': receiptGenerationPerMonth.toString(),
       'sales_report': salesReport ? 1 : 0,
       'receipt_sharing': receiptSharing ? 1 : 0,
       'receipt_printing': receiptPrinting ? 1 : 0,
@@ -115,20 +115,18 @@ class Plan {
       'templates': templates,
       'is_recommended': isRecommended ? 1 : 0,
       'duration': duration,
-      'amount': amount,
+      'amount': amount.toString(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
   }
 }
 
-// function to parse the full response from a raw JSON string
 PlanResponse parsePlans(String responseBody) {
   final parsed = jsonDecode(responseBody) as Map<String, dynamic>;
   return PlanResponse.fromJson(parsed);
 }
 
-// function to parse just the data list (if response is already decoded)
 List<Plan> parsePlanList(dynamic data) {
   if (data is List<dynamic>) {
     return data.map((item) => Plan.fromJson(item as Map<String, dynamic>)).toList();

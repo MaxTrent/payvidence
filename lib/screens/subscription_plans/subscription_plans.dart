@@ -162,14 +162,14 @@ class SubscriptionPlans extends HookConsumerWidget {
     );
   }
 
+
   Widget _buildSubscriptionContent(BuildContext context, Plan plan) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SubscriptionCard(
           subscriptionTier: plan.name,
-          price:
-              '₦${plan.amount.toString().toCommaSeparated}',
+          price: plan.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
           active: true,
           recommended: plan.isRecommended,
         ),
@@ -177,42 +177,27 @@ class SubscriptionPlans extends HookConsumerWidget {
         Text(
           'What’s embedded in ${plan.name.toLowerCase()}?',
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                fontWeight: FontWeight.w400,
-                fontSize: 20.sp,
-              ),
+            fontWeight: FontWeight.w400,
+            fontSize: 20.sp,
+          ),
         ),
         SizedBox(height: 20.h),
         Expanded(
           child: ListView(
             children: [
-              PlanList(
-                  description: 'Business accounts allowed',
-                  status: plan.businessAccountsAllowed.toString()),
-              PlanList(
-                  description: 'Receipt generation per month',
-                  status: plan.receiptGenerationPerMonth.toString()),
-              PlanList(
-                  description: 'Invoice generation per month',
-                  status: plan.invoiceGenerationPerMonth.toString()),
-              PlanList(
-                  description: 'Sales report',
-                  status: plan.salesReport.toString()),
-              PlanList(
-                  description: 'Receipts printing',
-                  status: plan.receiptPrinting.toString()),
-              PlanList(
-                  description: 'Inventory management',
-                  status: plan.inventoryManagement.toString()),
-              PlanList(
-                  description: 'PDF and CSV export',
-                  status: plan.pdfCsvExport.toString()),
-              PlanList(description: 'Client management', status: plan.clientManagement.toString()),
-              PlanList(description: 'Brand management', status: plan.brandManagement.toString()),
-              PlanList(description: 'Letterhead transactions', status: plan.letterheadTransaction.toString()),
-              PlanList(description: 'Payment instructions', status: plan.paymentInstructions.toString()),
-              PlanList(
-                  description: 'Advanced reporting and analytics',
-                  status: plan.advancedReportingAndAnalytics.toString()),
+              PlanList(description: 'Business accounts allowed', status: plan.businessAccountsAllowed.toString()),
+              PlanList(description: 'Receipt generation per month', status: plan.receiptGenerationPerMonth.toString()),
+              PlanList(description: 'Invoice generation per month', status: plan.invoiceGenerationPerMonth.toString()),
+              PlanList(description: 'Sales report', status: plan.salesReport ? 'Yes' : 'No'),
+              PlanList(description: 'Receipt sharing', status: plan.receiptSharing ? 'Yes' : 'No'),
+              PlanList(description: 'Receipts printing', status: plan.receiptPrinting ? 'Yes' : 'No'),
+              PlanList(description: 'Inventory management', status: plan.inventoryManagement ? 'Yes' : 'No'),
+              PlanList(description: 'PDF and CSV export', status: plan.pdfCsvExport ? 'Yes' : 'No'),
+              PlanList(description: 'Client management', status: plan.clientManagement ? 'Yes' : 'No'),
+              PlanList(description: 'Brand management', status: plan.brandManagement ? 'Yes' : 'No'),
+              PlanList(description: 'Letterhead transactions', status: plan.letterheadTransaction ? 'Yes' : 'No'),
+              PlanList(description: 'Payment instructions', status: plan.paymentInstructions ? 'Yes' : 'No'),
+              PlanList(description: 'Advanced reporting and analytics', status: plan.advancedReportingAndAnalytics ? 'Yes' : 'No'),
               PlanList(description: 'Templates', status: plan.templates.toString()),
             ],
           ),

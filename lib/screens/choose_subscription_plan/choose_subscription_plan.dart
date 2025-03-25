@@ -22,7 +22,9 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
     final viewModel = ref.watch(chooseSubscriptionPlanViewModel);
 
     useEffect(() {
-      viewModel.fetchPlans();
+      Future.delayed(Duration.zero, () {
+        viewModel.fetchPlans();
+      });
       return null;
     }, []);
 
@@ -31,8 +33,8 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
       appBar: AppBar(),
       body: Padding(
         padding:  EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Choose subscription plan', style: Theme.of(context).textTheme.displayLarge,),
             SizedBox(height: 24.h,),

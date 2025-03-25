@@ -1,15 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
-
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
-import '../../model/plan_model.dart';
+import '../../model/plan_model.dart'; // Update path if needed
 import '../../shared_dependency/shared_dependency.dart';
 
+final chooseSubscriptionPlanViewModel = ChangeNotifierProvider((ref) => ChooseSubscriptionPlanViewModel(ref));
 
-final chooseSubscriptionPlanViewModel = ChangeNotifierProvider((ref)=> ChooseSubscriptionPlanViewModel(ref));
-
-class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier{
+class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier {
   final Ref ref;
   ChooseSubscriptionPlanViewModel(this.ref);
 
@@ -19,7 +17,6 @@ class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier{
 
   List<Plan> get plans => _plans;
   bool get isLoading => _isLoading;
-
   Plan? get selectedPlan => _selectedPlan;
 
   set plans(List<Plan> value) {
@@ -34,7 +31,7 @@ class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier{
     print("ViewModel: selectedPlan set to $_selectedPlan");
   }
 
-  Future<void> fetchPlans() async{
+  Future<void> fetchPlans() async {
     try {
       _isLoading = true;
       notifyListeners();
