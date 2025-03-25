@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/utilities/payvidence_endpoints.dart';
 import '../screens/device_info.dart';
 import '../shared_dependency/shared_dependency.dart';
@@ -211,6 +212,22 @@ class ApiServices{
     return ApiResult.fromJson(response);
   }
 
+  Future<ApiResult> createSubscription(String oldPassword, String password, String confirmPassword) async {
+
+    var requestData = {
+      "old_password": oldPassword,
+      "password": password,
+      "password_confirmation": confirmPassword
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.changePassword,
+        data: requestData,
+        useToken: true);
+
+    return ApiResult.fromJson(response);
+  }
+
 
 
 
@@ -220,6 +237,19 @@ class ApiServices{
 
     return ApiResult.fromJson(response);
   }
+
+  Future<ApiResult> getPlans() async {
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.getPlans);
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> getOnePlan(String planId) async{
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.getOnePlan(planId));
+
+    return ApiResult.fromJson(response);
+  }
+
 
   // Future<ApiResult> addClient(
   //     String name, String address, String phoneNumber

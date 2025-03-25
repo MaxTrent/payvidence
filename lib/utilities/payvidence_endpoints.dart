@@ -50,4 +50,8 @@ static String get createSubscription => '/api/subscription';
 static String getSubcriptionById(String subId) => '/api/subscription/$subId';
 static String get listSubscriptions => '/api/subscription';
 
+
+//Plan Endpoints
+static String get getPlans => '/api/plan';
+static String  getOnePlan(String planId) => '/api/plan/$planId';
 }

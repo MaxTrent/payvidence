@@ -40,7 +40,7 @@ class MySubscription extends HookConsumerWidget {
           children: [
             Text('My subscription', style: Theme.of(context).textTheme.displayLarge,),
           SizedBox(height: 24.h,),
-            SubscriptionCard(subscriptionTier: viewModel.subInfo?.plan.name ?? "Starter subscription plan", price: '50,000', checkOut: false, active: true,),
+            SubscriptionCard(subscriptionTier: viewModel.subInfo?.plan.name ?? "Starter subscription plan", price: viewModel.subInfo?.plan.amount ?? '0', checkOut: false, active: true,),
             SizedBox(height: 32.h,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

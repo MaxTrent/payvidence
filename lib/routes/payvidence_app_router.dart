@@ -139,5 +139,5 @@ class PayvidenceRoutes {
   static String get resetPasswordSuccess => '/resetPasswordSuccess';
   static String get createNewPasswordReset => '/createNewPasswordReset';
   static String get chooseSubscriptionPlan => '/chooseSubPlan';
-  static String get subscriptionPlans => '/subscriptionPlans';
+  static String get subscriptionPlans => '/subscriptionPlans/:planId';
 }

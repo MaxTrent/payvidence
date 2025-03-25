@@ -36,7 +36,7 @@ import 'package:payvidence/screens/change_password_success/change_password_succe
     as _i16;
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture.dart'
     as _i17;
-import 'package:payvidence/screens/choose_subscription_plan.dart' as _i18;
+import 'package:payvidence/screens/choose_subscription_plan/choose_subscription_plan.dart' as _i18;
 import 'package:payvidence/screens/client_details/client_details.dart' as _i19;
 import 'package:payvidence/screens/client_success/client_success.dart' as _i20;
 import 'package:payvidence/screens/clients/clients.dart' as _i21;
@@ -599,7 +599,7 @@ class ChooseSubscriptionPlanRoute extends _i58.PageRouteInfo<void> {
   static _i58.PageInfo page = _i58.PageInfo(
     name,
     builder: (data) {
-      return const _i18.ChooseSubscriptionPlan();
+      return  _i18.ChooseSubscriptionPlan();
     },
   );
 }
@@ -1613,7 +1613,7 @@ class SettingsRoute extends _i58.PageRouteInfo<void> {
 /// generated route for
 /// [_i54.SubscriptionPlans]
 class SubscriptionPlansRoute extends _i58.PageRouteInfo<void> {
-  const SubscriptionPlansRoute({List<_i58.PageRouteInfo>? children})
+  const SubscriptionPlansRoute({List<_i58.PageRouteInfo>? children, required String planId})
       : super(
           SubscriptionPlansRoute.name,
           initialChildren: children,

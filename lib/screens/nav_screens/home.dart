@@ -188,7 +188,10 @@ class HomeScreen extends HookConsumerWidget {
             SizedBox(
               height: 38.h,
             ),
-            SvgPicture.asset(Assets.svg.subscribe),
+            GestureDetector(
+                onTap: ()=>
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.chooseSubscriptionPlan),
+                child: SvgPicture.asset(Assets.svg.subscribe)),
             SizedBox(
               height: 40.h,
             ),

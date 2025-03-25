@@ -10,8 +10,10 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
   UpdatePersonalDetailsViewModel(this.ref);
 
   User? _user;
+  bool _isLoading = false;
 
   User? get userInfo => _user;
+  bool get isLoading => _isLoading;
 
   set userInfo(User? user) {
     _user = user;
@@ -21,14 +23,15 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
 
   Future<void> fetchUserInformation() async {
     try {
+      _isLoading = true;
+      notifyListeners();
+
       print("ViewModel: Fetching user information");
       final response = await apiServices.getAccount();
       print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
-
         final userData = response.data!["data"];
-        // userInfo = User.fromJson(response.data!["data"]);
         userInfo = User(
           account: Account.fromJson(userData as Map<String, dynamic>),
           token: null,
@@ -44,6 +47,9 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
     } catch (e) {
       print("ViewModel: Exception - $e");
       throw Exception(e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }
