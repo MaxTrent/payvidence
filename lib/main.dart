@@ -28,7 +28,6 @@ Future<void> main() async {
   }
 }
 
-// final appRoutes = AppRoutes();
 
 
 
@@ -39,8 +38,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _appRouter = locator<PayvidenceAppRouter>();
-    // final goRouter = ref.watch(appRoutes.goRouterProvider);
+    final appRouter = locator<PayvidenceAppRouter>();
 
     return ScreenUtilInit(
       designSize: const Size(390, 844),
@@ -49,7 +47,7 @@ class MyApp extends StatelessWidget {
         title: 'Payvidence',
         debugShowCheckedModeBanner: false,
         theme: appTheme.light,
-        routerConfig: _appRouter.config(),
+        routerConfig: appRouter.config(),
       ),
     );
   }

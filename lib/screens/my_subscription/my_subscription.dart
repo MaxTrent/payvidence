@@ -63,16 +63,16 @@ class MySubscription extends HookConsumerWidget {
 
               ],
             ),
-            SizedBox(height: 18.h,),
-            Row(
+            viewModel.subInfo?.startDate == null ? SizedBox.shrink():SizedBox(height: 18.h,),
+            viewModel.subInfo?.startDate == null ? SizedBox.shrink():Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Subscription date', style: Theme.of(context).textTheme.displaySmall,),
-                Text(viewModel.subInfo?.startDate.toFormattedString() ?? "Not available", style: Theme.of(context).textTheme.displaySmall,),
+                Text(viewModel.subInfo!.startDate.toFormattedString(), style: Theme.of(context).textTheme.displaySmall,),
               ],
             ),
-            SizedBox(height: 18.h,),
-            Row(
+            viewModel.subInfo?.startDate == null ? SizedBox.shrink():SizedBox(height: 18.h,),
+            viewModel.subInfo?.expiryDate == null ? SizedBox.shrink() : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Expiration date', style: Theme.of(context).textTheme.displaySmall,),

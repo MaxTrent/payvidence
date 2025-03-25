@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/subscription_card.dart';
-import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/plan_list.dart';

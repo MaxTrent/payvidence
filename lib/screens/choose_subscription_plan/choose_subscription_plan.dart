@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
+import 'package:payvidence/utilities/extensions.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/subscription_card.dart';
 import '../../routes/payvidence_app_router.gr.dart';
@@ -44,6 +45,8 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
               CustomShimmer(height: 108.h),
               SizedBox(height: 24.h),
               CustomShimmer(height: 108.h),
+              SizedBox(height: 24.h),
+              CustomShimmer(height: 108.h),
             ] else ...[
               ...viewModel.plans.map(
                     (plan) => Padding(
@@ -54,7 +57,7 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
                           SubscriptionPlansRoute(planId: plan.id));},
                     child: SubscriptionCard(
                       subscriptionTier: plan.name,
-                      price: plan.amount.toString(),
+                      price: plan.amount.toString().toCommaSeparated(),
                       // recommended: plan.isRecommended,
                       active: false,
                     ),
