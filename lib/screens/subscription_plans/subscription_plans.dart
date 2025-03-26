@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/subscription_card.dart';
+import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/plan_list.dart';
@@ -25,26 +26,26 @@ class SubscriptionPlans extends HookConsumerWidget {
     final selectedTier = useState<String>('');
     final viewModel = ref.watch(chooseSubscriptionPlanViewModel);
 
+
+    void setInitialPlan() {
+      if (planId.isNotEmpty) {
+        selectedTier.value = viewModel.plans.firstWhere(
+              (plan) => plan.id == planId,
+          orElse: () => viewModel.plans.first,
+        ).name;
+      }
+    }
+
+
     useEffect(() {
       if (viewModel.plans.isEmpty) {
-        viewModel.fetchPlans().then((_) {
-          if (planId.isNotEmpty) {
-            final initialPlan = viewModel.plans.firstWhere(
-              (plan) => plan.id == planId,
-              orElse: () => viewModel.plans.first,
-            );
-            selectedTier.value = initialPlan.name;
-          }
-        });
-      } else if (planId.isNotEmpty) {
-        final initialPlan = viewModel.plans.firstWhere(
-          (plan) => plan.id == planId,
-          orElse: () => viewModel.plans.first,
-        );
-        selectedTier.value = initialPlan.name;
+        viewModel.fetchPlans().then((_) => setInitialPlan());
+      } else {
+        setInitialPlan();
       }
       return null;
     }, [planId]);
+
 
     return Scaffold(
       appBar: AppBar(),
@@ -54,9 +55,7 @@ class SubscriptionPlans extends HookConsumerWidget {
               : 'Renew ${selectedTier.value} plan',
           onPressed: () {
             locator<PayvidenceAppRouter>()
-                .popUntil((route) => route is OnboardingScreen);
-            locator<PayvidenceAppRouter>()
-                .navigateNamed(PayvidenceRoutes.login);
+                .navigateNamed(PayvidenceRoutes.subscriptionPrompt);
           }),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -168,9 +167,10 @@ class SubscriptionPlans extends HookConsumerWidget {
       children: [
         SubscriptionCard(
           subscriptionTier: plan.name,
-          price: plan.amount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},'),
+          price: plan.amount.toStringAsFixed(0).toCommaSeparated(),
           active: true,
           recommended: plan.isRecommended,
+          checkOut: false,
         ),
         SizedBox(height: 40.h),
         Text(

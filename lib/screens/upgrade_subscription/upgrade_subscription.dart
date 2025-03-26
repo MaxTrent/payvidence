@@ -50,8 +50,7 @@ class UpgradeSubscription extends StatelessWidget {
                           .displayMedium!
                           .copyWith(color: primaryColor2),
                     ),
-                  )
-
+                  ),
                 ],
               ),
             ),

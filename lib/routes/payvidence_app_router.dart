@@ -61,7 +61,7 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: ResetPasswordRoute.page, path: PayvidenceRoutes.resetPassword),
         AutoRoute(page: ChooseSubscriptionPlanRoute.page, path: PayvidenceRoutes.chooseSubscriptionPlan),
         AutoRoute(page: SubscriptionPlansRoute.page, path: PayvidenceRoutes.subscriptionPlans),
-
+        AutoRoute(page: SubscriptionPrompt.page, path: PayvidenceRoutes.subscriptionPrompt),
       ];
 
 }
@@ -140,4 +140,5 @@ class PayvidenceRoutes {
   static String get createNewPasswordReset => '/createNewPasswordReset';
   static String get chooseSubscriptionPlan => '/chooseSubPlan';
   static String get subscriptionPlans => '/subscriptionPlans/:planId';
+  static String get subscriptionPrompt => '/subscriptionPrompt';
 }

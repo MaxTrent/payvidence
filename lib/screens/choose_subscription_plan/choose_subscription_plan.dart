@@ -12,9 +12,10 @@ import '../../routes/payvidence_app_router.gr.dart';
 import 'choose_subscription_plan_vm.dart';
 
 
+
 @RoutePage(name: 'ChooseSubscriptionPlanRoute')
 class ChooseSubscriptionPlan extends HookConsumerWidget {
-  ChooseSubscriptionPlan({super.key});
+  const ChooseSubscriptionPlan({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
@@ -35,7 +36,6 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
       body: Padding(
         padding:  EdgeInsets.symmetric(horizontal: 20.w),
         child: ListView(
-          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Choose subscription plan', style: Theme.of(context).textTheme.displayLarge,),
             SizedBox(height: 24.h,),
@@ -50,7 +50,7 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
             ] else ...[
               ...viewModel.plans.map(
                     (plan) => Padding(
-                  padding: EdgeInsets.only(bottom: 24.h), // Space between cards
+                  padding: EdgeInsets.only(bottom: 24.h),
                   child: GestureDetector(
                     onTap: () {
                       locator<PayvidenceAppRouter>().push(
@@ -58,7 +58,7 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
                     child: SubscriptionCard(
                       subscriptionTier: plan.name,
                       price: plan.amount.toString().toCommaSeparated(),
-                      // recommended: plan.isRecommended,
+                      recommended: plan.isRecommended,
                       active: false,
                     ),
                   ),

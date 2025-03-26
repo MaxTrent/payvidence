@@ -240,6 +240,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/renewplan.svg
   String get renewplan => 'assets/svg/renewplan.svg';
 
+  /// File path: assets/svg/restricted.svg
+  String get restricted => 'assets/svg/restricted.svg';
+
   /// File path: assets/svg/ribbon white.svg
   String get ribbonWhite => 'assets/svg/ribbon white.svg';
 
@@ -270,8 +273,14 @@ class $AssetsSvgGen {
   /// File path: assets/svg/store.svg
   String get store => 'assets/svg/store.svg';
 
+  /// File path: assets/svg/subfailed.svg
+  String get subfailed => 'assets/svg/subfailed.svg';
+
   /// File path: assets/svg/subscribe.svg
   String get subscribe => 'assets/svg/subscribe.svg';
+
+  /// File path: assets/svg/subsuccess.svg
+  String get subsuccess => 'assets/svg/subsuccess.svg';
 
   /// File path: assets/svg/terms.svg
   String get terms => 'assets/svg/terms.svg';
@@ -357,6 +366,7 @@ class $AssetsSvgGen {
     profileOl,
     receipt,
     renewplan,
+    restricted,
     ribbonWhite,
     ribbon,
     search,
@@ -367,7 +377,9 @@ class $AssetsSvgGen {
     star,
     statusUp,
     store,
+    subfailed,
     subscribe,
+    subsuccess,
     terms,
     transaction,
     transactionOl,

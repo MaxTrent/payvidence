@@ -8,10 +8,10 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i58;
-import 'package:flutter/cupertino.dart' as _i61;
-import 'package:flutter/material.dart' as _i59;
-import 'package:payvidence/model/business_model.dart' as _i60;
+import 'package:auto_route/auto_route.dart' as _i59;
+import 'package:flutter/cupertino.dart' as _i62;
+import 'package:flutter/material.dart' as _i60;
+import 'package:payvidence/model/business_model.dart' as _i61;
 import 'package:payvidence/screens/account_success/account_success.dart' as _i1;
 import 'package:payvidence/screens/add_brand/add_brand.dart' as _i2;
 import 'package:payvidence/screens/add_business/add_business.dart' as _i3;
@@ -36,7 +36,8 @@ import 'package:payvidence/screens/change_password_success/change_password_succe
     as _i16;
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture.dart'
     as _i17;
-import 'package:payvidence/screens/choose_subscription_plan/choose_subscription_plan.dart' as _i18;
+import 'package:payvidence/screens/choose_subscription_plan/choose_subscription_plan.dart'
+    as _i18;
 import 'package:payvidence/screens/client_details/client_details.dart' as _i19;
 import 'package:payvidence/screens/client_success/client_success.dart' as _i20;
 import 'package:payvidence/screens/clients/clients.dart' as _i21;
@@ -84,17 +85,19 @@ import 'package:payvidence/screens/select_client/select_client.dart' as _i52;
 import 'package:payvidence/screens/settings/settings.dart' as _i53;
 import 'package:payvidence/screens/subscription_plans/subscription_plans.dart'
     as _i54;
-import 'package:payvidence/screens/update_personal_details/update_personal_details.dart'
+import 'package:payvidence/screens/subscription_prompt/subscription_prompt.dart'
     as _i55;
-import 'package:payvidence/screens/update_quantity/update_quantity.dart'
+import 'package:payvidence/screens/update_personal_details/update_personal_details.dart'
     as _i56;
-import 'package:payvidence/screens/upgrade_subscription/upgrade_subscription.dart'
+import 'package:payvidence/screens/update_quantity/update_quantity.dart'
     as _i57;
+import 'package:payvidence/screens/upgrade_subscription/upgrade_subscription.dart'
+    as _i58;
 
 /// generated route for
 /// [_i1.AccountSuccessScreen]
-class AccountSuccessRoute extends _i58.PageRouteInfo<void> {
-  const AccountSuccessRoute({List<_i58.PageRouteInfo>? children})
+class AccountSuccessRoute extends _i59.PageRouteInfo<void> {
+  const AccountSuccessRoute({List<_i59.PageRouteInfo>? children})
       : super(
           AccountSuccessRoute.name,
           initialChildren: children,
@@ -102,7 +105,7 @@ class AccountSuccessRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'AccountSuccessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i1.AccountSuccessScreen();
@@ -112,10 +115,10 @@ class AccountSuccessRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.AddBrand]
-class AddBrandRoute extends _i58.PageRouteInfo<AddBrandRouteArgs> {
+class AddBrandRoute extends _i59.PageRouteInfo<AddBrandRouteArgs> {
   AddBrandRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AddBrandRoute.name,
           args: AddBrandRouteArgs(key: key),
@@ -124,7 +127,7 @@ class AddBrandRoute extends _i58.PageRouteInfo<AddBrandRouteArgs> {
 
   static const String name = 'AddBrandRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AddBrandRouteArgs>(
@@ -137,7 +140,7 @@ class AddBrandRoute extends _i58.PageRouteInfo<AddBrandRouteArgs> {
 class AddBrandRouteArgs {
   const AddBrandRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -147,10 +150,10 @@ class AddBrandRouteArgs {
 
 /// generated route for
 /// [_i3.AddBusiness]
-class AddBusinessRoute extends _i58.PageRouteInfo<AddBusinessRouteArgs> {
+class AddBusinessRoute extends _i59.PageRouteInfo<AddBusinessRouteArgs> {
   AddBusinessRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AddBusinessRoute.name,
           args: AddBusinessRouteArgs(key: key),
@@ -159,7 +162,7 @@ class AddBusinessRoute extends _i58.PageRouteInfo<AddBusinessRouteArgs> {
 
   static const String name = 'AddBusinessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AddBusinessRouteArgs>(
@@ -172,7 +175,7 @@ class AddBusinessRoute extends _i58.PageRouteInfo<AddBusinessRouteArgs> {
 class AddBusinessRouteArgs {
   const AddBusinessRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -182,8 +185,8 @@ class AddBusinessRouteArgs {
 
 /// generated route for
 /// [_i4.AddBusinessSuccess]
-class AddBusinessSuccessRoute extends _i58.PageRouteInfo<void> {
-  const AddBusinessSuccessRoute({List<_i58.PageRouteInfo>? children})
+class AddBusinessSuccessRoute extends _i59.PageRouteInfo<void> {
+  const AddBusinessSuccessRoute({List<_i59.PageRouteInfo>? children})
       : super(
           AddBusinessSuccessRoute.name,
           initialChildren: children,
@@ -191,7 +194,7 @@ class AddBusinessSuccessRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'AddBusinessSuccessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i4.AddBusinessSuccess();
@@ -201,10 +204,10 @@ class AddBusinessSuccessRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.AddCategory]
-class AddCategoryRoute extends _i58.PageRouteInfo<AddCategoryRouteArgs> {
+class AddCategoryRoute extends _i59.PageRouteInfo<AddCategoryRouteArgs> {
   AddCategoryRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AddCategoryRoute.name,
           args: AddCategoryRouteArgs(key: key),
@@ -213,7 +216,7 @@ class AddCategoryRoute extends _i58.PageRouteInfo<AddCategoryRouteArgs> {
 
   static const String name = 'AddCategoryRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AddCategoryRouteArgs>(
@@ -226,7 +229,7 @@ class AddCategoryRoute extends _i58.PageRouteInfo<AddCategoryRouteArgs> {
 class AddCategoryRouteArgs {
   const AddCategoryRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -236,10 +239,10 @@ class AddCategoryRouteArgs {
 
 /// generated route for
 /// [_i6.AddClient]
-class AddClientRoute extends _i58.PageRouteInfo<AddClientRouteArgs> {
+class AddClientRoute extends _i59.PageRouteInfo<AddClientRouteArgs> {
   AddClientRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AddClientRoute.name,
           args: AddClientRouteArgs(key: key),
@@ -248,7 +251,7 @@ class AddClientRoute extends _i58.PageRouteInfo<AddClientRouteArgs> {
 
   static const String name = 'AddClientRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AddClientRouteArgs>(
@@ -261,7 +264,7 @@ class AddClientRoute extends _i58.PageRouteInfo<AddClientRouteArgs> {
 class AddClientRouteArgs {
   const AddClientRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -271,10 +274,10 @@ class AddClientRouteArgs {
 
 /// generated route for
 /// [_i7.AddProduct]
-class AddProductRoute extends _i58.PageRouteInfo<AddProductRouteArgs> {
+class AddProductRoute extends _i59.PageRouteInfo<AddProductRouteArgs> {
   AddProductRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AddProductRoute.name,
           args: AddProductRouteArgs(key: key),
@@ -283,7 +286,7 @@ class AddProductRoute extends _i58.PageRouteInfo<AddProductRouteArgs> {
 
   static const String name = 'AddProductRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AddProductRouteArgs>(
@@ -296,7 +299,7 @@ class AddProductRoute extends _i58.PageRouteInfo<AddProductRouteArgs> {
 class AddProductRouteArgs {
   const AddProductRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -306,8 +309,8 @@ class AddProductRouteArgs {
 
 /// generated route for
 /// [_i8.AddProductSuccess]
-class AddProductSuccessRoute extends _i58.PageRouteInfo<void> {
-  const AddProductSuccessRoute({List<_i58.PageRouteInfo>? children})
+class AddProductSuccessRoute extends _i59.PageRouteInfo<void> {
+  const AddProductSuccessRoute({List<_i59.PageRouteInfo>? children})
       : super(
           AddProductSuccessRoute.name,
           initialChildren: children,
@@ -315,7 +318,7 @@ class AddProductSuccessRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'AddProductSuccessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i8.AddProductSuccess();
@@ -325,11 +328,11 @@ class AddProductSuccessRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i9.AllBusinesses]
-class AllBusinessesRoute extends _i58.PageRouteInfo<AllBusinessesRouteArgs> {
+class AllBusinessesRoute extends _i59.PageRouteInfo<AllBusinessesRouteArgs> {
   AllBusinessesRoute({
-    required List<_i60.Business> allBusiness,
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    required List<_i61.Business> allBusiness,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AllBusinessesRoute.name,
           args: AllBusinessesRouteArgs(
@@ -341,7 +344,7 @@ class AllBusinessesRoute extends _i58.PageRouteInfo<AllBusinessesRouteArgs> {
 
   static const String name = 'AllBusinessesRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AllBusinessesRouteArgs>();
@@ -359,9 +362,9 @@ class AllBusinessesRouteArgs {
     this.key,
   });
 
-  final List<_i60.Business> allBusiness;
+  final List<_i61.Business> allBusiness;
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -371,10 +374,10 @@ class AllBusinessesRouteArgs {
 
 /// generated route for
 /// [_i10.AllInvoices]
-class AllInvoicesRoute extends _i58.PageRouteInfo<AllInvoicesRouteArgs> {
+class AllInvoicesRoute extends _i59.PageRouteInfo<AllInvoicesRouteArgs> {
   AllInvoicesRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AllInvoicesRoute.name,
           args: AllInvoicesRouteArgs(key: key),
@@ -383,7 +386,7 @@ class AllInvoicesRoute extends _i58.PageRouteInfo<AllInvoicesRouteArgs> {
 
   static const String name = 'AllInvoicesRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AllInvoicesRouteArgs>(
@@ -396,7 +399,7 @@ class AllInvoicesRoute extends _i58.PageRouteInfo<AllInvoicesRouteArgs> {
 class AllInvoicesRouteArgs {
   const AllInvoicesRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -406,10 +409,10 @@ class AllInvoicesRouteArgs {
 
 /// generated route for
 /// [_i11.AllReceipts]
-class AllReceiptsRoute extends _i58.PageRouteInfo<AllReceiptsRouteArgs> {
+class AllReceiptsRoute extends _i59.PageRouteInfo<AllReceiptsRouteArgs> {
   AllReceiptsRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           AllReceiptsRoute.name,
           args: AllReceiptsRouteArgs(key: key),
@@ -418,7 +421,7 @@ class AllReceiptsRoute extends _i58.PageRouteInfo<AllReceiptsRouteArgs> {
 
   static const String name = 'AllReceiptsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AllReceiptsRouteArgs>(
@@ -431,7 +434,7 @@ class AllReceiptsRoute extends _i58.PageRouteInfo<AllReceiptsRouteArgs> {
 class AllReceiptsRouteArgs {
   const AllReceiptsRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -441,10 +444,10 @@ class AllReceiptsRouteArgs {
 
 /// generated route for
 /// [_i12.Brands]
-class BrandsRoute extends _i58.PageRouteInfo<BrandsRouteArgs> {
+class BrandsRoute extends _i59.PageRouteInfo<BrandsRouteArgs> {
   BrandsRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           BrandsRoute.name,
           args: BrandsRouteArgs(key: key),
@@ -453,7 +456,7 @@ class BrandsRoute extends _i58.PageRouteInfo<BrandsRouteArgs> {
 
   static const String name = 'BrandsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -466,7 +469,7 @@ class BrandsRoute extends _i58.PageRouteInfo<BrandsRouteArgs> {
 class BrandsRouteArgs {
   const BrandsRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -476,8 +479,8 @@ class BrandsRouteArgs {
 
 /// generated route for
 /// [_i13.BusinessData]
-class BusinessDataRoute extends _i58.PageRouteInfo<void> {
-  const BusinessDataRoute({List<_i58.PageRouteInfo>? children})
+class BusinessDataRoute extends _i59.PageRouteInfo<void> {
+  const BusinessDataRoute({List<_i59.PageRouteInfo>? children})
       : super(
           BusinessDataRoute.name,
           initialChildren: children,
@@ -485,7 +488,7 @@ class BusinessDataRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'BusinessDataRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i13.BusinessData();
@@ -495,8 +498,8 @@ class BusinessDataRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i14.BusinessDetail]
-class BusinessDetailRoute extends _i58.PageRouteInfo<void> {
-  const BusinessDetailRoute({List<_i58.PageRouteInfo>? children})
+class BusinessDetailRoute extends _i59.PageRouteInfo<void> {
+  const BusinessDetailRoute({List<_i59.PageRouteInfo>? children})
       : super(
           BusinessDetailRoute.name,
           initialChildren: children,
@@ -504,7 +507,7 @@ class BusinessDetailRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'BusinessDetailRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i14.BusinessDetail();
@@ -514,10 +517,10 @@ class BusinessDetailRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i15.ChangePassword]
-class ChangePasswordRoute extends _i58.PageRouteInfo<ChangePasswordRouteArgs> {
+class ChangePasswordRoute extends _i59.PageRouteInfo<ChangePasswordRouteArgs> {
   ChangePasswordRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           ChangePasswordRoute.name,
           args: ChangePasswordRouteArgs(key: key),
@@ -526,7 +529,7 @@ class ChangePasswordRoute extends _i58.PageRouteInfo<ChangePasswordRouteArgs> {
 
   static const String name = 'ChangePasswordRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ChangePasswordRouteArgs>(
@@ -539,7 +542,7 @@ class ChangePasswordRoute extends _i58.PageRouteInfo<ChangePasswordRouteArgs> {
 class ChangePasswordRouteArgs {
   const ChangePasswordRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -549,8 +552,8 @@ class ChangePasswordRouteArgs {
 
 /// generated route for
 /// [_i16.ChangePasswordSuccess]
-class ChangePasswordSuccessRoute extends _i58.PageRouteInfo<void> {
-  const ChangePasswordSuccessRoute({List<_i58.PageRouteInfo>? children})
+class ChangePasswordSuccessRoute extends _i59.PageRouteInfo<void> {
+  const ChangePasswordSuccessRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ChangePasswordSuccessRoute.name,
           initialChildren: children,
@@ -558,7 +561,7 @@ class ChangePasswordSuccessRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ChangePasswordSuccessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i16.ChangePasswordSuccess();
@@ -568,8 +571,8 @@ class ChangePasswordSuccessRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i17.ChangeProfilePicture]
-class ChangeProfilePictureRoute extends _i58.PageRouteInfo<void> {
-  const ChangeProfilePictureRoute({List<_i58.PageRouteInfo>? children})
+class ChangeProfilePictureRoute extends _i59.PageRouteInfo<void> {
+  const ChangeProfilePictureRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ChangeProfilePictureRoute.name,
           initialChildren: children,
@@ -577,7 +580,7 @@ class ChangeProfilePictureRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ChangeProfilePictureRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i17.ChangeProfilePicture();
@@ -587,8 +590,8 @@ class ChangeProfilePictureRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i18.ChooseSubscriptionPlan]
-class ChooseSubscriptionPlanRoute extends _i58.PageRouteInfo<void> {
-  const ChooseSubscriptionPlanRoute({List<_i58.PageRouteInfo>? children})
+class ChooseSubscriptionPlanRoute extends _i59.PageRouteInfo<void> {
+  const ChooseSubscriptionPlanRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ChooseSubscriptionPlanRoute.name,
           initialChildren: children,
@@ -596,20 +599,20 @@ class ChooseSubscriptionPlanRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ChooseSubscriptionPlanRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
-      return  _i18.ChooseSubscriptionPlan();
+      return const _i18.ChooseSubscriptionPlan();
     },
   );
 }
 
 /// generated route for
 /// [_i19.ClientDetails]
-class ClientDetailsRoute extends _i58.PageRouteInfo<ClientDetailsRouteArgs> {
+class ClientDetailsRoute extends _i59.PageRouteInfo<ClientDetailsRouteArgs> {
   ClientDetailsRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           ClientDetailsRoute.name,
           args: ClientDetailsRouteArgs(key: key),
@@ -618,7 +621,7 @@ class ClientDetailsRoute extends _i58.PageRouteInfo<ClientDetailsRouteArgs> {
 
   static const String name = 'ClientDetailsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ClientDetailsRouteArgs>(
@@ -631,7 +634,7 @@ class ClientDetailsRoute extends _i58.PageRouteInfo<ClientDetailsRouteArgs> {
 class ClientDetailsRouteArgs {
   const ClientDetailsRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -641,8 +644,8 @@ class ClientDetailsRouteArgs {
 
 /// generated route for
 /// [_i20.ClientSuccess]
-class ClientSuccessRoute extends _i58.PageRouteInfo<void> {
-  const ClientSuccessRoute({List<_i58.PageRouteInfo>? children})
+class ClientSuccessRoute extends _i59.PageRouteInfo<void> {
+  const ClientSuccessRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ClientSuccessRoute.name,
           initialChildren: children,
@@ -650,7 +653,7 @@ class ClientSuccessRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ClientSuccessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i20.ClientSuccess();
@@ -660,10 +663,10 @@ class ClientSuccessRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i21.Clients]
-class ClientsRoute extends _i58.PageRouteInfo<ClientsRouteArgs> {
+class ClientsRoute extends _i59.PageRouteInfo<ClientsRouteArgs> {
   ClientsRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           ClientsRoute.name,
           args: ClientsRouteArgs(key: key),
@@ -672,7 +675,7 @@ class ClientsRoute extends _i58.PageRouteInfo<ClientsRouteArgs> {
 
   static const String name = 'ClientsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -685,7 +688,7 @@ class ClientsRoute extends _i58.PageRouteInfo<ClientsRouteArgs> {
 class ClientsRouteArgs {
   const ClientsRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -695,10 +698,10 @@ class ClientsRouteArgs {
 
 /// generated route for
 /// [_i22.CompleteDraft]
-class CompleteDraftRoute extends _i58.PageRouteInfo<CompleteDraftRouteArgs> {
+class CompleteDraftRoute extends _i59.PageRouteInfo<CompleteDraftRouteArgs> {
   CompleteDraftRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           CompleteDraftRoute.name,
           args: CompleteDraftRouteArgs(key: key),
@@ -707,7 +710,7 @@ class CompleteDraftRoute extends _i58.PageRouteInfo<CompleteDraftRouteArgs> {
 
   static const String name = 'CompleteDraftRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<CompleteDraftRouteArgs>(
@@ -720,7 +723,7 @@ class CompleteDraftRoute extends _i58.PageRouteInfo<CompleteDraftRouteArgs> {
 class CompleteDraftRouteArgs {
   const CompleteDraftRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -730,8 +733,8 @@ class CompleteDraftRouteArgs {
 
 /// generated route for
 /// [_i23.CreateAccountScreen]
-class CreateAccountRoute extends _i58.PageRouteInfo<void> {
-  const CreateAccountRoute({List<_i58.PageRouteInfo>? children})
+class CreateAccountRoute extends _i59.PageRouteInfo<void> {
+  const CreateAccountRoute({List<_i59.PageRouteInfo>? children})
       : super(
           CreateAccountRoute.name,
           initialChildren: children,
@@ -739,7 +742,7 @@ class CreateAccountRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'CreateAccountRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i23.CreateAccountScreen();
@@ -750,10 +753,10 @@ class CreateAccountRoute extends _i58.PageRouteInfo<void> {
 /// generated route for
 /// [_i24.CreateNewPassword]
 class CreateNewPasswordRoute
-    extends _i58.PageRouteInfo<CreateNewPasswordRouteArgs> {
+    extends _i59.PageRouteInfo<CreateNewPasswordRouteArgs> {
   CreateNewPasswordRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           CreateNewPasswordRoute.name,
           args: CreateNewPasswordRouteArgs(key: key),
@@ -762,7 +765,7 @@ class CreateNewPasswordRoute
 
   static const String name = 'CreateNewPasswordRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<CreateNewPasswordRouteArgs>(
@@ -775,7 +778,7 @@ class CreateNewPasswordRoute
 class CreateNewPasswordRouteArgs {
   const CreateNewPasswordRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -786,10 +789,10 @@ class CreateNewPasswordRouteArgs {
 /// generated route for
 /// [_i25.CreateNewPasswordReset]
 class CreateNewPasswordResetRoute
-    extends _i58.PageRouteInfo<CreateNewPasswordResetRouteArgs> {
+    extends _i59.PageRouteInfo<CreateNewPasswordResetRouteArgs> {
   CreateNewPasswordResetRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           CreateNewPasswordResetRoute.name,
           args: CreateNewPasswordResetRouteArgs(key: key),
@@ -798,7 +801,7 @@ class CreateNewPasswordResetRoute
 
   static const String name = 'CreateNewPasswordResetRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<CreateNewPasswordResetRouteArgs>(
@@ -811,7 +814,7 @@ class CreateNewPasswordResetRoute
 class CreateNewPasswordResetRouteArgs {
   const CreateNewPasswordResetRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -821,10 +824,10 @@ class CreateNewPasswordResetRouteArgs {
 
 /// generated route for
 /// [_i26.Drafts]
-class DraftsRoute extends _i58.PageRouteInfo<DraftsRouteArgs> {
+class DraftsRoute extends _i59.PageRouteInfo<DraftsRouteArgs> {
   DraftsRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           DraftsRoute.name,
           args: DraftsRouteArgs(key: key),
@@ -833,7 +836,7 @@ class DraftsRoute extends _i58.PageRouteInfo<DraftsRouteArgs> {
 
   static const String name = 'DraftsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -846,7 +849,7 @@ class DraftsRoute extends _i58.PageRouteInfo<DraftsRouteArgs> {
 class DraftsRouteArgs {
   const DraftsRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -856,8 +859,8 @@ class DraftsRouteArgs {
 
 /// generated route for
 /// [_i27.EmptyBusiness]
-class EmptyBusinessRoute extends _i58.PageRouteInfo<void> {
-  const EmptyBusinessRoute({List<_i58.PageRouteInfo>? children})
+class EmptyBusinessRoute extends _i59.PageRouteInfo<void> {
+  const EmptyBusinessRoute({List<_i59.PageRouteInfo>? children})
       : super(
           EmptyBusinessRoute.name,
           initialChildren: children,
@@ -865,7 +868,7 @@ class EmptyBusinessRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'EmptyBusinessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i27.EmptyBusiness();
@@ -875,10 +878,10 @@ class EmptyBusinessRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i28.EmptyCategory]
-class EmptyCategoryRoute extends _i58.PageRouteInfo<EmptyCategoryRouteArgs> {
+class EmptyCategoryRoute extends _i59.PageRouteInfo<EmptyCategoryRouteArgs> {
   EmptyCategoryRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           EmptyCategoryRoute.name,
           args: EmptyCategoryRouteArgs(key: key),
@@ -887,7 +890,7 @@ class EmptyCategoryRoute extends _i58.PageRouteInfo<EmptyCategoryRouteArgs> {
 
   static const String name = 'EmptyCategoryRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<EmptyCategoryRouteArgs>(
@@ -900,7 +903,7 @@ class EmptyCategoryRoute extends _i58.PageRouteInfo<EmptyCategoryRouteArgs> {
 class EmptyCategoryRouteArgs {
   const EmptyCategoryRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -910,10 +913,10 @@ class EmptyCategoryRouteArgs {
 
 /// generated route for
 /// [_i29.ForgotPassword]
-class ForgotPasswordRoute extends _i58.PageRouteInfo<ForgotPasswordRouteArgs> {
+class ForgotPasswordRoute extends _i59.PageRouteInfo<ForgotPasswordRouteArgs> {
   ForgotPasswordRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           ForgotPasswordRoute.name,
           args: ForgotPasswordRouteArgs(key: key),
@@ -922,7 +925,7 @@ class ForgotPasswordRoute extends _i58.PageRouteInfo<ForgotPasswordRouteArgs> {
 
   static const String name = 'ForgotPasswordRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ForgotPasswordRouteArgs>(
@@ -935,7 +938,7 @@ class ForgotPasswordRoute extends _i58.PageRouteInfo<ForgotPasswordRouteArgs> {
 class ForgotPasswordRouteArgs {
   const ForgotPasswordRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -946,10 +949,10 @@ class ForgotPasswordRouteArgs {
 /// generated route for
 /// [_i30.GenerateInvoices]
 class GenerateInvoicesRoute
-    extends _i58.PageRouteInfo<GenerateInvoicesRouteArgs> {
+    extends _i59.PageRouteInfo<GenerateInvoicesRouteArgs> {
   GenerateInvoicesRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           GenerateInvoicesRoute.name,
           args: GenerateInvoicesRouteArgs(key: key),
@@ -958,7 +961,7 @@ class GenerateInvoicesRoute
 
   static const String name = 'GenerateInvoicesRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<GenerateInvoicesRouteArgs>(
@@ -971,7 +974,7 @@ class GenerateInvoicesRoute
 class GenerateInvoicesRouteArgs {
   const GenerateInvoicesRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -982,10 +985,10 @@ class GenerateInvoicesRouteArgs {
 /// generated route for
 /// [_i31.GenerateReceipt]
 class GenerateReceiptRoute
-    extends _i58.PageRouteInfo<GenerateReceiptRouteArgs> {
+    extends _i59.PageRouteInfo<GenerateReceiptRouteArgs> {
   GenerateReceiptRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           GenerateReceiptRoute.name,
           args: GenerateReceiptRouteArgs(key: key),
@@ -994,7 +997,7 @@ class GenerateReceiptRoute
 
   static const String name = 'GenerateReceiptRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<GenerateReceiptRouteArgs>(
@@ -1007,7 +1010,7 @@ class GenerateReceiptRoute
 class GenerateReceiptRouteArgs {
   const GenerateReceiptRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1017,10 +1020,10 @@ class GenerateReceiptRouteArgs {
 
 /// generated route for
 /// [_i32.HomePage]
-class HomePageRoute extends _i58.PageRouteInfo<HomePageRouteArgs> {
+class HomePageRoute extends _i59.PageRouteInfo<HomePageRouteArgs> {
   HomePageRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           HomePageRoute.name,
           args: HomePageRouteArgs(key: key),
@@ -1029,7 +1032,7 @@ class HomePageRoute extends _i58.PageRouteInfo<HomePageRouteArgs> {
 
   static const String name = 'HomePageRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<HomePageRouteArgs>(
@@ -1042,7 +1045,7 @@ class HomePageRoute extends _i58.PageRouteInfo<HomePageRouteArgs> {
 class HomePageRouteArgs {
   const HomePageRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1052,8 +1055,8 @@ class HomePageRouteArgs {
 
 /// generated route for
 /// [_i33.HomeScreen]
-class HomeScreenRoute extends _i58.PageRouteInfo<void> {
-  const HomeScreenRoute({List<_i58.PageRouteInfo>? children})
+class HomeScreenRoute extends _i59.PageRouteInfo<void> {
+  const HomeScreenRoute({List<_i59.PageRouteInfo>? children})
       : super(
           HomeScreenRoute.name,
           initialChildren: children,
@@ -1061,7 +1064,7 @@ class HomeScreenRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'HomeScreenRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i33.HomeScreen();
@@ -1071,10 +1074,10 @@ class HomeScreenRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i34.Invoice]
-class InvoiceRoute extends _i58.PageRouteInfo<InvoiceRouteArgs> {
+class InvoiceRoute extends _i59.PageRouteInfo<InvoiceRouteArgs> {
   InvoiceRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           InvoiceRoute.name,
           args: InvoiceRouteArgs(key: key),
@@ -1083,7 +1086,7 @@ class InvoiceRoute extends _i58.PageRouteInfo<InvoiceRouteArgs> {
 
   static const String name = 'InvoiceRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -1096,7 +1099,7 @@ class InvoiceRoute extends _i58.PageRouteInfo<InvoiceRouteArgs> {
 class InvoiceRouteArgs {
   const InvoiceRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1106,10 +1109,10 @@ class InvoiceRouteArgs {
 
 /// generated route for
 /// [_i35.Login]
-class LoginRoute extends _i58.PageRouteInfo<LoginRouteArgs> {
+class LoginRoute extends _i59.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(key: key),
@@ -1118,7 +1121,7 @@ class LoginRoute extends _i58.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -1131,7 +1134,7 @@ class LoginRoute extends _i58.PageRouteInfo<LoginRouteArgs> {
 class LoginRouteArgs {
   const LoginRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1141,8 +1144,8 @@ class LoginRouteArgs {
 
 /// generated route for
 /// [_i36.MySubscription]
-class MySubscriptionRoute extends _i58.PageRouteInfo<void> {
-  const MySubscriptionRoute({List<_i58.PageRouteInfo>? children})
+class MySubscriptionRoute extends _i59.PageRouteInfo<void> {
+  const MySubscriptionRoute({List<_i59.PageRouteInfo>? children})
       : super(
           MySubscriptionRoute.name,
           initialChildren: children,
@@ -1150,7 +1153,7 @@ class MySubscriptionRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'MySubscriptionRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i36.MySubscription();
@@ -1160,8 +1163,8 @@ class MySubscriptionRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i37.NotificationSettings]
-class NotificationSettingsRoute extends _i58.PageRouteInfo<void> {
-  const NotificationSettingsRoute({List<_i58.PageRouteInfo>? children})
+class NotificationSettingsRoute extends _i59.PageRouteInfo<void> {
+  const NotificationSettingsRoute({List<_i59.PageRouteInfo>? children})
       : super(
           NotificationSettingsRoute.name,
           initialChildren: children,
@@ -1169,7 +1172,7 @@ class NotificationSettingsRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'NotificationSettingsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i37.NotificationSettings();
@@ -1179,8 +1182,8 @@ class NotificationSettingsRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i38.Notifications]
-class NotificationsRoute extends _i58.PageRouteInfo<void> {
-  const NotificationsRoute({List<_i58.PageRouteInfo>? children})
+class NotificationsRoute extends _i59.PageRouteInfo<void> {
+  const NotificationsRoute({List<_i59.PageRouteInfo>? children})
       : super(
           NotificationsRoute.name,
           initialChildren: children,
@@ -1188,7 +1191,7 @@ class NotificationsRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'NotificationsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i38.Notifications();
@@ -1199,10 +1202,10 @@ class NotificationsRoute extends _i58.PageRouteInfo<void> {
 /// generated route for
 /// [_i39.OnboardingScreen]
 class OnboardingScreenRoute
-    extends _i58.PageRouteInfo<OnboardingScreenRouteArgs> {
+    extends _i59.PageRouteInfo<OnboardingScreenRouteArgs> {
   OnboardingScreenRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           OnboardingScreenRoute.name,
           args: OnboardingScreenRouteArgs(key: key),
@@ -1211,7 +1214,7 @@ class OnboardingScreenRoute
 
   static const String name = 'OnboardingScreenRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<OnboardingScreenRouteArgs>(
@@ -1224,7 +1227,7 @@ class OnboardingScreenRoute
 class OnboardingScreenRouteArgs {
   const OnboardingScreenRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1234,10 +1237,10 @@ class OnboardingScreenRouteArgs {
 
 /// generated route for
 /// [_i40.OtpLogin]
-class OtpLoginRoute extends _i58.PageRouteInfo<OtpLoginRouteArgs> {
+class OtpLoginRoute extends _i59.PageRouteInfo<OtpLoginRouteArgs> {
   OtpLoginRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           OtpLoginRoute.name,
           args: OtpLoginRouteArgs(key: key),
@@ -1246,7 +1249,7 @@ class OtpLoginRoute extends _i58.PageRouteInfo<OtpLoginRouteArgs> {
 
   static const String name = 'OtpLoginRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<OtpLoginRouteArgs>(
@@ -1259,7 +1262,7 @@ class OtpLoginRoute extends _i58.PageRouteInfo<OtpLoginRouteArgs> {
 class OtpLoginRouteArgs {
   const OtpLoginRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1269,10 +1272,10 @@ class OtpLoginRouteArgs {
 
 /// generated route for
 /// [_i41.OtpReset]
-class OtpResetRoute extends _i58.PageRouteInfo<OtpResetRouteArgs> {
+class OtpResetRoute extends _i59.PageRouteInfo<OtpResetRouteArgs> {
   OtpResetRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           OtpResetRoute.name,
           args: OtpResetRouteArgs(key: key),
@@ -1281,7 +1284,7 @@ class OtpResetRoute extends _i58.PageRouteInfo<OtpResetRouteArgs> {
 
   static const String name = 'OtpResetRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<OtpResetRouteArgs>(
@@ -1294,7 +1297,7 @@ class OtpResetRoute extends _i58.PageRouteInfo<OtpResetRouteArgs> {
 class OtpResetRouteArgs {
   const OtpResetRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1304,10 +1307,10 @@ class OtpResetRouteArgs {
 
 /// generated route for
 /// [_i42.OtpScreen]
-class OtpScreenRoute extends _i58.PageRouteInfo<OtpScreenRouteArgs> {
+class OtpScreenRoute extends _i59.PageRouteInfo<OtpScreenRouteArgs> {
   OtpScreenRoute({
-    _i61.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i62.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           OtpScreenRoute.name,
           args: OtpScreenRouteArgs(key: key),
@@ -1316,7 +1319,7 @@ class OtpScreenRoute extends _i58.PageRouteInfo<OtpScreenRouteArgs> {
 
   static const String name = 'OtpScreenRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<OtpScreenRouteArgs>(
@@ -1329,7 +1332,7 @@ class OtpScreenRoute extends _i58.PageRouteInfo<OtpScreenRouteArgs> {
 class OtpScreenRouteArgs {
   const OtpScreenRouteArgs({this.key});
 
-  final _i61.Key? key;
+  final _i62.Key? key;
 
   @override
   String toString() {
@@ -1339,8 +1342,8 @@ class OtpScreenRouteArgs {
 
 /// generated route for
 /// [_i43.PayvidenceInfo]
-class PayvidenceInfoRoute extends _i58.PageRouteInfo<void> {
-  const PayvidenceInfoRoute({List<_i58.PageRouteInfo>? children})
+class PayvidenceInfoRoute extends _i59.PageRouteInfo<void> {
+  const PayvidenceInfoRoute({List<_i59.PageRouteInfo>? children})
       : super(
           PayvidenceInfoRoute.name,
           initialChildren: children,
@@ -1348,7 +1351,7 @@ class PayvidenceInfoRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'PayvidenceInfoRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i43.PayvidenceInfo();
@@ -1358,8 +1361,8 @@ class PayvidenceInfoRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i44.PrivacyAndSecurity]
-class PrivacyAndSecurityRoute extends _i58.PageRouteInfo<void> {
-  const PrivacyAndSecurityRoute({List<_i58.PageRouteInfo>? children})
+class PrivacyAndSecurityRoute extends _i59.PageRouteInfo<void> {
+  const PrivacyAndSecurityRoute({List<_i59.PageRouteInfo>? children})
       : super(
           PrivacyAndSecurityRoute.name,
           initialChildren: children,
@@ -1367,7 +1370,7 @@ class PrivacyAndSecurityRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'PrivacyAndSecurityRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i44.PrivacyAndSecurity();
@@ -1377,10 +1380,10 @@ class PrivacyAndSecurityRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i45.Product]
-class ProductRoute extends _i58.PageRouteInfo<ProductRouteArgs> {
+class ProductRoute extends _i59.PageRouteInfo<ProductRouteArgs> {
   ProductRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           ProductRoute.name,
           args: ProductRouteArgs(key: key),
@@ -1389,7 +1392,7 @@ class ProductRoute extends _i58.PageRouteInfo<ProductRouteArgs> {
 
   static const String name = 'ProductRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -1402,7 +1405,7 @@ class ProductRoute extends _i58.PageRouteInfo<ProductRouteArgs> {
 class ProductRouteArgs {
   const ProductRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1412,8 +1415,8 @@ class ProductRouteArgs {
 
 /// generated route for
 /// [_i46.ProductDetails]
-class ProductDetailsRoute extends _i58.PageRouteInfo<void> {
-  const ProductDetailsRoute({List<_i58.PageRouteInfo>? children})
+class ProductDetailsRoute extends _i59.PageRouteInfo<void> {
+  const ProductDetailsRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ProductDetailsRoute.name,
           initialChildren: children,
@@ -1421,7 +1424,7 @@ class ProductDetailsRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ProductDetailsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i46.ProductDetails();
@@ -1431,8 +1434,8 @@ class ProductDetailsRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i47.Profile]
-class ProfileRoute extends _i58.PageRouteInfo<void> {
-  const ProfileRoute({List<_i58.PageRouteInfo>? children})
+class ProfileRoute extends _i59.PageRouteInfo<void> {
+  const ProfileRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ProfileRoute.name,
           initialChildren: children,
@@ -1440,7 +1443,7 @@ class ProfileRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ProfileRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i47.Profile();
@@ -1450,8 +1453,8 @@ class ProfileRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i48.Receipt]
-class ReceiptRoute extends _i58.PageRouteInfo<void> {
-  const ReceiptRoute({List<_i58.PageRouteInfo>? children})
+class ReceiptRoute extends _i59.PageRouteInfo<void> {
+  const ReceiptRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ReceiptRoute.name,
           initialChildren: children,
@@ -1459,7 +1462,7 @@ class ReceiptRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ReceiptRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i48.Receipt();
@@ -1469,10 +1472,10 @@ class ReceiptRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i49.ResetPassword]
-class ResetPasswordRoute extends _i58.PageRouteInfo<ResetPasswordRouteArgs> {
+class ResetPasswordRoute extends _i59.PageRouteInfo<ResetPasswordRouteArgs> {
   ResetPasswordRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           ResetPasswordRoute.name,
           args: ResetPasswordRouteArgs(key: key),
@@ -1481,7 +1484,7 @@ class ResetPasswordRoute extends _i58.PageRouteInfo<ResetPasswordRouteArgs> {
 
   static const String name = 'ResetPasswordRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ResetPasswordRouteArgs>(
@@ -1494,7 +1497,7 @@ class ResetPasswordRoute extends _i58.PageRouteInfo<ResetPasswordRouteArgs> {
 class ResetPasswordRouteArgs {
   const ResetPasswordRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1504,8 +1507,8 @@ class ResetPasswordRouteArgs {
 
 /// generated route for
 /// [_i50.ResetPasswordSuccess]
-class ResetPasswordSuccessRoute extends _i58.PageRouteInfo<void> {
-  const ResetPasswordSuccessRoute({List<_i58.PageRouteInfo>? children})
+class ResetPasswordSuccessRoute extends _i59.PageRouteInfo<void> {
+  const ResetPasswordSuccessRoute({List<_i59.PageRouteInfo>? children})
       : super(
           ResetPasswordSuccessRoute.name,
           initialChildren: children,
@@ -1513,7 +1516,7 @@ class ResetPasswordSuccessRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'ResetPasswordSuccessRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i50.ResetPasswordSuccess();
@@ -1523,10 +1526,10 @@ class ResetPasswordSuccessRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i51.Sales]
-class SalesRoute extends _i58.PageRouteInfo<SalesRouteArgs> {
+class SalesRoute extends _i59.PageRouteInfo<SalesRouteArgs> {
   SalesRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           SalesRoute.name,
           args: SalesRouteArgs(key: key),
@@ -1535,7 +1538,7 @@ class SalesRoute extends _i58.PageRouteInfo<SalesRouteArgs> {
 
   static const String name = 'SalesRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args =
@@ -1548,7 +1551,7 @@ class SalesRoute extends _i58.PageRouteInfo<SalesRouteArgs> {
 class SalesRouteArgs {
   const SalesRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1558,10 +1561,10 @@ class SalesRouteArgs {
 
 /// generated route for
 /// [_i52.SelectClient]
-class SelectClientRoute extends _i58.PageRouteInfo<SelectClientRouteArgs> {
+class SelectClientRoute extends _i59.PageRouteInfo<SelectClientRouteArgs> {
   SelectClientRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           SelectClientRoute.name,
           args: SelectClientRouteArgs(key: key),
@@ -1570,7 +1573,7 @@ class SelectClientRoute extends _i58.PageRouteInfo<SelectClientRouteArgs> {
 
   static const String name = 'SelectClientRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<SelectClientRouteArgs>(
@@ -1583,7 +1586,7 @@ class SelectClientRoute extends _i58.PageRouteInfo<SelectClientRouteArgs> {
 class SelectClientRouteArgs {
   const SelectClientRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1593,8 +1596,8 @@ class SelectClientRouteArgs {
 
 /// generated route for
 /// [_i53.Settings]
-class SettingsRoute extends _i58.PageRouteInfo<void> {
-  const SettingsRoute({List<_i58.PageRouteInfo>? children})
+class SettingsRoute extends _i59.PageRouteInfo<void> {
+  const SettingsRoute({List<_i59.PageRouteInfo>? children})
       : super(
           SettingsRoute.name,
           initialChildren: children,
@@ -1602,7 +1605,7 @@ class SettingsRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'SettingsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       return const _i53.Settings();
@@ -1612,30 +1615,84 @@ class SettingsRoute extends _i58.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i54.SubscriptionPlans]
-class SubscriptionPlansRoute extends _i58.PageRouteInfo<void> {
-  const SubscriptionPlansRoute({List<_i58.PageRouteInfo>? children, required String planId})
-      : super(
+class SubscriptionPlansRoute
+    extends _i59.PageRouteInfo<SubscriptionPlansRouteArgs> {
+  SubscriptionPlansRoute({
+    _i60.Key? key,
+    String planId = '',
+    List<_i59.PageRouteInfo>? children,
+  }) : super(
           SubscriptionPlansRoute.name,
+          args: SubscriptionPlansRouteArgs(
+            key: key,
+            planId: planId,
+          ),
+          rawQueryParams: {'planId': planId},
           initialChildren: children,
         );
 
   static const String name = 'SubscriptionPlansRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
-      return const _i54.SubscriptionPlans();
+      final queryParams = data.queryParams;
+      final args = data.argsAs<SubscriptionPlansRouteArgs>(
+          orElse: () => SubscriptionPlansRouteArgs(
+                  planId: queryParams.getString(
+                'planId',
+                '',
+              )));
+      return _i54.SubscriptionPlans(
+        key: args.key,
+        planId: args.planId,
+      );
+    },
+  );
+}
+
+class SubscriptionPlansRouteArgs {
+  const SubscriptionPlansRouteArgs({
+    this.key,
+    this.planId = '',
+  });
+
+  final _i60.Key? key;
+
+  final String planId;
+
+  @override
+  String toString() {
+    return 'SubscriptionPlansRouteArgs{key: $key, planId: $planId}';
+  }
+}
+
+/// generated route for
+/// [_i55.SubscriptionPrompt]
+class SubscriptionPrompt extends _i59.PageRouteInfo<void> {
+  const SubscriptionPrompt({List<_i59.PageRouteInfo>? children})
+      : super(
+          SubscriptionPrompt.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SubscriptionPrompt';
+
+  static _i59.PageInfo page = _i59.PageInfo(
+    name,
+    builder: (data) {
+      return const _i55.SubscriptionPrompt();
     },
   );
 }
 
 /// generated route for
-/// [_i55.UpdatePersonalDetails]
+/// [_i56.UpdatePersonalDetails]
 class UpdatePersonalDetailsRoute
-    extends _i58.PageRouteInfo<UpdatePersonalDetailsRouteArgs> {
+    extends _i59.PageRouteInfo<UpdatePersonalDetailsRouteArgs> {
   UpdatePersonalDetailsRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           UpdatePersonalDetailsRoute.name,
           args: UpdatePersonalDetailsRouteArgs(key: key),
@@ -1644,12 +1701,12 @@ class UpdatePersonalDetailsRoute
 
   static const String name = 'UpdatePersonalDetailsRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<UpdatePersonalDetailsRouteArgs>(
           orElse: () => const UpdatePersonalDetailsRouteArgs());
-      return _i55.UpdatePersonalDetails(key: args.key);
+      return _i56.UpdatePersonalDetails(key: args.key);
     },
   );
 }
@@ -1657,7 +1714,7 @@ class UpdatePersonalDetailsRoute
 class UpdatePersonalDetailsRouteArgs {
   const UpdatePersonalDetailsRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1666,11 +1723,11 @@ class UpdatePersonalDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i56.UpdateQuantity]
-class UpdateQuantityRoute extends _i58.PageRouteInfo<UpdateQuantityRouteArgs> {
+/// [_i57.UpdateQuantity]
+class UpdateQuantityRoute extends _i59.PageRouteInfo<UpdateQuantityRouteArgs> {
   UpdateQuantityRoute({
-    _i59.Key? key,
-    List<_i58.PageRouteInfo>? children,
+    _i60.Key? key,
+    List<_i59.PageRouteInfo>? children,
   }) : super(
           UpdateQuantityRoute.name,
           args: UpdateQuantityRouteArgs(key: key),
@@ -1679,12 +1736,12 @@ class UpdateQuantityRoute extends _i58.PageRouteInfo<UpdateQuantityRouteArgs> {
 
   static const String name = 'UpdateQuantityRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<UpdateQuantityRouteArgs>(
           orElse: () => const UpdateQuantityRouteArgs());
-      return _i56.UpdateQuantity(key: args.key);
+      return _i57.UpdateQuantity(key: args.key);
     },
   );
 }
@@ -1692,7 +1749,7 @@ class UpdateQuantityRoute extends _i58.PageRouteInfo<UpdateQuantityRouteArgs> {
 class UpdateQuantityRouteArgs {
   const UpdateQuantityRouteArgs({this.key});
 
-  final _i59.Key? key;
+  final _i60.Key? key;
 
   @override
   String toString() {
@@ -1701,9 +1758,9 @@ class UpdateQuantityRouteArgs {
 }
 
 /// generated route for
-/// [_i57.UpgradeSubscription]
-class UpgradeSubscriptionRoute extends _i58.PageRouteInfo<void> {
-  const UpgradeSubscriptionRoute({List<_i58.PageRouteInfo>? children})
+/// [_i58.UpgradeSubscription]
+class UpgradeSubscriptionRoute extends _i59.PageRouteInfo<void> {
+  const UpgradeSubscriptionRoute({List<_i59.PageRouteInfo>? children})
       : super(
           UpgradeSubscriptionRoute.name,
           initialChildren: children,
@@ -1711,10 +1768,10 @@ class UpgradeSubscriptionRoute extends _i58.PageRouteInfo<void> {
 
   static const String name = 'UpgradeSubscriptionRoute';
 
-  static _i58.PageInfo page = _i58.PageInfo(
+  static _i59.PageInfo page = _i59.PageInfo(
     name,
     builder: (data) {
-      return const _i57.UpgradeSubscription();
+      return const _i58.UpgradeSubscription();
     },
   );
 }
