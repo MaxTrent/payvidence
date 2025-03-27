@@ -212,18 +212,16 @@ class ApiServices{
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> createSubscription(String oldPassword, String password, String confirmPassword) async {
+  Future<ApiResult> createSubscription(String planId) async {
 
     var requestData = {
-      "old_password": oldPassword,
-      "password": password,
-      "password_confirmation": confirmPassword
+      "plan_id": planId
     };
 
     var response = await locator<NetworkService>().post(
-        PayvidenceEndpoints.changePassword,
+        PayvidenceEndpoints.createSubscription,
         data: requestData,
-        useToken: true);
+        useToken: false);
 
     return ApiResult.fromJson(response);
   }

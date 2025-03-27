@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/subscription_card.dart';
+import 'package:payvidence/screens/subscription_plans/subscription_plans_vm.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
 import '../../components/custom_shimmer.dart';
@@ -11,9 +12,9 @@ import '../../components/plan_list.dart';
 import '../../constants/app_colors.dart';
 import '../../model/plan_model.dart';
 import '../../routes/payvidence_app_router.dart';
+import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../choose_subscription_plan/choose_subscription_plan_vm.dart';
-import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'SubscriptionPlansRoute')
 class SubscriptionPlans extends HookConsumerWidget {
@@ -25,17 +26,18 @@ class SubscriptionPlans extends HookConsumerWidget {
   Widget build(BuildContext context, ref) {
     final selectedTier = useState<String>('');
     final viewModel = ref.watch(chooseSubscriptionPlanViewModel);
-
+    final useSubscriptionPlansVm = ref.watch(subscriptionPlansViewModel);
 
     void setInitialPlan() {
       if (planId.isNotEmpty) {
-        selectedTier.value = viewModel.plans.firstWhere(
+        selectedTier.value = viewModel.plans
+            .firstWhere(
               (plan) => plan.id == planId,
-          orElse: () => viewModel.plans.first,
-        ).name;
+              orElse: () => viewModel.plans.first,
+            )
+            .name;
       }
     }
-
 
     useEffect(() {
       if (viewModel.plans.isEmpty) {
@@ -46,17 +48,27 @@ class SubscriptionPlans extends HookConsumerWidget {
       return null;
     }, [planId]);
 
-
     return Scaffold(
       appBar: AppBar(),
       floatingActionButton: AppButton(
           buttonText: selectedTier.value.isEmpty
-              ? 'Renew plan'
-              : 'Renew ${selectedTier.value} plan',
-          onPressed: () {
-            locator<PayvidenceAppRouter>()
-                .navigateNamed(PayvidenceRoutes.subscriptionPrompt);
-          }),
+              ? 'Renew ${selectedTier.value} plan'
+              : ' Continue with ${selectedTier.value} plan',
+          onPressed: selectedTier.value.isEmpty || useSubscriptionPlansVm.isLoading
+              ? null
+              : () {
+                  final selectedPlan = viewModel.plans.firstWhere(
+                    (plan) => plan.name == selectedTier.value,
+                    orElse: () => viewModel.plans.first,
+                  );
+                  useSubscriptionPlansVm.createSubscription(
+                    planId: selectedPlan.id,
+                    navigateOnSuccess: (paymentLink) {
+                      locator<PayvidenceAppRouter>()
+                          .push(PaymentWebViewRoute(paymentLink: paymentLink));
+                    },
+                  );
+                }),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
@@ -160,7 +172,6 @@ class SubscriptionPlans extends HookConsumerWidget {
     );
   }
 
-
   Widget _buildSubscriptionContent(BuildContext context, Plan plan) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,28 +187,55 @@ class SubscriptionPlans extends HookConsumerWidget {
         Text(
           'What’s embedded in ${plan.name.toLowerCase()}?',
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
-            fontWeight: FontWeight.w400,
-            fontSize: 20.sp,
-          ),
+                fontWeight: FontWeight.w400,
+                fontSize: 20.sp,
+              ),
         ),
         SizedBox(height: 20.h),
         Expanded(
           child: ListView(
             children: [
-              PlanList(description: 'Business accounts allowed', status: plan.businessAccountsAllowed.toString()),
-              PlanList(description: 'Receipt generation per month', status: plan.receiptGenerationPerMonth.toString()),
-              PlanList(description: 'Invoice generation per month', status: plan.invoiceGenerationPerMonth.toString()),
-              PlanList(description: 'Sales report', status: plan.salesReport ? 'Yes' : 'No'),
-              PlanList(description: 'Receipt sharing', status: plan.receiptSharing ? 'Yes' : 'No'),
-              PlanList(description: 'Receipts printing', status: plan.receiptPrinting ? 'Yes' : 'No'),
-              PlanList(description: 'Inventory management', status: plan.inventoryManagement ? 'Yes' : 'No'),
-              PlanList(description: 'PDF and CSV export', status: plan.pdfCsvExport ? 'Yes' : 'No'),
-              PlanList(description: 'Client management', status: plan.clientManagement ? 'Yes' : 'No'),
-              PlanList(description: 'Brand management', status: plan.brandManagement ? 'Yes' : 'No'),
-              PlanList(description: 'Letterhead transactions', status: plan.letterheadTransaction ? 'Yes' : 'No'),
-              PlanList(description: 'Payment instructions', status: plan.paymentInstructions ? 'Yes' : 'No'),
-              PlanList(description: 'Advanced reporting and analytics', status: plan.advancedReportingAndAnalytics ? 'Yes' : 'No'),
-              PlanList(description: 'Templates', status: plan.templates.toString()),
+              PlanList(
+                  description: 'Business accounts allowed',
+                  status: plan.businessAccountsAllowed.toString()),
+              PlanList(
+                  description: 'Receipt generation per month',
+                  status: plan.receiptGenerationPerMonth.toString()),
+              PlanList(
+                  description: 'Invoice generation per month',
+                  status: plan.invoiceGenerationPerMonth.toString()),
+              PlanList(
+                  description: 'Sales report',
+                  status: plan.salesReport ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Receipt sharing',
+                  status: plan.receiptSharing ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Receipts printing',
+                  status: plan.receiptPrinting ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Inventory management',
+                  status: plan.inventoryManagement ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'PDF and CSV export',
+                  status: plan.pdfCsvExport ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Client management',
+                  status: plan.clientManagement ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Brand management',
+                  status: plan.brandManagement ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Letterhead transactions',
+                  status: plan.letterheadTransaction ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Payment instructions',
+                  status: plan.paymentInstructions ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Advanced reporting and analytics',
+                  status: plan.advancedReportingAndAnalytics ? 'Yes' : 'No'),
+              PlanList(
+                  description: 'Templates', status: plan.templates.toString()),
             ],
           ),
         ),

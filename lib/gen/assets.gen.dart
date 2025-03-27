@@ -59,16 +59,16 @@ class $AssetsPngGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
-    keekee24158PM,
-    onboarding1,
-    onboarding2,
-    onboarding3,
-    payvidenceLogo,
-    productPicture,
-    productpic,
-    receipts,
-    signature,
-  ];
+        keekee24158PM,
+        onboarding1,
+        onboarding2,
+        onboarding3,
+        payvidenceLogo,
+        productPicture,
+        productpic,
+        receipts,
+        signature
+      ];
 }
 
 class $AssetsSvgGen {
@@ -311,85 +311,85 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<dynamic> get values => [
-    payvidence121351AM,
-    payvidence221351AM,
-    analytics,
-    archiveBook,
-    arrowRight,
-    backArrow,
-    backbutton,
-    boxTick,
-    briefcaseConfetti,
-    call,
-    chart,
-    check,
-    client,
-    clientSuccess,
-    contactUs,
-    contact,
-    copy,
-    defaultProfilepic,
-    delete,
-    documentText,
-    editImage,
-    edit,
-    emptyBriefcase,
-    emptyInvoice,
-    emptyProduct,
-    emptyReceipt,
-    emptyTransaction,
-    exclamation,
-    filter,
-    home,
-    homeOl,
-    invoice,
-    library,
-    like,
-    location,
-    lockCircle,
-    logout,
-    medalStar,
-    noteText,
-    notificationBing,
-    notification,
-    otherplans,
-    passwordCheck,
-    password,
-    passwordSuccess,
-    privacy,
-    productPicturePng,
-    productPictureSvg,
-    productSuccess,
-    product,
-    profile,
-    profileConfetti,
-    profileOl,
-    receipt,
-    renewplan,
-    restricted,
-    ribbonWhite,
-    ribbon,
-    search,
-    setting2,
-    shapes,
-    shop,
-    sms,
-    star,
-    statusUp,
-    store,
-    subfailed,
-    subscribe,
-    subsuccess,
-    terms,
-    transaction,
-    transactionOl,
-    upgradeplan,
-    uploadImage,
-    userSquare,
-    wallet,
-    walletOl,
-    whatsapp,
-  ];
+        payvidence121351AM,
+        payvidence221351AM,
+        analytics,
+        archiveBook,
+        arrowRight,
+        backArrow,
+        backbutton,
+        boxTick,
+        briefcaseConfetti,
+        call,
+        chart,
+        check,
+        client,
+        clientSuccess,
+        contactUs,
+        contact,
+        copy,
+        defaultProfilepic,
+        delete,
+        documentText,
+        editImage,
+        edit,
+        emptyBriefcase,
+        emptyInvoice,
+        emptyProduct,
+        emptyReceipt,
+        emptyTransaction,
+        exclamation,
+        filter,
+        home,
+        homeOl,
+        invoice,
+        library,
+        like,
+        location,
+        lockCircle,
+        logout,
+        medalStar,
+        noteText,
+        notificationBing,
+        notification,
+        otherplans,
+        passwordCheck,
+        password,
+        passwordSuccess,
+        privacy,
+        productPicturePng,
+        productPictureSvg,
+        productSuccess,
+        product,
+        profile,
+        profileConfetti,
+        profileOl,
+        receipt,
+        renewplan,
+        restricted,
+        ribbonWhite,
+        ribbon,
+        search,
+        setting2,
+        shapes,
+        shop,
+        sms,
+        star,
+        statusUp,
+        store,
+        subfailed,
+        subscribe,
+        subsuccess,
+        terms,
+        transaction,
+        transactionOl,
+        upgradeplan,
+        uploadImage,
+        userSquare,
+        wallet,
+        walletOl,
+        whatsapp
+      ];
 }
 
 class Assets {
@@ -405,7 +405,11 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  });
 
   final String _assetName;
 
@@ -465,8 +469,15 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({AssetBundle? bundle, String? package}) {
-    return AssetImage(_assetName, bundle: bundle, package: package);
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
   }
 
   String get path => _assetName;
