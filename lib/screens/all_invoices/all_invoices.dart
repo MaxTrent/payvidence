@@ -74,7 +74,9 @@ class AllInvoices extends ConsumerWidget {
                 filled: true,
                 fillColor: appGrey5,
               ),
-
+              SizedBox(
+                height: 20.h,
+              ),
               allInvoices.when(data: (data) {
                 final actualData =
                     data.where((data) => data.publishedAt != null).toList();
@@ -113,8 +115,16 @@ class AllInvoices extends ConsumerWidget {
                 return ListView.separated(
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return ReceiptTile(
-                        receipt: actualData[index],
+                      return GestureDetector(
+                        onTap: (){
+                          locator<PayvidenceAppRouter>()
+                              .navigate(ReceiptScreenRoute(
+                            record: actualData[index], isInvoice: true,
+                          ));
+                        },
+                        child: ReceiptTile(
+                          receipt: actualData[index],
+                        ),
                       );
                     },
                     physics: const NeverScrollableScrollPhysics(),

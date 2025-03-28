@@ -87,7 +87,7 @@ class AllReceipts extends ConsumerWidget {
               // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
               allReceipts.when(data: (data) {
                 final actualData =
-                data.where((data) => data.publishedAt != null).toList();
+                    data.where((data) => data.publishedAt != null).toList();
 
                 if (actualData.isEmpty) {
                   productNumber.value = 0;
@@ -96,7 +96,9 @@ class AllReceipts extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: ScreenUtil().screenHeight/4,),
+                      SizedBox(
+                        height: ScreenUtil().screenHeight / 4,
+                      ),
                       Text(
                         'No receipts available!',
                         style: Theme.of(context).textTheme.displayLarge,
@@ -118,8 +120,8 @@ class AllReceipts extends ConsumerWidget {
                       AppButton(
                           buttonText: 'Generate receipt',
                           onPressed: () {
-                            locator<PayvidenceAppRouter>()
-                                .navigateNamed(PayvidenceRoutes.generateReceipt);
+                            locator<PayvidenceAppRouter>().navigateNamed(
+                                PayvidenceRoutes.generateReceipt);
                           })
                     ],
                   );
@@ -129,7 +131,16 @@ class AllReceipts extends ConsumerWidget {
                 return ListView.separated(
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return ReceiptTile(receipt: actualData[index],);
+                      return GestureDetector(
+                          onTap: () {
+                            locator<PayvidenceAppRouter>()
+                                .navigate(ReceiptScreenRoute(
+                              record: actualData[index], isInvoice: false,
+                            ));
+                          },
+                          child: ReceiptTile(
+                            receipt: actualData[index],
+                          ));
                     },
                     physics: const NeverScrollableScrollPhysics(),
                     separatorBuilder: (ctx, idx) {
@@ -171,85 +182,84 @@ class AllReceipts extends ConsumerWidget {
 
 class ReceiptTile extends StatelessWidget {
   final Receipt receipt;
+
   const ReceiptTile({super.key, required this.receipt});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 101.h,
-      decoration: const BoxDecoration(color: Colors.transparent),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            height: 72.h,
-            width: 72.h,
-            decoration: const BoxDecoration(color: Colors.black),
-          ),
-          SizedBox(
-            width: 14.w,
-          ),
-          Expanded( 
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  receipt.recordProductDetails?[0].product?.name??'',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-                SizedBox(
-                  height: 6.h,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('${receipt.recordProductDetails?[0].quantity??''} units sold',
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          height: 72.h,
+          width: 72.h,
+          decoration: const BoxDecoration(color: Colors.black),
+        ),
+        SizedBox(
+          width: 14.w,
+        ),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                receipt.recordProductDetails?[0].product?.name ?? '',
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              SizedBox(
+                height: 6.h,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                      '${receipt.recordProductDetails?[0].quantity ?? ''} units sold',
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall!
+                          .copyWith(fontSize: 14.sp, color: appGrey4)),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Container(
+                    height: 6.h,
+                    width: 6.h,
+                    decoration: BoxDecoration(
+                        color: appGrey4,
+                        borderRadius: BorderRadius.circular(24.r)),
+                  ),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Expanded(
+                    child: Text(
+                        DateFormat.yMd().add_jm().format(receipt.createdAt!),
                         style: Theme.of(context)
                             .textTheme
                             .displaySmall!
                             .copyWith(fontSize: 14.sp, color: appGrey4)),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    Container(
-                      height: 6.h,
-                      width: 6.h,
-                      decoration: BoxDecoration(
-                          color: appGrey4,
-                          borderRadius: BorderRadius.circular(24.r)),
-                    ),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    Expanded(
-                      child: Text(DateFormat.yMd().add_jm().format(DateTime.parse(receipt.createdAt!)),
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(fontSize: 14.sp, color: appGrey4)),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8.h,
-                ),
-                Row(
-                  // mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('₦${receipt.recordProductDetails?[0].total??''} ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayMedium!
-                            .copyWith(fontSize: 14.sp)),
-                  ],
-                )
-              ],
-            ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 8.h,
+              ),
+              Row(
+                // mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('₦${receipt.recordProductDetails?[0].total ?? ''} ',
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayMedium!
+                          .copyWith(fontSize: 14.sp)),
+                ],
+              )
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
