@@ -49,6 +49,8 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: GenerateReceiptRoute.page, path: PayvidenceRoutes.generateReceipt),
         AutoRoute(page: GenerateInvoicesRoute.page, path: PayvidenceRoutes.generateInvoices),
         AutoRoute(page: UpdateBankDetailsRoute.page, path: PayvidenceRoutes.updateBankDetails),
+        AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
+        AutoRoute(page: ReceiptScreenRoute.page, path: PayvidenceRoutes.receiptScreen),
 
       ];
 
@@ -124,4 +126,5 @@ class PayvidenceRoutes {
   static String get clientSuccess => '/clientSuccess';
   static String get sales => 'sales';
   static String get profile => 'profile';
+  static String get receiptScreen => '/receiptScreen';
 }
