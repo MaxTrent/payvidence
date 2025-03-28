@@ -6,9 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
-import 'package:payvidence/screens/complete_draft/complete_draft.dart';
-
-import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/loading_dialog.dart';
@@ -120,7 +117,9 @@ class Drafts extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(height: ScreenUtil().screenHeight/4,),
+                        SizedBox(
+                          height: ScreenUtil().screenHeight / 4,
+                        ),
 
                         Text(
                           'No receipts in drafts!',
@@ -168,9 +167,11 @@ class Drafts extends ConsumerWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           return DraftTile(
-                            draft: actualData[index], onPressed: (String id) {
+                            draft: actualData[index],
+                            onPressed: (String id) {
                               deleteProduct(id);
-                          },
+                            },
+                            isInvoice: isInvoice ?? false,
                           );
                         },
                         separatorBuilder: (ctx, idx) {
@@ -215,15 +216,20 @@ class Drafts extends ConsumerWidget {
 class DraftTile extends StatelessWidget {
   final void Function(String id) onPressed;
   final Receipt draft;
+  final bool isInvoice;
 
-  const DraftTile({super.key, required this.draft, required this.onPressed});
+  const DraftTile(
+      {super.key,
+      required this.draft,
+      required this.onPressed,
+      required this.isInvoice});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         locator<PayvidenceAppRouter>()
-            .navigateNamed(PayvidenceRoutes.completeDraft);
+            .navigate(CompleteDraftRoute(draft: draft, isInvoice: isInvoice));
       },
       child: Container(
         height: 101.h,
@@ -275,9 +281,7 @@ class DraftTile extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                            DateFormat.yMd()
-                                .add_jm()
-                                .format(DateTime.parse(draft.createdAt!)),
+                            DateFormat.yMd().add_jm().format(draft.createdAt!),
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
