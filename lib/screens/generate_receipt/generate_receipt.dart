@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/model/receipt_model.dart';
+import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/utilities/toast_service.dart';
@@ -185,7 +186,9 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
         ToastService.success(context, "Receipt generated successfully");
-        ref.invalidate(getAllReceiptProvider);
+        ref.invalidate(widget.isInvoice == true
+            ? getAllInvoiceProvider
+            : getAllReceiptProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
             if (!context.mounted) return;
@@ -417,21 +420,21 @@ class FormFields extends StatefulWidget {
   final TextEditingController discountController;
   final Future<Product?> Function(int index) onPressed;
   final int index;
+  Product? product;
 
-  const FormFields(
+  FormFields(
       {super.key,
       required this.qtyController,
       required this.discountController,
       required this.onPressed,
-      required this.index});
+      required this.index,
+      this.product});
 
   @override
   State<FormFields> createState() => _FormFieldsState();
 }
 
 class _FormFieldsState extends State<FormFields> {
-  String productName = 'Select product';
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -446,13 +449,17 @@ class _FormFieldsState extends State<FormFields> {
         ),
         GestureDetector(
           onTap: () async {
-            final Product? product = await widget.onPressed.call(widget.index);
-
-            productName = product?.name ?? productName;
-            setState(() {});
+            final Product? result = await widget.onPressed.call(widget.index);
+            if (result == null) {
+            } else {
+              widget.product = result;
+              setState(() {});
+            }
           },
           child: AppTextField(
-            hintText: productName,
+            hintText: widget.product == null
+                ? "Select product"
+                : widget.product!.name!,
             enabled: false,
             suffixIcon: const Icon(Icons.keyboard_arrow_down),
             controller: TextEditingController(),
