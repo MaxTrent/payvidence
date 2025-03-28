@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,16 +9,25 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../my_subscription/my_subscription_vm.dart';
 import '../onboarding/onboarding.dart';
+
+
 @RoutePage(name: 'ProfileRoute')
-
-
 class Profile extends HookConsumerWidget {
   const Profile({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
     final viewModel = ref.watch(profileViewModelProvider);
+    final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
+
+
+    useEffect((){
+      print("fetching user info");
+      useMySubscriptionViewModel.fetchSubscriptions();
+      return null;
+    }, []);
 
     return SafeArea(
       child: Scaffold(
@@ -139,7 +149,7 @@ class Profile extends HookConsumerWidget {
                                   height: 2..h,
                                 ),
                                 Text(
-                                  'Starter plan',
+                                  useMySubscriptionViewModel.subInfo?.plan.name ?? 'Starter plan',
                                   style: Theme.of(context).textTheme.displayLarge,
                                 )
                               ],

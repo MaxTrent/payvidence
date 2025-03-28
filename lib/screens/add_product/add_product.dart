@@ -60,7 +60,7 @@ class AddProduct extends ConsumerWidget {
             await locator<IProductRepository>().addProduct(requestData);
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.success(context, "Product created successfully");
+        ToastService.success("Product created successfully");
         ref.invalidate(getAllProductProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
@@ -70,7 +70,7 @@ class AddProduct extends ConsumerWidget {
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context, 'An error has occurred!');
+        ToastService.error( 'An error has occurred!');
       }
     }
 
@@ -299,12 +299,12 @@ class AddProduct extends ConsumerWidget {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (currentBrand == null) {
-                          ToastService.error(context, "Select a brand!");
+                          ToastService.error( "Select a brand!");
                         } else if (currentCategory == null) {
-                          ToastService.error(context, "Select a category!");
+                          ToastService.error( "Select a category!");
                         }
                         if (productImage.value == null) {
-                          ToastService.error(context, "Select a product image");
+                          ToastService.error( "Select a product image");
                         } else {
                           createProduct();
                         }

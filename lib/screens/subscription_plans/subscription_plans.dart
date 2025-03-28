@@ -23,25 +23,25 @@ class SubscriptionPlans extends HookConsumerWidget {
   const SubscriptionPlans({super.key, @QueryParam('planId') this.planId = ''});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedTier = useState<String>('');
-    final viewModel = ref.watch(chooseSubscriptionPlanViewModel);
-    final useSubscriptionPlansVm = ref.watch(subscriptionPlansViewModel);
+    final choosePlanVm = ref.watch(chooseSubscriptionPlanViewModel);
+    final subscriptionPlansVm = ref.watch(subscriptionPlansViewModelProvider);
 
     void setInitialPlan() {
-      if (planId.isNotEmpty) {
-        selectedTier.value = viewModel.plans
+      if (planId.isNotEmpty && choosePlanVm.plans.isNotEmpty) {
+        selectedTier.value = choosePlanVm.plans
             .firstWhere(
               (plan) => plan.id == planId,
-              orElse: () => viewModel.plans.first,
-            )
+          orElse: () => choosePlanVm.plans.first,
+        )
             .name;
       }
     }
 
     useEffect(() {
-      if (viewModel.plans.isEmpty) {
-        viewModel.fetchPlans().then((_) => setInitialPlan());
+      if (choosePlanVm.plans.isEmpty) {
+        choosePlanVm.fetchPlans().then((_) => setInitialPlan());
       } else {
         setInitialPlan();
       }
@@ -50,25 +50,31 @@ class SubscriptionPlans extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(),
-      floatingActionButton: AppButton(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: SizedBox(
+        width: 350.w,
+        child: AppButton(
+          isProcessing: subscriptionPlansVm.isLoading,
           buttonText: selectedTier.value.isEmpty
-              ? 'Renew ${selectedTier.value} plan'
-              : ' Continue with ${selectedTier.value} plan',
-          onPressed: selectedTier.value.isEmpty || useSubscriptionPlansVm.isLoading
+              ? 'Choose a plan'
+              : 'Continue with ${selectedTier.value} plan',
+          onPressed: selectedTier.value.isEmpty || subscriptionPlansVm.isLoading
               ? null
               : () {
-                  final selectedPlan = viewModel.plans.firstWhere(
-                    (plan) => plan.name == selectedTier.value,
-                    orElse: () => viewModel.plans.first,
-                  );
-                  useSubscriptionPlansVm.createSubscription(
-                    planId: selectedPlan.id,
-                    navigateOnSuccess: (paymentLink) {
-                      locator<PayvidenceAppRouter>()
-                          .push(PaymentWebViewRoute(paymentLink: paymentLink));
-                    },
-                  );
-                }),
+            final selectedPlan = choosePlanVm.plans.firstWhere(
+                  (plan) => plan.name == selectedTier.value,
+              orElse: () => choosePlanVm.plans.first,
+            );
+            subscriptionPlansVm.createSubscription(
+              planId: selectedPlan.id,
+              navigateOnSuccess: (paymentLink) {
+                locator<PayvidenceAppRouter>()
+                    .push(PaymentWebViewRoute(paymentLink: paymentLink));
+              },
+            );
+          },
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
@@ -78,50 +84,46 @@ class SubscriptionPlans extends HookConsumerWidget {
               'Subscription plans',
               style: Theme.of(context).textTheme.displayLarge,
             ),
-            SizedBox(
-              height: 24.h,
-            ),
-            viewModel.isLoading
+            SizedBox(height: 24.h),
+            choosePlanVm.isLoading
                 ? Row(
-                    children: [
-                      CustomShimmer(width: 83.w, height: 45.h),
-                      SizedBox(width: 12.w),
-                      CustomShimmer(width: 83.w, height: 45.h),
-                      SizedBox(width: 12.w),
-                      CustomShimmer(width: 83.w, height: 45.h),
-                    ],
-                  )
+              children: [
+                CustomShimmer(width: 83.w, height: 45.h),
+                SizedBox(width: 12.w),
+                CustomShimmer(width: 83.w, height: 45.h),
+                SizedBox(width: 12.w),
+                CustomShimmer(width: 83.w, height: 45.h),
+              ],
+            )
                 : SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: viewModel.plans.map((plan) {
-                        return Padding(
-                          padding: EdgeInsets.only(right: 12.w),
-                          child: _buildTierButton(
-                            context: context,
-                            tier: plan.name,
-                            isSelected: selectedTier.value == plan.name,
-                            onTap: () => selectedTier.value = plan.name,
-                          ),
-                        );
-                      }).toList(),
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: choosePlanVm.plans.map((plan) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 12.w),
+                    child: _buildTierButton(
+                      context: context,
+                      tier: plan.name,
+                      isSelected: selectedTier.value == plan.name,
+                      onTap: () => selectedTier.value = plan.name,
                     ),
-                  ),
-            SizedBox(
-              height: 24.h,
+                  );
+                }).toList(),
+              ),
             ),
+            SizedBox(height: 24.h),
             Expanded(
-              child: viewModel.isLoading
+              child: choosePlanVm.isLoading
                   ? _buildLoadingShimmer()
-                  : viewModel.plans.isEmpty
-                      ? const Center(child: Text('No plans available'))
-                      : _buildSubscriptionContent(
-                          context,
-                          viewModel.plans.firstWhere(
-                            (plan) => plan.name == selectedTier.value,
-                            orElse: () => viewModel.plans.first,
-                          ),
-                        ),
+                  : choosePlanVm.plans.isEmpty
+                  ? const Center(child: Text('No plans available'))
+                  : _buildSubscriptionContent(
+                context,
+                choosePlanVm.plans.firstWhere(
+                      (plan) => plan.name == selectedTier.value,
+                  orElse: () => choosePlanVm.plans.first,
+                ),
+              ),
             ),
           ],
         ),
@@ -151,8 +153,8 @@ class SubscriptionPlans extends HookConsumerWidget {
           child: Text(
             tier,
             style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  color: isSelected ? Colors.white : Colors.black,
-                ),
+              color: isSelected ? Colors.white : Colors.black,
+            ),
           ),
         ),
       ),
@@ -187,9 +189,9 @@ class SubscriptionPlans extends HookConsumerWidget {
         Text(
           'What’s embedded in ${plan.name.toLowerCase()}?',
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                fontWeight: FontWeight.w400,
-                fontSize: 20.sp,
-              ),
+            fontWeight: FontWeight.w400,
+            fontSize: 20.sp,
+          ),
         ),
         SizedBox(height: 20.h),
         Expanded(

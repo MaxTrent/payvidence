@@ -2,7 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
  import 'package:payvidence/screens/profile/profile.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
@@ -54,43 +56,43 @@ class Settings extends StatelessWidget {
                 title: 'Privacy and security',
                 // navigateTo: AppRoutes.privacyAndSecurity,
               onTap: (){
-                context.router.push(PrivacyAndSecurityRoute());
-              },
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.privacyAndSecurity);
+                },
             ),
             ProfileOptionTile(
                 icon: Assets.svg.notificationBing,
                 title: 'Notifications setting',
                 // navigateTo: AppRoutes.notificationSettings
                 onTap: (){
-                context.router.push(NotificationSettingsRoute());
-      },
+                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.notificationSettings);
+                },
             ),
             SizedBox(
               height: 28.h,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Switch to dark mode',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall!
-                      .copyWith(fontSize: 22.sp),
-                ),
-                CupertinoSwitch(value: true, onChanged: (value) {})
-              ],
-            ),
-            SizedBox(
-              height: 11.h,
-            ),
-            Text(
-              'You can use Payvidence App on dark mode too. Turn on the switch to get started.',
-              style: Theme.of(context)
-                  .textTheme
-                  .displaySmall!
-                  .copyWith(fontSize: 16.sp),
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       'Switch to dark mode',
+            //       style: Theme.of(context)
+            //           .textTheme
+            //           .displaySmall!
+            //           .copyWith(fontSize: 22.sp),
+            //     ),
+            //     CupertinoSwitch(value: true, onChanged: (value) {})
+            //   ],
+            // ),
+            // SizedBox(
+            //   height: 11.h,
+            // ),
+            // Text(
+            //   'You can use Payvidence App on dark mode too. Turn on the switch to get started.',
+            //   style: Theme.of(context)
+            //       .textTheme
+            //       .displaySmall!
+            //       .copyWith(fontSize: 16.sp),
+            // ),
           ],
         ),
       ),

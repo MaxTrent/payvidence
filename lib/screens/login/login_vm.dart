@@ -28,6 +28,9 @@ class LoginViewModel extends BaseChangeNotifier {
       notifyListeners();
       final response = await apiServices.login(email, password);
 
+      _isLoading = false;
+      notifyListeners();
+
       if (response.success) {
         _isLoading = false;
         notifyListeners();
@@ -55,6 +58,7 @@ class LoginViewModel extends BaseChangeNotifier {
     } catch (e) {
       _isLoading = false;
       notifyListeners();
+      handleError(message: "An unexpected error occurred. Please try again.");
       throw Exception(e);
     }
   }

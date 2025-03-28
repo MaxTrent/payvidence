@@ -1,20 +1,16 @@
 import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/utilities/app_functions.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/toast_service.dart';
 import 'add_business_vm.dart';
 
@@ -170,10 +166,9 @@ class AddBusiness extends HookConsumerWidget {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (vm.logo.value == null) {
-                          ToastService.error(context, "Select a logo image");
+                          ToastService.error( "Select a logo image");
                         } else if (vm.signature.value == null) {
-                          ToastService.error(
-                              context, "Select a signature image");
+                          ToastService.error( "Select a signature image");
                         } else {
                           vm.createBusiness(context);
                         }

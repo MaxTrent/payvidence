@@ -32,6 +32,8 @@ class PayvidenceEndpoints{
 
 //Notification Endpoints
 static String get getAllNotifications => '/api/notification';
+static String getOneNotification(String notificationId) => '/api/notification/$notificationId';
+static String markNotificationAsRead(String notificationId) => '/api/notification/$notificationId';
 
 
 //Transaction Endpoints

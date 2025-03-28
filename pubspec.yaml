@@ -60,6 +60,8 @@ dependencies:
   intl: ^0.20.2
   collection: ^1.18.0
   webview_flutter: ^4.10.0
+  flutter_local_notifications: ^19.0.0
+  timezone: ^0.10.0
 
 dev_dependencies:
   auto_route_generator: ^9.0.0

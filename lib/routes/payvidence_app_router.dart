@@ -62,7 +62,7 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: ChooseSubscriptionPlanRoute.page, path: PayvidenceRoutes.chooseSubscriptionPlan),
         AutoRoute(page: SubscriptionPlansRoute.page, path: PayvidenceRoutes.subscriptionPlans),
         AutoRoute(page: SubscriptionPrompt.page, path: PayvidenceRoutes.subscriptionPrompt),
-        AutoRoute(page: PaymentWebViewRoute.page, path: PayvidenceRoutes.subscriptionPrompt),
+        AutoRoute(page: PaymentWebViewRoute.page, path: PayvidenceRoutes.paymentScreen),
 
       ];
 
@@ -143,5 +143,5 @@ class PayvidenceRoutes {
   static String get chooseSubscriptionPlan => '/chooseSubPlan';
   static String get subscriptionPlans => '/subscriptionPlans/:planId';
   static String get subscriptionPrompt => '/subscriptionPrompt';
-  static String get paymentScreen => '/paymentScreen';
+  static String get paymentScreen => '/paymentScreen/:paymentLink';
 }

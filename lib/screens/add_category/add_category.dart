@@ -33,7 +33,7 @@ class AddCategory extends ConsumerWidget {
             .addCategory(requestData);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success(context, "Category created successfully");
+        ToastService.success("Category created successfully");
         ref.invalidate(getAllCategoryProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
@@ -42,7 +42,7 @@ class AddCategory extends ConsumerWidget {
         });
       } catch (e) {
         Navigator.of(context).pop(); //pop loading dialog on error
-        ToastService.error(context, 'An error has occurred!');
+        ToastService.error( 'An error has occurred!');
       }
     }
 
