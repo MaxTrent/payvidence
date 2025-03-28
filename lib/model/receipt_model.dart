@@ -1,14 +1,22 @@
+import 'dart:convert';
+
+import 'package:payvidence/model/product_model.dart';
+
+import 'client_model.dart';
+
+
 class Receipt {
   final String? id;
   final String? clientId;
   final String? businessId;
   final String? status;
   final String? modeOfPayment;
-  final String? publishedAt;
-  final double? total;
-  final String? createdAt;
-  final String? updatedAt;
-  final List<RecordProductDetails>? recordProductDetails;
+  final String? total;
+  final DateTime? publishedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final ClientModel? client;
+  final List<RecordProductDetail>? recordProductDetails;
 
   Receipt({
     this.id,
@@ -20,40 +28,57 @@ class Receipt {
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
+    this.client,
     this.recordProductDetails,
   });
 
-  factory Receipt.fromJson(Map<String, dynamic> json) {
-    return Receipt(
-      id: json['id'],
-      clientId: json['client_id'],
-      businessId: json['business_id'],
-      status: json['status'],
-      modeOfPayment: json['mode_of_payment'],
-      total: json['total'] != null ? double.tryParse(json['total']) : null,
-      publishedAt: json['published_at'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
-      recordProductDetails: json['record_product_details'] != null
-          ? (json['record_product_details'] as List)
-          .map((item) => RecordProductDetails.fromJson(item))
-          .toList()
-          : null,
-    );
-  }
+  factory Receipt.fromRawJson(String str) => Receipt.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Receipt.fromJson(Map<String, dynamic> json) => Receipt(
+    id: json["id"],
+    clientId: json["client_id"],
+    businessId: json["business_id"],
+    status: json["status"],
+    modeOfPayment: json["mode_of_payment"],
+    total: json["total"],
+    publishedAt: json["published_at"] == null ? null : DateTime.parse(json["published_at"]),
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    client: json["client"] == null ? null : ClientModel.fromJson(json["client"]),
+    recordProductDetails: json["record_product_details"] == null ? [] : List<RecordProductDetail>.from(json["record_product_details"]!.map((x) => RecordProductDetail.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "client_id": clientId,
+    "business_id": businessId,
+    "status": status,
+    "mode_of_payment": modeOfPayment,
+    "total": total,
+    "published_at": publishedAt?.toIso8601String(),
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "client": client?.toJson(),
+    "record_product_details": recordProductDetails == null ? [] : List<dynamic>.from(recordProductDetails!.map((x) => x.toJson())),
+  };
 }
 
-class RecordProductDetails {
+
+class RecordProductDetail {
   final String? id;
   final String? saleRecordId;
   final String? productId;
   final int? quantity;
-  final double? price;
-  final double? discount;
-  final double? total;
-  final ReceiptProduct? product;
+  final String? price;
+  final String? discount;
+  final String? total;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final Product? product;
 
-  RecordProductDetails({
+  RecordProductDetail({
     this.id,
     this.saleRecordId,
     this.productId,
@@ -61,63 +86,39 @@ class RecordProductDetails {
     this.price,
     this.discount,
     this.total,
+    this.createdAt,
+    this.updatedAt,
     this.product,
   });
 
-  factory RecordProductDetails.fromJson(Map<String, dynamic> json) {
-    return RecordProductDetails(
-      id: json['id'],
-      saleRecordId: json['sale_record_id'],
-      productId: json['product_id'],
-      quantity: json['quantity'],
-      price: json['price'] != null ? double.tryParse(json['price']) : null,
-      discount: json['discount'] != null ? double.tryParse(json['discount']) : null,
-      total: json['total'] != null ? double.tryParse(json['total']) : null,
-      product: json['product'] != null ? ReceiptProduct.fromJson(json['product']) : null,
-    );
-  }
+  factory RecordProductDetail.fromRawJson(String str) => RecordProductDetail.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory RecordProductDetail.fromJson(Map<String, dynamic> json) => RecordProductDetail(
+    id: json["id"],
+    saleRecordId: json["sale_record_id"],
+    productId: json["product_id"],
+    quantity: json["quantity"],
+    price: json["price"],
+    discount: json["discount"],
+    total: json["total"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    product: json["product"] == null ? null : Product.fromJson(json["product"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "sale_record_id": saleRecordId,
+    "product_id": productId,
+    "quantity": quantity,
+    "price": price,
+    "discount": discount,
+    "total": total,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+    "product": product?.toJson(),
+  };
 }
 
-class ReceiptProduct {
-  final String? id;
-  final String? name;
-  final String? businessId;
-  final String? categoryId;
-  final String? brandId;
-  final String? description;
-  final String? logoUrl;
-  final double? price;
-  final int? quantitySold;
-  final int? quantityAvailable;
-  final double? vat;
-
-  ReceiptProduct({
-    this.id,
-    this.name,
-    this.businessId,
-    this.categoryId,
-    this.brandId,
-    this.description,
-    this.logoUrl,
-    this.price,
-    this.quantitySold,
-    this.quantityAvailable,
-    this.vat,
-  });
-
-  factory ReceiptProduct.fromJson(Map<String, dynamic> json) {
-    return ReceiptProduct(
-      id: json['id'],
-      name: json['name'],
-      businessId: json['business_id'],
-      categoryId: json['category_id'],
-      brandId: json['brand_id'],
-      description: json['description'],
-      logoUrl: json['logo_url'],
-      price: json['price'] != null ? double.tryParse(json['price']) : null,
-      quantitySold: json['quantity_sold'],
-      quantityAvailable: json['quantity_available'],
-      vat: json['vat'] != null ? double.tryParse(json['vat']) : null,
-    );
-  }
-}
