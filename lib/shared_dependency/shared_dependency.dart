@@ -16,9 +16,11 @@ import '../data/network/network_service.dart';
 import '../datasource/data/brand_datasource.dart';
 import '../datasource/data/category_datasource.dart';
 import '../datasource/data/product_datasource.dart';
+import '../datasource/data/sales_datasource.dart';
 import '../repositories/repository/brand_repository.dart';
 import '../repositories/repository/category_repository.dart';
 import '../repositories/repository/product_repository.dart';
+import '../repositories/repository/sales_repository.dart';
 import '../routes/payvidence_app_router.dart';
 
 GetIt locator = GetIt.instance;
@@ -30,56 +32,63 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   locator.registerSingleton(sharedPreferences);
 
   locator.registerLazySingleton<SessionManager>(
-        () => SessionManager(sharedPreferences: locator()),
+    () => SessionManager(sharedPreferences: locator()),
   );
   locator.registerLazySingleton(() => Dio());
 
-  locator.registerLazySingleton<PayvidenceAppRouter>(() => PayvidenceAppRouter());
+  locator
+      .registerLazySingleton<PayvidenceAppRouter>(() => PayvidenceAppRouter());
 
   locator.registerLazySingleton<NetworkService>(
-        () => NetworkService(dio: locator(), baseUrl: baseUrl),
+    () => NetworkService(dio: locator(), baseUrl: baseUrl),
   );
 
   locator.registerLazySingleton<ApiServices>(
-        () => ApiServices(),
+    () => ApiServices(),
   );
   locator.registerLazySingleton<IBusinessDatasource>(
-        () => BusinessDatasource(locator()),
+    () => BusinessDatasource(locator()),
   );
   locator.registerLazySingleton<IBusinessRepository>(
-        () => BusinessRepository(locator()),
+    () => BusinessRepository(locator()),
   );
 
   locator.registerLazySingleton<IProductDatasource>(
-        () => ProductDatasource(locator()),
+    () => ProductDatasource(locator()),
   );
   locator.registerLazySingleton<IProductRepository>(
-        () => ProductRepository(locator()),
+    () => ProductRepository(locator()),
   );
   locator.registerLazySingleton<ICategoryDatasource>(
-        () => CategoryDatasource(locator()),
+    () => CategoryDatasource(locator()),
   );
   locator.registerLazySingleton<ICategoryRepository>(
-        () => CategoryRepository(locator()),
+    () => CategoryRepository(locator()),
   );
   locator.registerLazySingleton<IBrandDatasource>(
-        () => BrandDatasource(locator()),
+    () => BrandDatasource(locator()),
   );
   locator.registerLazySingleton<IBrandRepository>(
-        () => BrandRepository(locator()),
+    () => BrandRepository(locator()),
   );
   locator.registerLazySingleton<IReceiptDatasource>(
-        () => ReceiptDatasource(locator()),
+    () => ReceiptDatasource(locator()),
   );
   locator.registerLazySingleton<IReceiptRepository>(
-        () => ReceiptRepository(locator()),
+    () => ReceiptRepository(locator()),
   );
   locator.registerLazySingleton<IClientDatasource>(
-        () => ClientDatasource(locator()),
+    () => ClientDatasource(locator()),
   );
   locator.registerLazySingleton<IClientRepository>(
-        () => ClientRepository(locator()),
+    () => ClientRepository(locator()),
+  );
+
+  locator.registerLazySingleton<ISalesDatasource>(
+    () => SalesDatasource(locator()),
+  );
+  locator.registerLazySingleton<ISalesRepository>(
+    () => SalesRepository(locator()),
   );
   log('Dependencies initialized successfully.');
-
 }
