@@ -9,6 +9,8 @@ abstract class IBusinessRepository {
   Future<List<Business>> fetchAllBusiness();
 
   Future<Business> fetchBusiness(String id);
+
+  Future<Business> updateBusiness(String id, Map<String, dynamic> requestData);
 }
 
 class BusinessRepository extends IBusinessRepository {
@@ -29,5 +31,10 @@ class BusinessRepository extends IBusinessRepository {
   @override
   Future<Business> fetchBusiness(String id) {
     return businessDatasource.fetchBusiness(id);
+  }
+
+  @override
+  Future<Business> updateBusiness(String id, Map<String, dynamic> requestData) {
+    return businessDatasource.updateBusiness(id, requestData);
   }
 }

@@ -63,6 +63,12 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: SubscriptionPlansRoute.page, path: PayvidenceRoutes.subscriptionPlans),
         AutoRoute(page: SubscriptionPrompt.page, path: PayvidenceRoutes.subscriptionPrompt),
         AutoRoute(page: PaymentWebViewRoute.page, path: PayvidenceRoutes.paymentScreen),
+        AutoRoute(page: UpdateQuantityRoute.page, path: PayvidenceRoutes.updateQuantity),
+        AutoRoute(page: GenerateReceiptRoute.page, path: PayvidenceRoutes.generateReceipt),
+        AutoRoute(page: GenerateInvoicesRoute.page, path: PayvidenceRoutes.generateInvoices),
+        AutoRoute(page: UpdateBankDetailsRoute.page, path: PayvidenceRoutes.updateBankDetails),
+        AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
+        AutoRoute(page: ReceiptScreenRoute.page, path: PayvidenceRoutes.receiptScreen),
 
       ];
 
@@ -119,6 +125,7 @@ class PayvidenceRoutes {
   static String get generateInvoices => '/generateInvoices';
   static String get allInvoices => '/allInvoices';
   static String get updatePersonalDetails => '/updatePersonalDetails';
+  static String get updateBankDetails => '/updateBankDetails';
   static String get businessData => '/businessData';
   static String get payvidenceInfo => '/payvidenceInfo';
   static String get changeProfilePicture => '/changeProfilePicture';
@@ -144,4 +151,5 @@ class PayvidenceRoutes {
   static String get subscriptionPlans => '/subscriptionPlans/:planId';
   static String get subscriptionPrompt => '/subscriptionPrompt';
   static String get paymentScreen => '/paymentScreen/:paymentLink';
+  static String get receiptScreen => '/receiptScreen';
 }

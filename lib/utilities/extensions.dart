@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 
+import 'package:intl/intl.dart';
+
 // extension NumberFormatting on String {
 //   String toCommaSeparated() {
 //     final numberStr = toString();
@@ -18,7 +20,18 @@ import 'package:intl/intl.dart';
 //   }
 // }
 
+extension StringFormatting on String {
+  String capitalize() {
+    return isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
+  }
+}
+
 extension NumberFormatting on String {
+  String commaSeparated() {
+    final number = double.tryParse(this) ?? 0.0;
+    final format = NumberFormat("#,##0.##", "en_US");
+    return format.format(number);
+  }
   String toCommaSeparated({String locale = 'en_US'}) {
     int? number = int.tryParse(this);
 
@@ -36,6 +49,9 @@ extension NumberFormatting on String {
     }
   }
 }
+
+
+
 
 extension DateTimeFormatting on DateTime? {
   String toFormattedString() {

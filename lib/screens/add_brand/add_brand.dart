@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,9 +39,13 @@ class AddBrand extends ConsumerWidget {
         ref.invalidate(getAllBrandProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
-          context.router.back();
+          Navigator.of(context).pop();
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
+      } on DioException catch (e) {
+        Navigator.of(context).pop(); // pop loading dialog on error
+        ToastService.error(
+            e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         Navigator.of(context).pop(); //pop loading dialog on error
         ToastService.error( 'An error has occurred!');

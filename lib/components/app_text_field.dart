@@ -45,6 +45,9 @@ class AppTextField extends StatelessWidget {
       height: height.h,
       width: width?.w,
       child: TextFormField(
+        onTapOutside: (event){
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         enabled: enabled,
         controller: controller,
         cursorColor: Colors.black,

@@ -7,6 +7,12 @@ abstract class IProductRepository {
       {String? brandId, String? name, String? categoryId});
 
   Future<Product> addProduct(FormData requestData);
+
+  Future<void> deleteProduct(String productId);
+
+  Future<Product> updateProduct(FormData requestData, String productId);
+
+  Future<Product> restockProduct(String productId, int quantity);
 }
 
 class ProductRepository extends IProductRepository {
@@ -24,5 +30,20 @@ class ProductRepository extends IProductRepository {
   @override
   Future<Product> addProduct(FormData requestData) {
     return productDatasource.addProduct(requestData);
+  }
+
+  @override
+  Future<void> deleteProduct(String productId) {
+    return productDatasource.deleteProduct(productId);
+  }
+
+  @override
+  Future<Product> updateProduct(FormData requestData, String productId) {
+    return productDatasource.updateProduct(requestData, productId);
+  }
+
+  @override
+  Future<Product> restockProduct(String productId, int quantity) {
+    return productDatasource.restockProduct(productId, quantity);
   }
 }

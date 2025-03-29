@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/login/login_vm.dart';
 import 'package:payvidence/screens/onboarding/onboarding.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
@@ -89,8 +93,7 @@ class Login extends HookConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Email address',
-                    controller:
-                        emailController,
+                    controller: emailController,
                     validator: (val) {
                       if (!val!.isValidEmail || val.isEmpty) {
                         return 'Enter valid email address';
@@ -111,7 +114,7 @@ class Login extends HookConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Password',
-                    controller:passwordController,
+                    controller: passwordController,
                     validator: (val) {
                       if (!val!.isValidPassword || val.isEmpty) {
                         return 'Enter a valid password';
@@ -165,9 +168,13 @@ class Login extends HookConsumerWidget {
                           password: passwordController.text.trim(),
                           navigateOnSuccess: () {
                             print('navigating');
-                            locator<PayvidenceAppRouter>().popUntil(
-                                    (route) => route is OnboardingScreen);
-                            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+                            ref.invalidate(getAllBusinessProvider);
+
+                            locator<PayvidenceAppRouter>()
+                                .pushAndPopUntil(HomePageRoute(),
+                                    predicate: (Route<dynamic> route) {
+                              return false;
+                            });
                           },
                         );
                       } else {

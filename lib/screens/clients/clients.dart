@@ -1,23 +1,30 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
- import '../../components/app_text_field.dart';
+import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
+import '../../components/app_button.dart';
+import '../../components/app_text_field.dart';
+import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
-   
-    
-
-
+import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'ClientsRoute')
-class Clients extends StatelessWidget {
-  Clients({super.key});
+class Clients extends ConsumerWidget {
+  final bool? forSelection;
+
+  Clients({super.key, this.forSelection = false});
 
   final _searchController = TextEditingController();
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allClients = ref.watch(getAllClientsProvider);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -42,653 +49,178 @@ class Clients extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: ListView(
-          // mainAxisAlignment: MainAxisAlignment.start,
-          // crossAxisAlignment: CrossAxisAlignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 32.h,
-                ),
-                AppTextField(
-                  // width: 282.w,
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(16.h),
-                    child: SvgPicture.asset(Assets.svg.search),
-                  ),
-                  hintText: 'Search for product',
-                  controller: _searchController,
-                  radius: 80,
-                  filled: true,
-                  fillColor: appGrey5,
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                // SvgPicture.asset(Assets.svg.emptyReceipt),
-                // SizedBox(height: 40.h,),
-                // Text('No receipt yet!', style: Theme.of(context).textTheme.displayLarge,),
-                // SizedBox(height: 10.h,),
-                // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
-                GestureDetector(
-                  onTap: (){
-                    context.router.push(ClientDetailsRoute());
-                  },
-                  child: SizedBox(
-                    height: 101.h,
-                    width: 350.w,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 56.h,
-                          width: 56.h,
-                          decoration: const BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.lightGreen),
-                          child: Center(
-                              child: Text(
-                            'BE',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontSize: 20.sp, color: Colors.white),
-                          )),
-                        ),
-                        SizedBox(
-                          width: 14.w,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Bolatito Eniola',
-                              style: Theme.of(context).textTheme.displayMedium,
-                            ),
-                            SizedBox(
-                              height: 8.h,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SvgPicture.asset(Assets.svg.location),
-                                SizedBox(
-                                  width: 6.w,
-                                ),
-                                Text(
-                                  'No. 2, New Area Street, Lagos State, Nigeria',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(fontSize: 14.sp),
-                                  // maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  // softWrap: true,
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 12.h,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  '0812 114 6633',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(fontSize: 14.sp),
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                                SvgPicture.asset(Assets.svg.copy)
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 101.h,
-                  width: 350.w,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 56.h,
-                        width: 56.h,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightGreen),
-                        child: Center(
-                            child: Text(
-                              'BE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 20.sp, color: Colors.white),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 14.w,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Bolatito Eniola',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(Assets.svg.location),
-                              SizedBox(
-                                width: 6.w,
-                              ),
-                              Text(
-                                'No. 2, New Area Street, Lagos State, Nigeria',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                                // maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                // softWrap: true,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '0812 114 6633',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              SvgPicture.asset(Assets.svg.copy)
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 101.h,
-                  width: 350.w,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 56.h,
-                        width: 56.h,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightGreen),
-                        child: Center(
-                            child: Text(
-                              'BE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 20.sp, color: Colors.white),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 14.w,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Bolatito Eniola',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(Assets.svg.location),
-                              SizedBox(
-                                width: 6.w,
-                              ),
-                              Text(
-                                'No. 2, New Area Street, Lagos State, Nigeria',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                                // maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                // softWrap: true,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '0812 114 6633',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              SvgPicture.asset(Assets.svg.copy)
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 101.h,
-                  width: 350.w,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 56.h,
-                        width: 56.h,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightGreen),
-                        child: Center(
-                            child: Text(
-                              'BE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 20.sp, color: Colors.white),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 14.w,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Bolatito Eniola',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(Assets.svg.location),
-                              SizedBox(
-                                width: 6.w,
-                              ),
-                              Text(
-                                'No. 2, New Area Street, Lagos State, Nigeria',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                                // maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                // softWrap: true,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '0812 114 6633',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              SvgPicture.asset(Assets.svg.copy)
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 101.h,
-                  width: 350.w,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 56.h,
-                        width: 56.h,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightGreen),
-                        child: Center(
-                            child: Text(
-                              'BE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 20.sp, color: Colors.white),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 14.w,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Bolatito Eniola',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(Assets.svg.location),
-                              SizedBox(
-                                width: 6.w,
-                              ),
-                              Text(
-                                'No. 2, New Area Street, Lagos State, Nigeria',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                                // maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                // softWrap: true,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '0812 114 6633',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              SvgPicture.asset(Assets.svg.copy)
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 101.h,
-                  width: 350.w,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 56.h,
-                        width: 56.h,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightGreen),
-                        child: Center(
-                            child: Text(
-                              'BE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 20.sp, color: Colors.white),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 14.w,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Bolatito Eniola',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(Assets.svg.location),
-                              SizedBox(
-                                width: 6.w,
-                              ),
-                              Text(
-                                'No. 2, New Area Street, Lagos State, Nigeria',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                                // maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                // softWrap: true,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '0812 114 6633',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              SvgPicture.asset(Assets.svg.copy)
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 101.h,
-                  width: 350.w,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 56.h,
-                        width: 56.h,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightGreen),
-                        child: Center(
-                            child: Text(
-                              'BE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 20.sp, color: Colors.white),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 14.w,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Bolatito Eniola',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(Assets.svg.location),
-                              SizedBox(
-                                width: 6.w,
-                              ),
-                              Text(
-                                'No. 2, New Area Street, Lagos State, Nigeria',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                                // maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                // softWrap: true,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '0812 114 6633',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              SvgPicture.asset(Assets.svg.copy)
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 101.h,
-                  width: 350.w,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 56.h,
-                        width: 56.h,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightGreen),
-                        child: Center(
-                            child: Text(
-                              'BE',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 20.sp, color: Colors.white),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 14.w,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Bolatito Eniola',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SvgPicture.asset(Assets.svg.location),
-                              SizedBox(
-                                width: 6.w,
-                              ),
-                              Text(
-                                'No. 2, New Area Street, Lagos State, Nigeria',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                                // maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                // softWrap: true,
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 12.h,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                '0812 114 6633',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              SvgPicture.asset(Assets.svg.copy)
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-
-              ],
+            SizedBox(
+              height: 32.h,
             ),
+            AppTextField(
+              // width: 282.w,
+              prefixIcon: Padding(
+                padding: EdgeInsets.all(16.h),
+                child: SvgPicture.asset(Assets.svg.search),
+              ),
+              hintText: 'Search for client',
+              controller: _searchController,
+              radius: 80,
+              filled: true,
+              fillColor: appGrey5,
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            // SvgPicture.asset(Assets.svg.emptyReceipt),
+            // SizedBox(height: 40.h,),
+            // Text('No receipt yet!', style: Theme.of(context).textTheme.displayLarge,),
+            // SizedBox(height: 10.h,),
+            // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
+
+            allClients.when(data: (data) {
+              if (data.isEmpty) {
+                return Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'No clients available!',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Text('All added clients will appear here.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(
+                                fontSize: 14.sp,
+                              )),
+                      SizedBox(
+                        height: 48.h,
+                      ),
+                      AppButton(
+                          buttonText: 'Add client',
+                          onPressed: () {
+                            locator<PayvidenceAppRouter>()
+                                .navigateNamed(PayvidenceRoutes.addClient);
+                          })
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (forSelection == true) {
+                          Navigator.of(context).pop(data[index]);
+                        } else {
+                          context.router.push(ClientDetailsRoute());
+                        }
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 56.h,
+                            width: 56.h,
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.lightGreen),
+                            child: Center(
+                                child: Text(
+                              '${data[index].name?.substring(0,2)}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(
+                                      fontSize: 20.sp, color: Colors.white),
+                            )),
+                          ),
+                          SizedBox(
+                            width: 12.w,
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  data[index].name??'',
+                                  style:
+                                      Theme.of(context).textTheme.displayMedium,
+                                ),
+                                SizedBox(
+                                  height: 8.h,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SvgPicture.asset(Assets.svg.location),
+                                    SizedBox(
+                                      width: 6.w,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        data[index].address??'',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall!
+                                            .copyWith(fontSize: 14.sp),
+                                        // maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        // softWrap: true,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 12.h,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      data[index].phoneNumber??'',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: 14.sp),
+                                    ),
+                                    SizedBox(
+                                      width: 8.w,
+                                    ),
+                                    SvgPicture.asset(Assets.svg.copy)
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                  separatorBuilder: (ctx, idx) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: 24.h,
+                        ),
+                      ],
+                    );
+                  },
+                  itemCount: data.length);
+            }, error: (error, _) {
+              return const Text('An error has occurred');
+            }, loading: () {
+              return const CustomShimmer();
+            })
           ],
         ),
       ),

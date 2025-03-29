@@ -37,11 +37,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> get(
-      path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -55,11 +55,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> patch(
-      path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -73,11 +73,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> post(
-      path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -91,11 +91,11 @@ class NetworkService {
   }
 
   Future<Either<Failure, Success>> delete(
-      String path, {
-        bool useToken = true,
-        dynamic data,
-        Map<String, dynamic> headers = const {},
-      }) async {
+    String path, {
+    bool useToken = true,
+    dynamic data,
+    Map<String, dynamic> headers = const {},
+  }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader();
@@ -188,6 +188,8 @@ class NetworkService {
 
   Future<Map<String, dynamic>> getAuthorizedHeader() async {
     var accessToken =
+        locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
+
     locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
     print('token: $accessToken');
     final accessData = {
@@ -197,6 +199,26 @@ class NetworkService {
     return accessData;
   }
 
+// Future<void> logOut() async {
+//   await locator<SessionManager>().clear();
+//
+//   locator<DialogHandler>().showCustomTopToastDialog(
+//     message: "Session Expired. Please log in again.",
+//     toastMessageType: ToastMessageType.failure,
+//   );
+//
+//   const String? appFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR') != ''
+//       ? String.fromEnvironment('FLUTTER_APP_FLAVOR')
+//       : null;
+//
+//   Future.microtask(() {
+//     if (appFlavor == "user")
+//       locator<UserAppRouter>().replaceAll([const OnboardingScreenRoute()]);
+//     else
+//       locator<RiderAppRouter>()
+//           .replaceAll([const OnboardingScreenRoute()]);
+//   });
+// }
   // Future<void> logOut() async {
   //   await locator<SessionManager>().clear();
   //
