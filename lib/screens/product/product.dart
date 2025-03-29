@@ -5,17 +5,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
 import 'package:payvidence/components/product_tile.dart';
+import 'package:payvidence/providers/category_providers/get_all_category_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
+import 'package:payvidence/providers/product_providers/product_fillter_provider.dart';
 
+import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../providers/product_providers/current_product_provider.dart';
 import '../../routes/payvidence_app_router.dart';
+import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'ProductRoute')
 class Product extends ConsumerWidget {
-  Product({super.key});
+  final bool? forProductSelection;
+
+  Product({super.key, this.forProductSelection = false});
 
   final _searchController = TextEditingController();
 
@@ -49,22 +56,33 @@ class Product extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppTextField(
-                  width: 282.w,
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(16.h),
-                    child: SvgPicture.asset(Assets.svg.search),
+                Expanded(
+                  child: AppTextField(
+                    //width: 282.w,
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(productFilterProvider.notifier)
+                            .setKey('name', _searchController.text);
+                        ref.read(getAllProductProvider.notifier).setFilter();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(16.h),
+                        child: SvgPicture.asset(Assets.svg.search),
+                      ),
+                    ),
+                    hintText: 'Search for product',
+                    controller: _searchController,
+                    radius: 80,
+                    filled: true,
+                    fillColor: appGrey5,
+                    appBorderColor: Colors.transparent,
                   ),
-                  hintText: 'Search for product',
-                  controller: _searchController,
-                  radius: 80,
-                  filled: true,
-                  fillColor: appGrey5,
-                  appBorderColor: Colors.transparent,
                 ),
+                12.horizontalSpace,
                 GestureDetector(
                   onTap: () {
-                    buildFilterBottomSheet(context);
+                    FilterBottomSheet.show(context);
                   },
                   child: Container(
                     height: 48.h,
@@ -90,11 +108,35 @@ class Product extends ConsumerWidget {
               if (data.isEmpty) {
                 productNumber.value = 0;
 
-                return const Expanded(
+                return Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("No products available"),
+                      Text(
+                        'No product available!',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Text('All added products will appear here.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(
+                                fontSize: 14.sp,
+                              )),
+                      SizedBox(
+                        height: 48.h,
+                      ),
+                      AppButton(
+                          buttonText: 'Add product',
+                          onPressed: () {
+                            locator<PayvidenceAppRouter>()
+                                .navigateNamed(PayvidenceRoutes.addProduct);
+                          })
                     ],
                   ),
                 );
@@ -106,11 +148,27 @@ class Product extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     return ProductTile(
                       product: data[index],
+                      ref: ref,
+                      onPressed: () {
+                        if (forProductSelection == true) {
+                          Navigator.of(context).pop(data[index]);
+                        } else {
+                          locator<PayvidenceAppRouter>().navigate(
+                              ProductDetailsRoute(product: data[index]));
+                          ref
+                              .read(getCurrentProductProvider.notifier)
+                              .setCurrentProduct(data[index]);
+                        }
+                      },
                     );
                   },
                   separatorBuilder: (ctx, idx) {
-                    return SizedBox(
-                      height: 24.h,
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: 24.h,
+                        ),
+                      ],
                     );
                   },
                   itemCount: data.length);
@@ -139,170 +197,354 @@ class Product extends ConsumerWidget {
     );
   }
 
-  Future<dynamic> buildFilterBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        clipBehavior: Clip.none,
+// Future<dynamic> buildFilterBottomSheet(BuildContext context, WidgetRef ref) {
+//   return showModalBottomSheet(
+//       isScrollControlled: true,
+//       backgroundColor: Colors.transparent,
+//       clipBehavior: Clip.none,
+//       context: context,
+//       builder: (context) {
+//         final allCategory = ref.watch(getAllCategoryProvider);
+//         return Container(
+//           decoration: BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.only(
+//                   topRight: Radius.circular(40.r),
+//                   topLeft: Radius.circular(40.r))),
+//           child: Padding(
+//             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 Padding(
+//                   padding: EdgeInsets.symmetric(horizontal: 140.w),
+//                   child: Container(
+//                     height: 5.h,
+//                     width: 67.w,
+//                     decoration: BoxDecoration(
+//                       color: const Color(0xffd9d9d9),
+//                       borderRadius: BorderRadius.circular(100.r),
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(
+//                   height: 38.h,
+//                 ),
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     const SizedBox.shrink(),
+//                     Center(
+//                       child: Text(
+//                         'Filter products',
+//                         style: Theme.of(context)
+//                             .textTheme
+//                             .displayLarge!
+//                             .copyWith(
+//                               fontSize: 22.sp,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                       ),
+//                     ),
+//                     GestureDetector(
+//                         onTap: () => Navigator.of(context).pop(),
+//                         child: const Icon(
+//                           Icons.close,
+//                         ))
+//                   ],
+//                 ),
+//                 SizedBox(
+//                   height: 12.h,
+//                 ),
+//                 Center(
+//                   child: Text(
+//                     'Select category you’ll like to see.',
+//                     style: Theme.of(context).textTheme.displaySmall,
+//                   ),
+//                 ),
+//                 SizedBox(
+//                   height: 40.h,
+//                 ),
+//                 allCategory.when(data: (data) {
+//                   if (data.isEmpty) {
+//                     return Expanded(
+//                       child: Column(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         crossAxisAlignment: CrossAxisAlignment.center,
+//                         children: [
+//                           Text(
+//                             'No category added!',
+//                             style: Theme.of(context).textTheme.displayLarge,
+//                           ),
+//                           SizedBox(
+//                             height: 10.h,
+//                           ),
+//                           Text('All added categories will appear here.',
+//                               textAlign: TextAlign.center,
+//                               style: Theme.of(context)
+//                                   .textTheme
+//                                   .displaySmall!
+//                                   .copyWith(
+//                                     fontSize: 14.sp,
+//                                   )),
+//                           SizedBox(
+//                             height: 48.h,
+//                           ),
+//                           AppButton(
+//                               buttonText: 'Add category',
+//                               onPressed: () {
+//                                 locator<PayvidenceAppRouter>().navigateNamed(
+//                                     PayvidenceRoutes.addCategory);
+//                               })
+//                         ],
+//                       ),
+//                     );
+//                   }
+//                   return ListView.separated(
+//                       shrinkWrap: true,
+//                       itemBuilder: (context, index) {
+//                         return GestureDetector(
+//                           onTap: () {
+//                             if (ref.read(
+//                                     productFilterProvider)['category_id'] ==
+//                                 data[index].id) {
+//                               ref
+//                                   .read(productFilterProvider.notifier)
+//                                   .removeFilter();
+//                             } else {
+//                               ref
+//                                   .read(productFilterProvider.notifier)
+//                                   .setKey('category_id', data[index].id);
+//                             }
+//                             ref
+//                                 .read(getAllProductProvider.notifier)
+//                                 .setFilter();
+//                           },
+//                           child: Padding(
+//                             padding: EdgeInsets.symmetric(vertical: 24.h),
+//                             child: Row(
+//                               mainAxisAlignment:
+//                                   MainAxisAlignment.spaceBetween,
+//                               children: [
+//                                 Row(
+//                                   mainAxisAlignment: MainAxisAlignment.start,
+//                                   children: [
+//                                     SvgPicture.asset(Assets.svg.shapes),
+//                                     SizedBox(
+//                                       width: 16.w,
+//                                     ),
+//                                     Text(
+//                                       data[index].name ?? '',
+//                                       style: Theme.of(context)
+//                                           .textTheme
+//                                           .displaySmall!
+//                                           .copyWith(fontSize: 14.sp),
+//                                     ),
+//                                   ],
+//                                 ),
+//                                 if (ref.read(productFilterProvider)[
+//                                         'category_id'] ==
+//                                     data[index].id)
+//                                   Icon(Icons.check)
+//                               ],
+//                             ),
+//                           ),
+//                         );
+//                       },
+//                       separatorBuilder: (ctx, idx) {
+//                         return const Column(
+//                           children: [
+//                             Divider(),
+//                           ],
+//                         );
+//                       },
+//                       itemCount: data.length);
+//                 }, error: (error, _) {
+//                   return const Text('An error has occurred');
+//                 }, loading: () {
+//                   return const CustomShimmer();
+//                 }),
+//               ],
+//             ),
+//           ),
+//         );
+//       });
+// }
+}
+
+class FilterBottomSheet extends ConsumerWidget {
+  static show(
+    BuildContext context,
+  ) {
+    showModalBottomSheet(
         context: context,
+        backgroundColor: Colors.white,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
         builder: (context) {
-          return Container(
-            height: 470.h,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(40.r),
-                    topLeft: Radius.circular(40.r))),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-              child: Stack(
-                children: [
-                  ListView(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 140.w),
-                        child: Container(
-                          height: 5.h,
-                          width: 67.w,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffd9d9d9),
-                            borderRadius: BorderRadius.circular(100.r),
-                          ),
+          return const FilterBottomSheet._();
+        });
+  }
+
+  const FilterBottomSheet._();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allCategory = ref.watch(getAllCategoryProvider);
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(40.r), topLeft: Radius.circular(40.r))),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 140.w),
+              child: Container(
+                height: 5.h,
+                width: 67.w,
+                decoration: BoxDecoration(
+                  color: const Color(0xffd9d9d9),
+                  borderRadius: BorderRadius.circular(100.r),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 38.h,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox.shrink(),
+                Center(
+                  child: Text(
+                    'Filter products',
+                    style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
                         ),
+                  ),
+                ),
+                GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      Icons.close,
+                    ))
+              ],
+            ),
+            SizedBox(
+              height: 12.h,
+            ),
+            Center(
+              child: Text(
+                'Select category you’ll like to see.',
+                style: Theme.of(context).textTheme.displaySmall,
+              ),
+            ),
+            SizedBox(
+              height: 40.h,
+            ),
+            allCategory.when(data: (data) {
+              if (data.isEmpty) {
+                return Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'No category added!',
+                        style: Theme.of(context).textTheme.displayLarge,
                       ),
                       SizedBox(
-                        height: 38.h,
+                        height: 10.h,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox.shrink(),
-                          Center(
-                            child: Text(
-                              'Filter products',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayLarge!
-                                  .copyWith(
-                                    fontSize: 22.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                            ),
-                          ),
-                          GestureDetector(
-                              onTap: () => Navigator.of(context).pop(),
-                              child: const Icon(
-                                Icons.close,
-                              ))
-                        ],
-                      ),
+                      Text('All added categories will appear here.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(
+                                fontSize: 14.sp,
+                              )),
                       SizedBox(
                         height: 12.h,
                       ),
-                      Center(
-                        child: Text(
-                          'Select category you’ll like to see.',
-                          style: Theme.of(context).textTheme.displaySmall,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40.h,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(Assets.svg.shapes),
-                            SizedBox(
-                              width: 16.w,
-                            ),
-                            Text(
-                              'Accessories',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 14.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.h,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(Assets.svg.shapes),
-                            SizedBox(
-                              width: 16.w,
-                            ),
-                            Text(
-                              'Bag',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 14.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.h,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(Assets.svg.shapes),
-                            SizedBox(
-                              width: 16.w,
-                            ),
-                            Text(
-                              'Clothes',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 14.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.h,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(Assets.svg.shapes),
-                            SizedBox(
-                              width: 16.w,
-                            ),
-                            Text(
-                              'Footwears',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 14.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.h,
-                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          );
-        });
+                );
+              }
+              return ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (ref.read(productFilterProvider)['category_id'] ==
+                            data[index].id) {
+                          ref
+                              .read(productFilterProvider.notifier)
+                              .removeFilter();
+                        } else {
+                          ref
+                              .read(productFilterProvider.notifier)
+                              .setKey('category_id', data[index].id);
+                        }
+
+                        ref.read(getAllProductProvider.notifier).setFilter();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SvgPicture.asset(Assets.svg.shapes),
+                                SizedBox(
+                                  width: 16.w,
+                                ),
+                                Text(
+                                  data[index].name ?? '',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall!
+                                      .copyWith(fontSize: 14.sp),
+                                ),
+                              ],
+                            ),
+                            Icon(
+                              Icons.check,
+                              color: ref.read(productFilterProvider)[
+                                          'category_id'] ==
+                                      data[index].id
+                                  ? Colors.black
+                                  : Colors.transparent,
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (ctx, idx) {
+                    return const Column(
+                      children: [
+                        Divider(),
+                      ],
+                    );
+                  },
+                  itemCount: data.length);
+            }, error: (error, _) {
+              return const Text('An error has occurred');
+            }, loading: () {
+              return const CustomShimmer();
+            }),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/product_model.dart';
+import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 
 import '../constants/app_colors.dart';
 import '../routes/payvidence_app_router.dart';
@@ -10,16 +12,15 @@ import '../shared_dependency/shared_dependency.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
+  final WidgetRef ref;
+  final void Function() onPressed;
 
-  const ProductTile({super.key, required this.product});
+  const ProductTile({super.key, required this.product, required this.ref, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        locator<PayvidenceAppRouter>()
-            .navigateNamed(PayvidenceRoutes.productDetails);
-      },
+      onTap: onPressed,
       child: Container(
         height: 101.h,
         decoration: const BoxDecoration(color: Colors.transparent),

@@ -45,6 +45,12 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: EmptyCategoryRoute.page, path: PayvidenceRoutes.emptyCategory),
         AutoRoute(page: BrandsRoute.page, path: PayvidenceRoutes.brands),
         AutoRoute(page: AddBrandRoute.page, path: PayvidenceRoutes.addBrand),
+        AutoRoute(page: UpdateQuantityRoute.page, path: PayvidenceRoutes.updateQuantity),
+        AutoRoute(page: GenerateReceiptRoute.page, path: PayvidenceRoutes.generateReceipt),
+        AutoRoute(page: GenerateInvoicesRoute.page, path: PayvidenceRoutes.generateInvoices),
+        AutoRoute(page: UpdateBankDetailsRoute.page, path: PayvidenceRoutes.updateBankDetails),
+        AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
+        AutoRoute(page: ReceiptScreenRoute.page, path: PayvidenceRoutes.receiptScreen),
 
       ];
 
@@ -101,6 +107,7 @@ class PayvidenceRoutes {
   static String get generateInvoices => '/generateInvoices';
   static String get allInvoices => '/allInvoices';
   static String get updatePersonalDetails => '/updatePersonalDetails';
+  static String get updateBankDetails => '/updateBankDetails';
   static String get businessData => '/businessData';
   static String get payvidenceInfo => '/payvidenceInfo';
   static String get changeProfilePicture => '/changeProfilePicture';
@@ -119,4 +126,5 @@ class PayvidenceRoutes {
   static String get clientSuccess => '/clientSuccess';
   static String get sales => 'sales';
   static String get profile => 'profile';
+  static String get receiptScreen => '/receiptScreen';
 }

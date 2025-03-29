@@ -13,9 +13,11 @@ final loginViewModelProvider = ChangeNotifierProvider<LoginViewModel>((ref) {
 
 class LoginViewModel extends BaseChangeNotifier {
   final Ref ref;
+
   LoginViewModel(this.ref);
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   Future<void> login({
@@ -42,6 +44,10 @@ class LoginViewModel extends BaseChangeNotifier {
             token: user.token ?? "");
         await locator<SessionManager>()
             .save(key: SessionConstants.isUserLoggedIn, value: true);
+        await locator<SessionManager>()
+            .save(key: SessionConstants.accessTokenPref, value: user.token);
+        notifyListeners();
+
         navigateOnSuccess();
       } else {
         _isLoading = false;

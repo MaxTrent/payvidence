@@ -81,9 +81,14 @@ class AddBusinessViewModel extends BaseChangeNotifier{
         //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         
       });
-    }catch(e){
+    } on DioException catch (e) {
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(context, 'An error has occurred!');
+      ToastService.error(context,
+          e.response?.data['message'] ?? 'An unknown error has occurred!!!');
+    } catch (e) {
+      print(e);
+      Navigator.of(context).pop(); // pop loading dialog on error
+      ToastService.error(context, 'An unknown error has occurred!');
     }
 
   }

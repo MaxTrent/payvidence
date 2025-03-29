@@ -42,4 +42,22 @@ class ToastService {
       autoCloseDuration: Duration(seconds: seconds ?? 5),
     );
   }
+  static void info(context, String msg, {int? seconds}) {
+    toastification.show(
+      context: context,
+      backgroundColor: Colors.blue,
+      icon: const Icon(
+        Icons.info_outline,
+        color: Colors.white,
+      ),
+      title: Text(
+        msg,
+        style: const TextStyle(color: Colors.white,),
+
+        overflow: TextOverflow.clip,
+      ),
+      showProgressBar: false,
+      autoCloseDuration: Duration(seconds: seconds ?? 5),
+    );
+  }
 }

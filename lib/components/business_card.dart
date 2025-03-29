@@ -24,7 +24,6 @@ class BusinessCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentBusiness = ref.watch(getCurrentBusinessProvider);
-   
     return Container(
       height: 184.h,
       decoration: const BoxDecoration(color: appGrey1),
@@ -85,9 +84,11 @@ class BusinessCard extends ConsumerWidget {
             ),
             AppButton(
                 buttonText: 'Switch to business',
-                isDisabled: business == currentBusiness,
+                isDisabled: business.id == currentBusiness?.id,
                 onPressed: () {
-                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
+                  ref
+                      .read(getCurrentBusinessProvider.notifier)
+                      .setCurrentBusiness(business);
                 })
           ],
         ),
