@@ -9,7 +9,7 @@ import 'notification_service.dart';
 
 class BaseChangeNotifier extends ChangeNotifier {
   late ApiServices apiServices;
-  late NotificationService notificationService;
+  late NotificationService _notificationService;
 
   BaseChangeNotifier(
       {
@@ -23,17 +23,21 @@ class BaseChangeNotifier extends ChangeNotifier {
     String? message,
     bool shouldDisplayError = true,
   }) {
-    showToastMessage(
+    showErrorToastMessage(
         message: message != "null" ? message.toString() : "An error occured",
         type: ToastMessageType.failure);
   }
 
-  void showToastMessage({
+  void showErrorToastMessage({
     required String message,
     required ToastMessageType type,
   }) {
-    ToastService.error(
-      message != "null" && message != null ? message.toString() : "An error occurred",
+    String errorMsg = message != "null" ? message : "An error occurred";
+    ToastService.error(errorMsg);
+    _notificationService.showNotification(
+      id: DateTime.now().millisecondsSinceEpoch % 10000,
+      title: 'Error',
+      body: errorMsg,
     );
   }
 
@@ -42,6 +46,11 @@ class BaseChangeNotifier extends ChangeNotifier {
     required String message,
   }) {
     ToastService.success(message);
+    _notificationService.showNotification(
+      id: DateTime.now().millisecondsSinceEpoch % 10000,
+      title: 'Success',
+      body: message,
+    );
   }
 
   void scheduleNotification({
@@ -49,7 +58,7 @@ class BaseChangeNotifier extends ChangeNotifier {
     required String body,
     required DateTime scheduledDate,
   }) {
-    notificationService.scheduleNotification(
+    _notificationService.scheduleNotification(
       id: DateTime.now().millisecondsSinceEpoch % 10000,
       title: title,
       body: body,

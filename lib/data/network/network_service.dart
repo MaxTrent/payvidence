@@ -200,7 +200,7 @@ class NetworkService {
   // Future<void> logOut() async {
   //   await locator<SessionManager>().clear();
   //
-  //   locator<DialogHandler>().showCustomTopToastDialog(
+  //   locator<DialogHandler>().showCustomTopToastDiaprint(
   //     message: "Session Expired. Please log in again.",
   //     toastMessageType: ToastMessageType.failure,
   //   );

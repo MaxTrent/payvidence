@@ -248,6 +248,12 @@ class ApiServices{
     return ApiResult.fromJson(response);
   }
 
+  Future<ApiResult> getAllNotifications() async{
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.getAllNotifications);
+
+    return ApiResult.fromJson(response);
+  }
+
 
   // Future<ApiResult> addClient(
   //     String name, String address, String phoneNumber

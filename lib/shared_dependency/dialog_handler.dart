@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../utilities/enum.dart';
 
 class DialogHandler {
-  void showCustomTopToastDialog({
+  void showCustomTopToastDiaprint({
     required BuildContext context,
     required String message,
     required ToastMessageType toastMessageType,

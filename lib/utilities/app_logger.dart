@@ -21,7 +21,7 @@ class AppLogger {
     _showPrettyLogs = showPrettyLogs;
   }
 
-  static void log(Object? e) {
+  static void print(Object? e) {
     if (_showLogs) dev.log("$e");
   }
 }

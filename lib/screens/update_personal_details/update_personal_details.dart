@@ -11,7 +11,7 @@ import '../../routes/payvidence_app_router.gr.dart';
 
 @RoutePage(name: 'UpdatePersonalDetailsRoute')
 class UpdatePersonalDetails extends HookConsumerWidget {
-  UpdatePersonalDetails({super.key});
+  const UpdatePersonalDetails({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -122,7 +122,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     onPressed: viewModel.isLoading
                         ? null
                         : () {
-                      context.router.replace(HomePageRoute());
+                      // context.router.replace(HomePageRoute());
                     },
                   ),
                 ],
