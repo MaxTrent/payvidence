@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:payvidence/model/product_model.dart';
 
+import 'business_model.dart';
 import 'client_model.dart';
 
 
@@ -16,6 +17,7 @@ class Receipt {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final ClientModel? client;
+  final Business? business;
   final List<RecordProductDetail>? recordProductDetails;
 
   Receipt({
@@ -30,6 +32,7 @@ class Receipt {
     this.updatedAt,
     this.client,
     this.recordProductDetails,
+    this.business
   });
 
   factory Receipt.fromRawJson(String str) => Receipt.fromJson(json.decode(str));
@@ -47,6 +50,7 @@ class Receipt {
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     client: json["client"] == null ? null : ClientModel.fromJson(json["client"]),
+    business: json["business"] == null ? null : Business.fromJson(json["business"]),
     recordProductDetails: json["record_product_details"] == null ? [] : List<RecordProductDetail>.from(json["record_product_details"]!.map((x) => RecordProductDetail.fromJson(x))),
   );
 
@@ -61,6 +65,7 @@ class Receipt {
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
     "client": client?.toJson(),
+    "business": business?.toJson(),
     "record_product_details": recordProductDetails == null ? [] : List<dynamic>.from(recordProductDetails!.map((x) => x.toJson())),
   };
 }

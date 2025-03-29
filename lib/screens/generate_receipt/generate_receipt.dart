@@ -175,7 +175,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         "business_id": ref.read(getCurrentBusinessProvider)!.id!,
         "client_id": client?.id,
         "is_draft": isDraft,
-        "mode_of_payment": selectedPayment?.toLowerCase()
+        "mode_of_payment":
+            widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
       };
       if (!context.mounted) return;
       LoadingDialog.show(context);

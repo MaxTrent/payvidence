@@ -34,10 +34,10 @@ class ReceiptScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Future<XFile> capturePng() async {
       RenderRepaintBoundary boundary =
-          globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 2);
       ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List? pngBytes = byteData?.buffer.asUint8List();
       return XFile.fromData(
         pngBytes!,
@@ -57,11 +57,12 @@ class ReceiptScreen extends ConsumerWidget {
 
       // Save the image to a file path
       String imagePath =
-          '${directory.path}/${imageFile.name}.png'; // Add a proper file extension (like .png)
+          '${directory.path}/${imageFile
+          .name}.png'; // Add a proper file extension (like .png)
 
 // Write the file to the correct path
       File file =
-          await File(imagePath).writeAsBytes(await imageFile.readAsBytes());
+      await File(imagePath).writeAsBytes(await imageFile.readAsBytes());
 
       // Save to gallery using ImageGallerySaver (alternative for direct access)
       await ImageGallerySaver.saveFile(file.path);
@@ -71,23 +72,24 @@ class ReceiptScreen extends ConsumerWidget {
       // Show success message
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Image Saved"),
-          content: const Text("Image has been saved to device"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
+        builder: (context) =>
+            AlertDialog(
+              title: const Text("Image Saved"),
+              content: const Text("Image has been saved to device"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     }
 
     Future<void> shareReceipt() async {
       XFile image = await capturePng();
       final result =
-          await Share.shareXFiles([image], text: 'Transaction Receipt');
+      await Share.shareXFiles([image], text: 'Transaction Receipt');
 
       if (result.status == ShareResultStatus.success) {
         print('Thank you for sharing the receipt!');
@@ -100,20 +102,23 @@ class ReceiptScreen extends ConsumerWidget {
           if (isInvoice == true)
             Center(
                 child: Padding(
-              padding: EdgeInsets.only(right: 20.w),
-              child: GestureDetector(
-                  onTap: () {
-                    locator<PayvidenceAppRouter>().navigate(CompleteDraftRoute(
-                        draft: record,
-                        isInvoice: true,
-                        inVoiceToReceipt: true));
-                  },
-                  child: Text('Re-issue to receipt',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(fontSize: 14.sp, color: primaryColor2))),
-            ))
+                  padding: EdgeInsets.only(right: 20.w),
+                  child: GestureDetector(
+                      onTap: () {
+                        locator<PayvidenceAppRouter>().navigate(
+                            CompleteDraftRoute(
+                                draft: record,
+                                isInvoice: true,
+                                inVoiceToReceipt: true));
+                      },
+                      child: Text('Re-issue to receipt',
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(
+                              fontSize: 14.sp, color: primaryColor2))),
+                ))
         ],
       ),
       body: Padding(
@@ -140,7 +145,7 @@ class ReceiptScreen extends ConsumerWidget {
                 children: [
                   AppButton(
                     buttonText:
-                        'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
+                    'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
                     onPressed: () {
                       shareReceipt();
                     },
@@ -154,12 +159,14 @@ class ReceiptScreen extends ConsumerWidget {
                     },
                     child: Text(
                       'Download ${isInvoice == true ? 'invoice' : 'receipt'}',
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .displayMedium!
                           .copyWith(color: primaryColor2),
                     ),
                   ),
+                  12.verticalSpace
                 ],
               )
             ],
@@ -201,38 +208,38 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 radius: 30,
               ),
               12.verticalSpace,
-              const Text("Keekee store"),
+              Text(record.business?.name ?? ''),
               6.verticalSpace,
-              const Text("Address"),
+              Text(record.business?.address ?? ''),
               6.verticalSpace,
-              const Text("phone number"),
+              Text(record.business?.phoneNumber ?? ''),
               Row(
                 children: [
                   Expanded(
                       child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Bill to: "),
-                      6.verticalSpace,
-                      Text(record.client?.name ?? ''),
-                      6.verticalSpace,
-                      Text(record.client?.phoneNumber ?? ''),
-                      6.verticalSpace,
-                      Text(record.client?.address ?? ''),
-                    ],
-                  )),
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Bill to: "),
+                          6.verticalSpace,
+                          Text(record.client?.name ?? ''),
+                          6.verticalSpace,
+                          Text(record.client?.phoneNumber ?? ''),
+                          6.verticalSpace,
+                          Text(record.client?.address ?? ''),
+                        ],
+                      )),
                   12.horizontalSpace,
                   Expanded(
                       child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const Text("Tracking id: "),
-                      6.verticalSpace,
-                      Text(record.id?.substring(0, 13) ?? ''),
-                      6.verticalSpace,
-                      Text(DateFormat.yMMMEd().format(record.createdAt!)),
-                    ],
-                  ))
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text("Tracking id: "),
+                          6.verticalSpace,
+                          Text(record.id?.substring(0, 13) ?? ''),
+                          6.verticalSpace,
+                          Text(DateFormat.yMMMEd().format(record.createdAt!)),
+                        ],
+                      ))
                 ],
               ),
               6.verticalSpace,
@@ -271,44 +278,46 @@ class ContainerWithClippedCircles extends StatelessWidget {
                       ],
                     ),
                     ...record.recordProductDetails!
-                        .map((row) => TableRow(
-                              decoration:
-                                  BoxDecoration(color: Colors.grey[200]),
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(row.product?.name ?? '',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      row.product?.price?.commaSeparated() ??
-                                          '',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(row.quantity.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      '${double.tryParse(row.price!)! * row.quantity!}'
-                                          .commaSeparated(),
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                              ],
-                            ))
+                        .map((row) =>
+                        TableRow(
+                          decoration:
+                          BoxDecoration(color: Colors.grey[200]),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(row.product?.name ?? '',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  row.product?.price?.commaSeparated() ??
+                                      '',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(row.quantity.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  '${double.tryParse(row.price!)! *
+                                      row.quantity!}'
+                                      .commaSeparated(),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ))
                         .toList()
                   ]),
               6.verticalSpace,
@@ -362,7 +371,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   const Text("Grand total",
                       textAlign: TextAlign.center,
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(record.total!,
+                  Text(record.total!.commaSeparated(),
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                 ],
@@ -375,11 +384,12 @@ class ContainerWithClippedCircles extends StatelessWidget {
                     child: Visibility(
                       visible: isInvoice == false,
                       replacement: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text("Payment info"),
-                          Text(record.modeOfPayment ?? ''),
-                          Text(record.modeOfPayment ?? ''),
-                          Text(record.modeOfPayment ?? '')
+                          Text(record.business?.accountNumber ?? ''),
+                          Text(record.business?.bankName ?? ''),
+                          Text(record.business?.accountName ?? '')
                         ],
                       ),
                       child: Column(
@@ -391,11 +401,11 @@ class ContainerWithClippedCircles extends StatelessWidget {
                     ),
                   ),
                   12.horizontalSpace,
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       children: [
-                        Text("Arike stores"),
-                        Text("Business Manager")
+                        Text(record.business?.name ?? ''),
+                        const Text("Business Manager")
                       ],
                     ),
                   ),
