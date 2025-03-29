@@ -8,7 +8,7 @@ import '../../model/receipt_model.dart';
 import '../../model/sales_model.dart';
 
 abstract class ISalesRepository {
-  Future<List<Sales>> fetchSales(String businessId,
+  Future<Sales> fetchSales(String businessId,
       {String? startDate, String? endDate, String? interval});
 }
 
@@ -18,7 +18,7 @@ class SalesRepository extends ISalesRepository {
   SalesRepository(this.salesDatasource);
 
   @override
-  Future<List<Sales>> fetchSales(String businessId,
+  Future<Sales> fetchSales(String businessId,
       {String? startDate, String? endDate, String? interval}) {
     return salesDatasource.fetchSales(businessId,
         startDate: startDate, endDate: endDate, interval: interval);
