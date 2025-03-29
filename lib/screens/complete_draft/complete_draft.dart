@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,9 +8,13 @@ import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../components/loading_dialog.dart';
 import '../../constants/app_colors.dart';
 import '../../model/client_model.dart';
 import '../../model/product_model.dart';
+import '../../providers/business_providers/current_business_provider.dart';
+import '../../providers/receipt_providers/get_all_invoice_provider.dart';
+import '../../providers/receipt_providers/get_all_receipt_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -104,6 +109,73 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
     }
   }
 
+  Future<void> createReceipt() async {
+    // String error = findMissingProducts();
+    // if (error == '') {
+    // } else {
+    //   ToastService.error(context, error);
+    //   return;
+    // }
+    List<Map<String, dynamic>> productList = [];
+
+    for (var index = 0; index < products.length; index++) {
+      final product = products[index]!;
+
+      productList.add({
+        "id": product.id,
+        "quantity_purchased": int.tryParse(qtyControllers[index].text) ?? 0,
+        "discount": discountControllers[index].text.isNotEmpty
+            ? double.tryParse(discountControllers[index].text)
+            : null,
+      });
+    }
+    Map<String, dynamic> requestData = {
+      "products": productList,
+      "record_type": widget.inVoiceToReceipt == true
+          ? "receipt"
+          : (widget.isInvoice == true && widget.inVoiceToReceipt == false)
+              ? "invoice"
+              : "receipt",
+      "business_id": ref.read(getCurrentBusinessProvider)!.id!,
+      "client_id": client?.id,
+      "is_draft": isDraft,
+      "mode_of_payment": selectedPayment?.toLowerCase()
+    };
+    if (!context.mounted) return;
+    LoadingDialog.show(context);
+    try {
+      final Receipt response = await ref
+          .read(getAllReceiptProvider.notifier)
+          .addReceipt(requestData);
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); //pop loading dialog on success
+      ToastService.success(context, "Receipt generated successfully");
+      ref.invalidate(widget.isInvoice == true && widget.inVoiceToReceipt==false
+          ? getAllInvoiceProvider
+          : getAllReceiptProvider);
+      Future.delayed(const Duration(seconds: 2), () {
+        if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
+          if (!context.mounted) return;
+
+          Navigator.of(context).pop();
+          locator<PayvidenceAppRouter>().navigate(UpdateBankDetailsRoute());
+        } else {
+          Navigator.of(context).pop();
+        }
+
+        //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
+      });
+    } on DioException catch (e) {
+      Navigator.of(context).pop(); // pop loading dialog on error
+      ToastService.error(context,
+          e.response?.data['message'] ?? 'An unknown error has occurred!!!');
+    } catch (e) {
+      print(e);
+      Navigator.of(context).pop(); // pop loading dialog on error
+      ToastService.error(context, 'An unknown error has occurred!');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -143,7 +215,11 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                       height: 16.h,
                     ),
                     Text(
-                      'Complete ${widget.isInvoice == true ? "invoice" : "receipt"}',
+                      widget.inVoiceToReceipt == true
+                          ? "Re-issue to receipt"
+                          : widget.isInvoice == true
+                              ? "Complete invoice"
+                              : "Complete receipt",
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
                     SizedBox(
@@ -199,7 +275,9 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                       itemCount: _textFields.length,
                     ),
                     Visibility(
-                      visible: widget.isInvoice == false,
+                      visible: (widget.isInvoice == false &&
+                              widget.inVoiceToReceipt == false) ||
+                          widget.inVoiceToReceipt == true,
                       replacement: const SizedBox(),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,7 +359,8 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         AppButton(
-                          buttonText: 'Generate receipt',
+                          buttonText:
+                              'Generate ${widget.isInvoice == true && widget.inVoiceToReceipt == false ? "invoice" : "receipt"}',
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
@@ -290,7 +369,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                                     context, "Select a client please");
                               }
                               isDraft = false;
-                              //createReceipt();
+                              createReceipt();
                             } // context.push(AppRoutes.receipt);
                           },
                         ),
@@ -306,7 +385,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                                     context, "Select a client please");
                               }
                               isDraft = true;
-                              //createReceipt();
+                              createReceipt();
                             }
                           },
                           child: Text(
