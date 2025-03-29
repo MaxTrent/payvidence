@@ -1,3 +1,31 @@
+class AccountResponse {
+  final bool success;
+  final String message;
+  final Account data;
+
+  AccountResponse({
+    required this.success,
+    required this.message,
+    required this.data,
+  });
+
+  factory AccountResponse.fromJson(Map<String, dynamic> json) {
+    return AccountResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+      data: Account.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'success': success,
+      'message': message,
+      'data': data.toJson(),
+    };
+  }
+}
+
 class User {
   final Account account;
   final String? token;

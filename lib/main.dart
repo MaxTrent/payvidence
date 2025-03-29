@@ -7,6 +7,7 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/app_provider_observer.dart';
 import 'package:payvidence/utilities/toast_service.dart';
+import 'package:toastification/toastification.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
 
@@ -44,12 +45,14 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(390, 844),
       minTextAdapt: true,
-      builder: (_, child) => MaterialApp.router(
-        scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
-        title: 'Payvidence',
-        debugShowCheckedModeBanner: false,
-        theme: appTheme.light,
-        routerConfig: appRouter.config(),
+      builder: (_, child) => ToastificationWrapper(
+        child: MaterialApp.router(
+          scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
+          title: 'Payvidence',
+          debugShowCheckedModeBanner: false,
+          theme: appTheme.light,
+          routerConfig: appRouter.config(),
+        ),
       ),
     );
   }

@@ -42,7 +42,6 @@ class BaseChangeNotifier extends ChangeNotifier {
   }
 
   void showSuccess({
-    required BuildContext context,
     required String message,
   }) {
     ToastService.success(message);

@@ -9,6 +9,6 @@ Future<void> loadEnvFile({String path = '.env'}) async {
     }
   } catch (e) {
     AppLogger.print("Failed to load env file: $e");
-    rethrow; // propagate the error
+    rethrow;
   }
 }
