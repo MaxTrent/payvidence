@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class Sales {
   final int? totalSales;
-  final String? totalRevenue;
+  final dynamic totalRevenue;
   final int? totalReceipts;
   final int? totalInvoices;
   final List<GraphDatum>? graphData;
