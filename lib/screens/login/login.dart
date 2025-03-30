@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -169,12 +168,9 @@ class Login extends HookConsumerWidget {
                           navigateOnSuccess: () {
                             print('navigating');
                             ref.invalidate(getAllBusinessProvider);
-
-                            locator<PayvidenceAppRouter>()
-                                .pushAndPopUntil(HomePageRoute(),
-                                    predicate: (Route<dynamic> route) {
-                              return false;
-                            });
+                            locator<PayvidenceAppRouter>().popUntil(
+                                    (route) => route is OnboardingScreen);
+                            locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.home);
                           },
                         );
                       } else {

@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
+import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
@@ -38,7 +40,7 @@ class Clients extends ConsumerWidget {
                   padding: EdgeInsets.only(right: 20.w),
                   child: GestureDetector(
                       onTap: () {
-                        context.router.push(AddClientRoute());
+                        locator<PayvidenceAppRouter>().push(AddClientRoute());
                       },
                       child: Text('+ Add New',
                           style: Theme.of(context)
@@ -121,7 +123,7 @@ class Clients extends ConsumerWidget {
                         if (forSelection == true) {
                           Navigator.of(context).pop(data[index]);
                         } else {
-                          context.router.push(ClientDetailsRoute());
+                          locator<PayvidenceAppRouter>().push(ClientDetailsRoute());
                         }
                       },
                       child: Row(
@@ -196,7 +198,15 @@ class Clients extends ConsumerWidget {
                                     SizedBox(
                                       width: 8.w,
                                     ),
-                                    SvgPicture.asset(Assets.svg.copy)
+                                    GestureDetector(
+                                      onTap: (){
+                                        Clipboard.setData(ClipboardData(text: data[index].phoneNumber??''));
+ToastService.showSnackBar('Copied to clipboard');
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                           SnackBar(content: Text('Copied to clipboard', style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.white, fontWeight: FontWeight.w400),), backgroundColor: primaryColor2,),
+                                        );
+                                      },
+                                        child: SvgPicture.asset(Assets.svg.copy))
                                   ],
                                 ),
                               ],
@@ -224,14 +234,14 @@ class Clients extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: primaryColor2,
-        child: Icon(
-          Icons.add,
-          size: 40.h,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   backgroundColor: primaryColor2,
+      //   child: Icon(
+      //     Icons.add,
+      //     size: 40.h,
+      //   ),
+      // ),
       // AppButton(buttonText: 'Generate receipt', onPressed: (){
       //   // context.push('/addBusiness');
       // }),

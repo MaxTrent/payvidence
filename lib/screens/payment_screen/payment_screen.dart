@@ -32,6 +32,8 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
             },
             onPageFinished: (url) {
               isLoading.value = false;
+              print("Page finished: $url");
+              // Navigator.pop(context);
               if (url.contains('success') || url.contains('callback')) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -39,7 +39,7 @@ static String markNotificationAsRead(String notificationId) => '/api/notificatio
 
 
 //Transaction Endpoints
-static String getAllTransactions(String businessId) => '/api/sale-record?business_id=9e2dcd00-da85-4888-b68e-a77e7ac3b3ed&record_type=invoice';
+static String get getAllTransactions => '/api/sale-record';
 
 
 //Client Endpoints

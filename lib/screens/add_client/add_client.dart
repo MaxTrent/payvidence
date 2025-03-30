@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
     
 
 @RoutePage(name: 'AddClientRoute')
@@ -88,7 +90,7 @@ class AddClient extends StatelessWidget {
                   AppButton(
                     buttonText: 'Add client',
                     onPressed: () {
-                      context.router.push(const ClientSuccessRoute());
+                      locator<PayvidenceAppRouter>().push(const ClientSuccessRoute());
                     },
                   ),
                   SizedBox(

@@ -221,7 +221,7 @@ class ApiServices{
     var response = await locator<NetworkService>().post(
         PayvidenceEndpoints.createSubscription,
         data: requestData,
-        useToken: false);
+        useToken: true);
 
     return ApiResult.fromJson(response);
   }
@@ -250,6 +250,17 @@ class ApiServices{
 
   Future<ApiResult> getAllNotifications() async{
     var response = await locator<NetworkService>().get(PayvidenceEndpoints.getAllNotifications);
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> getAllTransactions(String businessId) async{
+    var requestData = {
+      "business_id": businessId,
+    };
+
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.getAllTransactions,
+    data: requestData);
 
     return ApiResult.fromJson(response);
   }

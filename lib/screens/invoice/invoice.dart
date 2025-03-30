@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
    
     
 
@@ -37,7 +39,7 @@ class Invoice extends StatelessWidget {
                 SizedBox(height: 8.h,),
                 GestureDetector(
                     onTap: (){
-                      context.router.push(SelectClientRoute());
+                      locator<PayvidenceAppRouter>().push(SelectClientRoute());
                     },
                     child: AppTextField(enabled: false, hintText: 'Select client', controller: _controller, suffixIcon: const Icon(Icons.keyboard_arrow_down),)),
                 SizedBox(height: 20.h,),

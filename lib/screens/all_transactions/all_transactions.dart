@@ -1,21 +1,46 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-
-import '../../components/app_button.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
+import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_text_field.dart';
+import '../../components/custom_shimmer.dart';
+import '../../components/transaction_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
-class AllTransactions extends StatelessWidget {
+
+@RoutePage(name: 'AllTransactionsRoute')
+class AllTransactions extends HookConsumerWidget {
    AllTransactions({super.key});
-final _searchController = TextEditingController();
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final viewModel = ref.watch(allTransactionsViewModelProvider);
+    final searchController = useTextEditingController();
+    final businessId = locator<SessionManager>().get(SessionConstants.businessId);
+
+    useEffect(() {
+      if (businessId != null) {
+        Future.delayed(Duration.zero, () {
+          print('Fetching transactions with businessId: $businessId');
+          viewModel.fetchTransactions(businessId);
+        });
+      } else {
+        print('Business ID is null, skipping fetch');
+      }
+      return null;
+    }, [businessId]);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('All transactions (0)', style: Theme.of(context).textTheme.displayLarge!.copyWith(),),
+        title: Text('All transactions (${viewModel.transactions.length})', style: Theme.of(context).textTheme.displayLarge!.copyWith(),),
       ),
       body: Padding(
         padding:  EdgeInsets.symmetric(horizontal: 20.w),
@@ -37,7 +62,7 @@ final _searchController = TextEditingController();
                         child: SvgPicture.asset(Assets.svg.search),
                       ),
                       hintText: 'Search for transaction',
-                      controller: _searchController,
+                      controller: searchController,
                       radius: 80,
                       filled: true,
                       fillColor: appGrey5,
@@ -60,21 +85,44 @@ final _searchController = TextEditingController();
                     ),
                   ],
                 ),
-                SizedBox(height: 20.h,),
-                SvgPicture.asset(Assets.svg.emptyTransaction),
-                SizedBox(height: 40.h,),
-                Text('No transaction yet!', style: Theme.of(context).textTheme.displayLarge,),
-                SizedBox(height: 10.h,),
-                Text('Start generating receipts and invoices for your business. All transactions will show here.s',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
+                if (viewModel.isLoading) ...[
+                  CustomShimmer(height: 101.h),
+                  SizedBox(height: 24.h),
+                  CustomShimmer(height: 101.h),
+                  SizedBox(height: 24.h),
+                  CustomShimmer(height: 101.h),
+                  SizedBox(height: 24.h),
+                  CustomShimmer(height: 101.h),
+                ]else if (viewModel.transactions.isEmpty) ...[
+                  SizedBox(height: 20.h),
+                  SvgPicture.asset(Assets.svg.emptyTransaction),
+                  SizedBox(height: 40.h),
+                  Text(
+                    'No transaction yet!',
+                    style: Theme.of(context).textTheme.displayLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    'Start generating receipts and invoices for your business. All transactions will show here.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
+                  ),
+                ]
+                else ...[
+                  ...viewModel.transactions.map(
+                        (transaction) => GestureDetector(
+                          onTap: () {
+                            // locator<PayvidenceAppRouter>().push(
+                            //     SubscriptionPlansRoute(planId: plan.id));
+                                },
+                          child: TransactionTile(amount: transaction.recordProductDetails.first.product.price.toString().toCommaSeparated(), dateTime: transaction.recordProductDetails.first.product.createdAt.toString().toFormattedIsoDate(), productName: transaction.recordProductDetails.first.product.name, receiptOrInvoice: transaction.status == "pending"? "Receipt":"Invoice", unitSold: transaction.recordProductDetails.first.product.quantitySold.toString(),)
 
-                // ReceiptTile(),
-                // ReceiptTile(),
-                // ReceiptTile(),
-                // ReceiptTile(),
-                // ReceiptTile(),
-                // ReceiptTile(),
-                // ReceiptTile(),
-              ],
+                        ),
+                  ),
+                ],
+
+                 ],
             ),
           ],
         ),
@@ -103,7 +151,7 @@ final _searchController = TextEditingController();
          context: context,
          builder: (context) {
            return Container(
-             height: 470.h,
+             height: 326.h,
              decoration: BoxDecoration(
                  color: Colors.white,
                  borderRadius: BorderRadius.only(
@@ -136,7 +184,7 @@ final _searchController = TextEditingController();
                            const SizedBox.shrink(),
                            Center(
                              child: Text(
-                               'Filter products',
+                               'Filter transactions',
                                style: Theme.of(context)
                                    .textTheme
                                    .displayLarge!
@@ -158,7 +206,7 @@ final _searchController = TextEditingController();
                        ),
                        Center(
                          child: Text(
-                           'Select category you’ll like to see.',
+                           'Select transaction type you’ll like to see.',
                            style: Theme.of(context).textTheme.displaySmall,
                          ),
                        ),
@@ -175,7 +223,7 @@ final _searchController = TextEditingController();
                                width: 16.w,
                              ),
                              Text(
-                               'Accessories',
+                               'Receipt',
                                style: Theme.of(context)
                                    .textTheme
                                    .displaySmall!
@@ -197,51 +245,7 @@ final _searchController = TextEditingController();
                                width: 16.w,
                              ),
                              Text(
-                               'Bag',
-                               style: Theme.of(context)
-                                   .textTheme
-                                   .displaySmall!
-                                   .copyWith(fontSize: 14.sp),
-                             ),
-                           ],
-                         ),
-                       ),
-                       Divider(
-                         height: 1.h,
-                       ),
-                       Padding(
-                         padding: EdgeInsets.symmetric(vertical: 24.h),
-                         child: Row(
-                           mainAxisAlignment: MainAxisAlignment.start,
-                           children: [
-                             SvgPicture.asset(Assets.svg.shapes),
-                             SizedBox(
-                               width: 16.w,
-                             ),
-                             Text(
-                               'Clothes',
-                               style: Theme.of(context)
-                                   .textTheme
-                                   .displaySmall!
-                                   .copyWith(fontSize: 14.sp),
-                             ),
-                           ],
-                         ),
-                       ),
-                       Divider(
-                         height: 1.h,
-                       ),
-                       Padding(
-                         padding: EdgeInsets.symmetric(vertical: 24.h),
-                         child: Row(
-                           mainAxisAlignment: MainAxisAlignment.start,
-                           children: [
-                             SvgPicture.asset(Assets.svg.shapes),
-                             SizedBox(
-                               width: 16.w,
-                             ),
-                             Text(
-                               'Footwears',
+                               'Invoice',
                                style: Theme.of(context)
                                    .textTheme
                                    .displaySmall!
@@ -261,5 +265,5 @@ final _searchController = TextEditingController();
            );
          });
    }
-
 }
+

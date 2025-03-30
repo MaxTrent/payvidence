@@ -27,11 +27,9 @@ class SubscriptionPlansViewModel extends BaseChangeNotifier{
       final response = await apiServices.createSubscription(planId);
 
       if (response.success && response.data != null) {
-        final paymentLink = response.data!['payment_link'] as String?;
+        final paymentLink = response.data!['data']['payment_link'] as String?;
         if (paymentLink != null) {
           navigateOnSuccess(paymentLink);
-        } else {
-          handleError(message: 'Payment link not found in response');
         }
       } else {
         var errorMessage = response.error?.errors?.first.message ??

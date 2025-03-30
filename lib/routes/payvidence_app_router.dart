@@ -18,6 +18,7 @@ class PayvidenceAppRouter extends RootStackRouter {
         ],
         children: [
           AutoRoute(page: HomeScreenRoute.page, path: PayvidenceRoutes.homeScreen, initial: true),
+          AutoRoute(page: AllTransactionsRoute.page, path: PayvidenceRoutes.allTransactions),
           AutoRoute(page: SalesRoute.page, path: PayvidenceRoutes.sales),
           AutoRoute(page: ProfileRoute.page, path: PayvidenceRoutes.profile),
 
@@ -69,6 +70,10 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: UpdateBankDetailsRoute.page, path: PayvidenceRoutes.updateBankDetails),
         AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
         AutoRoute(page: ReceiptScreenRoute.page, path: PayvidenceRoutes.receiptScreen),
+        AutoRoute(page: ClientDetailsRoute.page, path: PayvidenceRoutes.clientDetails),
+        AutoRoute(page: AddClientRoute.page, path: PayvidenceRoutes.addClient),
+        AutoRoute(page: AddClientRoute.page, path: PayvidenceRoutes.addClient),
+
 
       ];
 
@@ -152,4 +157,6 @@ class PayvidenceRoutes {
   static String get subscriptionPrompt => '/subscriptionPrompt';
   static String get paymentScreen => '/paymentScreen/:paymentLink';
   static String get receiptScreen => '/receiptScreen';
+  static String get allTransactions => 'allTransactions';
+
 }

@@ -33,7 +33,7 @@ class BaseChangeNotifier extends ChangeNotifier {
     required ToastMessageType type,
   }) {
     String errorMsg = message != "null" ? message : "An error occurred";
-    ToastService.error(errorMsg);
+    ToastService.showErrorSnackBar(errorMsg);
     _notificationService.showNotification(
       id: DateTime.now().millisecondsSinceEpoch % 10000,
       title: 'Error',
@@ -44,7 +44,7 @@ class BaseChangeNotifier extends ChangeNotifier {
   void showSuccess({
     required String message,
   }) {
-    ToastService.success(message);
+    ToastService.showSnackBar(message);
     _notificationService.showNotification(
       id: DateTime.now().millisecondsSinceEpoch % 10000,
       title: 'Success',

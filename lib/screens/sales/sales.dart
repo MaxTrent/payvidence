@@ -188,10 +188,10 @@ class Sales extends ConsumerWidget {
               }, loading: () {
                 return const CustomShimmer();
               }),
-              SizedBox(
-                height: 36.h,
-              ),
-              SvgPicture.asset(Assets.svg.analytics)
+              // SizedBox(
+              //   height: 36.h,
+              // ),
+              // SvgPicture.asset(Assets.svg.analytics)
             ],
           ),
         ),

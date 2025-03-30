@@ -39,7 +39,7 @@ class Settings extends StatelessWidget {
                 icon: Assets.svg.passwordCheck,
                 title: 'Change password',
                 onTap: (){
-                  context.router.push(ChangePasswordRoute());
+                  locator<PayvidenceAppRouter>().push(ChangePasswordRoute());
                 },
                 // navigateTo: AppRoutes.changePassword
             ),
@@ -47,7 +47,7 @@ class Settings extends StatelessWidget {
                 icon: Assets.svg.check,
                 title: 'Reset password',
               onTap: (){
-                context.router.push(ResetPasswordRoute());
+                locator<PayvidenceAppRouter>().push(ResetPasswordRoute());
               },
                 // navigateTo: AppRoutes.resetPassword
             ),

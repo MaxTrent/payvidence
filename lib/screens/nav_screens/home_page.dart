@@ -29,7 +29,7 @@ class HomePage extends HookConsumerWidget {
       }
 
     final List<Widget> pages = [
-      HomeScreen(),
+      const HomeScreen(),
       AllTransactions(),
       Sales(),
       const Profile(),

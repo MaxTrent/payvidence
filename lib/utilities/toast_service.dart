@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:toastification/toastification.dart';
 
@@ -7,6 +8,28 @@ class ToastService {
   static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   ToastService._();
+
+  static void showSnackBar(String message) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(content: Text(message, style: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.white,
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w400,
+      ),), backgroundColor: primaryColor2,),
+    );
+  }
+
+  static void showErrorSnackBar(String message) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(content: Text(message, style: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.white,
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w400,
+      ),),backgroundColor: appRed,),
+    );
+  }
 
   static void success(String msg, {int? seconds}) {
     final context = scaffoldMessengerKey.currentContext;
