@@ -21,7 +21,7 @@ class SalesDatasource extends ISalesDatasource {
       {String? startDate, String? endDate, String? interval}) async {
     startDate ??= "2024-01-03";
     endDate ??= DateFormat("y-M-d").format(DateTime.now());
-    interval ??= "monthly";
+    interval ??= "weekly";
     try {
       final Either<Failure, Success> response = await networkService.get(
         '${PayvidenceEndpoints.analytics}?business_id=$businessId&start_date=$startDate&end_date=$endDate&interval=$interval',
