@@ -28,8 +28,12 @@ class HomePage extends HookConsumerWidget {
       selectedIndex.value = index;
       }
 
+    void switchToTab(int index) {
+      selectedIndex.value = index;
+    }
+
     final List<Widget> pages = [
-      const HomeScreen(),
+       HomeScreen(onViewAllTransactions: () => switchToTab(1)),
       AllTransactions(),
       Sales(),
       const Profile(),

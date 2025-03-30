@@ -1170,10 +1170,17 @@ class HomePageRouteArgs {
 
 /// generated route for
 /// [_i34.HomeScreen]
-class HomeScreenRoute extends _i63.PageRouteInfo<void> {
-  const HomeScreenRoute({List<_i63.PageRouteInfo>? children})
-      : super(
+class HomeScreenRoute extends _i63.PageRouteInfo<HomeScreenRouteArgs> {
+  HomeScreenRoute({
+    _i64.Key? key,
+    required _i64.VoidCallback onViewAllTransactions,
+    List<_i63.PageRouteInfo>? children,
+  }) : super(
           HomeScreenRoute.name,
+          args: HomeScreenRouteArgs(
+            key: key,
+            onViewAllTransactions: onViewAllTransactions,
+          ),
           initialChildren: children,
         );
 
@@ -1182,9 +1189,29 @@ class HomeScreenRoute extends _i63.PageRouteInfo<void> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      return const _i34.HomeScreen();
+      final args = data.argsAs<HomeScreenRouteArgs>();
+      return _i34.HomeScreen(
+        key: args.key,
+        onViewAllTransactions: args.onViewAllTransactions,
+      );
     },
   );
+}
+
+class HomeScreenRouteArgs {
+  const HomeScreenRouteArgs({
+    this.key,
+    required this.onViewAllTransactions,
+  });
+
+  final _i64.Key? key;
+
+  final _i64.VoidCallback onViewAllTransactions;
+
+  @override
+  String toString() {
+    return 'HomeScreenRouteArgs{key: $key, onViewAllTransactions: $onViewAllTransactions}';
+  }
 }
 
 /// generated route for

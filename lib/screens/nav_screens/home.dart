@@ -22,7 +22,8 @@ import '../../utilities/extensions.dart';
 
 @RoutePage(name: 'HomeScreenRoute')
 class HomeScreen extends HookConsumerWidget {
-  const HomeScreen({super.key});
+  final VoidCallback onViewAllTransactions;
+  const HomeScreen({super.key, required this.onViewAllTransactions});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -183,9 +184,8 @@ class HomeScreen extends HookConsumerWidget {
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   GestureDetector(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allTransactions);
-                    },
+                    onTap:
+                      onViewAllTransactions,
                     child: Text(
                       'View all',
                       style: Theme.of(context)
