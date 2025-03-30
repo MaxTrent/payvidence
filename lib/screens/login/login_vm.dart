@@ -4,6 +4,7 @@ import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../model/user_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/biometric_service.dart';
 
 
 
@@ -17,8 +18,21 @@ class LoginViewModel extends BaseChangeNotifier {
   LoginViewModel(this.ref);
 
   bool _isLoading = false;
+  bool _canUseBiometrics = false;
+  String _errorMessage = '';
 
   bool get isLoading => _isLoading;
+
+  Future<bool> get canUseBiometrics async {
+    final isBiometricEnabled = await locator<SessionManager>().get(SessionConstants.isBiometricLoginEnabled) ?? false;
+    return _canUseBiometrics && isBiometricEnabled;
+  }
+  String get errorMessage => _errorMessage;
+
+  void init() async {
+    _canUseBiometrics = await BiometricService.canCheckBiometrics();
+    notifyListeners();
+  }
 
   Future<void> login({
     required String email,
@@ -66,6 +80,45 @@ class LoginViewModel extends BaseChangeNotifier {
       notifyListeners();
       handleError(message: "An unexpected error occurred. Please try again.");
       throw Exception(e);
+    }
+  }
+
+  Future<void> biometricLogin({
+    required Function() navigateOnSuccess,
+  }) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      if (!await BiometricService.canCheckBiometrics()) {
+        handleError(message: "Biometric authentication is not available.");
+        return;
+      }
+
+      bool authenticated = await BiometricService.authenticate(
+        reason: "Login with your biometric credentials",
+      );
+
+      if (authenticated) {
+        final email = await locator<SessionManager>().get(SessionConstants.userEmail);
+        final token = await locator<SessionManager>().get(SessionConstants.accessTokenPref);
+
+        if (email != null && token != null) {
+          await locator<SessionManager>()
+              .save(key: SessionConstants.isUserLoggedIn, value: true);
+          navigateOnSuccess();
+        } else {
+          handleError(message: "No saved credentials found. Please login manually first.");
+        }
+      } else {
+        handleError(message: "Biometric authentication failed.");
+      }
+    } catch (e) {
+      handleError(message: "An error occurred during biometric login.");
+      throw Exception(e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

@@ -59,17 +59,17 @@ class Settings extends StatelessWidget {
                   locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.privacyAndSecurity);
                 },
             ),
-            ProfileOptionTile(
-                icon: Assets.svg.notificationBing,
-                title: 'Notifications setting',
-                // navigateTo: AppRoutes.notificationSettings
-                onTap: (){
-                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.notificationSettings);
-                },
-            ),
-            SizedBox(
-              height: 28.h,
-            ),
+            // ProfileOptionTile(
+            //     icon: Assets.svg.notificationBing,
+            //     title: 'Notifications setting',
+            //     // navigateTo: AppRoutes.notificationSettings
+            //     onTap: (){
+            //       locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.notificationSettings);
+            //     },
+            // ),
+            // SizedBox(
+            //   height: 28.h,
+            // ),
             // Row(
             //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
             //   children: [

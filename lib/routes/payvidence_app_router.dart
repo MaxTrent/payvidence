@@ -72,7 +72,9 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: ReceiptScreenRoute.page, path: PayvidenceRoutes.receiptScreen),
         AutoRoute(page: ClientDetailsRoute.page, path: PayvidenceRoutes.clientDetails),
         AutoRoute(page: AddClientRoute.page, path: PayvidenceRoutes.addClient),
-        AutoRoute(page: AddClientRoute.page, path: PayvidenceRoutes.addClient),
+        AutoRoute(page: NotificationSettingsRoute.page, path: PayvidenceRoutes.notificationSettings),
+        AutoRoute(page: PrivacyAndSecurityRoute.page, path: PayvidenceRoutes.privacyAndSecurity),
+
 
 
       ];

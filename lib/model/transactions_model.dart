@@ -30,12 +30,12 @@ class TransactionsResponse {
 
 class Transaction {
   final String id;
-  final String? clientId; // Nullable
+  final String? clientId;
   final String businessId;
   final String status;
-  final String? modeOfPayment; // Nullable
+  final String? modeOfPayment;
   final double total;
-  final DateTime? publishedAt; // Nullable
+  final DateTime? publishedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
   final Client client;

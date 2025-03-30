@@ -15,6 +15,7 @@ import '../../components/transaction_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
+
 @RoutePage(name: 'AllTransactionsRoute')
 class AllTransactions extends HookConsumerWidget {
   const AllTransactions({super.key});
@@ -24,30 +25,28 @@ class AllTransactions extends HookConsumerWidget {
     final viewModel = ref.watch(allTransactionsViewModelProvider);
     final searchController = useTextEditingController();
     final businessId = locator<SessionManager>().get(SessionConstants.businessId) as String?;
-    final filterType = useState<String?>('All'); // State for filter: 'All', 'Receipt', 'Invoice'
-    final searchQuery = useState<String>(''); // State for search query
+    final filterType = useState<String?>('All');
+    final searchQuery = useState<String>('');
 
     useEffect(() {
       if (businessId != null) {
-        Future.delayed(Duration.zero, () {
+        Future.microtask(() {
           print('Fetching transactions with businessId: $businessId');
           viewModel.fetchTransactions(businessId);
         });
       } else {
         print('Business ID is null, skipping fetch');
       }
-      return null;
-    }, [businessId]);
 
-    // Listen to search input changes
-    useEffect(() {
       void listener() {
         searchQuery.value = searchController.text;
       }
 
       searchController.addListener(listener);
-      return () => searchController.removeListener(listener);
-    }, [searchController]);
+      return () {
+        searchController.removeListener(listener);
+      };
+    }, [businessId, searchController]);
 
 
 
@@ -149,14 +148,37 @@ class AllTransactions extends HookConsumerWidget {
                   final firstProductDetail = transaction.recordProductDetails.first;
                   return GestureDetector(
                     onTap: () {
-                      // Add navigation to transaction details if needed
+                      // final receipt = Receipt(
+                      //   id: transaction.id,
+                      //   business: Business(
+                      //     name: transaction.business.name,
+                      //     address: transaction.business.address,
+                      //     phoneNumber: transaction.business.phoneNumber,
+                      //     accountNumber: transaction.business.accountNumber,
+                      //     bankName: transaction.business.bankName,
+                      //     accountName: transaction.business.accountName,
+                      //   ),
+                      //   client: ClientModel(
+                      //     name: transaction.client.name,
+                      //     phoneNumber: transaction.client.phoneNumber,
+                      //     address: transaction.client.address,
+                      //   ),
+                      //   recordProductDetails: transaction.recordProductDetails,
+                      //   total: transaction.total.toString(),
+                      //   createdAt: transaction.createdAt,
+                      //   modeOfPayment: transaction.modeOfPayment,
+                      // );
+                      // final isInvoice = transaction.status == 'pending';
+                      // locator<PayvidenceAppRouter>().push(
+                      //   ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
+                      // );
                     },
                     child: TransactionTile(
-                      amount: transaction.total.toString().toCommaSeparated(),
-                      dateTime: transaction.createdAt.toString().toFormattedIsoDate(),
+                      amount: firstProductDetail.product.price.toString().toCommaSeparated(),
+                      dateTime: firstProductDetail.product.createdAt.toString().toFormattedIsoDate(),
                       productName: firstProductDetail.product.name,
                       receiptOrInvoice: transaction.status == 'pending' ? 'Invoice' : 'Receipt',
-                      unitSold: firstProductDetail.quantity.toString(),
+                      unitSold: firstProductDetail.product.quantitySold.toString(),
                     ),
                   );
                 },

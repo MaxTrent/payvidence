@@ -14,5 +14,6 @@ class SessionConstants {
   static const planId = "planId";
   static const subscriptionId = "subscriptionId";
   static const businessId = "businessId";
+  static const isBiometricLoginEnabled = "isBiometricLoginEnabled";
 
 }

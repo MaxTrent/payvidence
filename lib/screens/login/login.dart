@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
-import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/login/login_vm.dart';
 import 'package:payvidence/screens/onboarding/onboarding.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
@@ -152,35 +150,77 @@ class Login extends HookConsumerWidget {
                     height: 32.h,
                   ),
                   // viewModel.loginState.isLoading ? const LoadingIndicator():
-                  AppButton(
-                    buttonText: 'Log in',
-                    isDisabled: areFieldsEmpty.value,
-                    isProcessing: viewModel.isLoading,
-                    onPressed: () {
-                      print("Button pressed");
-                      print("Fields empty: ${areFieldsEmpty.value}");
-                      if (formKey.currentState!.validate()) {
-                        print("Form is valid");
-                        FocusScope.of(context).unfocus();
-                        viewModel.login(
-                          email: emailController.text.trim(),
-                          password: passwordController.text.trim(),
-                          navigateOnSuccess: () {
-                            print('navigating');
-                            ref.invalidate(getAllBusinessProvider);
-                            locator<PayvidenceAppRouter>().popUntil(
-                                    (route) => route is OnboardingScreen);
-                            locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.home);
-                          },
-                        );
-                      } else {
-                        print("Form is not valid");
-                      }
-                    },
-
-
-
-    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FutureBuilder(
+                        future: viewModel.canUseBiometrics,
+                        builder: (context, snapshot) {
+                          final canUseBiometrics = snapshot.hasData && snapshot.data == true;
+                          return AppButton(
+                            width: canUseBiometrics ? 300.w : null,
+                            buttonText: 'Log in',
+                            isDisabled: areFieldsEmpty.value,
+                            isProcessing: viewModel.isLoading,
+                            onPressed: () {
+                              print("Button pressed");
+                              print("Fields empty: ${areFieldsEmpty.value}");
+                              if (formKey.currentState!.validate()) {
+                                print("Form is valid");
+                                FocusScope.of(context).unfocus();
+                                viewModel.login(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                  navigateOnSuccess: () {
+                                    print('Navigating');
+                                    ref.invalidate(getAllBusinessProvider);
+                                    locator<PayvidenceAppRouter>().popUntil(
+                                            (route) => route is OnboardingScreen);
+                                    locator<PayvidenceAppRouter>()
+                                        .replaceNamed(PayvidenceRoutes.home);
+                                  },
+                                );
+                              } else {
+                                print("Form is not valid");
+                              }
+                            },
+                          );
+                        },
+                      ),
+                      SizedBox(width: 16.w), // Spacing between button and icon
+                      FutureBuilder(
+                        future: viewModel.canUseBiometrics,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const SizedBox.shrink();
+                          }
+                          if (snapshot.hasData && snapshot.data == true) {
+                            return GestureDetector(
+                              onTap: () {
+                                FocusScope.of(context).unfocus();
+                                viewModel.biometricLogin(
+                                  navigateOnSuccess: () {
+                                    print('Navigating to home via biometrics');
+                                    ref.invalidate(getAllBusinessProvider);
+                                    locator<PayvidenceAppRouter>().popUntil(
+                                            (route) => route is OnboardingScreen);
+                                    locator<PayvidenceAppRouter>()
+                                        .replaceNamed(PayvidenceRoutes.home);
+                                  },
+                                );
+                              },
+                              child: Icon(
+                                Icons.fingerprint,
+                                size: 44.h,
+                                color: primaryColor2,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
