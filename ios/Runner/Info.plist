@@ -6,6 +6,8 @@
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
 		<string>Payvidence</string>
+		<key>NSFaceIDUsageDescription</key>
+        <string>We use Face ID to securely authenticate your identity.</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>

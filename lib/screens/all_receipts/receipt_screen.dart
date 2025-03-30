@@ -134,7 +134,7 @@ class ReceiptScreen extends ConsumerWidget {
                 key: globalKey,
                 child: ContainerWithClippedCircles(
                   record: record,
-                  isInvoice: isInvoice!,
+                  isInvoice: isInvoice ?? false,
                 ),
               ),
               SizedBox(
