@@ -9,8 +9,6 @@ import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/toast_service.dart';
 
 @RoutePage(name: 'AddBrandRoute')

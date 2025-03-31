@@ -16,7 +16,7 @@ import '../otp/otp_vm.dart';
 
 @RoutePage(name: 'OtpResetRoute')
 class OtpReset extends HookConsumerWidget {
-  OtpReset({super.key});
+  const OtpReset({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

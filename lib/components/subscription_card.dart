@@ -37,7 +37,7 @@ class SubscriptionCard extends StatelessWidget {
                     height: 26.h,
                     width: 108.w,
                     decoration: BoxDecoration(
-                        color: Color(0xff7767BD),
+                        color: const Color(0xff7767BD),
                         borderRadius: BorderRadius.circular(6.r)),
                     child: Center(
                       child: Text(

@@ -9,15 +9,14 @@ import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
-import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'ForgotPasswordRoute')
 class ForgotPassword extends HookConsumerWidget {
-  ForgotPassword({super.key});
+  const ForgotPassword({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
-    final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
+    final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final viewModel = ref.watch(forgotPasswordViewModelProvider);
     final emailController = useTextEditingController();
     final isTextFieldEmpty = useState(true);
@@ -34,7 +33,7 @@ class ForgotPassword extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Form(
-        key: _formKey,
+        key: formKey,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SafeArea(

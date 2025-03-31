@@ -310,7 +310,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 ),
                               ],
                             ))
-                        .toList()
+                        
                   ]),
               6.verticalSpace,
               Row(

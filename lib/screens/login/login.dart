@@ -17,7 +17,7 @@ import '../../gen/assets.gen.dart';
 
 @RoutePage(name: 'LoginRoute')
 class Login extends HookConsumerWidget {
-  Login({super.key});
+  const Login({super.key});
 
   @override
   Widget build(BuildContext context, ref) {

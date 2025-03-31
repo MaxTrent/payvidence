@@ -13,7 +13,7 @@ import 'create_new_password_reset_vm.dart';
 
 @RoutePage(name: 'CreateNewPasswordResetRoute')
 class CreateNewPasswordReset extends HookConsumerWidget {
-  CreateNewPasswordReset({super.key});
+  const CreateNewPasswordReset({super.key});
 
   @override
   Widget build(BuildContext context, ref) {

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:payvidence/model/category_model.dart';
 
 import '../../datasource/data/category_datasource.dart';

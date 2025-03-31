@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:payvidence/data/network/api_response.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/category_providers/current_category_provider.dart';
@@ -28,7 +26,7 @@ import '../../utilities/validators.dart';
 class AddProduct extends ConsumerStatefulWidget {
   final Product? product;
 
-  AddProduct({super.key, this.product});
+  const AddProduct({super.key, this.product});
 
   @override
   ConsumerState<AddProduct> createState() => _AddProductState();

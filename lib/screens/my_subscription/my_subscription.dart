@@ -82,12 +82,12 @@ class MySubscription extends HookConsumerWidget {
               ],
             ),
             viewModel.subInfo?.startDate == null
-                ? SizedBox.shrink()
+                ? const SizedBox.shrink()
                 : SizedBox(
                     height: 18.h,
                   ),
             viewModel.subInfo?.startDate == null
-                ? SizedBox.shrink()
+                ? const SizedBox.shrink()
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -102,12 +102,12 @@ class MySubscription extends HookConsumerWidget {
                     ],
                   ),
             viewModel.subInfo?.startDate == null
-                ? SizedBox.shrink()
+                ? const SizedBox.shrink()
                 : SizedBox(
                     height: 18.h,
                   ),
             viewModel.subInfo?.expiryDate == null
-                ? SizedBox.shrink()
+                ? const SizedBox.shrink()
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

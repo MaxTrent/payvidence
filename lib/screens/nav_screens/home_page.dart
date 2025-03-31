@@ -13,7 +13,7 @@ import '../../gen/assets.gen.dart';
 
 @RoutePage(name: 'HomePageRoute')
 class HomePage extends HookConsumerWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
@@ -29,7 +29,7 @@ class HomePage extends HookConsumerWidget {
 
     final List<Widget> pages = [
       HomeScreen(onViewAllTransactions: () => switchToTab(1)),
-      AllTransactions(),
+      const AllTransactions(),
       Sales(),
       const Profile(),
     ];

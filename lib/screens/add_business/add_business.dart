@@ -16,7 +16,7 @@ import 'add_business_vm.dart';
 
 @RoutePage(name: 'AddBusinessRoute')
 class AddBusiness extends HookConsumerWidget {
-  AddBusiness({super.key});
+  const AddBusiness({super.key});
 
   // final _controller = TextEditingController();
 

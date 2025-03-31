@@ -6,7 +6,6 @@ import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/payvidence_app_router.gr.dart';
 
 @RoutePage(name: 'EmptyBusinessRoute')
 class EmptyBusiness extends StatelessWidget {

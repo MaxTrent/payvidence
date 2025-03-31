@@ -97,7 +97,7 @@ class ApiError extends Equatable {
   final String? field;
   final String? message;
 
-  ApiError({this.rule, this.field, this.message});
+  const ApiError({this.rule, this.field, this.message});
 
   factory ApiError.fromMap(Map<String, dynamic> json) {
     return ApiError(

@@ -1,6 +1,5 @@
 import 'package:intl/intl.dart';
 
-import 'package:intl/intl.dart';
 
 // extension NumberFormatting on String {
 //   String toCommaSeparated() {

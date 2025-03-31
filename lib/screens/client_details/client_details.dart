@@ -8,8 +8,6 @@ import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
-import '../../data/local/session_constants.dart';
-import '../../data/local/session_manager.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
@@ -174,19 +172,14 @@ class ClientDetails extends HookConsumerWidget {
                           if (!viewModel.isEditing) {
                             viewModel.toggleEditing();
                           } else if (hasChanges()) {
-                            if (businessId != null) {
-                              viewModel.updateClient(
-                                  businessId: businessId,
-                                  clientId: clientId,
-                                  newName: nameController.text,
-                                  navigateOnSuccess: () {
-                                    locator<PayvidenceAppRouter>().back();
-                                  });
-                            } else {
-                              print(
-                                  "Business ID is null, cannot update client");
-                            }
-                          } else {
+                            viewModel.updateClient(
+                                businessId: businessId,
+                                clientId: clientId,
+                                newName: nameController.text,
+                                navigateOnSuccess: () {
+                                  locator<PayvidenceAppRouter>().back();
+                                });
+                                                    } else {
                             print("No changes detected, exiting edit mode");
                             viewModel.toggleEditing();
                           }

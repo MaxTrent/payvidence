@@ -1,11 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:payvidence/datasource/data/client_datasource.dart';
-import 'package:payvidence/datasource/data/product_datasource.dart';
-import 'package:payvidence/model/product_model.dart';
 
-import '../../datasource/data/receipt_datasource.dart';
 import '../../model/client_model.dart';
-import '../../model/receipt_model.dart';
 
 abstract class IClientRepository {
   Future<List<ClientModel>> fetchAllClients(String businessId);

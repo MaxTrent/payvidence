@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/model/category_model.dart';
 
-import '../../model/business_model.dart';
 
 final getCurrentCategoryProvider =
     NotifierProvider<GetCurrentCategoryNotifier, CategoryModel?>(() {

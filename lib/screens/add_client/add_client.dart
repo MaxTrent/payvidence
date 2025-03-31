@@ -4,12 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:payvidence/screens/add_brand/add_brand.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
-import '../../data/local/session_constants.dart';
-import '../../data/local/session_manager.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -146,8 +143,7 @@ class AddClient extends HookConsumerWidget {
                         isDisabled: areFieldsEmpty.value,
                         isProcessing: viewModel.isLoading,
                         onPressed: () {
-                          if (formKey.currentState!.validate() &&
-                              businessId != null) {
+                          if (formKey.currentState!.validate()) {
                             FocusScope.of(context).unfocus();
                             viewModel.addClient(
                               name: nameController.text,

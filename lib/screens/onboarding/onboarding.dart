@@ -7,7 +7,6 @@ import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../gen/assets.gen.dart';
-import '../../routes/payvidence_app_router.gr.dart';
 import 'onboarding_vm.dart';
 
 @RoutePage(name: 'OnboardingScreenRoute')

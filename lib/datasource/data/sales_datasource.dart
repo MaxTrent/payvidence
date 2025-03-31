@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:payvidence/model/sales_model.dart';
 import '../../data/network/api_response.dart';
 import '../../data/network/network_service.dart';
-import '../../model/brand_model.dart';
 import '../../utilities/payvidence_endpoints.dart';
 
 abstract class ISalesDatasource {

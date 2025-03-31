@@ -13,7 +13,7 @@ import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'ResetPasswordRoute')
 class ResetPassword extends HookConsumerWidget {
-  ResetPassword({super.key});
+  const ResetPassword({super.key});
 
   @override
   Widget build(BuildContext context, ref) {

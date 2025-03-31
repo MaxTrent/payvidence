@@ -1,9 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
-import '../../data/local/session_constants.dart';
-import '../../data/local/session_manager.dart';
 import '../../model/plan_model.dart'; // Update path if needed
-import '../../shared_dependency/shared_dependency.dart';
 
 final chooseSubscriptionPlanViewModel =
     ChangeNotifierProvider((ref) => ChooseSubscriptionPlanViewModel(ref));

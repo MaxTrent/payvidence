@@ -155,7 +155,7 @@ class NetworkService {
       }
 
       dynamic data;
-      if (response!.data is Map) {
+      if (response.data is Map) {
         data = response.data as Map<dynamic, dynamic>;
       } else {
         data = response.data;

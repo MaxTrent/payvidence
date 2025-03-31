@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/model/category_model.dart';
-import 'package:payvidence/repositories/repository/business_repository.dart';
 
-import '../../model/business_model.dart';
 import '../../repositories/repository/category_repository.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../business_providers/current_business_provider.dart';

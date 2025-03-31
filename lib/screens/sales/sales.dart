@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:payvidence/components/app_text_field.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/providers/sales_providers/sales_data_provider.dart';
 import 'package:payvidence/providers/sales_providers/sales_fillter_provider.dart';
-import 'package:payvidence/screens/all_receipts/receipt_screen.dart';
 import 'package:payvidence/utilities/extensions.dart';
 
 import '../../components/custom_shimmer.dart';

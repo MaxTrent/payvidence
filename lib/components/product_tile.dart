@@ -1,14 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/product_model.dart';
-import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 
 import '../constants/app_colors.dart';
-import '../routes/payvidence_app_router.dart';
-import '../routes/payvidence_app_router.gr.dart';
-import '../shared_dependency/shared_dependency.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;

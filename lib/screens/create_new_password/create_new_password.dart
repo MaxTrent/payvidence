@@ -13,7 +13,7 @@ import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'CreateNewPasswordRoute')
 class CreateNewPassword extends HookConsumerWidget {
-  CreateNewPassword({super.key});
+  const CreateNewPassword({super.key});
 
   @override
   Widget build(BuildContext context, ref) {

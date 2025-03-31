@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:payvidence/model/client_model.dart';
-import 'package:payvidence/model/receipt_model.dart';
 import '../../data/network/api_response.dart';
 import '../../data/network/network_service.dart';
 import '../../utilities/payvidence_endpoints.dart';

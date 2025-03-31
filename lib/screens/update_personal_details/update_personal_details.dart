@@ -7,7 +7,6 @@ import 'package:payvidence/screens/update_personal_details/update_personal_detai
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
-import '../../routes/payvidence_app_router.gr.dart';
 
 @RoutePage(name: 'UpdatePersonalDetailsRoute')
 class UpdatePersonalDetails extends HookConsumerWidget {

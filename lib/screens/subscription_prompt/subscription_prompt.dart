@@ -2,7 +2,6 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:payvidence/constants/app_colors.dart';
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
 

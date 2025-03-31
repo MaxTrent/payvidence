@@ -1,8 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../shared_dependency/shared_dependency.dart';
 
 final clientDetailsViewModelViewModelProvider =
     ChangeNotifierProvider((ref) => ClientDetailsViewModel(ref));

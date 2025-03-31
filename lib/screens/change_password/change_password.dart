@@ -9,13 +9,12 @@ import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../routes/payvidence_app_router.dart';
-import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'ChangePasswordRoute')
 class ChangePassword extends HookConsumerWidget {
-  ChangePassword({super.key});
+  const ChangePassword({super.key});
 
   @override
   Widget build(BuildContext context, ref) {

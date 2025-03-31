@@ -33,8 +33,7 @@ class LoggingInterceptor extends Interceptor {
         }
 
         builtResponse +=
-            responseAsString.substring(i * _maxCharactersPerLine, endingIndex) +
-                "\n";
+            "${responseAsString.substring(i * _maxCharactersPerLine, endingIndex)}\n";
       }
 
       logResponse(response, builtResponse);
@@ -46,7 +45,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
       print("❌ ❌ <------ ON ERROR --------> ❌ ❌");
       print(err.requestOptions.path);

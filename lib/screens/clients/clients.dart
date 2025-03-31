@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -171,7 +170,7 @@ class Clients extends HookConsumerWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  '${data[index].name?.substring(0, 2) ?? 'NA'}',
+                                  data[index].name?.substring(0, 2) ?? 'NA',
                                   style: Theme.of(context)
                                       .textTheme
                                       .displaySmall!

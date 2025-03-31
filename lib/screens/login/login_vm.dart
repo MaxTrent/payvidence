@@ -17,7 +17,7 @@ class LoginViewModel extends BaseChangeNotifier {
 
   bool _isLoading = false;
   bool _canUseBiometrics = false;
-  String _errorMessage = '';
+  final String _errorMessage = '';
 
   bool get isLoading => _isLoading;
 
