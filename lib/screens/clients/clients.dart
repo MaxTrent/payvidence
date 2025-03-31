@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,7 +23,10 @@ class Clients extends HookConsumerWidget {
   final bool? forSelection;
   final String businessId;
 
-  Clients({super.key, this.forSelection = false, @QueryParam('businessId') this.businessId = ''});
+  Clients(
+      {super.key,
+      this.forSelection = false,
+      @QueryParam('businessId') this.businessId = ''});
 
   final _searchController = TextEditingController();
 
@@ -62,16 +64,17 @@ class Clients extends HookConsumerWidget {
               child: GestureDetector(
                 onTap: () async {
                   print("Navigating to AddClientRoute");
-                  await locator<PayvidenceAppRouter>().navigate(AddClientRoute(businessId: businessId));
+                  await locator<PayvidenceAppRouter>()
+                      .navigate(AddClientRoute(businessId: businessId));
 
                   ref.read(getAllClientsProvider.notifier).fetchClients();
                 },
                 child: Text(
                   '+ Add New',
                   style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                    fontSize: 14.sp,
-                    color: primaryColor2,
-                  ),
+                        fontSize: 14.sp,
+                        color: primaryColor2,
+                      ),
                 ),
               ),
             ),
@@ -112,14 +115,20 @@ class Clients extends HookConsumerWidget {
                         Text(
                           'All added clients will appear here.',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(fontSize: 14.sp),
                         ),
                         SizedBox(height: 48.h),
                         AppButton(
                           buttonText: 'Add client',
                           onPressed: () async {
-                            await locator<PayvidenceAppRouter>().navigate(AddClientRoute(businessId: businessId));
-                            ref.read(getAllClientsProvider.notifier).fetchClients();
+                            await locator<PayvidenceAppRouter>().navigate(
+                                AddClientRoute(businessId: businessId));
+                            ref
+                                .read(getAllClientsProvider.notifier)
+                                .fetchClients();
                           },
                         ),
                       ],
@@ -137,11 +146,16 @@ class Clients extends HookConsumerWidget {
                             Navigator.of(context).pop(data[index]);
                           } else {
                             if (data[index].id != null) {
-                              print("Navigating to ClientDetails with businessId: $businessId, clientId: ${data[index].id}");
+                              print(
+                                  "Navigating to ClientDetails with businessId: $businessId, clientId: ${data[index].id}");
                               await locator<PayvidenceAppRouter>().push(
-                                ClientDetailsRoute(businessId: businessId, clientId: data[index].id!),
+                                ClientDetailsRoute(
+                                    businessId: businessId,
+                                    clientId: data[index].id!),
                               );
-                              ref.read(getAllClientsProvider.notifier).fetchClients();
+                              ref
+                                  .read(getAllClientsProvider.notifier)
+                                  .fetchClients();
                             }
                           }
                         },
@@ -151,17 +165,20 @@ class Clients extends HookConsumerWidget {
                             Container(
                               height: 56.h,
                               width: 56.h,
-                              decoration:  BoxDecoration(
+                              decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: getRandomColor(),
                               ),
                               child: Center(
                                 child: Text(
-                                  '${data[index].name?.substring(0, 2) ?? 'NA'}',
-                                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                                    fontSize: 20.sp,
-                                    color: Colors.white,
-                                  ),
+                                  data[index].name?.substring(0, 2) ?? 'NA',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall!
+                                      .copyWith(
+                                        fontSize: 20.sp,
+                                        color: Colors.white,
+                                      ),
                                 ),
                               ),
                             ),
@@ -173,19 +190,25 @@ class Clients extends HookConsumerWidget {
                                 children: [
                                   Text(
                                     data[index].name ?? '',
-                                    style: Theme.of(context).textTheme.displayMedium,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium,
                                   ),
                                   SizedBox(height: 8.h),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SvgPicture.asset(Assets.svg.location),
                                       SizedBox(width: 6.w),
                                       Expanded(
                                         child: Text(
                                           data[index].address ?? '',
-                                          style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displaySmall!
+                                              .copyWith(fontSize: 14.sp),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
@@ -196,27 +219,38 @@ class Clients extends HookConsumerWidget {
                                     children: [
                                       Text(
                                         data[index].phoneNumber ?? '',
-                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall!
+                                            .copyWith(fontSize: 14.sp),
                                       ),
                                       SizedBox(width: 8.w),
                                       GestureDetector(
                                         onTap: () {
-                                          Clipboard.setData(ClipboardData(text: data[index].phoneNumber ?? ''));
-                                          ToastService.showSnackBar('Copied to clipboard');
-                                          ScaffoldMessenger.of(context).showSnackBar(
+                                          Clipboard.setData(ClipboardData(
+                                              text: data[index].phoneNumber ??
+                                                  ''));
+                                          ToastService.showSnackBar(
+                                              'Copied to clipboard');
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
                                             SnackBar(
                                               content: Text(
                                                 'Copied to clipboard',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displaySmall!
-                                                    .copyWith(color: Colors.white, fontWeight: FontWeight.w400),
+                                                    .copyWith(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w400),
                                               ),
                                               backgroundColor: primaryColor2,
                                             ),
                                           );
                                         },
-                                        child: SvgPicture.asset(Assets.svg.copy),
+                                        child:
+                                            SvgPicture.asset(Assets.svg.copy),
                                       ),
                                     ],
                                   ),

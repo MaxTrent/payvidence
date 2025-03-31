@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:payvidence/components/app_text_field.dart';
+import 'package:intl/intl.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/providers/sales_providers/sales_data_provider.dart';
 import 'package:payvidence/providers/sales_providers/sales_fillter_provider.dart';
-import 'package:payvidence/screens/all_receipts/receipt_screen.dart';
 import 'package:payvidence/utilities/extensions.dart';
-
+import 'package:fl_chart/fl_chart.dart';
 import '../../components/custom_shimmer.dart';
 import '../../gen/assets.gen.dart';
+import '../../model/sales_model.dart';
 
 @RoutePage(name: 'SalesRoute')
 class Sales extends ConsumerWidget {
@@ -34,7 +34,7 @@ class Sales extends ConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      if(interval == "weekly"){
+                      if (interval == "weekly") {
                         return;
                       }
                       ref
@@ -66,14 +66,13 @@ class Sales extends ConsumerWidget {
                   SizedBox(width: 12.w),
                   GestureDetector(
                     onTap: () {
-                      if(interval == "monthly"){
+                      if (interval == "monthly") {
                         return;
                       }
                       ref
                           .read(salesFilterProvider.notifier)
                           .setKey("interval", "monthly");
                       ref.read(salesDataProvider.notifier).setFilter();
-
                     },
                     child: Container(
                       height: 45.h,
@@ -99,14 +98,13 @@ class Sales extends ConsumerWidget {
                   SizedBox(width: 12.w),
                   GestureDetector(
                     onTap: () {
-                      if(interval == "yearly"){
+                      if (interval == "yearly") {
                         return;
                       }
                       ref
                           .read(salesFilterProvider.notifier)
                           .setKey("interval", "yearly");
                       ref.read(salesDataProvider.notifier).setFilter();
-
                     },
                     child: Container(
                       height: 45.h,
@@ -181,6 +179,12 @@ class Sales extends ConsumerWidget {
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: 36.h,
+                    ),
+                    SalesOverviewChart(
+                      graphData: data.graphData!,
+                    )
                   ],
                 );
               }, error: (error, _) {
@@ -188,10 +192,9 @@ class Sales extends ConsumerWidget {
               }, loading: () {
                 return const CustomShimmer();
               }),
-              // SizedBox(
-              //   height: 36.h,
-              // ),
-              // SvgPicture.asset(Assets.svg.analytics)
+              SizedBox(
+                height: 36.h,
+              ),
             ],
           ),
         ),
@@ -201,16 +204,16 @@ class Sales extends ConsumerWidget {
 }
 
 class SalesInfoTile extends StatelessWidget {
-  SalesInfoTile({
+  const SalesInfoTile({
     required this.icon,
     required this.amount,
     required this.description,
     super.key,
   });
 
-  String amount;
-  String description;
-  String icon;
+  final String amount;
+  final String description;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -271,4 +274,122 @@ class SalesInfoTile extends StatelessWidget {
       ),
     );
   }
+}
+
+//TODO: fine-tune the chart
+class SalesOverviewChart extends StatelessWidget {
+  final List<GraphDatum> graphData;
+
+  const SalesOverviewChart({super.key, required this.graphData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Sales overview",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 400.h,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: graphData.length * 100.w,
+                  child: BarChart(
+                    BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: getMaxSales(graphData),
+                      barGroups: List.generate(graphData.length, (int index) {
+                        return _buildBarData(
+                            index,
+                            double.tryParse(
+                                    graphData[index].salesValue.toString()) ??
+                                0);
+                      }),
+                      titlesData: FlTitlesData(
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 80.w,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                "${value.toInt()}₦",
+                                style: const TextStyle(fontSize: 11),
+                                overflow: TextOverflow.ellipsis,
+                              );
+                            },
+                          ),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              var days =
+                                  List.generate(graphData.length, (int index) {
+                                return graphData[index].salesKey == "date"
+                                    ? DateFormat.E().format(DateTime.parse(
+                                        graphData[index].week.toString()))
+                                    : graphData[index].week.toString();
+                              });
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  days[value.toInt()],
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                      ),
+                      gridData: const FlGridData(show: false),
+                      borderData: FlBorderData(show: false),
+                      barTouchData: BarTouchData(enabled: false),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  BarChartGroupData _buildBarData(int x, double y) {
+    return BarChartGroupData(
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y,
+          color: Colors.indigo,
+          width: 18,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ],
+    );
+  }
+}
+
+double? getMaxSales(List<GraphDatum>? graphData) {
+  print(graphData);
+  if (graphData == null || graphData.isEmpty) return 0;
+  return double.tryParse(graphData
+      .reduce((curr, next) => curr.salesValue > next.salesValue ? curr : next)
+      .salesValue
+      .toString());
 }

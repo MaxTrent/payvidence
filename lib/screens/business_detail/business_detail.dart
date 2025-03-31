@@ -9,7 +9,6 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
-
 @RoutePage(name: 'BusinessDetailRoute')
 class BusinessDetail extends StatelessWidget {
   const BusinessDetail({super.key});
@@ -87,8 +86,8 @@ class BusinessDetail extends StatelessWidget {
                   Text(
                     'Keekee Store',
                     style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                      fontSize: 22.sp,
-                    ),
+                          fontSize: 22.sp,
+                        ),
                   ),
                   SizedBox(
                     height: 12.h,
@@ -96,7 +95,9 @@ class BusinessDetail extends StatelessWidget {
                   Row(
                     children: [
                       SvgPicture.asset(Assets.svg.location),
-                      SizedBox(width: 6.w,),
+                      SizedBox(
+                        width: 6.w,
+                      ),
                       Text('No. 2, New Area Street, Lagos State, Nigeria',
                           style: Theme.of(context).textTheme.displaySmall),
                     ],
@@ -107,74 +108,139 @@ class BusinessDetail extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Phone number', style: Theme.of(context).textTheme.displaySmall,),
-                      Text('0803 455 4522', style: Theme.of(context).textTheme.displaySmall,),
-        
+                      Text(
+                        'Phone number',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      Text(
+                        '0803 455 4522',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 16.h,),
+                  SizedBox(
+                    height: 16.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Business VAT rate', style: Theme.of(context).textTheme.displaySmall,),
-                      Text('2%', style: Theme.of(context).textTheme.displaySmall,),
-        
+                      Text(
+                        'Business VAT rate',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      Text(
+                        '2%',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 16.h,),
+                  SizedBox(
+                    height: 16.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Receipts issuer', style: Theme.of(context).textTheme.displaySmall,),
-                      Text('Peter Ogunkunle', style: Theme.of(context).textTheme.displaySmall,),
+                      Text(
+                        'Receipts issuer',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      Text(
+                        'Peter Ogunkunle',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 16.h,),
+                  SizedBox(
+                    height: 16.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Issuer role', style: Theme.of(context).textTheme.displaySmall,),
-                      Text('Business Manager', style: Theme.of(context).textTheme.displaySmall,),
+                      Text(
+                        'Issuer role',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      Text(
+                        'Business Manager',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 16.h,),
+                  SizedBox(
+                    height: 16.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Issuer signature', style: Theme.of(context).textTheme.displaySmall,),
+                      Text(
+                        'Issuer signature',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                       Container(
                         height: 64.h,
                         width: 120.w,
                         decoration: BoxDecoration(
-                          image: DecorationImage(image: AssetImage(Assets.png.signature.path))
-                        ),
+                            image: DecorationImage(
+                                image: AssetImage(Assets.png.signature.path))),
                       )
                     ],
                   ),
-                  SizedBox(height: 32.h,),
-                  Text('Bank details', style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 18.sp),),
-                  SizedBox(height: 20.h,),
+                  SizedBox(
+                    height: 32.h,
+                  ),
+                  Text(
+                    'Bank details',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displaySmall!
+                        .copyWith(fontSize: 18.sp),
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Bank name', style: Theme.of(context).textTheme.displaySmall,),
-                      Text('First Bank', style: Theme.of(context).textTheme.displaySmall,),
+                      Text(
+                        'Bank name',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      Text(
+                        'First Bank',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 16.h,),
+                  SizedBox(
+                    height: 16.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Account number', style: Theme.of(context).textTheme.displaySmall,),
-                      Text('3013334434', style: Theme.of(context).textTheme.displaySmall,),
+                      Text(
+                        'Account number',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      Text(
+                        '3013334434',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 16.h,),
+                  SizedBox(
+                    height: 16.h,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Account name', style: Theme.of(context).textTheme.displaySmall,),
-                      Text('Keekee Store', style: Theme.of(context).textTheme.displaySmall,),
+                      Text(
+                        'Account name',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      Text(
+                        'Keekee Store',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -220,24 +286,20 @@ class BusinessDetail extends StatelessWidget {
                     topRight: Radius.circular(40.r),
                     topLeft: Radius.circular(40.r))),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 20.w, vertical: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
               child: Stack(
                 children: [
                   ListView(
                     // crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 140.w),
+                        padding: EdgeInsets.symmetric(horizontal: 140.w),
                         child: Container(
                           height: 5.h,
                           width: 67.w,
                           decoration: BoxDecoration(
                             color: const Color(0xffd9d9d9),
-                            borderRadius:
-                            BorderRadius.circular(
-                                100.r),
+                            borderRadius: BorderRadius.circular(100.r),
                           ),
                         ),
                       ),
@@ -245,9 +307,7 @@ class BusinessDetail extends StatelessWidget {
                         height: 38.h,
                       ),
                       Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment
-                            .spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const SizedBox.shrink(),
                           Center(
@@ -257,14 +317,13 @@ class BusinessDetail extends StatelessWidget {
                                   .textTheme
                                   .displayLarge!
                                   .copyWith(
-                                fontSize: 22.sp,
-                                fontWeight:
-                                FontWeight.w600,
-                              ),
+                                    fontSize: 22.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
                           ),
                           GestureDetector(
-                              onTap: ()=> Navigator.of(context).pop(),
+                              onTap: () => Navigator.of(context).pop(),
                               child: const Icon(
                                 Icons.close,
                               ))
@@ -277,9 +336,7 @@ class BusinessDetail extends StatelessWidget {
                         child: Text(
                           'Are you sure you want to delete this product?\n\nAll details and statistics will be gone.',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall,
+                          style: Theme.of(context).textTheme.displaySmall,
                         ),
                       ),
                       SizedBox(

@@ -1,11 +1,9 @@
-
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 class LoggingInterceptor extends Interceptor {
-
   final int _maxCharactersPerLine = 200;
 
   @override
@@ -24,18 +22,18 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     String responseAsString = response.data.toString();
-    if(responseAsString.length > _maxCharactersPerLine) {
-      int iterations = (responseAsString.length/ _maxCharactersPerLine).floor();
+    if (responseAsString.length > _maxCharactersPerLine) {
+      int iterations =
+          (responseAsString.length / _maxCharactersPerLine).floor();
       var builtResponse = "";
-      for(int i = 0; i < iterations; i++) {
+      for (int i = 0; i < iterations; i++) {
         int endingIndex = i * _maxCharactersPerLine + _maxCharactersPerLine;
-        if(endingIndex > responseAsString.length) {
+        if (endingIndex > responseAsString.length) {
           endingIndex = responseAsString.length;
         }
 
         builtResponse +=
-            responseAsString.substring(i * _maxCharactersPerLine, endingIndex) +
-                "\n";
+            "${responseAsString.substring(i * _maxCharactersPerLine, endingIndex)}\n";
       }
 
       logResponse(response, builtResponse);
@@ -47,7 +45,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
       print("❌ ❌ <------ ON ERROR --------> ❌ ❌");
       print(err.requestOptions.path);
@@ -64,8 +62,7 @@ class LoggingInterceptor extends Interceptor {
   void logResponse(Response<dynamic> response, String builtResponse) {
     debugPrint(
         "~~~~~~~~~~~~~> ${response.statusCode} ${response.requestOptions.uri} (${response.requestOptions.method})\n"
-            "$builtResponse"
-            "<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END RESPONSE");
+        "$builtResponse"
+        "<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ END RESPONSE");
   }
-
 }

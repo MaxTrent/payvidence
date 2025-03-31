@@ -16,13 +16,11 @@ import '../otp/otp_vm.dart';
 
 @RoutePage(name: 'OtpLoginRoute')
 class OtpLogin extends HookConsumerWidget {
-  OtpLogin({super.key});
-
-
+  const OtpLogin({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
+    final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final email = locator<SessionManager>().get(SessionConstants.userEmail);
     final viewModel = ref.read(otpViewModelProvider);
     final pinController = useTextEditingController();
@@ -51,6 +49,7 @@ class OtpLogin extends HookConsumerWidget {
       void listener() {
         isTextFieldEmpty.value = pinController.text.isEmpty;
       }
+
       pinController.addListener(listener);
       return () => pinController.removeListener(listener);
     }, []);
@@ -60,13 +59,12 @@ class OtpLogin extends HookConsumerWidget {
       return () => timer?.cancel();
     }, []);
 
-
     return GestureDetector(
-      onTap: ()=>FocusManager.instance.primaryFocus?.unfocus(),
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(),
         body: Form(
-          key: _formKey,
+          key: formKey,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -117,17 +115,16 @@ class OtpLogin extends HookConsumerWidget {
                     // locator<PayvidenceAppRouter>()
                     //           .navigateNamed(PayvidenceRoutes.createNewPassword);
 
-
-                    if (_formKey.currentState!.validate()) {
+                    if (formKey.currentState!.validate()) {
                       print("Form is valid");
                       FocusScope.of(context).unfocus();
                       viewModel.verifyOtp(
                         otp: pinController.text,
                         navigateOnSuccess: () {
-                          locator<PayvidenceAppRouter>().popUntil(
-                                  (route) => route is OnboardingScreen);
                           locator<PayvidenceAppRouter>()
-                              .navigateNamed(PayvidenceRoutes.createNewPassword);
+                              .popUntil((route) => route is OnboardingScreen);
+                          locator<PayvidenceAppRouter>().navigateNamed(
+                              PayvidenceRoutes.createNewPassword);
                         },
                       );
                     } else {
@@ -166,10 +163,13 @@ class OtpLogin extends HookConsumerWidget {
                         ] else
                           TextSpan(
                             text: 'Resend code',
-                            style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xff4E38B2),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff4E38B2),
+                                ),
                           ),
                       ],
                     ),

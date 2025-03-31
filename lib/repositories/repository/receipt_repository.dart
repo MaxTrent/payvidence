@@ -1,7 +1,3 @@
-import 'package:dio/dio.dart';
-import 'package:payvidence/datasource/data/product_datasource.dart';
-import 'package:payvidence/model/product_model.dart';
-
 import '../../datasource/data/receipt_datasource.dart';
 import '../../model/receipt_model.dart';
 
@@ -11,6 +7,12 @@ abstract class IReceiptRepository {
   Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType);
 
   Future<void> deleteReceipt(String receiptId);
+
+  Future<Receipt> updateReceipt(
+      String recordId, Map<String, dynamic> requestData, bool? publish);
+
+  Future<Receipt> invoiceToReceipt(
+      String recordId, Map<String, dynamic> requestData);
 }
 
 class ReceiptRepository extends IReceiptRepository {
@@ -24,13 +26,25 @@ class ReceiptRepository extends IReceiptRepository {
   }
 
   @override
-  Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType) {
+  Future<List<Receipt>> fetchAllReceipts(
+      String businessId, String? recordType) {
     return receiptDatasource.fetchAllReceipts(businessId, recordType);
   }
 
   @override
   Future<void> deleteReceipt(String receiptId) {
     return receiptDatasource.deleteReceipt(receiptId);
+  }
 
+  @override
+  Future<Receipt> updateReceipt(
+      String recordId, Map<String, dynamic> requestData, bool? publish) {
+    return receiptDatasource.updateReceipt(recordId, requestData, publish);
+  }
+
+  @override
+  Future<Receipt> invoiceToReceipt(
+      String recordId, Map<String, dynamic> requestData) {
+    return receiptDatasource.invoiceToReceipt(recordId, requestData);
   }
 }

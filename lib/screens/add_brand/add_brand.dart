@@ -9,8 +9,6 @@ import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/toast_service.dart';
 
 @RoutePage(name: 'AddBrandRoute')
@@ -48,7 +46,7 @@ class AddBrand extends ConsumerWidget {
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         Navigator.of(context).pop(); //pop loading dialog on error
-        ToastService.error( 'An error has occurred!');
+        ToastService.error('An error has occurred!');
       }
     }
 

@@ -16,7 +16,7 @@ import 'add_business_vm.dart';
 
 @RoutePage(name: 'AddBusinessRoute')
 class AddBusiness extends HookConsumerWidget {
-  AddBusiness({super.key});
+  const AddBusiness({super.key});
 
   // final _controller = TextEditingController();
 
@@ -166,9 +166,9 @@ class AddBusiness extends HookConsumerWidget {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (vm.logo.value == null) {
-                          ToastService.error( "Select a logo image");
+                          ToastService.error("Select a logo image");
                         } else if (vm.signature.value == null) {
-                          ToastService.error( "Select a signature image");
+                          ToastService.error("Select a signature image");
                         } else {
                           vm.createBusiness(context);
                         }

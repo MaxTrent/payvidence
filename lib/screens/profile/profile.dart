@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/constants/app_colors.dart';
-import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
@@ -94,16 +93,15 @@ class Profile extends HookConsumerWidget {
                                                 .account
                                                 .profilePictureUrl!,
                                         placeholder: (context, url) =>
-                                            SvgPicture.asset(Assets
-                                                .svg.defaultProfilepic),
-                                        errorWidget:
-                                            (context, url, error) =>
-                                                SvgPicture.asset(Assets
-                                                    .svg.defaultProfilepic),
+                                            SvgPicture.asset(
+                                                Assets.svg.defaultProfilepic),
+                                        errorWidget: (context, url, error) =>
+                                            SvgPicture.asset(
+                                                Assets.svg.defaultProfilepic),
                                         fit: BoxFit.cover,
                                       )
-                                    : SvgPicture.asset(Assets.svg
-                                        .defaultProfilepic),
+                                    : SvgPicture.asset(
+                                        Assets.svg.defaultProfilepic),
                               ),
                             ),
                             Positioned(
@@ -111,9 +109,8 @@ class Profile extends HookConsumerWidget {
                               right: 0.w,
                               child: GestureDetector(
                                 onTap: () {
-                                  locator<PayvidenceAppRouter>()
-                                      .navigateNamed(PayvidenceRoutes
-                                          .changeProfilePicture);
+                                  locator<PayvidenceAppRouter>().navigateNamed(
+                                      PayvidenceRoutes.changeProfilePicture);
                                   // context.router.push(ChangeProfilePictureRoute());
                                 },
                                 child: CircleAvatar(
@@ -121,8 +118,8 @@ class Profile extends HookConsumerWidget {
                                   backgroundColor: Colors.white,
                                   child: Padding(
                                     padding: EdgeInsets.all(7.h),
-                                    child: SvgPicture.asset(
-                                        Assets.svg.editImage),
+                                    child:
+                                        SvgPicture.asset(Assets.svg.editImage),
                                   ),
                                 ),
                               ),
@@ -134,23 +131,20 @@ class Profile extends HookConsumerWidget {
                           children: [
                             GestureDetector(
                                 onTap: () {
-                                  locator<PayvidenceAppRouter>()
-                                      .navigateNamed(
-                                          PayvidenceRoutes.notifications);
+                                  locator<PayvidenceAppRouter>().navigateNamed(
+                                      PayvidenceRoutes.notifications);
                                 },
-                                child: SvgPicture.asset(
-                                    Assets.svg.notification)),
+                                child:
+                                    SvgPicture.asset(Assets.svg.notification)),
                             SizedBox(
                               width: 12.w,
                             ),
                             GestureDetector(
                                 onTap: () {
                                   locator<PayvidenceAppRouter>()
-                                      .navigateNamed(
-                                          PayvidenceRoutes.settings);
+                                      .navigateNamed(PayvidenceRoutes.settings);
                                 },
-                                child:
-                                    SvgPicture.asset(Assets.svg.setting2)),
+                                child: SvgPicture.asset(Assets.svg.setting2)),
                           ],
                         ),
                       ],
@@ -190,11 +184,9 @@ class Profile extends HookConsumerWidget {
                               height: 2..h,
                             ),
                             Text(
-                              useMySubscriptionViewModel
-                                      .subInfo?.plan.name ??
+                              useMySubscriptionViewModel.subInfo?.plan.name ??
                                   'Starter plan',
-                              style:
-                                  Theme.of(context).textTheme.displayLarge,
+                              style: Theme.of(context).textTheme.displayLarge,
                             )
                           ],
                         ),

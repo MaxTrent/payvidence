@@ -1,14 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
+final changePasswordViewModel =
+    ChangeNotifierProvider((ref) => ChangePasswordViewModel(ref));
 
-
-final changePasswordViewModel = ChangeNotifierProvider((ref)=> ChangePasswordViewModel(ref));
-
-class ChangePasswordViewModel extends BaseChangeNotifier{
+class ChangePasswordViewModel extends BaseChangeNotifier {
   final Ref ref;
   ChangePasswordViewModel(this.ref);
-
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -26,7 +24,8 @@ class ChangePasswordViewModel extends BaseChangeNotifier{
   }) async {
     _setLoading(true);
     try {
-      final response = await apiServices.changePassword(oldPassword, newPassword, confirmNewPassword);
+      final response = await apiServices.changePassword(
+          oldPassword, newPassword, confirmNewPassword);
 
       if (response.success) {
         navigateOnSuccess();

@@ -1,10 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:payvidence/model/category_model.dart';
 
 import '../../datasource/data/category_datasource.dart';
 
 abstract class ICategoryRepository {
-  Future<CategoryModel> addCategory(String businessId, Map<String, dynamic>  requestData);
+  Future<CategoryModel> addCategory(
+      String businessId, Map<String, dynamic> requestData);
 
   Future<List<CategoryModel>> fetchAllCategory(String businessId);
 
@@ -17,7 +17,8 @@ class CategoryRepository extends ICategoryRepository {
   CategoryRepository(this.categoryDatasource);
 
   @override
-  Future<CategoryModel> addCategory(String businessId, Map<String, dynamic>  requestData) {
+  Future<CategoryModel> addCategory(
+      String businessId, Map<String, dynamic> requestData) {
     return categoryDatasource.addCategory(businessId, requestData);
   }
 

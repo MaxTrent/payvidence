@@ -3,31 +3,43 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:toastification/toastification.dart';
 
-
 class ToastService {
-  static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   ToastService._();
 
   static void showSnackBar(String message) {
     scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(content: Text(message, style: TextStyle(
-        fontFamily: 'Polysans',
-        color: Colors.white,
-        fontSize: 16.sp,
-        fontWeight: FontWeight.w400,
-      ),), backgroundColor: primaryColor2,),
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(
+            fontFamily: 'Polysans',
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        backgroundColor: primaryColor2,
+      ),
     );
   }
 
   static void showErrorSnackBar(String message) {
     scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(content: Text(message, style: TextStyle(
-        fontFamily: 'Polysans',
-        color: Colors.white,
-        fontSize: 16.sp,
-        fontWeight: FontWeight.w400,
-      ),),backgroundColor: appRed,),
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(
+            fontFamily: 'Polysans',
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        backgroundColor: appRed,
+      ),
     );
   }
 
@@ -41,7 +53,9 @@ class ToastService {
       ),
       title: Text(
         msg,
-        style: Theme.of(context!).textTheme.displaySmall?.copyWith(color: Colors.white,),
+        style: Theme.of(context!).textTheme.displaySmall?.copyWith(
+              color: Colors.white,
+            ),
         overflow: TextOverflow.clip,
       ),
       showProgressBar: false,
@@ -59,14 +73,16 @@ class ToastService {
       ),
       title: Text(
         msg,
-        style: Theme.of(context!).textTheme.displaySmall?.copyWith(color: Colors.white,),
-
+        style: Theme.of(context!).textTheme.displaySmall?.copyWith(
+              color: Colors.white,
+            ),
         overflow: TextOverflow.clip,
       ),
       showProgressBar: false,
       autoCloseDuration: Duration(seconds: seconds ?? 5),
     );
   }
+
   static void info(context, String msg, {int? seconds}) {
     toastification.show(
       context: context,
@@ -77,8 +93,9 @@ class ToastService {
       ),
       title: Text(
         msg,
-        style: const TextStyle(color: Colors.white,),
-
+        style: const TextStyle(
+          color: Colors.white,
+        ),
         overflow: TextOverflow.clip,
       ),
       showProgressBar: false,

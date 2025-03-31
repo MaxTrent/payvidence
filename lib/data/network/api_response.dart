@@ -16,10 +16,10 @@ class ApiResult<T> extends Equatable {
 
   factory ApiResult.fromJson(Either<Failure, Success> json) {
     return json.fold(
-          (failure) => ApiResult(
+      (failure) => ApiResult(
         error: failure.error,
       ),
-          (success) => ApiResult(
+      (success) => ApiResult(
         success: true,
         data: success.data,
       ),
@@ -45,7 +45,8 @@ class Failure extends ApiResponse with EquatableMixin {
   Failure(this.error);
 
   factory Failure.fromMap(Map<String, dynamic> json) {
-    return Failure(ApiErrorResponseV2.fromMap(json["message"], json["results"]));
+    return Failure(
+        ApiErrorResponseV2.fromMap(json["message"], json["results"]));
   }
 
   @override
@@ -61,10 +62,12 @@ class ApiErrorResponseV2 extends Equatable {
 
   const ApiErrorResponseV2({this.message, this.errors});
 
-  factory ApiErrorResponseV2.fromMap(String message, Map<String, dynamic>? json) {
+  factory ApiErrorResponseV2.fromMap(
+      String message, Map<String, dynamic>? json) {
     var apiErrors = json?["errors"] as List?;
 
-    List<ApiError>? errors = apiErrors?.map((e) => ApiError.fromMap(e)).toList();
+    List<ApiError>? errors =
+        apiErrors?.map((e) => ApiError.fromMap(e)).toList();
 
     return ApiErrorResponseV2(message: message, errors: errors);
   }
@@ -94,7 +97,7 @@ class ApiError extends Equatable {
   final String? field;
   final String? message;
 
-  ApiError({this.rule, this.field, this.message});
+  const ApiError({this.rule, this.field, this.message});
 
   factory ApiError.fromMap(Map<String, dynamic> json) {
     return ApiError(

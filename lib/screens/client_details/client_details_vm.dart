@@ -1,10 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../shared_dependency/shared_dependency.dart';
 
-final clientDetailsViewModelViewModelProvider = ChangeNotifierProvider((ref) => ClientDetailsViewModel(ref));
+final clientDetailsViewModelViewModelProvider =
+    ChangeNotifierProvider((ref) => ClientDetailsViewModel(ref));
 
 class ClientDetailsViewModel extends BaseChangeNotifier {
   final Ref ref;
@@ -32,14 +31,14 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
   }
 
   Future<void> fetchClientDetails(String businessId, String clientId) async {
-
     try {
       _isLoading = true;
       notifyListeners();
 
       print("ViewModel: Fetching client information");
       final response = await apiServices.getClientInfo(businessId, clientId);
-      print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         final userData = response.data!["data"];
@@ -59,17 +58,22 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-
-
   }
-  Future<void> removeClient({required String businessId, required String clientId, required Function() navigateOnSuccess,}) async {
+
+  Future<void> removeClient({
+    required String businessId,
+    required String clientId,
+    required Function() navigateOnSuccess,
+  }) async {
     try {
       _isLoading = true;
       notifyListeners();
 
-      print("ViewModel: Removing client with businessId: $businessId, clientId: $clientId");
+      print(
+          "ViewModel: Removing client with businessId: $businessId, clientId: $clientId");
       final response = await apiServices.deleteClient(businessId, clientId);
-      print("ViewModel: Delete response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: Delete response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         print("ViewModel: Client removed successfully");
@@ -85,7 +89,8 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       }
     } catch (e) {
       print("ViewModel: Exception during remove - $e");
-      handleError(message: "An unexpected error occurred while removing the client.");
+      handleError(
+          message: "An unexpected error occurred while removing the client.");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -134,17 +139,22 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      print("ViewModel: Updating client with businessId: $businessId, clientId: $clientId, newName: $newName");
-      final response = await apiServices.updateClient(businessId, clientId, newName);
-      print("ViewModel: Update response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: Updating client with businessId: $businessId, clientId: $clientId, newName: $newName");
+      final response =
+          await apiServices.updateClient(businessId, clientId, newName);
+      print(
+          "ViewModel: Update response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         // Update clientInfo with the new data from the response (if provided) or manually
         if (response.data != null && response.data!.containsKey("data")) {
-          _client = ClientModel.fromJson(response.data!["data"] as Map<String, dynamic>);
+          _client = ClientModel.fromJson(
+              response.data!["data"] as Map<String, dynamic>);
         } else {
           // If API doesn't return updated data, update manually
-          _client = _client?.copyWith(name: newName) ?? ClientModel(id: clientId, name: newName);
+          _client = _client?.copyWith(name: newName) ??
+              ClientModel(id: clientId, name: newName);
         }
         _isEditing = false;
         showSuccess(message: 'Client details updated!');
@@ -159,9 +169,11 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       }
     } catch (e) {
       print("ViewModel: Exception during update - $e");
-      handleError(message: "An unexpected error occurred while updating the client.");
+      handleError(
+          message: "An unexpected error occurred while updating the client.");
     } finally {
       _isLoading = false;
       notifyListeners();
     }
-  }}
+  }
+}

@@ -3,19 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 import '../../model/subscription_model.dart';
 
+final mySubscriptionViewModel =
+    ChangeNotifierProvider((ref) => MySubscriptionViewModel(ref));
 
-final mySubscriptionViewModel = ChangeNotifierProvider((ref)=> MySubscriptionViewModel(ref));
-
-class MySubscriptionViewModel extends BaseChangeNotifier{
+class MySubscriptionViewModel extends BaseChangeNotifier {
   final Ref ref;
   MySubscriptionViewModel(this.ref);
 
   List<Subscription> _subscriptions = [];
 
   List<Subscription> get subscriptions => _subscriptions;
-
-
-
 
   // set subscriptionInfo(Subscription? subscription) {
   //   _subscription = subscription;
@@ -24,7 +21,7 @@ class MySubscriptionViewModel extends BaseChangeNotifier{
   // }
 
   Subscription? get subInfo {
-   return _subscriptions.firstWhereOrNull((sub) => sub.status == "active");
+    return _subscriptions.firstWhereOrNull((sub) => sub.status == "active");
   }
 
   List<Subscription> get expiredSubscriptions {
@@ -41,18 +38,19 @@ class MySubscriptionViewModel extends BaseChangeNotifier{
     print("ViewModel: subscriptionsInfo set to $_subscriptions");
   }
 
-
   Future<void> fetchSubscriptions() async {
     try {
       print("ViewModel: Fetching user information");
       final response = await apiServices.getPendingSubscriptions();
-      print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         final subData = response.data!["data"];
         if (subData is List) {
           subscriptionsInfo = subData
-              .map((item) => Subscription.fromJson(item as Map<String, dynamic>))
+              .map(
+                  (item) => Subscription.fromJson(item as Map<String, dynamic>))
               .toList();
         } else if (subData is Map<String, dynamic>) {
           subscriptionsInfo = [Subscription.fromJson(subData)];
@@ -76,5 +74,4 @@ class MySubscriptionViewModel extends BaseChangeNotifier{
       throw Exception(e);
     }
   }
-
 }

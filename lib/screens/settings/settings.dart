@@ -1,16 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
- import 'package:payvidence/screens/profile/profile.dart';
+import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
-   
-    
-
 
 @RoutePage(name: 'SettingsRoute')
 class Settings extends StatelessWidget {
@@ -36,28 +32,29 @@ class Settings extends StatelessWidget {
               height: 28.h,
             ),
             ProfileOptionTile(
-                icon: Assets.svg.passwordCheck,
-                title: 'Change password',
-                onTap: (){
-                  locator<PayvidenceAppRouter>().push(ChangePasswordRoute());
-                },
-                // navigateTo: AppRoutes.changePassword
+              icon: Assets.svg.passwordCheck,
+              title: 'Change password',
+              onTap: () {
+                locator<PayvidenceAppRouter>().push(ChangePasswordRoute());
+              },
+              // navigateTo: AppRoutes.changePassword
             ),
             ProfileOptionTile(
-                icon: Assets.svg.check,
-                title: 'Reset password',
-              onTap: (){
+              icon: Assets.svg.check,
+              title: 'Reset password',
+              onTap: () {
                 locator<PayvidenceAppRouter>().push(ResetPasswordRoute());
               },
-                // navigateTo: AppRoutes.resetPassword
+              // navigateTo: AppRoutes.resetPassword
             ),
             ProfileOptionTile(
-                icon: Assets.svg.lockCircle,
-                title: 'Privacy and security',
-                // navigateTo: AppRoutes.privacyAndSecurity,
-              onTap: (){
-                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.privacyAndSecurity);
-                },
+              icon: Assets.svg.lockCircle,
+              title: 'Privacy and security',
+              // navigateTo: AppRoutes.privacyAndSecurity,
+              onTap: () {
+                locator<PayvidenceAppRouter>()
+                    .navigateNamed(PayvidenceRoutes.privacyAndSecurity);
+              },
             ),
             // ProfileOptionTile(
             //     icon: Assets.svg.notificationBing,

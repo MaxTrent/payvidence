@@ -114,11 +114,11 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   Future<void> selectClient() async {
-    final ClientModel? _client = await locator<PayvidenceAppRouter>()
+    ClientModel? client = await locator<PayvidenceAppRouter>()
         .push(ClientsRoute(forSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
-    if (_client != null) {
-      client = _client;
+    if (client != null) {
+      client = client;
       setState(() {});
     }
   }
@@ -155,7 +155,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         final product = products[index]!;
 
         if (qtyControllers[index - 1].text.isEmpty) {
-          ToastService.error( 'Enter the qty purchased for product $index');
+          ToastService.error('Enter the qty purchased for product $index');
           return; // Stops the entire function execution
         } else {
           productList.add({
@@ -208,7 +208,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error( 'An unknown error has occurred!');
+        ToastService.error('An unknown error has occurred!');
       }
     }
 
@@ -371,7 +371,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error( "Select a client please");
+                                ToastService.error("Select a client please");
                               }
                               isDraft = false;
                               createReceipt();
@@ -419,6 +419,7 @@ class FormFields extends StatefulWidget {
   final Future<Product?> Function(int index) onPressed;
   final int index;
   Product? product;
+  final bool? invoiceToReceipt;
 
   FormFields(
       {super.key,
@@ -426,7 +427,8 @@ class FormFields extends StatefulWidget {
       required this.discountController,
       required this.onPressed,
       required this.index,
-      this.product});
+      this.product,
+      this.invoiceToReceipt = false});
 
   @override
   State<FormFields> createState() => _FormFieldsState();
@@ -447,6 +449,9 @@ class _FormFieldsState extends State<FormFields> {
         ),
         GestureDetector(
           onTap: () async {
+            if (widget.invoiceToReceipt == true) {
+              return;
+            }
             final Product? result = await widget.onPressed.call(widget.index);
             if (result == null) {
             } else {
@@ -486,6 +491,7 @@ class _FormFieldsState extends State<FormFields> {
             }
             return null;
           },
+          enabled: !widget.invoiceToReceipt!,
         ),
         SizedBox(
           height: 20.h,
@@ -508,6 +514,7 @@ class _FormFieldsState extends State<FormFields> {
                     .displaySmall!
                     .copyWith(fontSize: 14.sp)),
           ),
+          enabled: !widget.invoiceToReceipt!,
         ),
       ],
     );

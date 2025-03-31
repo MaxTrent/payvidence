@@ -155,7 +155,7 @@ class NetworkService {
       }
 
       dynamic data;
-      if (response!.data is Map) {
+      if (response.data is Map) {
         data = response.data as Map<dynamic, dynamic>;
       } else {
         data = response.data;
@@ -171,15 +171,16 @@ class NetworkService {
 
       if (e.response == null) {
         return Left(Failure(const ApiErrorResponseV2(
-            message: "Service unavailable at the moment. \nPlease try again later!")));
+            message:
+                "Service unavailable at the moment. \nPlease try again later!")));
       }
 
       if (e.response!.statusCode == 401 &&
           e.response!.data is Map &&
           e.response!.data['message'] == 'Unauthenticated') {
         // await logOut();
-        return Left(Failure(
-            const ApiErrorResponseV2(message: 'Session expired. Please log in again.')));
+        return Left(Failure(const ApiErrorResponseV2(
+            message: 'Session expired. Please log in again.')));
       }
 
       return Left(Failure.fromMap(e.response!.data as Map<String, dynamic>));

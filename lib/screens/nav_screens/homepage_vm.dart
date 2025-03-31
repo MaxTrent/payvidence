@@ -3,9 +3,10 @@ import 'package:payvidence/utilities/base_notifier.dart';
 
 import '../../model/business_model.dart';
 
-final homePageViewModel = ChangeNotifierProvider((ref)=> HomePageViewModel(ref));
+final homePageViewModel =
+    ChangeNotifierProvider((ref) => HomePageViewModel(ref));
 
-class HomePageViewModel extends BaseChangeNotifier{
+class HomePageViewModel extends BaseChangeNotifier {
   final Ref ref;
   HomePageViewModel(this.ref);
 
@@ -17,24 +18,20 @@ class HomePageViewModel extends BaseChangeNotifier{
   }
 
   Future<void> getBusiness() async {
-  try {
+    try {
+      final response = await apiServices.getBusiness();
 
-    final response = await apiServices.getBusiness();
-
-    if (response.success) {
-      if(response.data!["data"][0]){
-        businessInfo = Business.fromJson(response.data!["data"][0]);
-        notifyListeners();
+      if (response.success) {
+        if (response.data!["data"][0]) {
+          businessInfo = Business.fromJson(response.data!["data"][0]);
+          notifyListeners();
+        }
+      } else {
+        var errorMessage = response.error?.errors?.first.message ??
+            response.error?.message ??
+            "An error occurred!";
+        handleError(message: errorMessage);
       }
-    } else {
-
-      var errorMessage = response.error?.errors?.first.message ??
-          response.error?.message ??
-          "An error occurred!";
-      handleError(message: errorMessage);
-    }
-  } catch (e) {
+    } catch (e) {}
   }
-}
-
 }

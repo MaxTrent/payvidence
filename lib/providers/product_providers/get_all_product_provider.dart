@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/providers/product_providers/product_fillter_provider.dart';
-import 'package:payvidence/repositories/repository/business_repository.dart';
 import 'package:payvidence/repositories/repository/product_repository.dart';
 
-import '../../model/business_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
 final getAllProductProvider =

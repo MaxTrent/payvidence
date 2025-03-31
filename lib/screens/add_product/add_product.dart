@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:payvidence/data/network/api_response.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/category_providers/current_category_provider.dart';
@@ -28,7 +26,7 @@ import '../../utilities/validators.dart';
 class AddProduct extends ConsumerStatefulWidget {
   final Product? product;
 
-  AddProduct({super.key, this.product});
+  const AddProduct({super.key, this.product});
 
   @override
   ConsumerState<AddProduct> createState() => _AddProductState();
@@ -122,10 +120,9 @@ class _AddProductState extends ConsumerState<AddProduct> {
 
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.success(
-            widget.product == null
-                ? "Product created successfully"
-                : "Product updated successfully");
+        ToastService.success(widget.product == null
+            ? "Product created successfully"
+            : "Product updated successfully");
         ref.invalidate(getAllProductProvider);
         if (widget.product != null) {
           ref
@@ -417,13 +414,13 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (currentBrand == null) {
-                          ToastService.error( "Select a brand!");
+                          ToastService.error("Select a brand!");
                         } else if (currentCategory == null) {
-                          ToastService.error( "Select a category!");
+                          ToastService.error("Select a category!");
                         }
                         if (productImage.value == null &&
                             widget.product == null) {
-                          ToastService.error( "Select a product image");
+                          ToastService.error("Select a product image");
                         } else {
                           createProduct();
                         }

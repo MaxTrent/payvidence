@@ -43,7 +43,8 @@ class AllInvoices extends ConsumerWidget {
             padding: EdgeInsets.only(right: 20.w),
             child: GestureDetector(
                 onTap: () {
-                  locator<PayvidenceAppRouter>().push(DraftsRoute(isInvoice: true));
+                  locator<PayvidenceAppRouter>()
+                      .push(DraftsRoute(isInvoice: true));
                 },
                 child: Text('View drafts',
                     style: Theme.of(context)
@@ -116,10 +117,11 @@ class AllInvoices extends ConsumerWidget {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           locator<PayvidenceAppRouter>()
                               .navigate(ReceiptScreenRoute(
-                            record: actualData[index], isInvoice: true,
+                            record: actualData[index],
+                            isInvoice: true,
                           ));
                         },
                         child: ReceiptTile(

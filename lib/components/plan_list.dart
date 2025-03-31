@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,11 +18,19 @@ class PlanList extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(description, style: Theme.of(context).textTheme.displaySmall!,),
-            Text(status, style: Theme.of(context).textTheme.displaySmall!,),
+            Text(
+              description,
+              style: Theme.of(context).textTheme.displaySmall!,
+            ),
+            Text(
+              status,
+              style: Theme.of(context).textTheme.displaySmall!,
+            ),
           ],
         ),
-        SizedBox(height: 18.h,),
+        SizedBox(
+          height: 18.h,
+        ),
       ],
     );
   }

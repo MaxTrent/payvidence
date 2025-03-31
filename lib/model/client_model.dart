@@ -19,29 +19,34 @@ class ClientModel {
     this.updatedAt,
   });
 
-  factory ClientModel.fromRawJson(String str) => ClientModel.fromJson(json.decode(str));
+  factory ClientModel.fromRawJson(String str) =>
+      ClientModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory ClientModel.fromJson(Map<String, dynamic> json) => ClientModel(
-    id: json["id"],
-    businessId: json["business_id"],
-    name: json["name"],
-    phoneNumber: json["phone_number"],
-    address: json["address"],
-    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-  );
+        id: json["id"],
+        businessId: json["business_id"],
+        name: json["name"],
+        phoneNumber: json["phone_number"],
+        address: json["address"],
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "business_id": businessId,
-    "name": name,
-    "phone_number": phoneNumber,
-    "address": address,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-  };
+        "id": id,
+        "business_id": businessId,
+        "name": name,
+        "phone_number": phoneNumber,
+        "address": address,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+      };
 
   ClientModel copyWith({
     String? id,

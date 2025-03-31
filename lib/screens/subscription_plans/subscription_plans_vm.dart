@@ -1,13 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
+final subscriptionPlansViewModelProvider =
+    ChangeNotifierProvider((ref) => SubscriptionPlansViewModel(ref));
 
-final subscriptionPlansViewModelProvider = ChangeNotifierProvider((ref)=>SubscriptionPlansViewModel(ref));
-
-class SubscriptionPlansViewModel extends BaseChangeNotifier{
+class SubscriptionPlansViewModel extends BaseChangeNotifier {
   final Ref ref;
   SubscriptionPlansViewModel(this.ref);
-
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;

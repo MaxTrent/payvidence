@@ -73,7 +73,8 @@ class Transaction {
       client: Client.fromJson(json['client'] as Map<String, dynamic>),
       business: Business.fromJson(json['business'] as Map<String, dynamic>),
       recordProductDetails: (json['record_product_details'] as List<dynamic>)
-          .map((item) => RecordProductDetail.fromJson(item as Map<String, dynamic>))
+          .map((item) =>
+              RecordProductDetail.fromJson(item as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -91,7 +92,8 @@ class Transaction {
       'updated_at': updatedAt.toIso8601String(),
       'client': client.toJson(),
       'business': business.toJson(),
-      'record_product_details': recordProductDetails.map((detail) => detail.toJson()).toList(),
+      'record_product_details':
+          recordProductDetails.map((detail) => detail.toJson()).toList(),
     };
   }
 }

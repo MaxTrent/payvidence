@@ -1,11 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
-import '../../data/local/session_constants.dart';
-import '../../data/local/session_manager.dart';
 import '../../model/plan_model.dart'; // Update path if needed
-import '../../shared_dependency/shared_dependency.dart';
 
-final chooseSubscriptionPlanViewModel = ChangeNotifierProvider((ref) => ChooseSubscriptionPlanViewModel(ref));
+final chooseSubscriptionPlanViewModel =
+    ChangeNotifierProvider((ref) => ChooseSubscriptionPlanViewModel(ref));
 
 class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier {
   final Ref ref;
@@ -38,12 +36,15 @@ class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier {
 
       print("ViewModel: Fetching plans");
       final response = await apiServices.getPlans();
-      print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         final planData = response.data!["data"];
         if (planData is List) {
-          plans = planData.map((item) => Plan.fromJson(item as Map<String, dynamic>)).toList();
+          plans = planData
+              .map((item) => Plan.fromJson(item as Map<String, dynamic>))
+              .toList();
         } else {
           print("ViewModel: Unexpected data format - $planData");
           handleError(message: "Unexpected data format");
@@ -72,7 +73,8 @@ class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier {
       notifyListeners();
       print("ViewModel: Fetching plan details for planId: $planId");
       final response = await apiServices.getOnePlan(planId);
-      print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         final planData = response.data!["data"];

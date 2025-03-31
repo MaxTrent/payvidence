@@ -2,7 +2,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 import '../../model/user_model.dart';
 
-final updatePersonalDetailsViewModelProvider = ChangeNotifierProvider((ref) => UpdatePersonalDetailsViewModel(ref));
+final updatePersonalDetailsViewModelProvider =
+    ChangeNotifierProvider((ref) => UpdatePersonalDetailsViewModel(ref));
 
 class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
   final Ref ref;
@@ -28,7 +29,8 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
 
       print("ViewModel: Fetching user information");
       final response = await apiServices.getAccount();
-      print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         final userData = response.data!["data"];

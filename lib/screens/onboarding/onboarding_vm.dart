@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 final onboardingScreenViewModelProvider =
-ChangeNotifierProvider<OnboardingScreenViewModel>((ref) {
+    ChangeNotifierProvider<OnboardingScreenViewModel>((ref) {
   return OnboardingScreenViewModel(ref);
 });
 
@@ -15,8 +14,7 @@ class OnboardingScreenViewModel extends ChangeNotifier {
 
   int get currentPageIndex => ref.watch(currentPageProvider);
 
-  void changeIndex(index){
+  void changeIndex(index) {
     ref.read(currentPageProvider.notifier).state = index;
   }
-
 }

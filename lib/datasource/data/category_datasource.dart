@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../data/network/api_response.dart';
@@ -11,7 +10,8 @@ abstract class ICategoryDatasource {
     String businessId,
   );
 
-  Future<CategoryModel> addCategory(String businessId, Map<String, dynamic>  requestData);
+  Future<CategoryModel> addCategory(
+      String businessId, Map<String, dynamic> requestData);
 }
 
 class CategoryDatasource extends ICategoryDatasource {

@@ -77,10 +77,7 @@ class AppTextField extends StatelessWidget {
               .textTheme
               .displaySmall!
               .copyWith(fontWeight: FontWeight.w400),
-          errorStyle: Theme.of(context)
-              .textTheme
-              .displaySmall!
-              .copyWith(
+          errorStyle: Theme.of(context).textTheme.displaySmall!.copyWith(
               fontWeight: FontWeight.w400,
               color: Colors.red,
               height: 0.3,

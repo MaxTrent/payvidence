@@ -14,8 +14,8 @@ class DialogHandler {
         backgroundColor: toastMessageType == ToastMessageType.failure
             ? Colors.red
             : toastMessageType == ToastMessageType.success
-            ? Colors.green
-            : Colors.blue,
+                ? Colors.green
+                : Colors.blue,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 3),
       ),

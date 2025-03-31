@@ -20,11 +20,11 @@ class AccountSuccessScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: AppButton(
           buttonText: 'Go to Home',
-          onPressed: () async{
+          onPressed: () async {
             await locator<SessionManager>()
-            .save(key: SessionConstants.isUserLoggedIn, value: true);
-            locator<PayvidenceAppRouter>().popUntil(
-                    (route) => route is OnboardingScreen);
+                .save(key: SessionConstants.isUserLoggedIn, value: true);
+            locator<PayvidenceAppRouter>()
+                .popUntil((route) => route is OnboardingScreen);
             locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
 
             // context.go(AppRoutes.login);

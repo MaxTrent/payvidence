@@ -7,10 +7,11 @@ import '../../utilities/payvidence_endpoints.dart';
 
 abstract class IBrandDatasource {
   Future<List<BrandModel>> fetchAllBrand(
-      String businessId,
-      );
+    String businessId,
+  );
 
-  Future<BrandModel> addBrand(String businessId, Map<String, dynamic>  requestData);
+  Future<BrandModel> addBrand(
+      String businessId, Map<String, dynamic> requestData);
 }
 
 class BrandDatasource extends IBrandDatasource {
@@ -20,8 +21,8 @@ class BrandDatasource extends IBrandDatasource {
 
   @override
   Future<List<BrandModel>> fetchAllBrand(
-      String businessId,
-      ) async {
+    String businessId,
+  ) async {
     try {
       final Either<Failure, Success> response = await networkService.get(
         '${PayvidenceEndpoints.business}$businessId/brand',

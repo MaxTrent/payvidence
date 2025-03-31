@@ -7,19 +7,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/login/login_vm.dart';
-import 'package:payvidence/screens/onboarding/onboarding.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
-
+import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'LoginRoute')
 class Login extends HookConsumerWidget {
-  Login({super.key});
-
+  const Login({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
@@ -50,8 +48,7 @@ class Login extends HookConsumerWidget {
         emailController.removeListener(updateFieldsEmptyStatus);
         passwordController.removeListener(updateFieldsEmptyStatus);
       };
-    }, [
-    ]);
+    }, []);
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus,
@@ -136,7 +133,8 @@ class Login extends HookConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.forgotPassword);
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.forgotPassword);
                     },
                     child: Text(
                       'Forgot password?',
@@ -153,7 +151,8 @@ class Login extends HookConsumerWidget {
                   FutureBuilder(
                     future: viewModel.canUseBiometrics,
                     builder: (context, snapshot) {
-                      final canUseBiometrics = snapshot.hasData && snapshot.data == true;
+                      final canUseBiometrics =
+                          snapshot.hasData && snapshot.data == true;
 
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +172,7 @@ class Login extends HookConsumerWidget {
                                     navigateOnSuccess: () {
                                       ref.invalidate(getAllBusinessProvider);
                                       locator<PayvidenceAppRouter>().popUntil(
-                                              (route) => route is OnboardingScreen);
+                                          (route) => route is OnboardingScreen);
                                       locator<PayvidenceAppRouter>()
                                           .replaceNamed(PayvidenceRoutes.home);
                                     },
@@ -182,9 +181,7 @@ class Login extends HookConsumerWidget {
                               },
                             ),
                           ),
-
                           if (canUseBiometrics) SizedBox(width: 16.w),
-
                           if (canUseBiometrics)
                             GestureDetector(
                               onTap: () {
@@ -193,7 +190,7 @@ class Login extends HookConsumerWidget {
                                   navigateOnSuccess: () {
                                     ref.invalidate(getAllBusinessProvider);
                                     locator<PayvidenceAppRouter>().popUntil(
-                                            (route) => route is OnboardingScreen);
+                                        (route) => route is OnboardingScreen);
                                     locator<PayvidenceAppRouter>()
                                         .replaceNamed(PayvidenceRoutes.home);
                                   },
@@ -209,7 +206,6 @@ class Login extends HookConsumerWidget {
                       );
                     },
                   ),
-
                 ],
               ),
             ),

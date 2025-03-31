@@ -2,11 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/model/notification_model.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
+final notificationsViewModel =
+    ChangeNotifierProvider((ref) => NotificationsViewModel(ref));
 
-
-final notificationsViewModel = ChangeNotifierProvider((ref)=>NotificationsViewModel(ref));
-
-class NotificationsViewModel extends BaseChangeNotifier{
+class NotificationsViewModel extends BaseChangeNotifier {
   final Ref ref;
   NotificationsViewModel(this.ref);
 
@@ -37,12 +36,16 @@ class NotificationsViewModel extends BaseChangeNotifier{
 
       print("ViewModel: Fetching plans");
       final response = await apiServices.getAllNotifications();
-      print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
+      print(
+          "ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
         final notificationData = response.data!["data"];
         if (notificationData is List) {
-          notifications = notificationData.map((item) => NotificationModel.fromJson(item as Map<String, dynamic>)).toList();
+          notifications = notificationData
+              .map((item) =>
+                  NotificationModel.fromJson(item as Map<String, dynamic>))
+              .toList();
         } else {
           print("ViewModel: Unexpected data format - $notificationData");
           handleError(message: "Unexpected data format");
@@ -64,6 +67,4 @@ class NotificationsViewModel extends BaseChangeNotifier{
       notifyListeners();
     }
   }
-
-
 }

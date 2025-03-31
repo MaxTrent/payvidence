@@ -3,36 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:payvidence/screens/nav_screens/home.dart';
 
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../providers/client_providers/get_all_client_provider.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../routes/payvidence_app_router.gr.dart';
-import '../../shared_dependency/shared_dependency.dart';
-import '../clients/clients.dart';
-   
-
-
 
 @RoutePage(name: 'ClientSuccessRoute')
 class ClientSuccess extends HookConsumerWidget {
   final String name;
 
-  const ClientSuccess({super.key,@QueryParam('name') this.name = ''});
+  const ClientSuccess({super.key, @QueryParam('name') this.name = ''});
 
   @override
   Widget build(BuildContext context, ref) {
     return Scaffold(
       floatingActionButton: AppButton(
           buttonText: 'Alright!',
-          onPressed: (){
+          onPressed: () {
             // locator<PayvidenceAppRouter>().popUntil(
             //         (route) => route is Clients);
             ref.read(getAllClientsProvider.notifier).fetchClients();
-           Navigator.of(context).pop();
-           Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
             // locator<PayvidenceAppRouter>().back();
           }),
       body: SafeArea(

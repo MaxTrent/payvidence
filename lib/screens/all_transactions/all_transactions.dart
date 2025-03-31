@@ -15,7 +15,6 @@ import '../../components/transaction_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
-
 @RoutePage(name: 'AllTransactionsRoute')
 class AllTransactions extends HookConsumerWidget {
   const AllTransactions({super.key});
@@ -24,17 +23,16 @@ class AllTransactions extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(allTransactionsViewModelProvider);
     final searchController = useTextEditingController();
-    final businessId = locator<SessionManager>().get(SessionConstants.businessId) as String?;
+    final businessId =
+        locator<SessionManager>().get(SessionConstants.businessId) as String?;
     final filterType = useState('All');
     final searchQuery = useState('');
 
     useEffect(() {
-
-        Future.microtask(() {
-          print('Fetching transactions with businessId: $businessId');
-          viewModel.fetchTransactions(businessId!);
-        });
-
+      Future.microtask(() {
+        print('Fetching transactions with businessId: $businessId');
+        viewModel.fetchTransactions(businessId!);
+      });
 
       void listener() {
         searchQuery.value = searchController.text;
@@ -46,10 +44,9 @@ class AllTransactions extends HookConsumerWidget {
       };
     }, [businessId, searchController]);
 
-
-
     final filteredTransactions = viewModel.transactions.where((transaction) {
-      final isReceipt = transaction.status != 'pending'; // Assuming 'pending' means Invoice
+      final isReceipt =
+          transaction.status != 'pending'; // Assuming 'pending' means Invoice
       final isInvoice = transaction.status == 'pending';
       final matchesFilter = filterType.value == 'All' ||
           (filterType.value == 'Receipt' && isReceipt) ||
@@ -138,12 +135,16 @@ class AllTransactions extends HookConsumerWidget {
                     ? 'Try adjusting your filter or search.'
                     : 'Start generating receipts and invoices for your business. All transactions will show here.',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
+                style: Theme.of(context)
+                    .textTheme
+                    .displaySmall!
+                    .copyWith(fontSize: 14.sp),
               ),
             ] else ...[
               ...filteredTransactions.map(
-                    (transaction) {
-                  final firstProductDetail = transaction.recordProductDetails.first;
+                (transaction) {
+                  final firstProductDetail =
+                      transaction.recordProductDetails.first;
                   return GestureDetector(
                     onTap: () {
                       // final receipt = Receipt(
@@ -172,11 +173,18 @@ class AllTransactions extends HookConsumerWidget {
                       // );
                     },
                     child: TransactionTile(
-                      amount: firstProductDetail.product.price.toString().toCommaSeparated(),
-                      dateTime: firstProductDetail.product.createdAt.toString().toFormattedIsoDate(),
+                      amount: firstProductDetail.product.price
+                          .toString()
+                          .toCommaSeparated(),
+                      dateTime: firstProductDetail.product.createdAt
+                          .toString()
+                          .toFormattedIsoDate(),
                       productName: firstProductDetail.product.name,
-                      receiptOrInvoice: transaction.status == 'pending' ? 'Invoice' : 'Receipt',
-                      unitSold: firstProductDetail.product.quantitySold.toString(),
+                      receiptOrInvoice: transaction.status == 'pending'
+                          ? 'Invoice'
+                          : 'Receipt',
+                      unitSold:
+                          firstProductDetail.product.quantitySold.toString(),
                     ),
                   );
                 },
@@ -188,7 +196,8 @@ class AllTransactions extends HookConsumerWidget {
     );
   }
 
-  Future<dynamic> buildFilterBottomSheet(BuildContext context, ValueNotifier<String?> filterType) {
+  Future<dynamic> buildFilterBottomSheet(
+      BuildContext context, ValueNotifier<String?> filterType) {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -229,10 +238,13 @@ class AllTransactions extends HookConsumerWidget {
                         Center(
                           child: Text(
                             'Filter transactions',
-                            style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayLarge!
+                                .copyWith(
+                                  fontSize: 22.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ),
                         GestureDetector(

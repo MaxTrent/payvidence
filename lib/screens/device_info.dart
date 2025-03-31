@@ -8,10 +8,10 @@ Future<String?> getDeviceName() async {
 
   if (Platform.isAndroid) {
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    deviceName = androidInfo.model; 
+    deviceName = androidInfo.model;
   } else if (Platform.isIOS) {
     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    deviceName = iosInfo.name; 
+    deviceName = iosInfo.name;
   }
 
   return deviceName;
