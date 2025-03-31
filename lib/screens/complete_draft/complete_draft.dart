@@ -150,9 +150,10 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
       if (!context.mounted) return;
       Navigator.of(context).pop(); //pop loading dialog on success
       ToastService.success("Receipt generated successfully");
-      ref.invalidate(widget.isInvoice == true && widget.inVoiceToReceipt==false
-          ? getAllInvoiceProvider
-          : getAllReceiptProvider);
+      ref.invalidate(
+          widget.isInvoice == true && widget.inVoiceToReceipt == false
+              ? getAllInvoiceProvider
+              : getAllReceiptProvider);
       Future.delayed(const Duration(seconds: 2), () {
         if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
           if (!context.mounted) return;
@@ -365,7 +366,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error( "Select a client please");
+                                ToastService.error("Select a client please");
                               }
                               isDraft = false;
                               createReceipt();
@@ -380,7 +381,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error( "Select a client please");
+                                ToastService.error("Select a client please");
                               }
                               isDraft = true;
                               createReceipt();

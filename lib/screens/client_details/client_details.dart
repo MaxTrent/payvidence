@@ -18,10 +18,13 @@ class ClientDetails extends HookConsumerWidget {
   final String clientId;
   final String businessId;
 
-  const ClientDetails({super.key,@QueryParam('businessId') this.businessId = '',  @QueryParam('clientId') this.clientId = ''});
+  const ClientDetails(
+      {super.key,
+      @QueryParam('businessId') this.businessId = '',
+      @QueryParam('clientId') this.clientId = ''});
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(clientDetailsViewModelViewModelProvider);
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final nameController = useTextEditingController();
@@ -32,10 +35,10 @@ class ClientDetails extends HookConsumerWidget {
     //     locator<SessionManager>().get(SessionConstants.businessId) as String?;
 
     useEffect(() {
-      Future.microtask(() => viewModel.fetchClientDetails(businessId, clientId));
+      Future.microtask(
+          () => viewModel.fetchClientDetails(businessId, clientId));
       return null;
     }, [businessId, clientId]);
-
 
     useEffect(() {
       if (viewModel.clientInfo != null && !viewModel.isLoading) {
@@ -114,50 +117,49 @@ class ClientDetails extends HookConsumerWidget {
                     ),
                     CustomShimmer(height: 50.h),
                   ] else ...[
-
-
-                  Text(
-                    'Client name',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  AppTextField(
-                    hintText: 'Client name',
-                    controller: nameController,
-                    enabled: viewModel.isEditing,
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    'Client phone number',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  AppTextField(
-                    hintText: 'Client phone number',
-                    controller: phoneNumberController,
-                    enabled: false,
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    'Client address',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  AppTextField(
-                    hintText: 'Client address',
-                    controller: addressController,
-                    enabled: false,
-                  ),],
+                    Text(
+                      'Client name',
+                      style: Theme.of(context).textTheme.displaySmall,
+                    ),
+                    SizedBox(
+                      height: 8.h,
+                    ),
+                    AppTextField(
+                      hintText: 'Client name',
+                      controller: nameController,
+                      enabled: viewModel.isEditing,
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Text(
+                      'Client phone number',
+                      style: Theme.of(context).textTheme.displaySmall,
+                    ),
+                    SizedBox(
+                      height: 8.h,
+                    ),
+                    AppTextField(
+                      hintText: 'Client phone number',
+                      controller: phoneNumberController,
+                      enabled: false,
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Text(
+                      'Client address',
+                      style: Theme.of(context).textTheme.displaySmall,
+                    ),
+                    SizedBox(
+                      height: 8.h,
+                    ),
+                    AppTextField(
+                      hintText: 'Client address',
+                      controller: addressController,
+                      enabled: false,
+                    ),
+                  ],
                   SizedBox(
                     height: 32.h,
                   ),
@@ -165,18 +167,24 @@ class ClientDetails extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       AppButton(
-                        buttonText: viewModel.isEditing ? 'Save' :'Update client details',
+                        buttonText: viewModel.isEditing
+                            ? 'Save'
+                            : 'Update client details',
                         onPressed: () {
                           if (!viewModel.isEditing) {
                             viewModel.toggleEditing();
                           } else if (hasChanges()) {
                             if (businessId != null) {
-                              viewModel.updateClient(businessId: businessId,clientId:  clientId,newName:  nameController.text,
-                              navigateOnSuccess: (){
-                                locator<PayvidenceAppRouter>().back();
-                              });
+                              viewModel.updateClient(
+                                  businessId: businessId,
+                                  clientId: clientId,
+                                  newName: nameController.text,
+                                  navigateOnSuccess: () {
+                                    locator<PayvidenceAppRouter>().back();
+                                  });
                             } else {
-                              print("Business ID is null, cannot update client");
+                              print(
+                                  "Business ID is null, cannot update client");
                             }
                           } else {
                             print("No changes detected, exiting edit mode");
@@ -220,9 +228,11 @@ class ClientDetails extends HookConsumerWidget {
                                                 height: 5.h,
                                                 width: 67.w,
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xffd9d9d9),
+                                                  color:
+                                                      const Color(0xffd9d9d9),
                                                   borderRadius:
-                                                      BorderRadius.circular(100.r),
+                                                      BorderRadius.circular(
+                                                          100.r),
                                                 ),
                                               ),
                                             ),
@@ -231,7 +241,8 @@ class ClientDetails extends HookConsumerWidget {
                                             ),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 const SizedBox.shrink(),
                                                 Center(
@@ -274,11 +285,13 @@ class ClientDetails extends HookConsumerWidget {
                                             AppButton(
                                               buttonText: 'Remove client',
                                               onPressed: () async {
-
-                                                  await viewModel.removeClient(businessId: businessId, clientId: clientId, navigateOnSuccess: (){
-                                                    locator<PayvidenceAppRouter>().back();
-                                                  });
-
+                                                await viewModel.removeClient(
+                                                    businessId: businessId,
+                                                    clientId: clientId,
+                                                    navigateOnSuccess: () {
+                                                      locator<PayvidenceAppRouter>()
+                                                          .back();
+                                                    });
                                               },
                                               backgroundColor: appRed,
                                               textColor: Colors.white,
@@ -289,7 +302,8 @@ class ClientDetails extends HookConsumerWidget {
                                             AppButton(
                                               buttonText: 'Cancel',
                                               onPressed: () {},
-                                              backgroundColor: Colors.transparent,
+                                              backgroundColor:
+                                                  Colors.transparent,
                                               textColor: Colors.black,
                                             ),
                                           ],

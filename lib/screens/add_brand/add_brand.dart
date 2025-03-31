@@ -48,7 +48,7 @@ class AddBrand extends ConsumerWidget {
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         Navigator.of(context).pop(); //pop loading dialog on error
-        ToastService.error( 'An error has occurred!');
+        ToastService.error('An error has occurred!');
       }
     }
 

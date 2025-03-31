@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,7 +8,8 @@ class CategoryTile extends StatelessWidget {
   const CategoryTile({
     required this.title,
     required this.subtitle,
-    super.key, required this.onPressed,
+    super.key,
+    required this.onPressed,
   });
 
   final String title;
@@ -23,16 +23,14 @@ class CategoryTile extends StatelessWidget {
         height: 70.h,
         decoration: BoxDecoration(
             border: Border(
-                bottom: BorderSide(
-                    color: const Color(0xffF0F0F0),
-                    width: 1.h
-                )
-            )
-        ),
+                bottom:
+                    BorderSide(color: const Color(0xffF0F0F0), width: 1.h))),
         child: Row(
           children: [
             SvgPicture.asset(Assets.svg.shapes),
-            SizedBox(width: 16.w,),
+            SizedBox(
+              width: 16.w,
+            ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,13 +51,10 @@ class CategoryTile extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall!
-                        .copyWith(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w300),
+                        .copyWith(fontSize: 14.sp, fontWeight: FontWeight.w300),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-
                 ],
               ),
             )

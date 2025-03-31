@@ -14,7 +14,6 @@ class AllBusinesses extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -32,9 +31,7 @@ class AllBusinesses extends ConsumerWidget {
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 GestureDetector(
-                  onTap: (){
-
-                  },
+                  onTap: () {},
                   child: Text('+ Add New',
                       style: Theme.of(context)
                           .textTheme
@@ -47,11 +44,10 @@ class AllBusinesses extends ConsumerWidget {
               height: 32.h,
             ),
             ListView.separated(
-              shrinkWrap: true,
+                shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return BusinessCard(
                     business: allBusiness[index],
-
                   );
                 },
                 separatorBuilder: (ctx, idx) {

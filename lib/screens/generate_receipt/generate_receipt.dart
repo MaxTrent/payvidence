@@ -155,7 +155,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         final product = products[index]!;
 
         if (qtyControllers[index - 1].text.isEmpty) {
-          ToastService.error( 'Enter the qty purchased for product $index');
+          ToastService.error('Enter the qty purchased for product $index');
           return; // Stops the entire function execution
         } else {
           productList.add({
@@ -208,7 +208,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error( 'An unknown error has occurred!');
+        ToastService.error('An unknown error has occurred!');
       }
     }
 
@@ -371,7 +371,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error( "Select a client please");
+                                ToastService.error("Select a client please");
                               }
                               isDraft = false;
                               createReceipt();

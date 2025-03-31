@@ -1,6 +1,4 @@
-
 class SessionConstants {
-
   SessionConstants._();
 
   static const accessTokenPref = "accessTokenPref";
@@ -15,5 +13,4 @@ class SessionConstants {
   static const subscriptionId = "subscriptionId";
   static const businessId = "businessId";
   static const isBiometricLoginEnabled = "isBiometricLoginEnabled";
-
 }

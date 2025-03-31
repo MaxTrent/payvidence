@@ -6,8 +6,6 @@ import '../../components/app_button.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
-
-
 @RoutePage(name: 'UpgradeSubscriptionRoute')
 class UpgradeSubscription extends StatelessWidget {
   const UpgradeSubscription({super.key});
@@ -16,7 +14,7 @@ class UpgradeSubscription extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Stack(
           children: [
             Column(
@@ -24,23 +22,36 @@ class UpgradeSubscription extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(Assets.svg.exclamation),
-                SizedBox(height: 40.h,),
-                Text('Upgrade subscription!', style: Theme.of(context).textTheme.displayLarge,),
-                SizedBox(height: 10.h,),
-                Text('You are currently on the Starter plan! Upgrade to enjoy more benefits and explore more features on Payvidence,',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, ))
+                SizedBox(
+                  height: 40.h,
+                ),
+                Text(
+                  'Upgrade subscription!',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Text(
+                    'You are currently on the Starter plan! Upgrade to enjoy more benefits and explore more features on Payvidence,',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: 14.sp,
+                        ))
               ],
             ),
             Positioned(
-              bottom:
-              34.h,
+              bottom: 34.h,
               child: Column(
                 children: [
-                  AppButton(buttonText: 'Upgrade plan', onPressed: (){
-                    // context.go(AppRoutes.allBusiness);
-                  }),
+                  AppButton(
+                      buttonText: 'Upgrade plan',
+                      onPressed: () {
+                        // context.go(AppRoutes.allBusiness);
+                      }),
                   SizedBox(height: 26.h),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       // context.go('/login');
                     },
                     child: Text(
@@ -57,7 +68,6 @@ class UpgradeSubscription extends StatelessWidget {
           ],
         ),
       ),
-
     );
   }
 }

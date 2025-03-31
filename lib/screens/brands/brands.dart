@@ -76,8 +76,8 @@ class Brands extends ConsumerWidget {
                                   .textTheme
                                   .displaySmall!
                                   .copyWith(
-                                fontSize: 14.sp,
-                              )),
+                                    fontSize: 14.sp,
+                                  )),
                           SizedBox(
                             height: 48.h,
                           ),

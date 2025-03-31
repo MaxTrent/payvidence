@@ -11,12 +11,9 @@ import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../onboarding/onboarding.dart';
 
-
-
 @RoutePage(name: 'ResetPasswordRoute')
 class ResetPassword extends HookConsumerWidget {
   ResetPassword({super.key});
-
 
   @override
   Widget build(BuildContext context, ref) {
@@ -29,56 +26,83 @@ class ResetPassword extends HookConsumerWidget {
       void listener() {
         isTextFieldEmpty.value = emailController.text.isEmpty;
       }
+
       emailController.addListener(listener);
       return () => emailController.removeListener(listener);
     }, []);
-
 
     return Scaffold(
       appBar: AppBar(),
       body: Form(
         key: formKey,
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 16.h,),
-                Text('Reset password', style: Theme.of(context).textTheme.displayLarge,),
-                SizedBox(height: 8.h,),
-                Text('Confirm email address used for registration.', style: Theme.of(context).textTheme.displaySmall!,),
-                SizedBox(height: 32.h,),
-                Text('Email address', style: Theme.of(context).textTheme.displaySmall,),
-                SizedBox(height: 8.h,),
-                AppTextField(hintText: 'Email address', controller: emailController, validator: (val) {
-                  if (!val!.isValidEmail || val.isEmpty) {
-                    return 'Enter valid email address';
-                  }
-                  return null;
-                },),
-                SizedBox(height: 32.h,),
+                SizedBox(
+                  height: 16.h,
+                ),
+                Text(
+                  'Reset password',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                SizedBox(
+                  height: 8.h,
+                ),
+                Text(
+                  'Confirm email address used for registration.',
+                  style: Theme.of(context).textTheme.displaySmall!,
+                ),
+                SizedBox(
+                  height: 32.h,
+                ),
+                Text(
+                  'Email address',
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+                SizedBox(
+                  height: 8.h,
+                ),
+                AppTextField(
+                  hintText: 'Email address',
+                  controller: emailController,
+                  validator: (val) {
+                    if (!val!.isValidEmail || val.isEmpty) {
+                      return 'Enter valid email address';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(
+                  height: 32.h,
+                ),
                 AppButton(
                   isDisabled: isTextFieldEmpty.value,
-                  isProcessing: viewModel.isLoading, buttonText: 'Continue', onPressed: (){
-                  // locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otpLogin);
+                  isProcessing: viewModel.isLoading,
+                  buttonText: 'Continue',
+                  onPressed: () {
+                    // locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otpLogin);
 
-                  if (formKey.currentState!.validate()) {
-                    print("Form is valid");
-                    FocusScope.of(context).unfocus();
-                    viewModel.resetPasswordInit(
-                      email: emailController.text.trim(),
-                      navigateOnSuccess: () {
-                        print('navigating');
-                        locator<PayvidenceAppRouter>().popUntil(
-                                (route) => route is OnboardingScreen);
-                        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otpReset);
-                      },
-                    );
-                  } else {
-                    print("Form is not valid");
-                  }
-                },),
+                    if (formKey.currentState!.validate()) {
+                      print("Form is valid");
+                      FocusScope.of(context).unfocus();
+                      viewModel.resetPasswordInit(
+                        email: emailController.text.trim(),
+                        navigateOnSuccess: () {
+                          print('navigating');
+                          locator<PayvidenceAppRouter>()
+                              .popUntil((route) => route is OnboardingScreen);
+                          locator<PayvidenceAppRouter>()
+                              .navigateNamed(PayvidenceRoutes.otpReset);
+                        },
+                      );
+                    } else {
+                      print("Form is not valid");
+                    }
+                  },
+                ),
               ],
             ),
           ),

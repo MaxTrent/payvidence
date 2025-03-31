@@ -15,7 +15,11 @@ class ProductTile extends StatelessWidget {
   final WidgetRef ref;
   final void Function() onPressed;
 
-  const ProductTile({super.key, required this.product, required this.ref, required this.onPressed});
+  const ProductTile(
+      {super.key,
+      required this.product,
+      required this.ref,
+      required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

@@ -6,87 +6,165 @@ import '../shared_dependency/shared_dependency.dart';
 
 @AutoRouterConfig()
 class PayvidenceAppRouter extends RootStackRouter {
-
-
   @override
-  List<AutoRoute> get routes =>
-      [
-        AutoRoute(page: OnboardingScreenRoute.page, path: PayvidenceRoutes.onboarding),
-        AutoRoute(page: HomePageRoute.page, path: PayvidenceRoutes.home, initial: true,
-        guards: [
-          AuthRouteGuard(),
-        ],
-        children: [
-          AutoRoute(page: HomeScreenRoute.page, path: PayvidenceRoutes.homeScreen, initial: true),
-          AutoRoute(page: AllTransactionsRoute.page, path: PayvidenceRoutes.allTransactions),
-          AutoRoute(page: SalesRoute.page, path: PayvidenceRoutes.sales),
-          AutoRoute(page: ProfileRoute.page, path: PayvidenceRoutes.profile),
-
-        ]),
-        AutoRoute(page: CreateAccountRoute.page, path: PayvidenceRoutes.createAccount),
+  List<AutoRoute> get routes => [
+        AutoRoute(
+            page: OnboardingScreenRoute.page,
+            path: PayvidenceRoutes.onboarding),
+        AutoRoute(
+            page: HomePageRoute.page,
+            path: PayvidenceRoutes.home,
+            initial: true,
+            guards: [
+              AuthRouteGuard(),
+            ],
+            children: [
+              AutoRoute(
+                  page: HomeScreenRoute.page,
+                  path: PayvidenceRoutes.homeScreen,
+                  initial: true),
+              AutoRoute(
+                  page: AllTransactionsRoute.page,
+                  path: PayvidenceRoutes.allTransactions),
+              AutoRoute(page: SalesRoute.page, path: PayvidenceRoutes.sales),
+              AutoRoute(
+                  page: ProfileRoute.page, path: PayvidenceRoutes.profile),
+            ]),
+        AutoRoute(
+            page: CreateAccountRoute.page,
+            path: PayvidenceRoutes.createAccount),
         AutoRoute(page: LoginRoute.page, path: PayvidenceRoutes.login),
-        AutoRoute(page: ForgotPasswordRoute.page, path: PayvidenceRoutes.forgotPassword),
-        AutoRoute(page: EmptyBusinessRoute.page, path: PayvidenceRoutes.emptyBusiness),
-        AutoRoute(page: AddBusinessRoute.page, path: PayvidenceRoutes.addBusiness),
-        AutoRoute(page: AddCategoryRoute.page, path: PayvidenceRoutes.addCategory),
-        AutoRoute(page: CreateAccountRoute.page, path: PayvidenceRoutes.createAccount),
-        AutoRoute(page: BusinessDetailRoute.page, path: PayvidenceRoutes.businessDetail),
-        AutoRoute(page: ProductDetailsRoute.page, path: PayvidenceRoutes.productDetails),
-        AutoRoute(page: ChangePasswordRoute.page, path: PayvidenceRoutes.changePassword),
-        AutoRoute(page: AllBusinessesRoute.page, path: PayvidenceRoutes.allBusiness),
-        AutoRoute(page: CreateNewPasswordRoute.page, path: PayvidenceRoutes.createNewPassword),
-        AutoRoute(page: AddProductRoute.page, path: PayvidenceRoutes.addProduct),
-        AutoRoute(page: AllInvoicesRoute.page, path: PayvidenceRoutes.allInvoices),
-        AutoRoute(page: AllReceiptsRoute.page, path: PayvidenceRoutes.allReceipts),
+        AutoRoute(
+            page: ForgotPasswordRoute.page,
+            path: PayvidenceRoutes.forgotPassword),
+        AutoRoute(
+            page: EmptyBusinessRoute.page,
+            path: PayvidenceRoutes.emptyBusiness),
+        AutoRoute(
+            page: AddBusinessRoute.page, path: PayvidenceRoutes.addBusiness),
+        AutoRoute(
+            page: AddCategoryRoute.page, path: PayvidenceRoutes.addCategory),
+        AutoRoute(
+            page: CreateAccountRoute.page,
+            path: PayvidenceRoutes.createAccount),
+        AutoRoute(
+            page: BusinessDetailRoute.page,
+            path: PayvidenceRoutes.businessDetail),
+        AutoRoute(
+            page: ProductDetailsRoute.page,
+            path: PayvidenceRoutes.productDetails),
+        AutoRoute(
+            page: ChangePasswordRoute.page,
+            path: PayvidenceRoutes.changePassword),
+        AutoRoute(
+            page: AllBusinessesRoute.page, path: PayvidenceRoutes.allBusiness),
+        AutoRoute(
+            page: CreateNewPasswordRoute.page,
+            path: PayvidenceRoutes.createNewPassword),
+        AutoRoute(
+            page: AddProductRoute.page, path: PayvidenceRoutes.addProduct),
+        AutoRoute(
+            page: AllInvoicesRoute.page, path: PayvidenceRoutes.allInvoices),
+        AutoRoute(
+            page: AllReceiptsRoute.page, path: PayvidenceRoutes.allReceipts),
         AutoRoute(page: ReceiptRoute.page, path: PayvidenceRoutes.receipt),
-        AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
+        AutoRoute(
+            page: CompleteDraftRoute.page,
+            path: PayvidenceRoutes.completeDraft),
         AutoRoute(page: ClientsRoute.page, path: PayvidenceRoutes.clients),
         AutoRoute(page: ProductRoute.page, path: PayvidenceRoutes.product),
         AutoRoute(page: DraftsRoute.page, path: PayvidenceRoutes.drafts),
-        AutoRoute(page: EmptyCategoryRoute.page, path: PayvidenceRoutes.emptyCategory),
+        AutoRoute(
+            page: EmptyCategoryRoute.page,
+            path: PayvidenceRoutes.emptyCategory),
         AutoRoute(page: BrandsRoute.page, path: PayvidenceRoutes.brands),
         AutoRoute(page: AddBrandRoute.page, path: PayvidenceRoutes.addBrand),
-        AutoRoute(page: UpdatePersonalDetailsRoute.page, path: PayvidenceRoutes.updatePersonalDetails),
-        AutoRoute(page: PayvidenceInfoRoute.page, path: PayvidenceRoutes.payvidenceInfo),
-        AutoRoute(page: BusinessDataRoute.page, path: PayvidenceRoutes.businessData),
+        AutoRoute(
+            page: UpdatePersonalDetailsRoute.page,
+            path: PayvidenceRoutes.updatePersonalDetails),
+        AutoRoute(
+            page: PayvidenceInfoRoute.page,
+            path: PayvidenceRoutes.payvidenceInfo),
+        AutoRoute(
+            page: BusinessDataRoute.page, path: PayvidenceRoutes.businessData),
         AutoRoute(page: SettingsRoute.page, path: PayvidenceRoutes.settings),
-        AutoRoute(page: NotificationsRoute.page, path: PayvidenceRoutes.notifications),
-        AutoRoute(page: ChangeProfilePictureRoute.page, path: PayvidenceRoutes.changeProfilePicture),
-        AutoRoute(page: MySubscriptionRoute.page, path: PayvidenceRoutes.mySubscription),
+        AutoRoute(
+            page: NotificationsRoute.page,
+            path: PayvidenceRoutes.notifications),
+        AutoRoute(
+            page: ChangeProfilePictureRoute.page,
+            path: PayvidenceRoutes.changeProfilePicture),
+        AutoRoute(
+            page: MySubscriptionRoute.page,
+            path: PayvidenceRoutes.mySubscription),
         AutoRoute(page: OtpLoginRoute.page, path: PayvidenceRoutes.otpLogin),
-        AutoRoute(page: CreateNewPasswordRoute.page, path: PayvidenceRoutes.createNewPassword),
-        AutoRoute(page: ChangePasswordSuccessRoute.page, path: PayvidenceRoutes.changePasswordSuccess),
+        AutoRoute(
+            page: CreateNewPasswordRoute.page,
+            path: PayvidenceRoutes.createNewPassword),
+        AutoRoute(
+            page: ChangePasswordSuccessRoute.page,
+            path: PayvidenceRoutes.changePasswordSuccess),
         AutoRoute(page: OtpResetRoute.page, path: PayvidenceRoutes.otpReset),
-        AutoRoute(page: ResetPasswordSuccessRoute.page, path: PayvidenceRoutes.resetPasswordSuccess),
-        AutoRoute(page: CreateNewPasswordResetRoute.page, path: PayvidenceRoutes.createNewPasswordReset),
-        AutoRoute(page: ResetPasswordRoute.page, path: PayvidenceRoutes.resetPassword),
-        AutoRoute(page: ChooseSubscriptionPlanRoute.page, path: PayvidenceRoutes.chooseSubscriptionPlan),
-        AutoRoute(page: SubscriptionPlansRoute.page, path: PayvidenceRoutes.subscriptionPlans),
-        AutoRoute(page: SubscriptionPrompt.page, path: PayvidenceRoutes.subscriptionPrompt),
-        AutoRoute(page: PaymentWebViewRoute.page, path: PayvidenceRoutes.paymentScreen),
-        AutoRoute(page: UpdateQuantityRoute.page, path: PayvidenceRoutes.updateQuantity),
-        AutoRoute(page: GenerateReceiptRoute.page, path: PayvidenceRoutes.generateReceipt),
-        AutoRoute(page: GenerateInvoicesRoute.page, path: PayvidenceRoutes.generateInvoices),
-        AutoRoute(page: UpdateBankDetailsRoute.page, path: PayvidenceRoutes.updateBankDetails),
-        AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
-        AutoRoute(page: ReceiptScreenRoute.page, path: PayvidenceRoutes.receiptScreen),
-        AutoRoute(page: ClientDetailsRoute.page, path: PayvidenceRoutes.clientDetails),
+        AutoRoute(
+            page: ResetPasswordSuccessRoute.page,
+            path: PayvidenceRoutes.resetPasswordSuccess),
+        AutoRoute(
+            page: CreateNewPasswordResetRoute.page,
+            path: PayvidenceRoutes.createNewPasswordReset),
+        AutoRoute(
+            page: ResetPasswordRoute.page,
+            path: PayvidenceRoutes.resetPassword),
+        AutoRoute(
+            page: ChooseSubscriptionPlanRoute.page,
+            path: PayvidenceRoutes.chooseSubscriptionPlan),
+        AutoRoute(
+            page: SubscriptionPlansRoute.page,
+            path: PayvidenceRoutes.subscriptionPlans),
+        AutoRoute(
+            page: SubscriptionPrompt.page,
+            path: PayvidenceRoutes.subscriptionPrompt),
+        AutoRoute(
+            page: PaymentWebViewRoute.page,
+            path: PayvidenceRoutes.paymentScreen),
+        AutoRoute(
+            page: UpdateQuantityRoute.page,
+            path: PayvidenceRoutes.updateQuantity),
+        AutoRoute(
+            page: GenerateReceiptRoute.page,
+            path: PayvidenceRoutes.generateReceipt),
+        AutoRoute(
+            page: GenerateInvoicesRoute.page,
+            path: PayvidenceRoutes.generateInvoices),
+        AutoRoute(
+            page: UpdateBankDetailsRoute.page,
+            path: PayvidenceRoutes.updateBankDetails),
+        AutoRoute(
+            page: CompleteDraftRoute.page,
+            path: PayvidenceRoutes.completeDraft),
+        AutoRoute(
+            page: ReceiptScreenRoute.page,
+            path: PayvidenceRoutes.receiptScreen),
+        AutoRoute(
+            page: ClientDetailsRoute.page,
+            path: PayvidenceRoutes.clientDetails),
         AutoRoute(page: AddClientRoute.page, path: PayvidenceRoutes.addClient),
-        AutoRoute(page: NotificationSettingsRoute.page, path: PayvidenceRoutes.notificationSettings),
-        AutoRoute(page: PrivacyAndSecurityRoute.page, path: PayvidenceRoutes.privacyAndSecurity),
-        AutoRoute(page:  ClientSuccessRoute.page, path: PayvidenceRoutes.clientSuccess),
-
-
-
+        AutoRoute(
+            page: NotificationSettingsRoute.page,
+            path: PayvidenceRoutes.notificationSettings),
+        AutoRoute(
+            page: PrivacyAndSecurityRoute.page,
+            path: PayvidenceRoutes.privacyAndSecurity),
+        AutoRoute(
+            page: ClientSuccessRoute.page,
+            path: PayvidenceRoutes.clientSuccess),
       ];
-
 }
 
 class AuthRouteGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
     var isUserLoggedIn =
-    locator<SessionManager>().get<bool>(SessionConstants.isUserLoggedIn);
+        locator<SessionManager>().get<bool>(SessionConstants.isUserLoggedIn);
 
     if ((isUserLoggedIn ?? false) == true) {
       resolver.next(true);
@@ -97,8 +175,7 @@ class AuthRouteGuard extends AutoRouteGuard {
 }
 
 class PayvidenceRoutes {
-  PayvidenceRoutes(): super();
-
+  PayvidenceRoutes() : super();
 
   static String get onboarding => '/onboarding';
   static String get login => '/login';
@@ -161,7 +238,4 @@ class PayvidenceRoutes {
   static String get paymentScreen => '/paymentScreen/:paymentLink';
   static String get receiptScreen => '/receiptScreen';
   static String get allTransactions => 'allTransactions/:businessId';
-
-
-
 }

@@ -34,7 +34,7 @@ class Sales extends ConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      if(interval == "weekly"){
+                      if (interval == "weekly") {
                         return;
                       }
                       ref
@@ -66,14 +66,13 @@ class Sales extends ConsumerWidget {
                   SizedBox(width: 12.w),
                   GestureDetector(
                     onTap: () {
-                      if(interval == "monthly"){
+                      if (interval == "monthly") {
                         return;
                       }
                       ref
                           .read(salesFilterProvider.notifier)
                           .setKey("interval", "monthly");
                       ref.read(salesDataProvider.notifier).setFilter();
-
                     },
                     child: Container(
                       height: 45.h,
@@ -99,14 +98,13 @@ class Sales extends ConsumerWidget {
                   SizedBox(width: 12.w),
                   GestureDetector(
                     onTap: () {
-                      if(interval == "yearly"){
+                      if (interval == "yearly") {
                         return;
                       }
                       ref
                           .read(salesFilterProvider.notifier)
                           .setKey("interval", "yearly");
                       ref.read(salesDataProvider.notifier).setFilter();
-
                     },
                     child: Container(
                       height: 45.h,

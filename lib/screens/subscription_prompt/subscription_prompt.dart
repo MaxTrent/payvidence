@@ -14,11 +14,13 @@ class SubscriptionPrompt extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 116.h,),
+            SizedBox(
+              height: 116.h,
+            ),
             // Column(
             //   mainAxisAlignment: MainAxisAlignment.center,
             //   crossAxisAlignment: CrossAxisAlignment.center,
@@ -48,14 +50,28 @@ class SubscriptionPrompt extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(Assets.svg.subsuccess),
-                SizedBox(height: 40.h,),
-                Text('Subscription successful!!', style: Theme.of(context).textTheme.displayLarge,),
-                SizedBox(height: 10.h,),
-                Text('You have successfully paid for Premium subscription plan. You can now explore our premium benefits and features.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, ))
+                SizedBox(
+                  height: 40.h,
+                ),
+                Text(
+                  'Subscription successful!!',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Text(
+                    'You have successfully paid for Premium subscription plan. You can now explore our premium benefits and features.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: 14.sp,
+                        ))
               ],
             ),
 
-            SizedBox(height: 176.h,),
+            SizedBox(
+              height: 176.h,
+            ),
             Column(
               children: [
                 // AppButton(buttonText: 'Upgrade plan', onPressed: (){
@@ -64,8 +80,7 @@ class SubscriptionPrompt extends StatelessWidget {
                 // AppButton(buttonText: 'Try again', onPressed: (){
                 // }),
 
-                AppButton(buttonText: 'Alright!', onPressed: (){
-                }),
+                AppButton(buttonText: 'Alright!', onPressed: () {}),
 
                 // SizedBox(height: 26.h),
                 // GestureDetector(
@@ -79,13 +94,11 @@ class SubscriptionPrompt extends StatelessWidget {
                 //         .copyWith(color: primaryColor2),
                 //   ),
                 // )
-
               ],
             ),
           ],
         ),
       ),
-
     );
   }
 }

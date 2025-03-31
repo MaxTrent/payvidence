@@ -11,7 +11,8 @@ abstract class ICategoryDatasource {
     String businessId,
   );
 
-  Future<CategoryModel> addCategory(String businessId, Map<String, dynamic>  requestData);
+  Future<CategoryModel> addCategory(
+      String businessId, Map<String, dynamic> requestData);
 }
 
 class CategoryDatasource extends ICategoryDatasource {

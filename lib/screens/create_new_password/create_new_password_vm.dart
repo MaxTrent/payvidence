@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
@@ -6,13 +5,12 @@ import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
+final createNewPasswordViewModel =
+    ChangeNotifierProvider((ref) => CreateNewPasswordViewModel(ref));
 
-final createNewPasswordViewModel = ChangeNotifierProvider((ref)=> CreateNewPasswordViewModel(ref));
-class CreateNewPasswordViewModel extends BaseChangeNotifier{
+class CreateNewPasswordViewModel extends BaseChangeNotifier {
   final Ref ref;
   CreateNewPasswordViewModel(this.ref);
-
-
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -30,7 +28,8 @@ class CreateNewPasswordViewModel extends BaseChangeNotifier{
     _setLoading(true);
     try {
       final userId = locator<SessionManager>().get(SessionConstants.userId);
-      final response = await apiServices.forgotPasswordComplete(password, confirmPassword, userId);
+      final response = await apiServices.forgotPasswordComplete(
+          password, confirmPassword, userId);
 
       if (response.success) {
         navigateOnSuccess();

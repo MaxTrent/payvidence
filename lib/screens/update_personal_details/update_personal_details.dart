@@ -23,13 +23,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
     final emailController = useTextEditingController();
     final phoneController = useTextEditingController();
 
-
     useEffect(() {
       print("fetching user info");
       viewModel.fetchUserInformation();
       return null;
     }, []);
-
 
     useEffect(() {
       if (viewModel.userInfo != null && !viewModel.isLoading) {
@@ -38,11 +36,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
         lastNameController.text = viewModel.userInfo?.account.lastName ?? "";
         emailController.text = viewModel.userInfo?.account.email ?? "";
         phoneController.text = viewModel.userInfo?.account.phoneNumber ?? "";
-        print("Controllers set - FirstName: ${firstNameController.text}, LastName: ${lastNameController.text}");
+        print(
+            "Controllers set - FirstName: ${firstNameController.text}, LastName: ${lastNameController.text}");
       }
       return null;
     }, [viewModel.userInfo, viewModel.isLoading]);
-
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -68,23 +66,28 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                   ),
                   SizedBox(height: 32.h),
                   if (viewModel.isLoading) ...[
-                    Text('First name', style: Theme.of(context).textTheme.displaySmall),
+                    Text('First name',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     CustomShimmer(height: 50.h),
                     SizedBox(height: 20.h),
-                    Text('Last name', style: Theme.of(context).textTheme.displaySmall),
+                    Text('Last name',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     CustomShimmer(height: 50.h),
                     SizedBox(height: 20.h),
-                    Text('Email address', style: Theme.of(context).textTheme.displaySmall),
+                    Text('Email address',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     CustomShimmer(height: 50.h),
                     SizedBox(height: 20.h),
-                    Text('Phone number', style: Theme.of(context).textTheme.displaySmall),
+                    Text('Phone number',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     CustomShimmer(height: 50.h),
                   ] else ...[
-                    Text('First name', style: Theme.of(context).textTheme.displaySmall),
+                    Text('First name',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     AppTextField(
                       hintText: 'First Name',
@@ -92,7 +95,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                       controller: firstNameController,
                     ),
                     SizedBox(height: 20.h),
-                    Text('Last name', style: Theme.of(context).textTheme.displaySmall),
+                    Text('Last name',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     AppTextField(
                       hintText: 'Last Name',
@@ -100,7 +104,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                       controller: lastNameController,
                     ),
                     SizedBox(height: 20.h),
-                    Text('Email address', style: Theme.of(context).textTheme.displaySmall),
+                    Text('Email address',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     AppTextField(
                       hintText: 'Email address',
@@ -108,7 +113,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                       controller: emailController,
                     ),
                     SizedBox(height: 20.h),
-                    Text('Phone number', style: Theme.of(context).textTheme.displaySmall),
+                    Text('Phone number',
+                        style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     AppTextField(
                       hintText: 'Phone number',
@@ -122,8 +128,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     onPressed: viewModel.isLoading
                         ? null
                         : () {
-                      // context.router.replace(HomePageRoute());
-                    },
+                            // context.router.replace(HomePageRoute());
+                          },
                   ),
                 ],
               ),

@@ -5,7 +5,7 @@ import 'package:payvidence/utilities/base_notifier.dart';
 import '../update_personal_details/update_personal_details_vm.dart';
 
 final changeProfilePictureViewModelProvider =
-ChangeNotifierProvider((ref) => ChangeProfilePictureViewModel(ref));
+    ChangeNotifierProvider((ref) => ChangeProfilePictureViewModel(ref));
 
 class ChangeProfilePictureViewModel extends BaseChangeNotifier {
   final Ref ref;
@@ -21,7 +21,8 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
   ChangeProfilePictureViewModel(this.ref) : super() {
     final updateVM = ref.read(updatePersonalDetailsViewModelProvider);
     _currentProfilePictureUrl = updateVM.userInfo?.account.profilePictureUrl;
-    print("Initial profile picture URL from UpdatePersonalDetailsVM: $_currentProfilePictureUrl");
+    print(
+        "Initial profile picture URL from UpdatePersonalDetailsVM: $_currentProfilePictureUrl");
 
     fetchCurrentProfilePicture();
   }
@@ -36,14 +37,17 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
       _setLoading(true);
       final response = await apiServices.getAccount();
       if (response.success && response.data != null) {
-        _currentProfilePictureUrl = response.data!['data']['profile_picture_url'] as String?;
+        _currentProfilePictureUrl =
+            response.data!['data']['profile_picture_url'] as String?;
         print("Fetched profile picture URL: $_currentProfilePictureUrl");
-        if (_currentProfilePictureUrl == null || _currentProfilePictureUrl!.isEmpty) {
+        if (_currentProfilePictureUrl == null ||
+            _currentProfilePictureUrl!.isEmpty) {
           print("Profile picture URL is null or empty, using default");
         }
       } else {
         _currentProfilePictureUrl = null;
-        print("Failed to fetch profile picture: ${response.error?.message ?? 'Unknown error'}");
+        print(
+            "Failed to fetch profile picture: ${response.error?.message ?? 'Unknown error'}");
       }
     } catch (e) {
       _currentProfilePictureUrl = null; // Reset on exception
@@ -79,7 +83,8 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
       final response = await apiServices.updateProfilePicture(_selectedImage!);
 
       if (response.success) {
-        _currentProfilePictureUrl = response.data!['profile_picture_url'] as String?;
+        _currentProfilePictureUrl =
+            response.data!['profile_picture_url'] as String?;
         _selectedImage = null;
         showSuccess(message: "Profile picture updated");
         notifyListeners();
@@ -99,4 +104,5 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
     } finally {
       _setLoading(false);
     }
-  }}
+  }
+}

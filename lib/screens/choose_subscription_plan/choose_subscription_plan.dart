@@ -11,16 +11,12 @@ import '../../components/subscription_card.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import 'choose_subscription_plan_vm.dart';
 
-
-
 @RoutePage(name: 'ChooseSubscriptionPlanRoute')
 class ChooseSubscriptionPlan extends HookConsumerWidget {
   const ChooseSubscriptionPlan({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
-
-
     final viewModel = ref.watch(chooseSubscriptionPlanViewModel);
 
     useEffect(() {
@@ -30,15 +26,19 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
       return null;
     }, []);
 
-
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: ListView(
           children: [
-            Text('Choose subscription plan', style: Theme.of(context).textTheme.displayLarge,),
-            SizedBox(height: 24.h,),
+            Text(
+              'Choose subscription plan',
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+            SizedBox(
+              height: 24.h,
+            ),
             if (viewModel.isLoading) ...[
               CustomShimmer(height: 108.h),
               SizedBox(height: 24.h),
@@ -49,12 +49,13 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
               CustomShimmer(height: 108.h),
             ] else ...[
               ...viewModel.plans.map(
-                    (plan) => Padding(
+                (plan) => Padding(
                   padding: EdgeInsets.only(bottom: 24.h),
                   child: GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().push(
-                          SubscriptionPlansRoute(planId: plan.id));},
+                      locator<PayvidenceAppRouter>()
+                          .push(SubscriptionPlansRoute(planId: plan.id));
+                    },
                     child: SubscriptionCard(
                       subscriptionTier: plan.name,
                       price: plan.amount.toString().toCommaSeparated(),
@@ -72,11 +73,9 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
             // GestureDetector(
             //     onTap: ()=> locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.subscriptionPlans),
             //     child: SubscriptionCard(subscriptionTier: 'Premium subscription plan', price: '50,000')),
-
           ],
         ),
       ),
-
     );
   }
 }

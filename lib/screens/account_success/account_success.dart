@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:payvidence/components/app_button.dart';  
+import 'package:payvidence/components/app_button.dart';
 
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
@@ -20,11 +20,11 @@ class AccountSuccessScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: AppButton(
           buttonText: 'Go to Home',
-          onPressed: () async{
+          onPressed: () async {
             await locator<SessionManager>()
-            .save(key: SessionConstants.isUserLoggedIn, value: true);
-            locator<PayvidenceAppRouter>().popUntil(
-                    (route) => route is OnboardingScreen);
+                .save(key: SessionConstants.isUserLoggedIn, value: true);
+            locator<PayvidenceAppRouter>()
+                .popUntil((route) => route is OnboardingScreen);
             locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
 
             // context.go(AppRoutes.login);

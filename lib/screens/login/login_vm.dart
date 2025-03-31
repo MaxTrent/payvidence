@@ -6,8 +6,6 @@ import '../../model/user_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/biometric_service.dart';
 
-
-
 final loginViewModelProvider = ChangeNotifierProvider<LoginViewModel>((ref) {
   return LoginViewModel(ref);
 });
@@ -24,9 +22,12 @@ class LoginViewModel extends BaseChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<bool> get canUseBiometrics async {
-    final isBiometricEnabled = await locator<SessionManager>().get(SessionConstants.isBiometricLoginEnabled) ?? false;
+    final isBiometricEnabled = await locator<SessionManager>()
+            .get(SessionConstants.isBiometricLoginEnabled) ??
+        false;
     return _canUseBiometrics && isBiometricEnabled;
   }
+
   String get errorMessage => _errorMessage;
 
   void init() async {
@@ -53,7 +54,7 @@ class LoginViewModel extends BaseChangeNotifier {
 
         var user = User.fromJson(response.data!["data"]);
         await saveUserCredentials(
-          userId: user.account.id,
+            userId: user.account.id,
             firstName: user.account.firstName,
             lastName: user.account.lastName,
             email: user.account.email,
@@ -100,15 +101,19 @@ class LoginViewModel extends BaseChangeNotifier {
       );
 
       if (authenticated) {
-        final email = await locator<SessionManager>().get(SessionConstants.userEmail);
-        final token = await locator<SessionManager>().get(SessionConstants.accessTokenPref);
+        final email =
+            await locator<SessionManager>().get(SessionConstants.userEmail);
+        final token = await locator<SessionManager>()
+            .get(SessionConstants.accessTokenPref);
 
         if (email != null && token != null) {
           await locator<SessionManager>()
               .save(key: SessionConstants.isUserLoggedIn, value: true);
           navigateOnSuccess();
         } else {
-          handleError(message: "No saved credentials found. Please login manually first.");
+          handleError(
+              message:
+                  "No saved credentials found. Please login manually first.");
         }
       } else {
         handleError(message: "Biometric authentication failed.");
@@ -131,8 +136,7 @@ class LoginViewModel extends BaseChangeNotifier {
     required String profilePictureUrl,
     required String token,
   }) async {
-    locator<SessionManager>()
-        .save(key: SessionConstants.userId, value: userId);
+    locator<SessionManager>().save(key: SessionConstants.userId, value: userId);
 
     await locator<SessionManager>()
         .save(key: SessionConstants.userFirstName, value: firstName);

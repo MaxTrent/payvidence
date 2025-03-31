@@ -122,10 +122,9 @@ class _AddProductState extends ConsumerState<AddProduct> {
 
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.success(
-            widget.product == null
-                ? "Product created successfully"
-                : "Product updated successfully");
+        ToastService.success(widget.product == null
+            ? "Product created successfully"
+            : "Product updated successfully");
         ref.invalidate(getAllProductProvider);
         if (widget.product != null) {
           ref
@@ -417,13 +416,13 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (currentBrand == null) {
-                          ToastService.error( "Select a brand!");
+                          ToastService.error("Select a brand!");
                         } else if (currentCategory == null) {
-                          ToastService.error( "Select a category!");
+                          ToastService.error("Select a category!");
                         }
                         if (productImage.value == null &&
                             widget.product == null) {
-                          ToastService.error( "Select a product image");
+                          ToastService.error("Select a product image");
                         } else {
                           createProduct();
                         }

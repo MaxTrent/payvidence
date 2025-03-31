@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,10 +17,7 @@ class AppDot extends StatelessWidget {
       height: 6.h,
       width: 6.h,
       decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(24.r)
-
-      ),
+          color: color, borderRadius: BorderRadius.circular(24.r)),
     );
   }
 }

@@ -18,8 +18,6 @@ import '../otp/otp_vm.dart';
 class OtpReset extends HookConsumerWidget {
   OtpReset({super.key});
 
-
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
@@ -51,6 +49,7 @@ class OtpReset extends HookConsumerWidget {
       void listener() {
         isTextFieldEmpty.value = pinController.text.isEmpty;
       }
+
       pinController.addListener(listener);
       return () => pinController.removeListener(listener);
     }, []);
@@ -60,9 +59,8 @@ class OtpReset extends HookConsumerWidget {
       return () => timer?.cancel();
     }, []);
 
-
     return GestureDetector(
-      onTap: ()=>FocusManager.instance.primaryFocus?.unfocus(),
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(),
         body: Form(
@@ -117,17 +115,16 @@ class OtpReset extends HookConsumerWidget {
                     // locator<PayvidenceAppRouter>()
                     //           .navigateNamed(PayvidenceRoutes.createNewPassword);
 
-
                     if (formKey.currentState!.validate()) {
                       print("Form is valid");
                       FocusScope.of(context).unfocus();
                       viewModel.verifyOtp(
                         otp: pinController.text,
                         navigateOnSuccess: () {
-                          locator<PayvidenceAppRouter>().popUntil(
-                                  (route) => route is OnboardingScreen);
                           locator<PayvidenceAppRouter>()
-                              .navigateNamed(PayvidenceRoutes.createNewPasswordReset);
+                              .popUntil((route) => route is OnboardingScreen);
+                          locator<PayvidenceAppRouter>().navigateNamed(
+                              PayvidenceRoutes.createNewPasswordReset);
                         },
                       );
                     } else {
@@ -166,10 +163,13 @@ class OtpReset extends HookConsumerWidget {
                         ] else
                           TextSpan(
                             text: 'Resend code',
-                            style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xff4E38B2),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff4E38B2),
+                                ),
                           ),
                       ],
                     ),

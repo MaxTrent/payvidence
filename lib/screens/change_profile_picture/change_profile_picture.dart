@@ -25,6 +25,7 @@ class ChangeProfilePicture extends HookConsumerWidget {
       void listener() {
         isImageSelected.value = viewModel.selectedImage != null;
       }
+
       viewModel.addListener(listener);
       return () => viewModel.removeListener(listener);
     }, [viewModel]);
@@ -56,38 +57,44 @@ class ChangeProfilePicture extends HookConsumerWidget {
                   child: ClipOval(
                     child: viewModel.selectedImage != null
                         ? Image.file(
-                      viewModel.selectedImage!,
-                      fit: BoxFit.cover,
-                      width: 200.r,
-                      height: 200.r,
-                    ): viewModel.currentProfilePictureUrl != null &&
-                        viewModel.currentProfilePictureUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                      imageUrl: viewModel.currentProfilePictureUrl!,
-                      fit: BoxFit.cover,
-                      width: 200.r,
-                      height: 200.r,
-                      placeholder: (context, url) => const LoadingIndicator(),
-                      errorWidget: (context, url, error) => SvgPicture.asset(
-                        Assets.svg.defaultProfilepic,
-                        fit: BoxFit.cover,
-                        width: 200.r,
-                        height: 200.r,
-                      ),
-                    )
-                        : SvgPicture.asset(
-                      Assets.svg.defaultProfilepic,
-                      fit: BoxFit.cover,
-                      width: 200.r,
-                      height: 200.r,
-                    ),),
+                            viewModel.selectedImage!,
+                            fit: BoxFit.cover,
+                            width: 200.r,
+                            height: 200.r,
+                          )
+                        : viewModel.currentProfilePictureUrl != null &&
+                                viewModel.currentProfilePictureUrl!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: viewModel.currentProfilePictureUrl!,
+                                fit: BoxFit.cover,
+                                width: 200.r,
+                                height: 200.r,
+                                placeholder: (context, url) =>
+                                    const LoadingIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    SvgPicture.asset(
+                                  Assets.svg.defaultProfilepic,
+                                  fit: BoxFit.cover,
+                                  width: 200.r,
+                                  height: 200.r,
+                                ),
+                              )
+                            : SvgPicture.asset(
+                                Assets.svg.defaultProfilepic,
+                                fit: BoxFit.cover,
+                                width: 200.r,
+                                height: 200.r,
+                              ),
+                  ),
                 ),
               ),
               SizedBox(height: 32.h),
               AppButton(
                 isProcessing: viewModel.isLoading,
-                isDisabled: viewModel.isLoading ,
-                buttonText: viewModel.selectedImage == null ? 'Choose image' : 'Upload image',
+                isDisabled: viewModel.isLoading,
+                buttonText: viewModel.selectedImage == null
+                    ? 'Choose image'
+                    : 'Upload image',
                 onPressed: () {
                   if (viewModel.selectedImage == null) {
                     viewModel.pickImage();
@@ -95,7 +102,7 @@ class ChangeProfilePicture extends HookConsumerWidget {
                     viewModel.uploadImage(
                       navigateOnSuccess: () {
                         locator<PayvidenceAppRouter>().back();
-                        },
+                      },
                     );
                   }
                 },

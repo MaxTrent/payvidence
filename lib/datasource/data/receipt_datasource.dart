@@ -11,7 +11,6 @@ abstract class IReceiptDatasource {
   Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType);
 
   Future<void> deleteReceipt(String receiptId);
-
 }
 
 class ReceiptDatasource extends IReceiptDatasource {

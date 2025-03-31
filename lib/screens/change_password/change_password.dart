@@ -12,12 +12,10 @@ import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../onboarding/onboarding.dart';
-    
-
 
 @RoutePage(name: 'ChangePasswordRoute')
 class ChangePassword extends HookConsumerWidget {
-   ChangePassword({super.key});
+  ChangePassword({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
@@ -28,11 +26,13 @@ class ChangePassword extends HookConsumerWidget {
     final confirmPasswordController = useTextEditingController();
     final areFieldsEmpty = useState(true);
 
-    bool checkFieldsEmpty(){
-      return passwordController.text.toString().isEmpty || newPasswordController.text.toString().isEmpty || confirmPasswordController.text.toString().isEmpty;
+    bool checkFieldsEmpty() {
+      return passwordController.text.toString().isEmpty ||
+          newPasswordController.text.toString().isEmpty ||
+          confirmPasswordController.text.toString().isEmpty;
     }
 
-    useEffect((){
+    useEffect(() {
       void updateFieldsEmptyStatus() {
         areFieldsEmpty.value = checkFieldsEmpty();
         print("Fields empty: ${areFieldsEmpty.value}");
@@ -49,45 +49,85 @@ class ChangePassword extends HookConsumerWidget {
       };
     }, []);
 
-
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus,
       child: Scaffold(
         appBar: AppBar(),
         body: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SafeArea(
             child: Form(
               key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 16.h,),
-                  Text('Change your password', style: Theme.of(context).textTheme.displayLarge,),
-                  SizedBox(height: 8.h,),
-                  Text('Enter your previous password and set new one.', style: Theme.of(context).textTheme.displaySmall!,),
-                  SizedBox(height: 32.h,),
-                  Text('Current password', style: Theme.of(context).textTheme.displaySmall,),
-                  SizedBox(height: 8.h,),
-                  AppTextField(hintText: 'Current password', controller: passwordController, validator: (val) {
-                    if (!val!.isValidPassword || val.isEmpty) {
-                      return 'Enter a valid password';
-                    }
-                    return null;
-                  },),
-                  SizedBox(height: 20.h,),
-                  Text('New password', style: Theme.of(context).textTheme.displaySmall,),
-                  SizedBox(height: 8.h,),
-                  AppTextField(hintText: 'New password', controller: newPasswordController,validator: (val) {
-                    if (!val!.isValidPassword || val.isEmpty) {
-                      return 'Enter a valid password';
-                    }
-                    return null;
-                  },),
-                  SizedBox(height: 20.h,),
-                  Text('Confirm new password', style: Theme.of(context).textTheme.displaySmall,),
-                  SizedBox(height: 8.h,),
-                  AppTextField(hintText: 'Re-enter new password', controller: confirmPasswordController,
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  Text(
+                    'Change your password',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    'Enter your previous password and set new one.',
+                    style: Theme.of(context).textTheme.displaySmall!,
+                  ),
+                  SizedBox(
+                    height: 32.h,
+                  ),
+                  Text(
+                    'Current password',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  AppTextField(
+                    hintText: 'Current password',
+                    controller: passwordController,
+                    validator: (val) {
+                      if (!val!.isValidPassword || val.isEmpty) {
+                        return 'Enter a valid password';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Text(
+                    'New password',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  AppTextField(
+                    hintText: 'New password',
+                    controller: newPasswordController,
+                    validator: (val) {
+                      if (!val!.isValidPassword || val.isEmpty) {
+                        return 'Enter a valid password';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  Text(
+                    'Confirm new password',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  AppTextField(
+                    hintText: 'Re-enter new password',
+                    controller: confirmPasswordController,
                     validator: (val) {
                       final password = newPasswordController.text;
                       if (!val!.isValidPassword || val.isEmpty) {
@@ -99,27 +139,36 @@ class ChangePassword extends HookConsumerWidget {
                       return null;
                     },
                   ),
-                  SizedBox(height: 32.h,),
+                  SizedBox(
+                    height: 32.h,
+                  ),
                   AppButton(
                     isProcessing: viewModel.isLoading,
                     isDisabled: areFieldsEmpty.value,
-                    buttonText: 'Change password', onPressed: (){
-                    print("Button pressed");
-                    if (formKey.currentState!.validate()) {
-                      print("Form is valid");
-                      FocusScope.of(context).unfocus();
-                      viewModel.changePassword(oldPassword: passwordController.text.trim(), newPassword: newPasswordController.text.trim(), confirmNewPassword: newPasswordController.text.trim(), navigateOnSuccess: (){
-                        locator<PayvidenceAppRouter>().popUntil(
-                                (route) => route is OnboardingScreen);
-                        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.changePasswordSuccess);
-                      });
-                    } else {
-                      print("Form is not valid");
-                    }
+                    buttonText: 'Change password',
+                    onPressed: () {
+                      print("Button pressed");
+                      if (formKey.currentState!.validate()) {
+                        print("Form is valid");
+                        FocusScope.of(context).unfocus();
+                        viewModel.changePassword(
+                            oldPassword: passwordController.text.trim(),
+                            newPassword: newPasswordController.text.trim(),
+                            confirmNewPassword:
+                                newPasswordController.text.trim(),
+                            navigateOnSuccess: () {
+                              locator<PayvidenceAppRouter>().popUntil(
+                                  (route) => route is OnboardingScreen);
+                              locator<PayvidenceAppRouter>().navigateNamed(
+                                  PayvidenceRoutes.changePasswordSuccess);
+                            });
+                      } else {
+                        print("Form is not valid");
+                      }
 
-
-                    // context.router.replace(ChangePasswordSuccessRoute());
-                  },),
+                      // context.router.replace(ChangePasswordSuccessRoute());
+                    },
+                  ),
                 ],
               ),
             ),

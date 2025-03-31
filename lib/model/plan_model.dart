@@ -74,8 +74,10 @@ class Plan {
       id: json['id'] as String,
       name: json['name'] as String,
       businessAccountsAllowed: json['business_accounts_allowed'] as int,
-      invoiceGenerationPerMonth: int.parse(json['invoice_generation_per_month'] as String),
-      receiptGenerationPerMonth: int.parse(json['receipt_generation_per_month'] as String),
+      invoiceGenerationPerMonth:
+          int.parse(json['invoice_generation_per_month'] as String),
+      receiptGenerationPerMonth:
+          int.parse(json['receipt_generation_per_month'] as String),
       salesReport: json['sales_report'] as bool,
       receiptSharing: json['receipt_sharing'] as bool,
       receiptPrinting: json['receipt_printing'] as bool,
@@ -85,7 +87,8 @@ class Plan {
       brandManagement: json['brand_management'] as bool,
       letterheadTransaction: json['letterhead_transaction'] as bool,
       paymentInstructions: json['payment_instructions'] as bool,
-      advancedReportingAndAnalytics: json['advanced_reporting_and_analytics'] as bool,
+      advancedReportingAndAnalytics:
+          json['advanced_reporting_and_analytics'] as bool,
       templates: json['templates'] as int,
       isRecommended: json['is_recommended'] as bool,
       duration: json['duration'] as String,
@@ -129,7 +132,9 @@ PlanResponse parsePlans(String responseBody) {
 
 List<Plan> parsePlanList(dynamic data) {
   if (data is List<dynamic>) {
-    return data.map((item) => Plan.fromJson(item as Map<String, dynamic>)).toList();
+    return data
+        .map((item) => Plan.fromJson(item as Map<String, dynamic>))
+        .toList();
   }
   throw Exception('Expected a list of plans');
 }

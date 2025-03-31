@@ -17,8 +17,8 @@ class GetAllInvoiceNotifier extends AsyncNotifier<List<Receipt>> {
   @override
   Future<List<Receipt>> build() {
     //final userModel = getUser();
-    return locator<IReceiptRepository>().fetchAllReceipts(
-        ref.read(getCurrentBusinessProvider)!.id!, 'invoice');
+    return locator<IReceiptRepository>()
+        .fetchAllReceipts(ref.read(getCurrentBusinessProvider)!.id!, 'invoice');
   }
 
   Future<Receipt> addInvoice(Map<String, dynamic> data) {

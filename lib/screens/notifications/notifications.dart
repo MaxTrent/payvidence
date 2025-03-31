@@ -10,17 +10,13 @@ import 'package:payvidence/model/notification_model.dart';
 import '../../gen/assets.gen.dart';
 import 'notifications_vm.dart';
 
-
 @RoutePage(name: 'NotificationsRoute')
 class Notifications extends HookConsumerWidget {
   const Notifications({super.key});
 
-
-
   @override
   Widget build(BuildContext context, ref) {
     final viewModel = ref.watch(notificationsViewModel);
-
 
     useEffect(() {
       if (viewModel.notifications.isEmpty && !viewModel.isLoading) {
@@ -43,19 +39,26 @@ class Notifications extends HookConsumerWidget {
               'Notifications',
               style: Theme.of(context).textTheme.displayLarge,
             ),
-            SizedBox(height: 28.h,),
+            SizedBox(
+              height: 28.h,
+            ),
             Expanded(
               child: viewModel.isLoading
                   ? const LoadingIndicator()
                   : viewModel.notifications.isEmpty
-                  ?  Center(child: Text('No notifications available',style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 16.sp)))
-                  : ListView.builder(
-                itemCount: viewModel.notifications.length,
-                itemBuilder: (context, index) {
-                  final notification = viewModel.notifications[index];
-                  return NotificationTile(notification: notification);
-                },
-              ),
+                      ? Center(
+                          child: Text('No notifications available',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(fontSize: 16.sp)))
+                      : ListView.builder(
+                          itemCount: viewModel.notifications.length,
+                          itemBuilder: (context, index) {
+                            final notification = viewModel.notifications[index];
+                            return NotificationTile(notification: notification);
+                          },
+                        ),
             ),
           ],
         ),
@@ -68,7 +71,8 @@ class NotificationTile extends StatelessWidget {
   final NotificationModel notification;
 
   const NotificationTile({
-    super.key, required this.notification,
+    super.key,
+    required this.notification,
   });
 
   String _formatTime(DateTime dateTime) {
@@ -91,17 +95,22 @@ class NotificationTile extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Padding(
-          padding:  EdgeInsets.all(14.h),
+          padding: EdgeInsets.all(14.h),
           child: SvgPicture.asset(Assets.svg.notification),
         ),
       ),
-      title: Text(notification.details, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 16.sp),),
-    trailing: Text(
-      _formatTime(notification.createdAt),
-      style: Theme.of(context)
-          .textTheme
-          .displaySmall!
-          .copyWith(fontSize: 14.sp, color: const Color(0xff8B8B8B)),
-    ), );
+      title: Text(
+        notification.details,
+        style:
+            Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 16.sp),
+      ),
+      trailing: Text(
+        _formatTime(notification.createdAt),
+        style: Theme.of(context)
+            .textTheme
+            .displaySmall!
+            .copyWith(fontSize: 14.sp, color: const Color(0xff8B8B8B)),
+      ),
+    );
   }
 }

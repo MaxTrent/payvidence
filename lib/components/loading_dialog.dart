@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
   static show(
-      BuildContext context,
-      ) {
+    BuildContext context,
+  ) {
     showDialog(
         context: context,
         barrierColor: Colors.white70,

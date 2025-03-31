@@ -15,11 +15,9 @@ import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 
-
 @RoutePage(name: 'LoginRoute')
 class Login extends HookConsumerWidget {
   Login({super.key});
-
 
   @override
   Widget build(BuildContext context, ref) {
@@ -50,8 +48,7 @@ class Login extends HookConsumerWidget {
         emailController.removeListener(updateFieldsEmptyStatus);
         passwordController.removeListener(updateFieldsEmptyStatus);
       };
-    }, [
-    ]);
+    }, []);
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus,
@@ -136,7 +133,8 @@ class Login extends HookConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.forgotPassword);
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.forgotPassword);
                     },
                     child: Text(
                       'Forgot password?',
@@ -153,7 +151,8 @@ class Login extends HookConsumerWidget {
                   FutureBuilder(
                     future: viewModel.canUseBiometrics,
                     builder: (context, snapshot) {
-                      final canUseBiometrics = snapshot.hasData && snapshot.data == true;
+                      final canUseBiometrics =
+                          snapshot.hasData && snapshot.data == true;
 
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +172,7 @@ class Login extends HookConsumerWidget {
                                     navigateOnSuccess: () {
                                       ref.invalidate(getAllBusinessProvider);
                                       locator<PayvidenceAppRouter>().popUntil(
-                                              (route) => route is OnboardingScreen);
+                                          (route) => route is OnboardingScreen);
                                       locator<PayvidenceAppRouter>()
                                           .replaceNamed(PayvidenceRoutes.home);
                                     },
@@ -182,9 +181,7 @@ class Login extends HookConsumerWidget {
                               },
                             ),
                           ),
-
                           if (canUseBiometrics) SizedBox(width: 16.w),
-
                           if (canUseBiometrics)
                             GestureDetector(
                               onTap: () {
@@ -193,7 +190,7 @@ class Login extends HookConsumerWidget {
                                   navigateOnSuccess: () {
                                     ref.invalidate(getAllBusinessProvider);
                                     locator<PayvidenceAppRouter>().popUntil(
-                                            (route) => route is OnboardingScreen);
+                                        (route) => route is OnboardingScreen);
                                     locator<PayvidenceAppRouter>()
                                         .replaceNamed(PayvidenceRoutes.home);
                                   },
@@ -209,7 +206,6 @@ class Login extends HookConsumerWidget {
                       );
                     },
                   ),
-
                 ],
               ),
             ),

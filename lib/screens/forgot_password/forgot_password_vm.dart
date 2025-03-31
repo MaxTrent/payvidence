@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
@@ -8,14 +6,12 @@ import '../../data/local/session_manager.dart';
 import '../../model/user_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
+final forgotPasswordViewModelProvider =
+    ChangeNotifierProvider((ref) => ForgotPasswordViewModel(ref));
 
-
-final forgotPasswordViewModelProvider = ChangeNotifierProvider((ref)=> ForgotPasswordViewModel(ref));
-
-class ForgotPasswordViewModel extends BaseChangeNotifier{
+class ForgotPasswordViewModel extends BaseChangeNotifier {
   final Ref ref;
   ForgotPasswordViewModel(this.ref);
-
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;

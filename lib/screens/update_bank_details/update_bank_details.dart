@@ -38,7 +38,7 @@ class UpdateBankDetails extends ConsumerWidget {
         print(response.toJson());
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.success( "Bank details updated successfully");
+        ToastService.success("Bank details updated successfully");
         ref.invalidate(getAllBusinessProvider);
         ref
             .read(getCurrentBusinessProvider.notifier)

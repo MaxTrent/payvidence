@@ -12,27 +12,24 @@ import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../clients/clients.dart';
-   
-
-
 
 @RoutePage(name: 'ClientSuccessRoute')
 class ClientSuccess extends HookConsumerWidget {
   final String name;
 
-  const ClientSuccess({super.key,@QueryParam('name') this.name = ''});
+  const ClientSuccess({super.key, @QueryParam('name') this.name = ''});
 
   @override
   Widget build(BuildContext context, ref) {
     return Scaffold(
       floatingActionButton: AppButton(
           buttonText: 'Alright!',
-          onPressed: (){
+          onPressed: () {
             // locator<PayvidenceAppRouter>().popUntil(
             //         (route) => route is Clients);
             ref.read(getAllClientsProvider.notifier).fetchClients();
-           Navigator.of(context).pop();
-           Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
             // locator<PayvidenceAppRouter>().back();
           }),
       body: SafeArea(

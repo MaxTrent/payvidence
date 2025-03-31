@@ -5,12 +5,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/loading_indicator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-
 @RoutePage(name: 'PaymentWebViewRoute')
 class PaymentWebViewPage extends StatefulHookConsumerWidget {
   final String paymentLink;
 
-  const PaymentWebViewPage({super.key, @QueryParam('paymentLink') this.paymentLink = ''});
+  const PaymentWebViewPage(
+      {super.key, @QueryParam('paymentLink') this.paymentLink = ''});
 
   @override
   ConsumerState<PaymentWebViewPage> createState() => _PaymentWebViewPageState();
@@ -21,9 +21,8 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
   Widget build(BuildContext context) {
     final isLoading = useState(true);
 
-
     final controller = useMemoized(
-          () => WebViewController()
+      () => WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setNavigationDelegate(
           NavigationDelegate(
@@ -51,7 +50,6 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
         ..loadRequest(Uri.parse(widget.paymentLink)),
       [widget.paymentLink],
     );
-
 
     useEffect(() {
       return null;

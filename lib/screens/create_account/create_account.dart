@@ -14,7 +14,6 @@ import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 import '../onboarding/onboarding.dart';
 
-
 @RoutePage(name: 'CreateAccountRoute')
 class CreateAccountScreen extends HookConsumerWidget {
   const CreateAccountScreen({super.key});
@@ -32,7 +31,6 @@ class CreateAccountScreen extends HookConsumerWidget {
     final passwordController = useTextEditingController();
     final passwordConfirmController = useTextEditingController();
 
-
     final _areFieldsEmpty = useState(true);
     final obscurePasswordText = useState(true);
     final obscurePasswordConfirmText = useState(true);
@@ -42,7 +40,8 @@ class CreateAccountScreen extends HookConsumerWidget {
           lastNameController.text.toString().isEmpty ||
           phoneController.text.toString().isEmpty ||
           emailController.text.toString().isEmpty ||
-          passwordController.text.toString().isEmpty || passwordConfirmController.text.toString().isEmpty;
+          passwordController.text.toString().isEmpty ||
+          passwordConfirmController.text.toString().isEmpty;
     }
 
     useEffect(() {
@@ -73,7 +72,6 @@ class CreateAccountScreen extends HookConsumerWidget {
       passwordController,
       passwordConfirmController,
     ]);
-
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -177,7 +175,6 @@ class CreateAccountScreen extends HookConsumerWidget {
                     hintText: 'Phone number',
                     keyboardType: TextInputType.number,
                     controller: phoneController,
-
                     validator: (val) {
                       if (!val!.isValidPhone || val.isEmpty) {
                         return 'Enter a valid phone number';
@@ -204,12 +201,12 @@ class CreateAccountScreen extends HookConsumerWidget {
                       return null;
                     },
                     controller: passwordController,
-                    obscureText:
-                        obscurePasswordText.value,
+                    obscureText: obscurePasswordText.value,
                     suffixIcon: Padding(
                       padding: EdgeInsets.all(16.h),
                       child: GestureDetector(
-                          onTap: () => obscurePasswordText.value = !obscurePasswordText.value,
+                          onTap: () => obscurePasswordText.value =
+                              !obscurePasswordText.value,
                           child: SvgPicture.asset(Assets.svg.password)),
                     ),
                   ),
@@ -226,7 +223,7 @@ class CreateAccountScreen extends HookConsumerWidget {
                   AppTextField(
                     hintText: 'Confirm Password',
                     controller: passwordConfirmController,
-                    obscureText:  obscurePasswordConfirmText.value,
+                    obscureText: obscurePasswordConfirmText.value,
                     validator: (val) {
                       final password = passwordController.text;
                       if (!val!.isValidPassword || val.isEmpty) {
@@ -240,7 +237,8 @@ class CreateAccountScreen extends HookConsumerWidget {
                     suffixIcon: Padding(
                       padding: EdgeInsets.all(16.h),
                       child: GestureDetector(
-                          onTap: () => obscurePasswordConfirmText.value = !obscurePasswordConfirmText.value,
+                          onTap: () => obscurePasswordConfirmText.value =
+                              !obscurePasswordConfirmText.value,
                           child: SvgPicture.asset(Assets.svg.password)),
                     ),
                   ),
@@ -254,7 +252,7 @@ class CreateAccountScreen extends HookConsumerWidget {
                           .displaySmall!
                           .copyWith(fontSize: 14.sp),
                       children: [
-                       TextSpan(
+                        TextSpan(
                             text: 'Terms & Conditions',
                             style: Theme.of(context)
                                 .textTheme
@@ -279,26 +277,33 @@ class CreateAccountScreen extends HookConsumerWidget {
                   //     ? const LoadingIndicator()
                   //     :
                   AppButton(
-                          buttonText: 'Create account',
-                          isDisabled: _areFieldsEmpty.value,
-                          isProcessing: viewModel.isLoading,
-                          onPressed: () {
-                            print("Button pressed");
-                              if (_formKey.currentState!.validate()) {
-                                print("Form is valid");
-                                FocusScope.of(context).unfocus();
-                                viewModel.createAccount(firstName: firstNameController.text.trim(), lastName: lastNameController.text.trim(), phone: phoneController.text.trim(), email: emailController.text.trim(), password: passwordController.text.trim(), passwordConfirm: passwordConfirmController.text.trim(), navigateOnSuccess: (){
-                                  locator<PayvidenceAppRouter>().popUntil(
-                                          (route) => route is OnboardingScreen);
-                                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otp);
-                                });
-                              } else {
-                                print("Form is not valid");
-                              }
-                          },
-                        ),
-
-                  
+                    buttonText: 'Create account',
+                    isDisabled: _areFieldsEmpty.value,
+                    isProcessing: viewModel.isLoading,
+                    onPressed: () {
+                      print("Button pressed");
+                      if (_formKey.currentState!.validate()) {
+                        print("Form is valid");
+                        FocusScope.of(context).unfocus();
+                        viewModel.createAccount(
+                            firstName: firstNameController.text.trim(),
+                            lastName: lastNameController.text.trim(),
+                            phone: phoneController.text.trim(),
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                            passwordConfirm:
+                                passwordConfirmController.text.trim(),
+                            navigateOnSuccess: () {
+                              locator<PayvidenceAppRouter>().popUntil(
+                                  (route) => route is OnboardingScreen);
+                              locator<PayvidenceAppRouter>()
+                                  .navigateNamed(PayvidenceRoutes.otp);
+                            });
+                      } else {
+                        print("Form is not valid");
+                      }
+                    },
+                  ),
                 ],
               ),
             ),

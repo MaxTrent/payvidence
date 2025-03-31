@@ -20,20 +20,25 @@ class Sales {
   String toRawJson() => json.encode(toJson());
 
   factory Sales.fromJson(Map<String, dynamic> json) => Sales(
-    totalSales: json["total_sales"],
-    totalRevenue: json["total_revenue"],
-    totalReceipts: json["total_receipts"],
-    totalInvoices: json["total_invoices"],
-    graphData: json["graph_data"] == null ? [] : List<GraphDatum>.from(json["graph_data"]!.map((x) => GraphDatum.fromJson(x))),
-  );
+        totalSales: json["total_sales"],
+        totalRevenue: json["total_revenue"],
+        totalReceipts: json["total_receipts"],
+        totalInvoices: json["total_invoices"],
+        graphData: json["graph_data"] == null
+            ? []
+            : List<GraphDatum>.from(
+                json["graph_data"]!.map((x) => GraphDatum.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "total_sales": totalSales,
-    "total_revenue": totalRevenue,
-    "total_receipts": totalReceipts,
-    "total_invoices": totalInvoices,
-    "graph_data": graphData == null ? [] : List<dynamic>.from(graphData!.map((x) => x.toJson())),
-  };
+        "total_sales": totalSales,
+        "total_revenue": totalRevenue,
+        "total_receipts": totalReceipts,
+        "total_invoices": totalInvoices,
+        "graph_data": graphData == null
+            ? []
+            : List<dynamic>.from(graphData!.map((x) => x.toJson())),
+      };
 }
 
 class GraphDatum {
@@ -45,17 +50,18 @@ class GraphDatum {
     this.sales,
   });
 
-  factory GraphDatum.fromRawJson(String str) => GraphDatum.fromJson(json.decode(str));
+  factory GraphDatum.fromRawJson(String str) =>
+      GraphDatum.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory GraphDatum.fromJson(Map<String, dynamic> json) => GraphDatum(
-    week: json["week"],
-    sales: json["sales"],
-  );
+        week: json["week"],
+        sales: json["sales"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "week": week,
-    "sales": sales,
-  };
+        "week": week,
+        "sales": sales,
+      };
 }

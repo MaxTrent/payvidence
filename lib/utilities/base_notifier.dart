@@ -14,7 +14,8 @@ class BaseChangeNotifier extends ChangeNotifier {
     NotificationService? notificationService, // Optional parameter
   }) {
     this.apiServices = apiServices ?? locator<ApiServices>();
-    _notificationService = notificationService ?? locator<NotificationService>();
+    _notificationService =
+        notificationService ?? locator<NotificationService>();
   }
 
   void handleError({

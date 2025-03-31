@@ -92,7 +92,8 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
     () => SalesRepository(locator()),
   );
 
-  locator.registerLazySingleton<NotificationService>(() => NotificationService());
+  locator
+      .registerLazySingleton<NotificationService>(() => NotificationService());
 
   // locator.registerLazySingleton(() => DialogHandler());
 

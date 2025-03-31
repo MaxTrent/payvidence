@@ -33,8 +33,8 @@ class SubscriptionPlans extends HookConsumerWidget {
         selectedTier.value = choosePlanVm.plans
             .firstWhere(
               (plan) => plan.id == planId,
-          orElse: () => choosePlanVm.plans.first,
-        )
+              orElse: () => choosePlanVm.plans.first,
+            )
             .name;
       }
     }
@@ -61,18 +61,18 @@ class SubscriptionPlans extends HookConsumerWidget {
           onPressed: selectedTier.value.isEmpty || subscriptionPlansVm.isLoading
               ? null
               : () {
-            final selectedPlan = choosePlanVm.plans.firstWhere(
-                  (plan) => plan.name == selectedTier.value,
-              orElse: () => choosePlanVm.plans.first,
-            );
-            subscriptionPlansVm.createSubscription(
-              planId: selectedPlan.id,
-              navigateOnSuccess: (paymentLink) {
-                locator<PayvidenceAppRouter>()
-                    .push(PaymentWebViewRoute(paymentLink: paymentLink));
-              },
-            );
-          },
+                  final selectedPlan = choosePlanVm.plans.firstWhere(
+                    (plan) => plan.name == selectedTier.value,
+                    orElse: () => choosePlanVm.plans.first,
+                  );
+                  subscriptionPlansVm.createSubscription(
+                    planId: selectedPlan.id,
+                    navigateOnSuccess: (paymentLink) {
+                      locator<PayvidenceAppRouter>()
+                          .push(PaymentWebViewRoute(paymentLink: paymentLink));
+                    },
+                  );
+                },
         ),
       ),
       body: Padding(
@@ -87,43 +87,43 @@ class SubscriptionPlans extends HookConsumerWidget {
             SizedBox(height: 24.h),
             choosePlanVm.isLoading
                 ? Row(
-              children: [
-                CustomShimmer(width: 83.w, height: 45.h),
-                SizedBox(width: 12.w),
-                CustomShimmer(width: 83.w, height: 45.h),
-                SizedBox(width: 12.w),
-                CustomShimmer(width: 83.w, height: 45.h),
-              ],
-            )
+                    children: [
+                      CustomShimmer(width: 83.w, height: 45.h),
+                      SizedBox(width: 12.w),
+                      CustomShimmer(width: 83.w, height: 45.h),
+                      SizedBox(width: 12.w),
+                      CustomShimmer(width: 83.w, height: 45.h),
+                    ],
+                  )
                 : SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: choosePlanVm.plans.map((plan) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: 12.w),
-                    child: _buildTierButton(
-                      context: context,
-                      tier: plan.name,
-                      isSelected: selectedTier.value == plan.name,
-                      onTap: () => selectedTier.value = plan.name,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: choosePlanVm.plans.map((plan) {
+                        return Padding(
+                          padding: EdgeInsets.only(right: 12.w),
+                          child: _buildTierButton(
+                            context: context,
+                            tier: plan.name,
+                            isSelected: selectedTier.value == plan.name,
+                            onTap: () => selectedTier.value = plan.name,
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
+                  ),
             SizedBox(height: 24.h),
             Expanded(
               child: choosePlanVm.isLoading
                   ? _buildLoadingShimmer()
                   : choosePlanVm.plans.isEmpty
-                  ? const Center(child: Text('No plans available'))
-                  : _buildSubscriptionContent(
-                context,
-                choosePlanVm.plans.firstWhere(
-                      (plan) => plan.name == selectedTier.value,
-                  orElse: () => choosePlanVm.plans.first,
-                ),
-              ),
+                      ? const Center(child: Text('No plans available'))
+                      : _buildSubscriptionContent(
+                          context,
+                          choosePlanVm.plans.firstWhere(
+                            (plan) => plan.name == selectedTier.value,
+                            orElse: () => choosePlanVm.plans.first,
+                          ),
+                        ),
             ),
           ],
         ),
@@ -153,8 +153,8 @@ class SubscriptionPlans extends HookConsumerWidget {
           child: Text(
             tier,
             style: Theme.of(context).textTheme.displaySmall!.copyWith(
-              color: isSelected ? Colors.white : Colors.black,
-            ),
+                  color: isSelected ? Colors.white : Colors.black,
+                ),
           ),
         ),
       ),
@@ -189,9 +189,9 @@ class SubscriptionPlans extends HookConsumerWidget {
         Text(
           'What’s embedded in ${plan.name.toLowerCase()}?',
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
-            fontWeight: FontWeight.w400,
-            fontSize: 20.sp,
-          ),
+                fontWeight: FontWeight.w400,
+                fontSize: 20.sp,
+              ),
         ),
         SizedBox(height: 20.h),
         Expanded(

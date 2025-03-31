@@ -10,7 +10,8 @@ import 'package:payvidence/repositories/repository/client_repository.dart';
 import '../../model/business_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
-final getAllClientsProvider = AsyncNotifierProvider<GetAllClientsNotifier, List<ClientModel>>(() {
+final getAllClientsProvider =
+    AsyncNotifierProvider<GetAllClientsNotifier, List<ClientModel>>(() {
   return GetAllClientsNotifier();
 });
 
@@ -33,7 +34,8 @@ class GetAllClientsNotifier extends AsyncNotifier<List<ClientModel>> {
     }
     state = const AsyncValue.loading();
     try {
-      final clients = await locator<IClientRepository>().fetchAllClients(businessId);
+      final clients =
+          await locator<IClientRepository>().fetchAllClients(businessId);
       state = AsyncValue.data(clients);
       print("Refreshed clients: ${clients.length}");
     } catch (e, stackTrace) {

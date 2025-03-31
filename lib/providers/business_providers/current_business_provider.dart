@@ -33,6 +33,7 @@ class GetCurrentBusinessNotifier extends Notifier<Business?> {
       ref.invalidate(productFilterProvider);
     }
   }
+
   void resetCurrentBusiness(Business business) {
     if (state != business) {
       state = business;

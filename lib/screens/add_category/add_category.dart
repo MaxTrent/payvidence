@@ -48,7 +48,7 @@ class AddCategory extends ConsumerWidget {
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error( 'An unknown error has occurred!');
+        ToastService.error('An unknown error has occurred!');
       }
     }
 

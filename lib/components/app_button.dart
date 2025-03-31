@@ -34,7 +34,8 @@ class AppButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isProcessing || isDisabled ? null : onPressed,
         style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(isDisabled? Colors.grey: backgroundColor),
+            backgroundColor: WidgetStateProperty.all(
+                isDisabled ? Colors.grey : backgroundColor),
             foregroundColor: WidgetStateProperty.all(textColor),
             elevation: WidgetStateProperty.all(0),
             minimumSize: WidgetStateProperty.all(Size(350.w, 60.h)),
@@ -47,7 +48,9 @@ class AppButton extends StatelessWidget {
               ),
             )),
         child: isProcessing
-            ? const LoadingIndicator(color: Colors.white,)
+            ? const LoadingIndicator(
+                color: Colors.white,
+              )
             : Text(
                 buttonText,
                 style: Theme.of(context)

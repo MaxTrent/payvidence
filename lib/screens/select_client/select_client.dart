@@ -2,13 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
- 
+
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
-
 
 @RoutePage(name: 'SelectClientRoute')
 class SelectClient extends StatelessWidget {
@@ -26,7 +25,7 @@ class SelectClient extends StatelessWidget {
           prefixIcon: Padding(
             padding: EdgeInsets.all(16.h),
             child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   locator<PayvidenceAppRouter>().back();
                 },
                 child: SvgPicture.asset(Assets.svg.backbutton)),
@@ -42,7 +41,9 @@ class SelectClient extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            SizedBox(height: 16.h,),
+            SizedBox(
+              height: 16.h,
+            ),
             ClientTile(
               fullName: 'Bolatito Eniola',
               phoneNumber: '0812 224 6633',
@@ -88,16 +89,13 @@ class ClientTile extends StatelessWidget {
       height: 70.h,
       decoration: BoxDecoration(
           border: Border(
-              bottom: BorderSide(
-                  color: const Color(0xffF0F0F0),
-                  width: 1.h
-              )
-          )
-      ),
+              bottom: BorderSide(color: const Color(0xffF0F0F0), width: 1.h))),
       child: Row(
         children: [
           SvgPicture.asset(Assets.svg.contact),
-          SizedBox(width: 16.w,),
+          SizedBox(
+            width: 16.w,
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,14 +116,10 @@ class ClientTile extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .displaySmall!
-                      .copyWith(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w300
-                  ),
+                      .copyWith(fontSize: 14.sp, fontWeight: FontWeight.w300),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-
               ],
             ),
           )

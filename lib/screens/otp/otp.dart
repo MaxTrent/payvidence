@@ -20,8 +20,6 @@ import 'otp_vm.dart';
 class OtpScreen extends HookConsumerWidget {
   OtpScreen({super.key});
 
-
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _formKey = useMemoized(() => GlobalKey<FormState>(), []);
@@ -53,6 +51,7 @@ class OtpScreen extends HookConsumerWidget {
       void listener() {
         isTextFieldEmpty.value = pinController.text.isEmpty;
       }
+
       pinController.addListener(listener);
       return () => pinController.removeListener(listener);
     }, []);
@@ -65,7 +64,7 @@ class OtpScreen extends HookConsumerWidget {
     // final isComplete = pinController.text.length == 5;
 
     return GestureDetector(
-      onTap: ()=>FocusManager.instance.primaryFocus?.unfocus(),
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         appBar: AppBar(),
         body: Form(
@@ -163,10 +162,13 @@ class OtpScreen extends HookConsumerWidget {
                         ] else
                           TextSpan(
                             text: 'Resend code',
-                            style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xff4E38B2),
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff4E38B2),
+                                ),
                           ),
                       ],
                     ),

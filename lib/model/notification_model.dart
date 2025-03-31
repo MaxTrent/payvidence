@@ -14,7 +14,8 @@ class NotificationResponse {
       success: json['success'] as bool,
       message: json['message'] as String,
       data: (json['data'] as List<dynamic>)
-          .map((item) => NotificationModel.fromJson(item as Map<String, dynamic>))
+          .map((item) =>
+              NotificationModel.fromJson(item as Map<String, dynamic>))
           .toList(),
     );
   }

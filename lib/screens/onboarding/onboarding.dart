@@ -10,7 +10,6 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import 'onboarding_vm.dart';
 
-
 @RoutePage(name: 'OnboardingScreenRoute')
 class OnboardingScreen extends HookConsumerWidget {
   static String routeName = "/onboardingScreen";
@@ -68,7 +67,8 @@ class OnboardingScreen extends HookConsumerWidget {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black, // Shadow color with transparency
-                        offset: Offset(0, -2.h), // Horizontal and vertical offset
+                        offset:
+                            Offset(0, -2.h), // Horizontal and vertical offset
                         blurRadius: 4.r, // Amount of blur
                         spreadRadius: 10, // Spread of the shadow
                       ),
@@ -87,14 +87,18 @@ class OnboardingScreen extends HookConsumerWidget {
                         SizedBox(
                           height: 45.h,
                         ),
-                        AppButton(buttonText: 'Get started', onPressed: () {
-                          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.createAccount);
-                        },),
+                        AppButton(
+                          buttonText: 'Get started',
+                          onPressed: () {
+                            locator<PayvidenceAppRouter>()
+                                .navigateNamed(PayvidenceRoutes.createAccount);
+                          },
+                        ),
                         SizedBox(height: 26.h),
                         GestureDetector(
-                          onTap: (){
-                            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
-
+                          onTap: () {
+                            locator<PayvidenceAppRouter>()
+                                .navigateNamed(PayvidenceRoutes.login);
                           },
                           child: Text(
                             'Log in instead',
@@ -116,7 +120,6 @@ class OnboardingScreen extends HookConsumerWidget {
     );
   }
 }
-
 
 class PageIndicator extends StatelessWidget {
   const PageIndicator({

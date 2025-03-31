@@ -24,14 +24,16 @@ Future<void> main() async {
 
   try {
     await initializeSharedDependencies(baseUrl: baseUrl);
-    runApp(ProviderScope(observers: [AppProviderObserver()],child: MyApp(appTheme: AppTheme(), ),));
+    runApp(ProviderScope(
+      observers: [AppProviderObserver()],
+      child: MyApp(
+        appTheme: AppTheme(),
+      ),
+    ));
   } catch (e) {
     print(e);
   }
 }
-
-
-
 
 class MyApp extends StatelessWidget {
   final AppTheme appTheme;

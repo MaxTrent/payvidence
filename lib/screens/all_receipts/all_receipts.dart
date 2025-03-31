@@ -15,8 +15,6 @@ import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
-
-
 @RoutePage(name: 'AllReceiptsRoute')
 class AllReceipts extends ConsumerWidget {
   AllReceipts({super.key});
@@ -136,7 +134,8 @@ class AllReceipts extends ConsumerWidget {
                           onTap: () {
                             locator<PayvidenceAppRouter>()
                                 .navigate(ReceiptScreenRoute(
-                              record: actualData[index], isInvoice: false,
+                              record: actualData[index],
+                              isInvoice: false,
                             ));
                           },
                           child: ReceiptTile(
@@ -255,7 +254,6 @@ class ReceiptTile extends StatelessWidget {
                           .textTheme
                           .displayMedium!
                           .copyWith(fontSize: 14.sp)),
-
                 ],
               )
             ],

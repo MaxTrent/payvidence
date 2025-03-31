@@ -9,7 +9,7 @@ extension ExtString on String {
   bool get isValidPassword {
     // Minimum 8 characters, at least one letter and one number, special characters allowed
     final passwordRegExp =
-    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$');
+        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$');
     return passwordRegExp.hasMatch(this);
   }
 
@@ -23,7 +23,8 @@ extension ExtString on String {
     return nameRegExp.hasMatch(this);
   }
 }
-class Validator{
+
+class Validator {
   Validator._();
 
   static String? validateName(String? value) {
@@ -46,6 +47,7 @@ class Validator{
 
     return null; // Return null if the phone number is valid
   }
+
   static String? validateEmpty(String? value) {
     // Remove leading and trailing white spaces
 
@@ -54,6 +56,5 @@ class Validator{
     }
 
     return null; // Return null if the full name is valid
-
   }
 }

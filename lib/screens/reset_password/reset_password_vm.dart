@@ -1,13 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
+final resetPasswordViewModelProvider =
+    ChangeNotifierProvider((ref) => ResetPasswordViewModel(ref));
 
-final resetPasswordViewModelProvider = ChangeNotifierProvider((ref)=> ResetPasswordViewModel(ref));
-
-class ResetPasswordViewModel extends BaseChangeNotifier{
+class ResetPasswordViewModel extends BaseChangeNotifier {
   final Ref ref;
   ResetPasswordViewModel(this.ref);
-
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -26,7 +25,7 @@ class ResetPasswordViewModel extends BaseChangeNotifier{
       final response = await apiServices.resetPasswordInit(email);
 
       if (response.success) {
-       navigateOnSuccess();
+        navigateOnSuccess();
       } else {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??

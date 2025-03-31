@@ -33,16 +33,18 @@ class HomeScreen extends HookConsumerWidget {
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
 
-
     ref.listen(getAllBusinessProvider, (prev, next) {
       if (next.hasValue && next.value!.isNotEmpty) {
-        ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(next.value!.last);
+        ref
+            .read(getCurrentBusinessProvider.notifier)
+            .setCurrentBusiness(next.value!.last);
       }
     });
 
     final businessId = ref.watch(getCurrentBusinessProvider)?.id;
     if (businessId != null) {
-      locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+      locator<SessionManager>()
+          .save(key: SessionConstants.businessId, value: businessId);
       print('business id saved: $businessId');
     }
 
@@ -65,7 +67,8 @@ class HomeScreen extends HookConsumerWidget {
               getAllBusiness.when(
                 data: (data) {
                   if (data.isEmpty) {
-                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
+                    locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.emptyBusiness);
                     return const SizedBox.shrink();
                   }
                   return Row(
@@ -76,14 +79,16 @@ class HomeScreen extends HookConsumerWidget {
                           CircleAvatar(
                             radius: 20.r,
                             backgroundColor: Colors.black,
-                            backgroundImage: NetworkImage(data.last.logoUrl ?? ''),
+                            backgroundImage:
+                                NetworkImage(data.last.logoUrl ?? ''),
                           ),
                           SizedBox(width: 10.w),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                ref.watch(getCurrentBusinessProvider)?.name ?? '...',
+                                ref.watch(getCurrentBusinessProvider)?.name ??
+                                    '...',
                                 style: Theme.of(context)
                                     .textTheme
                                     .displaySmall!
@@ -109,7 +114,8 @@ class HomeScreen extends HookConsumerWidget {
                       SizedBox(width: 15.w),
                       GestureDetector(
                         onTap: () {
-                          locator<PayvidenceAppRouter>().push(AllBusinessesRoute(allBusiness: data));
+                          locator<PayvidenceAppRouter>()
+                              .push(AllBusinessesRoute(allBusiness: data));
                         },
                         child: Container(
                           height: 40.h,
@@ -148,37 +154,42 @@ class HomeScreen extends HookConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allReceipts);
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.allReceipts);
                     },
                     child: AppCard(text: 'Receipts', icon: Assets.svg.receipt),
                   ),
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allInvoices);
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.allInvoices);
                     },
                     child: AppCard(text: 'Invoices', icon: Assets.svg.invoice),
                   ),
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigate(ClientsRoute(businessId: businessId!));
+                      locator<PayvidenceAppRouter>()
+                          .navigate(ClientsRoute(businessId: businessId!));
                     },
                     child: AppCard(text: 'Clients', icon: Assets.svg.client),
                   ),
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.product);
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.product);
                     },
                     child: AppCard(text: 'Products', icon: Assets.svg.product),
                   ),
                 ],
               ),
               SizedBox(height: 38.h),
-              useMySubscriptionViewModel.subInfo?.plan.name !=null ? const SizedBox.shrink():
-              GestureDetector(
-                onTap: () => locator<PayvidenceAppRouter>()
-                    .navigateNamed(PayvidenceRoutes.chooseSubscriptionPlan),
-                child: SvgPicture.asset(Assets.svg.subscribe),
-              ),
+              useMySubscriptionViewModel.subInfo?.plan.name != null
+                  ? const SizedBox.shrink()
+                  : GestureDetector(
+                      onTap: () => locator<PayvidenceAppRouter>().navigateNamed(
+                          PayvidenceRoutes.chooseSubscriptionPlan),
+                      child: SvgPicture.asset(Assets.svg.subscribe),
+                    ),
               SizedBox(height: 40.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -188,8 +199,7 @@ class HomeScreen extends HookConsumerWidget {
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   GestureDetector(
-                    onTap:
-                      onViewAllTransactions,
+                    onTap: onViewAllTransactions,
                     child: Text(
                       'View all',
                       style: Theme.of(context)
@@ -228,16 +238,25 @@ class HomeScreen extends HookConsumerWidget {
                 ),
               ] else ...[
                 ...transactionsViewModel.transactions.take(5).map(
-                      (transaction) {
-                    final firstProductDetail = transaction.recordProductDetails.isNotEmpty
-                        ? transaction.recordProductDetails.first
-                        : null;
+                  (transaction) {
+                    final firstProductDetail =
+                        transaction.recordProductDetails.isNotEmpty
+                            ? transaction.recordProductDetails.first
+                            : null;
                     return TransactionTile(
-                      amount: firstProductDetail!.product.price.toString().toCommaSeparated(),
-                      dateTime: firstProductDetail.product.createdAt.toString().toFormattedIsoDate(),
+                      amount: firstProductDetail!.product.price
+                          .toString()
+                          .toCommaSeparated(),
+                      dateTime: firstProductDetail.product.createdAt
+                          .toString()
+                          .toFormattedIsoDate(),
                       productName: firstProductDetail.product.name,
-                      receiptOrInvoice: transaction.status == 'pending' ? 'Invoice' : 'Receipt',
-                      unitSold: firstProductDetail.product.quantitySold.toString() ?? '0',
+                      receiptOrInvoice: transaction.status == 'pending'
+                          ? 'Invoice'
+                          : 'Receipt',
+                      unitSold:
+                          firstProductDetail.product.quantitySold.toString() ??
+                              '0',
                     );
                   },
                 ),

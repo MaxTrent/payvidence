@@ -24,13 +24,13 @@ class ReceiptRepository extends IReceiptRepository {
   }
 
   @override
-  Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType) {
+  Future<List<Receipt>> fetchAllReceipts(
+      String businessId, String? recordType) {
     return receiptDatasource.fetchAllReceipts(businessId, recordType);
   }
 
   @override
   Future<void> deleteReceipt(String receiptId) {
     return receiptDatasource.deleteReceipt(receiptId);
-
   }
 }

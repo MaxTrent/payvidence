@@ -36,7 +36,7 @@ class ProductDetails extends ConsumerWidget {
             .deleteProduct(currentProduct?.id ?? '');
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success( "Product deleted successfully");
+        ToastService.success("Product deleted successfully");
         ref.invalidate(getAllProductProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
@@ -363,8 +363,5 @@ class ProductDetails extends ConsumerWidget {
             ),
           );
         });
-
   }
 }
-
-

@@ -107,7 +107,7 @@ class AddClient extends HookConsumerWidget {
                     hintText: 'Client phone number',
                     controller: phoneNumberController,
                     keyboardType: TextInputType.phone,
-inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (val) {
                       if (val == null || val.isEmpty) {
                         return 'Phone number is required';
@@ -146,7 +146,8 @@ inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         isDisabled: areFieldsEmpty.value,
                         isProcessing: viewModel.isLoading,
                         onPressed: () {
-                          if (formKey.currentState!.validate() && businessId != null) {
+                          if (formKey.currentState!.validate() &&
+                              businessId != null) {
                             FocusScope.of(context).unfocus();
                             viewModel.addClient(
                               name: nameController.text,
@@ -154,7 +155,9 @@ inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               phoneNumber: phoneNumberController.text,
                               businessId: businessId,
                               navigateOnSuccess: () {
-                                locator<PayvidenceAppRouter>().push( ClientSuccessRoute(name: nameController.text));
+                                locator<PayvidenceAppRouter>().push(
+                                    ClientSuccessRoute(
+                                        name: nameController.text));
                               },
                             );
                           } else {

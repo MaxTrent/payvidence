@@ -32,6 +32,7 @@ extension NumberFormatting on String {
     final format = NumberFormat("#,##0.##", "en_US");
     return format.format(number);
   }
+
   String toCommaSeparated({String locale = 'en_US'}) {
     int? number = int.tryParse(this);
 
@@ -49,9 +50,6 @@ extension NumberFormatting on String {
     }
   }
 }
-
-
-
 
 extension DateTimeFormatting on DateTime? {
   String toFormattedString() {
