@@ -77,6 +77,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
         onPressed: selectProduct,
         index: _textFields.length + 1,
         product: product,
+        invoiceToReceipt: widget.inVoiceToReceipt,
       ));
     });
   }
@@ -100,11 +101,11 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
   }
 
   Future<void> selectClient() async {
-    ClientModel? client = await locator<PayvidenceAppRouter>()
+    final ClientModel? _client = await locator<PayvidenceAppRouter>()
         .push(ClientsRoute(forSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
-    if (client != null) {
-      client = client;
+    if (_client != null) {
+      client = _client;
       setState(() {});
     }
   }
@@ -138,18 +139,27 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
               : "receipt",
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
       "client_id": client?.id,
-      "is_draft": isDraft,
       "mode_of_payment": selectedPayment?.toLowerCase()
     };
     if (!context.mounted) return;
     LoadingDialog.show(context);
     try {
-      final Receipt response = await ref
-          .read(getAllReceiptProvider.notifier)
-          .addReceipt(requestData);
+      if (widget.inVoiceToReceipt == true) {
+        final Receipt response =
+            await ref.read(getAllReceiptProvider.notifier).reIssueReceipt(
+          widget.draft.id!,
+          {"mode_of_payment": selectedPayment?.toLowerCase()},
+        );
+      } else {
+        final Receipt response = await ref
+            .read(getAllReceiptProvider.notifier)
+            .updateReceipt(widget.draft.id!, requestData, !isDraft!);
+      }
+
       if (!context.mounted) return;
       Navigator.of(context).pop(); //pop loading dialog on success
-      ToastService.success("Receipt generated successfully");
+      ToastService.success(context,
+          "${(widget.isInvoice == true && widget.inVoiceToReceipt == false) ? "invoice" : "receipt"} generated successfully");
       ref.invalidate(
           widget.isInvoice == true && widget.inVoiceToReceipt == false
               ? getAllInvoiceProvider
@@ -168,12 +178,12 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
       });
     } on DioException catch (e) {
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(
+      ToastService.error(context,
           e.response?.data['message'] ?? 'An unknown error has occurred!!!');
     } catch (e) {
       print(e);
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error('An unknown error has occurred!');
+      ToastService.error(context, 'An unknown error has occurred!');
     }
   }
 
@@ -242,6 +252,9 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                     ),
                     GestureDetector(
                         onTap: () {
+                          if (widget.inVoiceToReceipt == true) {
+                            return;
+                          }
                           selectClient();
                         },
                         child: AppTextField(
@@ -366,7 +379,8 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error("Select a client please");
+                                ToastService.error(
+                                    context, "Select a client please");
                               }
                               isDraft = false;
                               createReceipt();
@@ -376,23 +390,27 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                         SizedBox(
                           height: 26.h,
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                              if (client == null) {
-                                ToastService.error("Select a client please");
+                        Visibility(
+                          visible: widget.inVoiceToReceipt == false,
+                          child: GestureDetector(
+                            onTap: () {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                if (client == null) {
+                                  ToastService.error(
+                                      context, "Select a client please");
+                                }
+                                isDraft = true;
+                                createReceipt();
                               }
-                              isDraft = true;
-                              createReceipt();
-                            }
-                          },
-                          child: Text(
-                            'Save as draft',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displayMedium!
-                                .copyWith(color: primaryColor2),
+                            },
+                            child: Text(
+                              'Save as draft',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(color: primaryColor2),
+                            ),
                           ),
                         ),
                       ],
