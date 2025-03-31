@@ -5,18 +5,16 @@ import '../shared_dependency/shared_dependency.dart';
 import 'enum.dart';
 import 'notification_service.dart';
 
-
-
 class BaseChangeNotifier extends ChangeNotifier {
   late ApiServices apiServices;
   late NotificationService _notificationService;
 
-  BaseChangeNotifier(
-      {
-        ApiServices? apiServices,
-      })
-  {
-    this.apiServices = apiServices ?? locator();
+  BaseChangeNotifier({
+    ApiServices? apiServices,
+    NotificationService? notificationService, // Optional parameter
+  }) {
+    this.apiServices = apiServices ?? locator<ApiServices>();
+    _notificationService = notificationService ?? locator<NotificationService>();
   }
 
   void handleError({
@@ -24,8 +22,9 @@ class BaseChangeNotifier extends ChangeNotifier {
     bool shouldDisplayError = true,
   }) {
     showErrorToastMessage(
-        message: message != "null" ? message.toString() : "An error occured",
-        type: ToastMessageType.failure);
+      message: message != "null" ? message.toString() : "An error occurred",
+      type: ToastMessageType.failure,
+    );
   }
 
   void showErrorToastMessage({

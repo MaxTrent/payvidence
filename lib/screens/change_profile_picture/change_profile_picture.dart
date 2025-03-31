@@ -60,15 +60,14 @@ class ChangeProfilePicture extends HookConsumerWidget {
                       fit: BoxFit.cover,
                       width: 200.r,
                       height: 200.r,
-                    )
-                        : viewModel.currentProfilePictureUrl != null &&
+                    ): viewModel.currentProfilePictureUrl != null &&
                         viewModel.currentProfilePictureUrl!.isNotEmpty
                         ? CachedNetworkImage(
                       imageUrl: viewModel.currentProfilePictureUrl!,
                       fit: BoxFit.cover,
                       width: 200.r,
                       height: 200.r,
-                      placeholder: (context, url) => LoadingIndicator(),
+                      placeholder: (context, url) => const LoadingIndicator(),
                       errorWidget: (context, url, error) => SvgPicture.asset(
                         Assets.svg.defaultProfilepic,
                         fit: BoxFit.cover,
