@@ -96,7 +96,7 @@ class AllTransactions extends HookConsumerWidget {
                   },
                   child: Container(
                     height: 48.h,
-                    width: 56.w,
+                    // width: 56.w,
                     decoration: BoxDecoration(
                       color: borderColor,
                       borderRadius: BorderRadius.circular(56.r),

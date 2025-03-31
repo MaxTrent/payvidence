@@ -69,6 +69,7 @@ dependencies:
   fl_chart: ^0.66.1
   permission_handler: ^11.4.0
   image_gallery_saver: ^2.0.3
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   auto_route_generator: ^9.0.0

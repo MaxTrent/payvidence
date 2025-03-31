@@ -7,7 +7,7 @@
 		<key>CFBundleDisplayName</key>
 		<string>Payvidence</string>
 		<key>NSFaceIDUsageDescription</key>
-        <string>We use Face ID to securely authenticate your identity.</string>
+		<string>We use Face ID to securely authenticate your identity.</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -50,6 +50,6 @@
 		<key>UIStatusBarHidden</key>
 		<false/>
 		<key>NSPhotoLibraryAddUsageDescription</key>
-        <string>This app needs access to your photo library to save images you capture.</string>
+		<string>This app needs access to your photo library to save images you capture.</string>
 	</dict>
 </plist>
