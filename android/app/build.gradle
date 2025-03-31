@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.payvidence"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -47,3 +47,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
 
 }
+//configurations.all {
+//    exclude group: "com.google.errorprone", module: "error_prone_annotations"
+//}

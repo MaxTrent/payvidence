@@ -8,8 +8,6 @@ import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
-import '../../data/local/session_constants.dart';
-import '../../data/local/session_manager.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 

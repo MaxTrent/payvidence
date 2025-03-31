@@ -1,0 +1,2 @@
+/Users/samueladelowo/StudioProjects/payvidence/android/app/.cxx/RelWithDebInfo/1439724z/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/samueladelowo/StudioProjects/payvidence/android/app/.cxx/RelWithDebInfo/1439724z/armeabi-v7a/CMakeFiles/edit_cache.dir

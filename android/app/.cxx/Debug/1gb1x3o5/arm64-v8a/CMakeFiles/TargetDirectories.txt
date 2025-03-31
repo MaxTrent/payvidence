@@ -1,0 +1,2 @@
+/Users/samueladelowo/StudioProjects/payvidence/android/app/.cxx/Debug/1gb1x3o5/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/samueladelowo/StudioProjects/payvidence/android/app/.cxx/Debug/1gb1x3o5/arm64-v8a/CMakeFiles/rebuild_cache.dir
