@@ -197,6 +197,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/notification.svg
   String get notification => 'assets/svg/notification.svg';
 
+  /// File path: assets/svg/otherplans.svg
+  String get otherplans => 'assets/svg/otherplans.svg';
+
   /// File path: assets/svg/password-check.svg
   String get passwordCheck => 'assets/svg/password-check.svg';
 
@@ -234,6 +237,12 @@ class $AssetsSvgGen {
   /// File path: assets/svg/receipt.svg
   String get receipt => 'assets/svg/receipt.svg';
 
+  /// File path: assets/svg/renewplan.svg
+  String get renewplan => 'assets/svg/renewplan.svg';
+
+  /// File path: assets/svg/restricted.svg
+  String get restricted => 'assets/svg/restricted.svg';
+
   /// File path: assets/svg/ribbon white.svg
   String get ribbonWhite => 'assets/svg/ribbon white.svg';
 
@@ -264,8 +273,14 @@ class $AssetsSvgGen {
   /// File path: assets/svg/store.svg
   String get store => 'assets/svg/store.svg';
 
+  /// File path: assets/svg/subfailed.svg
+  String get subfailed => 'assets/svg/subfailed.svg';
+
   /// File path: assets/svg/subscribe.svg
   String get subscribe => 'assets/svg/subscribe.svg';
+
+  /// File path: assets/svg/subsuccess.svg
+  String get subsuccess => 'assets/svg/subsuccess.svg';
 
   /// File path: assets/svg/terms.svg
   String get terms => 'assets/svg/terms.svg';
@@ -275,6 +290,9 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/transaction_ol.svg
   String get transactionOl => 'assets/svg/transaction_ol.svg';
+
+  /// File path: assets/svg/upgradeplan.svg
+  String get upgradeplan => 'assets/svg/upgradeplan.svg';
 
   /// File path: assets/svg/upload image.svg
   String get uploadImage => 'assets/svg/upload image.svg';
@@ -334,6 +352,7 @@ class $AssetsSvgGen {
         noteText,
         notificationBing,
         notification,
+        otherplans,
         passwordCheck,
         password,
         passwordSuccess,
@@ -346,6 +365,8 @@ class $AssetsSvgGen {
         profileConfetti,
         profileOl,
         receipt,
+        renewplan,
+        restricted,
         ribbonWhite,
         ribbon,
         search,
@@ -356,10 +377,13 @@ class $AssetsSvgGen {
         star,
         statusUp,
         store,
+        subfailed,
         subscribe,
+        subsuccess,
         terms,
         transaction,
         transactionOl,
+        upgradeplan,
         uploadImage,
         userSquare,
         wallet,

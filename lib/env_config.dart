@@ -8,7 +8,7 @@ Future<void> loadEnvFile({String path = '.env'}) async {
       throw Exception("dotenv.env is empty—check if .env file is correctly placed and listed in pubspec.yaml");
     }
   } catch (e) {
-    AppLogger.log("Failed to load env file: $e");
-    rethrow; // propagate the error
+    AppLogger.print("Failed to load env file: $e");
+    rethrow;
   }
 }

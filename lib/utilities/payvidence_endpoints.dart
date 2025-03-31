@@ -5,10 +5,20 @@ class PayvidenceEndpoints{
 
   // Authentication Endpoints //
   static String get createAccount => '/api/account';
-  static String get verifyOtp => '/api/account/9dccbdc2-d0e7-4ce9-9032-1602bb01caaa/verify-otp';
-  static String get resendOtp => '/api/account/9da9b5f3-e42c-4cba-816d-fca35fdd49b3/resend-otp';
+  static String verifyOtp(String userId) => '/api/account/$userId/verify-otp';
+  static String resendOtp(String userId) => '/api/account/$userId/resend-otp';
   static String get login => '/api/account/login';
   static String get getAccount => '/api/account';
+  static String get forgotPasswordInit => '/api/account/forgot-password';
+  static String forgotPasswordComplete(String userId) => '/api/account/$userId/forgot-password/new-password';
+  static String get resetPasswordInit => '/api/account/reset-password';
+  static String get resetPasswordComplete => '/api/account/reset-password/new-password';
+  static String get changePassword => '/api/account/change-password';
+  static String get logout => '/api/account/logout';
+
+  //Profile Endpoints
+  static String get updateProfilePicture => '/api/account/profile-picture';
+
 
   // Business Endpoints //
   static String get business => '/api/business/';
@@ -21,4 +31,31 @@ class PayvidenceEndpoints{
 
   // Category Endpoints
   //static String get category => '/api/category/';
+
+//Notification Endpoints
+static String get getAllNotifications => '/api/notification';
+static String getOneNotification(String notificationId) => '/api/notification/$notificationId';
+static String markNotificationAsRead(String notificationId) => '/api/notification/$notificationId';
+
+
+//Transaction Endpoints
+static String get getAllTransactions => '/api/sale-record';
+
+
+//Client Endpoints
+static String createClient(String businessId) => "/api/business/$businessId/client";
+static String getClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
+static String listClients(String businessId) => "/api/business/$businessId/client";
+static String deleteClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
+static String updateClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
+
+//Subscription Endpoints
+static String get createSubscription => '/api/subscription';
+static String getSubcriptionById(String subId) => '/api/subscription/$subId';
+static String get listSubscriptions => '/api/subscription';
+
+
+//Plan Endpoints
+static String get getPlans => '/api/plan';
+static String  getOnePlan(String planId) => '/api/plan/$planId';
 }

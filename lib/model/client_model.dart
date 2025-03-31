@@ -42,4 +42,27 @@ class ClientModel {
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
   };
+
+  ClientModel copyWith({
+    String? id,
+    String? businessId,
+    String? name,
+    String? phoneNumber,
+    String? address,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return ClientModel(
+      id: id ?? this.id,
+      businessId: businessId ?? this.businessId,
+      name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      address: address ?? this.address,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() => 'ClientModel(id: $id, name: $name)';
 }

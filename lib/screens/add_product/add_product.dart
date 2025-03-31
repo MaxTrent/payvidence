@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +123,6 @@ class _AddProductState extends ConsumerState<AddProduct> {
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
         ToastService.success(
-            context,
             widget.product == null
                 ? "Product created successfully"
                 : "Product updated successfully");
@@ -141,12 +139,12 @@ class _AddProductState extends ConsumerState<AddProduct> {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context,
+        ToastService.error(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context, 'An unknown error has occurred!');
+        ToastService.error('An error has occurred!');
       }
     }
 
@@ -419,13 +417,13 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (currentBrand == null) {
-                          ToastService.error(context, "Select a brand!");
+                          ToastService.error( "Select a brand!");
                         } else if (currentCategory == null) {
-                          ToastService.error(context, "Select a category!");
+                          ToastService.error( "Select a category!");
                         }
                         if (productImage.value == null &&
                             widget.product == null) {
-                          ToastService.error(context, "Select a product image");
+                          ToastService.error( "Select a product image");
                         } else {
                           createProduct();
                         }

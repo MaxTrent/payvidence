@@ -34,7 +34,7 @@ class AddCategory extends ConsumerWidget {
             .addCategory(requestData);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success(context, "Category created successfully");
+        ToastService.success("Category created successfully");
         ref.invalidate(getAllCategoryProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
@@ -43,12 +43,12 @@ class AddCategory extends ConsumerWidget {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context,
+        ToastService.error(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context, 'An unknown error has occurred!');
+        ToastService.error( 'An unknown error has occurred!');
       }
     }
 

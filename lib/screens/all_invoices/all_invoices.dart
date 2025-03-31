@@ -43,7 +43,7 @@ class AllInvoices extends ConsumerWidget {
             padding: EdgeInsets.only(right: 20.w),
             child: GestureDetector(
                 onTap: () {
-                  context.router.push(DraftsRoute(isInvoice: true));
+                  locator<PayvidenceAppRouter>().push(DraftsRoute(isInvoice: true));
                 },
                 child: Text('View drafts',
                     style: Theme.of(context)

@@ -72,7 +72,7 @@ class AddBusinessViewModel extends BaseChangeNotifier{
           requestData);
       if(!context.mounted) return;
       Navigator.of(context).pop(); // pop loading dialog on success
-      ToastService.success(context, "Business created successfully");
+      ToastService.success("Business created successfully");
       Future.delayed(const Duration(seconds: 2), (){
         if(!context.mounted) return;
         context.router.back();
@@ -83,12 +83,12 @@ class AddBusinessViewModel extends BaseChangeNotifier{
       });
     } on DioException catch (e) {
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(context,
+      ToastService.error(
           e.response?.data['message'] ?? 'An unknown error has occurred!!!');
     } catch (e) {
       print(e);
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(context, 'An unknown error has occurred!');
+      ToastService.error( 'An error has occurred!');
     }
 
   }

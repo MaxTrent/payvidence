@@ -149,7 +149,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
           .addReceipt(requestData);
       if (!context.mounted) return;
       Navigator.of(context).pop(); //pop loading dialog on success
-      ToastService.success(context, "Receipt generated successfully");
+      ToastService.success("Receipt generated successfully");
       ref.invalidate(widget.isInvoice == true && widget.inVoiceToReceipt==false
           ? getAllInvoiceProvider
           : getAllReceiptProvider);
@@ -167,12 +167,12 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
       });
     } on DioException catch (e) {
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(context,
+      ToastService.error(
           e.response?.data['message'] ?? 'An unknown error has occurred!!!');
     } catch (e) {
       print(e);
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(context, 'An unknown error has occurred!');
+      ToastService.error('An unknown error has occurred!');
     }
   }
 
@@ -365,8 +365,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error(
-                                    context, "Select a client please");
+                                ToastService.error( "Select a client please");
                               }
                               isDraft = false;
                               createReceipt();
@@ -381,8 +380,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error(
-                                    context, "Select a client please");
+                                ToastService.error( "Select a client please");
                               }
                               isDraft = true;
                               createReceipt();

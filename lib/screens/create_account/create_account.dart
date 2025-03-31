@@ -282,15 +282,12 @@ class CreateAccountScreen extends HookConsumerWidget {
                           buttonText: 'Create account',
                           isDisabled: _areFieldsEmpty.value,
                           isProcessing: viewModel.isLoading,
-                          backgroundColor: !_areFieldsEmpty.value ? primaryColor2 : primaryColor2.withOpacity(0.4),
                           onPressed: () {
                             print("Button pressed");
-                            if (!_areFieldsEmpty.value) {
-                              print("All fields are filled");
                               if (_formKey.currentState!.validate()) {
                                 print("Form is valid");
                                 FocusScope.of(context).unfocus();
-                                viewModel.createAccount(firstName: firstNameController.text, lastName: lastNameController.text, phone: phoneController.text, email: emailController.text, password: passwordController.text, passwordConfirm: passwordConfirmController.text, navigateOnSuccess: (){
+                                viewModel.createAccount(firstName: firstNameController.text.trim(), lastName: lastNameController.text.trim(), phone: phoneController.text.trim(), email: emailController.text.trim(), password: passwordController.text.trim(), passwordConfirm: passwordConfirmController.text.trim(), navigateOnSuccess: (){
                                   locator<PayvidenceAppRouter>().popUntil(
                                           (route) => route is OnboardingScreen);
                                   locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otp);
@@ -298,9 +295,6 @@ class CreateAccountScreen extends HookConsumerWidget {
                               } else {
                                 print("Form is not valid");
                               }
-                            } else {
-                              print("Not all fields are filled");
-                            }
                           },
                         ),
 

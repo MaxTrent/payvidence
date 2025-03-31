@@ -9,6 +9,7 @@ class AppButton extends StatelessWidget {
     required this.buttonText,
     required this.onPressed,
     this.height,
+    this.width,
     this.backgroundColor = primaryColor2,
     this.textColor = Colors.white,
     this.isProcessing = false,
@@ -19,6 +20,7 @@ class AppButton extends StatelessWidget {
   String buttonText;
   void Function()? onPressed;
   double? height;
+  double? width;
   Color backgroundColor;
   Color textColor;
   final bool isProcessing;
@@ -28,6 +30,7 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height ?? 56.h,
+      width: width?.w,
       child: ElevatedButton(
         onPressed: isProcessing || isDisabled ? null : onPressed,
         style: ButtonStyle(

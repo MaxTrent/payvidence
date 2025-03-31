@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
-
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
@@ -15,6 +14,8 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+
+
 
 @RoutePage(name: 'AllReceiptsRoute')
 class AllReceipts extends ConsumerWidget {
@@ -247,13 +248,14 @@ class ReceiptTile extends StatelessWidget {
               ),
               Row(
                 // mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('₦${receipt.recordProductDetails?[0].total ?? ''} ',
                       style: Theme.of(context)
                           .textTheme
                           .displayMedium!
                           .copyWith(fontSize: 14.sp)),
+
                 ],
               )
             ],

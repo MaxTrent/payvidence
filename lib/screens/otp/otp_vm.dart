@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
 final otpViewModelProvider = ChangeNotifierProvider((ref) {
@@ -10,21 +13,22 @@ class OtpViewModel extends BaseChangeNotifier {
   final Ref ref;
   OtpViewModel(this.ref);
 
-  // OTP UI State Providers
-  static final secondsProvider = StateProvider.autoDispose<int>((_) => 17);
-  static final otpTextProvider = StateProvider.autoDispose<String>((_) => '');
-  static final isOtpCompleteProvider = Provider.autoDispose<bool>((ref) {
-    return ref.watch(otpTextProvider).length == 5;
-  });
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
-  Timer? _timer;
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   Future<void> verifyOtp({
     required String otp,
     required Function() navigateOnSuccess,
   }) async {
+    _setLoading(true);
     try {
-      final response = await apiServices.verifyOtp(otp);
+      final userId = locator<SessionManager>().get(SessionConstants.userId);
+      final response = await apiServices.verifyOtp(otp, userId);
 
       if (response.success) {
         navigateOnSuccess();
@@ -35,56 +39,25 @@ class OtpViewModel extends BaseChangeNotifier {
         handleError(message: errorMessage);
       }
     } catch (e) {
-      throw Exception(e);
+      handleError(message: "Something went wrong.");
+    } finally {
+      _setLoading(false);
     }
   }
 
-  void startCountdown() {
-    _timer?.cancel();
-    ref.read(secondsProvider.notifier).state = 17;
+  Future<void> resendOtp() async {
+    try {
+      final userId = locator<SessionManager>().get(SessionConstants.userId);
+      final response = await apiServices.resendOtp(userId);
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final current = ref.read(secondsProvider);
-      if (current == 0) {
-        timer.cancel();
-      } else {
-        ref.read(secondsProvider.notifier).state = current - 1;
+      if (!response.success) {
+        var errorMessage = response.error?.errors?.first.message ??
+            response.error?.message ??
+            "An error occurred!";
+        handleError(message: errorMessage);
       }
-    });
-  }
-
-  void resendCode() {
-    startCountdown();
-  }
-
-  void dispose() {
-    _timer?.cancel();
+    } catch (e) {
+      handleError(message: "Something went wrong.");
+    }
   }
 }
-
-// class VerifyOtpNotifier extends BaseNotifier<VerifyOtpModel> {
-//   VerifyOtpNotifier({
-//     required super.apiService,
-//     required super.onSuccess,
-//   });
-//
-//   Future<void> verifyOtp(String otp) async {
-//     await executeRequest(
-//       () => apiService.verifyOtp(otp),
-//       dataMapper: (json) => VerifyOtpModel.fromJson(json),
-//     );
-//   }
-// }
-
-// final verifyOtpNotifierProvider = StateNotifierProvider.autoDispose<
-//   VerifyOtpNotifier, BaseState<VerifyOtpModel>>(
-//   (ref) => VerifyOtpNotifier(
-//     apiService: ref.read(apiServiceProvider),
-//     onSuccess: () {
-//       final router = ref.read(navigationProvider);
-//       router.replace(const AccountSuccessRoute());
-//       print('Navigation Complete');
-//       // ref.read(AppRoutes().goRouterProvider).go(AppRoutes.accountSuccess);\
-// }
-//   ),
-// );

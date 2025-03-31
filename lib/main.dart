@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/app_provider_observer.dart';
+import 'package:payvidence/utilities/toast_service.dart';
+import 'package:toastification/toastification.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
 
@@ -28,7 +30,6 @@ Future<void> main() async {
   }
 }
 
-// final appRoutes = AppRoutes();
 
 
 
@@ -39,17 +40,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _appRouter = locator<PayvidenceAppRouter>();
-    // final goRouter = ref.watch(appRoutes.goRouterProvider);
+    final appRouter = locator<PayvidenceAppRouter>();
 
     return ScreenUtilInit(
       designSize: const Size(390, 844),
       minTextAdapt: true,
-      builder: (_, child) => MaterialApp.router(
-        title: 'Payvidence',
-        debugShowCheckedModeBanner: false,
-        theme: appTheme.light,
-        routerConfig: _appRouter.config(),
+      builder: (_, child) => ToastificationWrapper(
+        child: MaterialApp.router(
+          scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
+          title: 'Payvidence',
+          debugShowCheckedModeBanner: false,
+          theme: appTheme.light,
+          routerConfig: appRouter.config(),
+        ),
       ),
     );
   }

@@ -18,6 +18,7 @@ class PayvidenceAppRouter extends RootStackRouter {
         ],
         children: [
           AutoRoute(page: HomeScreenRoute.page, path: PayvidenceRoutes.homeScreen, initial: true),
+          AutoRoute(page: AllTransactionsRoute.page, path: PayvidenceRoutes.allTransactions),
           AutoRoute(page: SalesRoute.page, path: PayvidenceRoutes.sales),
           AutoRoute(page: ProfileRoute.page, path: PayvidenceRoutes.profile),
 
@@ -45,12 +46,37 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: EmptyCategoryRoute.page, path: PayvidenceRoutes.emptyCategory),
         AutoRoute(page: BrandsRoute.page, path: PayvidenceRoutes.brands),
         AutoRoute(page: AddBrandRoute.page, path: PayvidenceRoutes.addBrand),
+        AutoRoute(page: UpdatePersonalDetailsRoute.page, path: PayvidenceRoutes.updatePersonalDetails),
+        AutoRoute(page: PayvidenceInfoRoute.page, path: PayvidenceRoutes.payvidenceInfo),
+        AutoRoute(page: BusinessDataRoute.page, path: PayvidenceRoutes.businessData),
+        AutoRoute(page: SettingsRoute.page, path: PayvidenceRoutes.settings),
+        AutoRoute(page: NotificationsRoute.page, path: PayvidenceRoutes.notifications),
+        AutoRoute(page: ChangeProfilePictureRoute.page, path: PayvidenceRoutes.changeProfilePicture),
+        AutoRoute(page: MySubscriptionRoute.page, path: PayvidenceRoutes.mySubscription),
+        AutoRoute(page: OtpLoginRoute.page, path: PayvidenceRoutes.otpLogin),
+        AutoRoute(page: CreateNewPasswordRoute.page, path: PayvidenceRoutes.createNewPassword),
+        AutoRoute(page: ChangePasswordSuccessRoute.page, path: PayvidenceRoutes.changePasswordSuccess),
+        AutoRoute(page: OtpResetRoute.page, path: PayvidenceRoutes.otpReset),
+        AutoRoute(page: ResetPasswordSuccessRoute.page, path: PayvidenceRoutes.resetPasswordSuccess),
+        AutoRoute(page: CreateNewPasswordResetRoute.page, path: PayvidenceRoutes.createNewPasswordReset),
+        AutoRoute(page: ResetPasswordRoute.page, path: PayvidenceRoutes.resetPassword),
+        AutoRoute(page: ChooseSubscriptionPlanRoute.page, path: PayvidenceRoutes.chooseSubscriptionPlan),
+        AutoRoute(page: SubscriptionPlansRoute.page, path: PayvidenceRoutes.subscriptionPlans),
+        AutoRoute(page: SubscriptionPrompt.page, path: PayvidenceRoutes.subscriptionPrompt),
+        AutoRoute(page: PaymentWebViewRoute.page, path: PayvidenceRoutes.paymentScreen),
         AutoRoute(page: UpdateQuantityRoute.page, path: PayvidenceRoutes.updateQuantity),
         AutoRoute(page: GenerateReceiptRoute.page, path: PayvidenceRoutes.generateReceipt),
         AutoRoute(page: GenerateInvoicesRoute.page, path: PayvidenceRoutes.generateInvoices),
         AutoRoute(page: UpdateBankDetailsRoute.page, path: PayvidenceRoutes.updateBankDetails),
         AutoRoute(page: CompleteDraftRoute.page, path: PayvidenceRoutes.completeDraft),
         AutoRoute(page: ReceiptScreenRoute.page, path: PayvidenceRoutes.receiptScreen),
+        AutoRoute(page: ClientDetailsRoute.page, path: PayvidenceRoutes.clientDetails),
+        AutoRoute(page: AddClientRoute.page, path: PayvidenceRoutes.addClient),
+        AutoRoute(page: NotificationSettingsRoute.page, path: PayvidenceRoutes.notificationSettings),
+        AutoRoute(page: PrivacyAndSecurityRoute.page, path: PayvidenceRoutes.privacyAndSecurity),
+        AutoRoute(page:  ClientSuccessRoute.page, path: PayvidenceRoutes.clientSuccess),
+
+
 
       ];
 
@@ -121,10 +147,21 @@ class PayvidenceRoutes {
   static String get updateQuantity => '/updateQuantity';
   static String get businessDetail => '/businessDetail';
   static String get clients => '/clients';
-  static String get clientDetails => '/clientDetails';
-  static String get addClient => '/addClient';
-  static String get clientSuccess => '/clientSuccess';
+  static String get clientDetails => '/clientDetails/:businessId/:clientId';
+  static String get addClient => '/addClient/:businessId';
+  static String get clientSuccess => '/clientSuccess/:name';
   static String get sales => 'sales';
   static String get profile => 'profile';
+  static String get otpReset => '/otpReset';
+  static String get resetPasswordSuccess => '/resetPasswordSuccess';
+  static String get createNewPasswordReset => '/createNewPasswordReset';
+  static String get chooseSubscriptionPlan => '/chooseSubPlan';
+  static String get subscriptionPlans => '/subscriptionPlans/:planId';
+  static String get subscriptionPrompt => '/subscriptionPrompt';
+  static String get paymentScreen => '/paymentScreen/:paymentLink';
   static String get receiptScreen => '/receiptScreen';
+  static String get allTransactions => 'allTransactions/:businessId';
+
+
+
 }

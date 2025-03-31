@@ -38,7 +38,7 @@ class UpdateQuantity extends ConsumerWidget {
             .setCurrentProduct(newProduct);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success(context, "Quantity updated successfully");
+        ToastService.success("Quantity updated successfully");
         ref.invalidate(getAllProductProvider);
 
         Future.delayed(const Duration(seconds: 2), () {
@@ -47,12 +47,12 @@ class UpdateQuantity extends ConsumerWidget {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context,
+        ToastService.error(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(context, 'An unknown error has occurred!');
+        ToastService.error( 'An unknown error has occurred!');
       }
     }
 

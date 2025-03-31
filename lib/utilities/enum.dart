@@ -1,5 +1,4 @@
 enum ToastMessageType {
-  failure,
   success,
-  info
+  failure,
 }

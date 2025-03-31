@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,11 +20,12 @@ class AppTextField extends StatelessWidget {
     this.radius = 8,
     this.width,
     this.focusNode,
-    this.keyboardType,
+    this.keyboardType = TextInputType.number,
+    this.inputFormatters,
     super.key,
   });
 
- final String hintText;
+  final String hintText;
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final Widget? suffixIcon;
@@ -37,7 +39,8 @@ class AppTextField extends StatelessWidget {
   final double? width;
   final bool obscureText;
   final FocusNode? focusNode;
-  final TextInputType? keyboardType; 
+  final TextInputType keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +48,7 @@ class AppTextField extends StatelessWidget {
       height: height.h,
       width: width?.w,
       child: TextFormField(
-        onTapOutside: (event){
+        onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();
         },
         enabled: enabled,
@@ -53,11 +56,10 @@ class AppTextField extends StatelessWidget {
         cursorColor: Colors.black,
         validator: validator,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         showCursor: true,
         obscureText: obscureText,
-        style: Theme.of(context)
-            .textTheme
-            .displaySmall!,
+        style: Theme.of(context).textTheme.displaySmall!,
         focusNode: focusNode,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(8.h),
@@ -67,17 +69,22 @@ class AppTextField extends StatelessWidget {
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,
           errorMaxLines: 2,
-          // isDense: true,
-          // helperText: '',
-          hintStyle: Theme.of(context).textTheme.displaySmall!.copyWith(color: hintTextColor),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .displaySmall!
+              .copyWith(color: hintTextColor),
           labelStyle: Theme.of(context)
               .textTheme
               .displaySmall!
-              .copyWith(fontWeight: FontWeight.w400,),
+              .copyWith(fontWeight: FontWeight.w400),
           errorStyle: Theme.of(context)
               .textTheme
               .displaySmall!
-              .copyWith(fontWeight: FontWeight.w400, color: Colors.red, height: 0.3, fontSize: 12.sp),
+              .copyWith(
+              fontWeight: FontWeight.w400,
+              color: Colors.red,
+              height: 0.3,
+              fontSize: 12.sp),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
             borderSide: BorderSide(
@@ -109,7 +116,6 @@ class AppTextField extends StatelessWidget {
               width: 1,
             ),
           ),
-          
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius.r),
             borderSide: const BorderSide(
@@ -118,6 +124,7 @@ class AppTextField extends StatelessWidget {
             ),
           ),
         ),
-      ),);
+      ),
+    );
   }
 }

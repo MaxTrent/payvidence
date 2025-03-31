@@ -22,6 +22,7 @@ import '../repositories/repository/category_repository.dart';
 import '../repositories/repository/product_repository.dart';
 import '../repositories/repository/sales_repository.dart';
 import '../routes/payvidence_app_router.dart';
+import '../utilities/notification_service.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -90,5 +91,10 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   locator.registerLazySingleton<ISalesRepository>(
     () => SalesRepository(locator()),
   );
+
+  locator.registerLazySingleton<NotificationService>(() => NotificationService());
+
+  // locator.registerLazySingleton(() => DialogHandler());
+
   log('Dependencies initialized successfully.');
 }

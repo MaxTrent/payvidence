@@ -4,7 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:payvidence/components/app_button.dart';  
 
+import '../../data/local/session_constants.dart';
+import '../../data/local/session_manager.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
+import '../../shared_dependency/shared_dependency.dart';
+import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'AccountSuccessRoute')
 class AccountSuccessScreen extends StatelessWidget {
@@ -15,7 +20,13 @@ class AccountSuccessScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: AppButton(
           buttonText: 'Go to Home',
-          onPressed: (){
+          onPressed: () async{
+            await locator<SessionManager>()
+            .save(key: SessionConstants.isUserLoggedIn, value: true);
+            locator<PayvidenceAppRouter>().popUntil(
+                    (route) => route is OnboardingScreen);
+            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+
             // context.go(AppRoutes.login);
           }),
       body: SafeArea(
