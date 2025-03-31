@@ -276,7 +276,7 @@ class SalesInfoTile extends StatelessWidget {
   }
 }
 
-//TODO: rebase the chart 
+//TODO: fine-tune the chart
 class SalesOverviewChart extends StatelessWidget {
   final List<GraphDatum> graphData;
 
