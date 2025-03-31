@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
@@ -277,6 +278,7 @@ class Profile extends HookConsumerWidget {
                 ProfileOptionTile(
                   onTap: () {
                     viewModel.logout(navigateOnSuccess: () {
+                      // locator<SessionManager>().clear();
                       locator<PayvidenceAppRouter>()
                           .popUntil((route) => route is OnboardingScreen);
                       locator<PayvidenceAppRouter>()

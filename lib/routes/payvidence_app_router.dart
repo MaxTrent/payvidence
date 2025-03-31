@@ -74,6 +74,7 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(page: AddClientRoute.page, path: PayvidenceRoutes.addClient),
         AutoRoute(page: NotificationSettingsRoute.page, path: PayvidenceRoutes.notificationSettings),
         AutoRoute(page: PrivacyAndSecurityRoute.page, path: PayvidenceRoutes.privacyAndSecurity),
+        AutoRoute(page:  ClientSuccessRoute.page, path: PayvidenceRoutes.clientSuccess),
 
 
 
@@ -146,9 +147,9 @@ class PayvidenceRoutes {
   static String get updateQuantity => '/updateQuantity';
   static String get businessDetail => '/businessDetail';
   static String get clients => '/clients';
-  static String get clientDetails => '/clientDetails';
-  static String get addClient => '/addClient';
-  static String get clientSuccess => '/clientSuccess';
+  static String get clientDetails => '/clientDetails/:businessId/:clientId';
+  static String get addClient => '/addClient/:businessId';
+  static String get clientSuccess => '/clientSuccess/:name';
   static String get sales => 'sales';
   static String get profile => 'profile';
   static String get otpReset => '/otpReset';
@@ -159,6 +160,8 @@ class PayvidenceRoutes {
   static String get subscriptionPrompt => '/subscriptionPrompt';
   static String get paymentScreen => '/paymentScreen/:paymentLink';
   static String get receiptScreen => '/receiptScreen';
-  static String get allTransactions => 'allTransactions';
+  static String get allTransactions => 'allTransactions/:businessId';
+
+
 
 }

@@ -28,6 +28,7 @@ class AddClientViewModel extends BaseChangeNotifier {
 
       if (response.success) {
         print("ViewModel: Client added successfully");
+        showSuccess(message: 'Client Added');
         navigateOnSuccess();
       } else {
         var errorMessage = response.error?.errors?.first.message ??

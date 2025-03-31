@@ -32,11 +32,12 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
   }
 
   Future<void> fetchClientDetails(String businessId, String clientId) async {
+
     try {
       _isLoading = true;
       notifyListeners();
 
-      print("ViewModel: Fetching user information");
+      print("ViewModel: Fetching client information");
       final response = await apiServices.getClientInfo(businessId, clientId);
       print("ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
@@ -61,7 +62,7 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
 
 
   }
-  Future<void> removeClient(String businessId, String clientId) async {
+  Future<void> removeClient({required String businessId, required String clientId, required Function() navigateOnSuccess,}) async {
     try {
       _isLoading = true;
       notifyListeners();
@@ -73,7 +74,9 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       if (response.success) {
         print("ViewModel: Client removed successfully");
         _client = null;
-        locator<PayvidenceAppRouter>().back();} else {
+        showSuccess(message: 'Client Removed');
+        navigateOnSuccess();
+      } else {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??
             "Failed to remove client!";
@@ -121,22 +124,33 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
   //   }
   // }
 
-  Future<void> updateClient({required String businessId, required String clientId, required String newName, required Function() navigateOnSuccess,}) async {
+  Future<void> updateClient({
+    required String businessId,
+    required String clientId,
+    required String newName,
+    required Function() navigateOnSuccess,
+  }) async {
     try {
       _isLoading = true;
       notifyListeners();
 
       print("ViewModel: Updating client with businessId: $businessId, clientId: $clientId, newName: $newName");
-      final response = await apiServices.updateClient(
-        businessId,
-        clientId, newName,
-      );
+      final response = await apiServices.updateClient(businessId, clientId, newName);
       print("ViewModel: Update response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
-       navigateOnSuccess();
-       showSuccess(message: 'Client details updated!');
+        // Update clientInfo with the new data from the response (if provided) or manually
+        if (response.data != null && response.data!.containsKey("data")) {
+          _client = ClientModel.fromJson(response.data!["data"] as Map<String, dynamic>);
         } else {
+          // If API doesn't return updated data, update manually
+          _client = _client?.copyWith(name: newName) ?? ClientModel(id: clientId, name: newName);
+        }
+        _isEditing = false;
+        showSuccess(message: 'Client details updated!');
+        notifyListeners(); // Trigger UI update
+        navigateOnSuccess();
+      } else {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??
             "Failed to update client!";
@@ -150,5 +164,4 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
-}
+  }}

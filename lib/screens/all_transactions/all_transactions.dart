@@ -25,18 +25,16 @@ class AllTransactions extends HookConsumerWidget {
     final viewModel = ref.watch(allTransactionsViewModelProvider);
     final searchController = useTextEditingController();
     final businessId = locator<SessionManager>().get(SessionConstants.businessId) as String?;
-    final filterType = useState<String?>('All');
-    final searchQuery = useState<String>('');
+    final filterType = useState('All');
+    final searchQuery = useState('');
 
     useEffect(() {
-      if (businessId != null) {
+
         Future.microtask(() {
           print('Fetching transactions with businessId: $businessId');
-          viewModel.fetchTransactions(businessId);
+          viewModel.fetchTransactions(businessId!);
         });
-      } else {
-        print('Business ID is null, skipping fetch');
-      }
+
 
       void listener() {
         searchQuery.value = searchController.text;

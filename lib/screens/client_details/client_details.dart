@@ -4,22 +4,21 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/screens/client_details/client_details_vm.dart';
-
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
-import '../../model/client_model.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'ClientDetailsRoute')
 class ClientDetails extends HookConsumerWidget {
   final String clientId;
+  final String businessId;
 
-  const ClientDetails({super.key, @QueryParam('clientId') this.clientId = ''});
+  const ClientDetails({super.key,@QueryParam('businessId') this.businessId = '',  @QueryParam('clientId') this.clientId = ''});
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
@@ -29,30 +28,27 @@ class ClientDetails extends HookConsumerWidget {
     final phoneNumberController = useTextEditingController();
     final addressController = useTextEditingController();
     final originalName = useState("");
-    final businessId =
-        locator<SessionManager>().get(SessionConstants.businessId) as String?;
+    // final businessId =
+    //     locator<SessionManager>().get(SessionConstants.businessId) as String?;
 
     useEffect(() {
-      if (businessId != null) {
-        Future.microtask(() {
-          print("Fetching client info");
-          viewModel.fetchClientDetails(businessId, clientId);
-        });
-      }
-
-      if (viewModel.clientInfo != null && !viewModel.isLoading) {
-        print("useEffect - userInfo: ${viewModel.clientInfo}");
-        nameController.text = viewModel.clientInfo?.name ?? "";
-        phoneNumberController.text = viewModel.clientInfo?.phoneNumber ?? "";
-        addressController.text = viewModel.clientInfo?.address ?? "";
-        originalName.value = viewModel.clientInfo?.name ?? "";
-        print("Controllers set");
-      }
-      print('BUSINESSID: $businessId, CLIENTID: $clientId');
-
+      Future.microtask(() => viewModel.fetchClientDetails(businessId, clientId));
       return null;
-    }, [businessId, viewModel.clientInfo, viewModel.isLoading]);
+    }, [businessId, clientId]);
 
+
+    useEffect(() {
+      if (viewModel.clientInfo != null && !viewModel.isLoading) {
+        nameController.text = viewModel.clientInfo?.name ?? "";
+        phoneNumberController.text = viewModel.clientInfo?.phoneNumber ?? '';
+        addressController.text = viewModel.clientInfo?.address ?? '';
+        originalName.value = viewModel.clientInfo?.name ?? "";
+        print("Controllers set with clientInfo: ${viewModel.clientInfo!.name}");
+      }
+      return null;
+    }, [viewModel.clientInfo, viewModel.isLoading]);
+
+    print('BUSINESSID: $businessId, CLIENTID: $clientId');
     bool hasChanges() {
       return nameController.text != originalName.value;
     }
@@ -278,13 +274,11 @@ class ClientDetails extends HookConsumerWidget {
                                             AppButton(
                                               buttonText: 'Remove client',
                                               onPressed: () async {
-                                                final businessId = locator<SessionManager>().get(SessionConstants.businessId) as String?;
-                                                if (businessId != null) {
-                                                  await viewModel.removeClient(businessId, clientId);
-                                                } else {
-                                                  print("Business ID is null, cannot remove client");
-                                                }
-                                                locator<PayvidenceAppRouter>().back();
+
+                                                  await viewModel.removeClient(businessId: businessId, clientId: clientId, navigateOnSuccess: (){
+                                                    locator<PayvidenceAppRouter>().back();
+                                                  });
+
                                               },
                                               backgroundColor: appRed,
                                               textColor: Colors.white,

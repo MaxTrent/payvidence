@@ -250,10 +250,15 @@ class AddCategoryRouteArgs {
 class AddClientRoute extends _i63.PageRouteInfo<AddClientRouteArgs> {
   AddClientRoute({
     _i64.Key? key,
+    String businessId = '',
     List<_i63.PageRouteInfo>? children,
   }) : super(
           AddClientRoute.name,
-          args: AddClientRouteArgs(key: key),
+          args: AddClientRouteArgs(
+            key: key,
+            businessId: businessId,
+          ),
+          rawQueryParams: {'businessId': businessId},
           initialChildren: children,
         );
 
@@ -262,21 +267,34 @@ class AddClientRoute extends _i63.PageRouteInfo<AddClientRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
+      final queryParams = data.queryParams;
       final args = data.argsAs<AddClientRouteArgs>(
-          orElse: () => const AddClientRouteArgs());
-      return _i6.AddClient(key: args.key);
+          orElse: () => AddClientRouteArgs(
+                  businessId: queryParams.getString(
+                'businessId',
+                '',
+              )));
+      return _i6.AddClient(
+        key: args.key,
+        businessId: args.businessId,
+      );
     },
   );
 }
 
 class AddClientRouteArgs {
-  const AddClientRouteArgs({this.key});
+  const AddClientRouteArgs({
+    this.key,
+    this.businessId = '',
+  });
 
   final _i64.Key? key;
 
+  final String businessId;
+
   @override
   String toString() {
-    return 'AddClientRouteArgs{key: $key}';
+    return 'AddClientRouteArgs{key: $key, businessId: $businessId}';
   }
 }
 
@@ -651,15 +669,20 @@ class ChooseSubscriptionPlanRoute extends _i63.PageRouteInfo<void> {
 class ClientDetailsRoute extends _i63.PageRouteInfo<ClientDetailsRouteArgs> {
   ClientDetailsRoute({
     _i64.Key? key,
+    String businessId = '',
     String clientId = '',
     List<_i63.PageRouteInfo>? children,
   }) : super(
           ClientDetailsRoute.name,
           args: ClientDetailsRouteArgs(
             key: key,
+            businessId: businessId,
             clientId: clientId,
           ),
-          rawQueryParams: {'clientId': clientId},
+          rawQueryParams: {
+            'businessId': businessId,
+            'clientId': clientId,
+          },
           initialChildren: children,
         );
 
@@ -671,12 +694,18 @@ class ClientDetailsRoute extends _i63.PageRouteInfo<ClientDetailsRouteArgs> {
       final queryParams = data.queryParams;
       final args = data.argsAs<ClientDetailsRouteArgs>(
           orElse: () => ClientDetailsRouteArgs(
-                  clientId: queryParams.getString(
-                'clientId',
-                '',
-              )));
+                businessId: queryParams.getString(
+                  'businessId',
+                  '',
+                ),
+                clientId: queryParams.getString(
+                  'clientId',
+                  '',
+                ),
+              ));
       return _i20.ClientDetails(
         key: args.key,
+        businessId: args.businessId,
         clientId: args.clientId,
       );
     },
@@ -686,25 +715,36 @@ class ClientDetailsRoute extends _i63.PageRouteInfo<ClientDetailsRouteArgs> {
 class ClientDetailsRouteArgs {
   const ClientDetailsRouteArgs({
     this.key,
+    this.businessId = '',
     this.clientId = '',
   });
 
   final _i64.Key? key;
 
+  final String businessId;
+
   final String clientId;
 
   @override
   String toString() {
-    return 'ClientDetailsRouteArgs{key: $key, clientId: $clientId}';
+    return 'ClientDetailsRouteArgs{key: $key, businessId: $businessId, clientId: $clientId}';
   }
 }
 
 /// generated route for
 /// [_i21.ClientSuccess]
-class ClientSuccessRoute extends _i63.PageRouteInfo<void> {
-  const ClientSuccessRoute({List<_i63.PageRouteInfo>? children})
-      : super(
+class ClientSuccessRoute extends _i63.PageRouteInfo<ClientSuccessRouteArgs> {
+  ClientSuccessRoute({
+    _i64.Key? key,
+    String name = '',
+    List<_i63.PageRouteInfo>? children,
+  }) : super(
           ClientSuccessRoute.name,
+          args: ClientSuccessRouteArgs(
+            key: key,
+            name: name,
+          ),
+          rawQueryParams: {'name': name},
           initialChildren: children,
         );
 
@@ -713,9 +753,35 @@ class ClientSuccessRoute extends _i63.PageRouteInfo<void> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      return const _i21.ClientSuccess();
+      final queryParams = data.queryParams;
+      final args = data.argsAs<ClientSuccessRouteArgs>(
+          orElse: () => ClientSuccessRouteArgs(
+                  name: queryParams.getString(
+                'name',
+                '',
+              )));
+      return _i21.ClientSuccess(
+        key: args.key,
+        name: args.name,
+      );
     },
   );
+}
+
+class ClientSuccessRouteArgs {
+  const ClientSuccessRouteArgs({
+    this.key,
+    this.name = '',
+  });
+
+  final _i64.Key? key;
+
+  final String name;
+
+  @override
+  String toString() {
+    return 'ClientSuccessRouteArgs{key: $key, name: $name}';
+  }
 }
 
 /// generated route for
@@ -724,13 +790,16 @@ class ClientsRoute extends _i63.PageRouteInfo<ClientsRouteArgs> {
   ClientsRoute({
     _i64.Key? key,
     bool? forSelection = false,
+    String businessId = '',
     List<_i63.PageRouteInfo>? children,
   }) : super(
           ClientsRoute.name,
           args: ClientsRouteArgs(
             key: key,
             forSelection: forSelection,
+            businessId: businessId,
           ),
+          rawQueryParams: {'businessId': businessId},
           initialChildren: children,
         );
 
@@ -739,11 +808,17 @@ class ClientsRoute extends _i63.PageRouteInfo<ClientsRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args =
-          data.argsAs<ClientsRouteArgs>(orElse: () => const ClientsRouteArgs());
+      final queryParams = data.queryParams;
+      final args = data.argsAs<ClientsRouteArgs>(
+          orElse: () => ClientsRouteArgs(
+                  businessId: queryParams.getString(
+                'businessId',
+                '',
+              )));
       return _i22.Clients(
         key: args.key,
         forSelection: args.forSelection,
+        businessId: args.businessId,
       );
     },
   );
@@ -753,15 +828,18 @@ class ClientsRouteArgs {
   const ClientsRouteArgs({
     this.key,
     this.forSelection = false,
+    this.businessId = '',
   });
 
   final _i64.Key? key;
 
   final bool? forSelection;
 
+  final String businessId;
+
   @override
   String toString() {
-    return 'ClientsRouteArgs{key: $key, forSelection: $forSelection}';
+    return 'ClientsRouteArgs{key: $key, forSelection: $forSelection, businessId: $businessId}';
   }
 }
 

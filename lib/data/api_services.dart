@@ -271,7 +271,7 @@ class ApiServices{
   }
 
   Future<ApiResult> deleteClient(String businessId, String clientId) async{
-    var response = await locator<NetworkService>().delete(PayvidenceEndpoints.getClient(businessId, clientId));
+    var response = await locator<NetworkService>().delete(PayvidenceEndpoints.deleteClient(businessId, clientId));
 
     return ApiResult.fromJson(response);
   }
@@ -281,7 +281,7 @@ class ApiServices{
       "name": newName,
     };
 
-    var response = await locator<NetworkService>().patch(PayvidenceEndpoints.getClient(businessId, clientId), data: requestData);
+    var response = await locator<NetworkService>().patch(PayvidenceEndpoints.updateClient(businessId, clientId), data: requestData);
 
     return ApiResult.fromJson(response);
   }

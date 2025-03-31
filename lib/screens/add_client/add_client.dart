@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,7 +17,9 @@ import 'add_client_viewmodel.dart';
 
 @RoutePage(name: 'AddClientRoute')
 class AddClient extends HookConsumerWidget {
-  const AddClient({super.key});
+  final String businessId;
+
+  const AddClient({super.key, @QueryParam('businessId') this.businessId = ''});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +28,7 @@ class AddClient extends HookConsumerWidget {
     final nameController = useTextEditingController();
     final addressController = useTextEditingController();
     final phoneNumberController = useTextEditingController();
-    final businessId = locator<SessionManager>().get(SessionConstants.businessId) as String?;
+    // final businessId = locator<SessionManager>().get(SessionConstants.businessId) as String?;
 
     final areFieldsEmpty = useState(true);
 
@@ -51,6 +54,8 @@ class AddClient extends HookConsumerWidget {
         phoneNumberController.removeListener(updateFieldsEmptyStatus);
       };
     }, []);
+
+    print('b.Id = $businessId');
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus,
@@ -101,6 +106,8 @@ class AddClient extends HookConsumerWidget {
                   AppTextField(
                     hintText: 'Client phone number',
                     controller: phoneNumberController,
+                    keyboardType: TextInputType.phone,
+inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (val) {
                       if (val == null || val.isEmpty) {
                         return 'Phone number is required';
@@ -147,7 +154,7 @@ class AddClient extends HookConsumerWidget {
                               phoneNumber: phoneNumberController.text,
                               businessId: businessId,
                               navigateOnSuccess: () {
-                                locator<PayvidenceAppRouter>().push(const ClientSuccessRoute());
+                                locator<PayvidenceAppRouter>().push( ClientSuccessRoute(name: nameController.text));
                               },
                             );
                           } else {

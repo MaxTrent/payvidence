@@ -160,7 +160,7 @@ class HomeScreen extends HookConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.clients);
+                      locator<PayvidenceAppRouter>().navigate(ClientsRoute(businessId: businessId!));
                     },
                     child: AppCard(text: 'Clients', icon: Assets.svg.client),
                   ),
@@ -173,7 +173,7 @@ class HomeScreen extends HookConsumerWidget {
                 ],
               ),
               SizedBox(height: 38.h),
-              useMySubscriptionViewModel.subInfo?.plan.name !=null ? SizedBox.shrink():
+              useMySubscriptionViewModel.subInfo?.plan.name !=null ? const SizedBox.shrink():
               GestureDetector(
                 onTap: () => locator<PayvidenceAppRouter>()
                     .navigateNamed(PayvidenceRoutes.chooseSubscriptionPlan),
