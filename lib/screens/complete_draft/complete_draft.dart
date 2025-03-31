@@ -101,11 +101,11 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
   }
 
   Future<void> selectClient() async {
-    final ClientModel? _client = await locator<PayvidenceAppRouter>()
+    ClientModel? client = await locator<PayvidenceAppRouter>()
         .push(ClientsRoute(forSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
-    if (_client != null) {
-      client = _client;
+    if (client != null) {
+      client = client;
       setState(() {});
     }
   }
