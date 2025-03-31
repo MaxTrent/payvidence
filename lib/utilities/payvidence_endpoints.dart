@@ -43,7 +43,7 @@ static String get getAllTransactions => '/api/sale-record';
 
 
 //Client Endpoints
-static String createClient(String userId) => "/api/business/$userId/client";
+static String createClient(String businessId) => "/api/business/$businessId/client";
 static String getClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";
 static String listClients(String businessId) => "/api/business/$businessId/client";
 static String deleteClient(String businessId, String clientId) => "/api/business/$businessId/client/$clientId";

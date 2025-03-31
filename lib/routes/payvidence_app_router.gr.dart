@@ -464,14 +464,10 @@ class AllReceiptsRouteArgs {
 
 /// generated route for
 /// [_i12.AllTransactions]
-class AllTransactionsRoute
-    extends _i63.PageRouteInfo<AllTransactionsRouteArgs> {
-  AllTransactionsRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class AllTransactionsRoute extends _i63.PageRouteInfo<void> {
+  const AllTransactionsRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           AllTransactionsRoute.name,
-          args: AllTransactionsRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -480,22 +476,9 @@ class AllTransactionsRoute
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AllTransactionsRouteArgs>(
-          orElse: () => const AllTransactionsRouteArgs());
-      return _i12.AllTransactions(key: args.key);
+      return const _i12.AllTransactions();
     },
   );
-}
-
-class AllTransactionsRouteArgs {
-  const AllTransactionsRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'AllTransactionsRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -668,10 +651,15 @@ class ChooseSubscriptionPlanRoute extends _i63.PageRouteInfo<void> {
 class ClientDetailsRoute extends _i63.PageRouteInfo<ClientDetailsRouteArgs> {
   ClientDetailsRoute({
     _i64.Key? key,
+    String clientId = '',
     List<_i63.PageRouteInfo>? children,
   }) : super(
           ClientDetailsRoute.name,
-          args: ClientDetailsRouteArgs(key: key),
+          args: ClientDetailsRouteArgs(
+            key: key,
+            clientId: clientId,
+          ),
+          rawQueryParams: {'clientId': clientId},
           initialChildren: children,
         );
 
@@ -680,21 +668,34 @@ class ClientDetailsRoute extends _i63.PageRouteInfo<ClientDetailsRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
+      final queryParams = data.queryParams;
       final args = data.argsAs<ClientDetailsRouteArgs>(
-          orElse: () => const ClientDetailsRouteArgs());
-      return _i20.ClientDetails(key: args.key);
+          orElse: () => ClientDetailsRouteArgs(
+                  clientId: queryParams.getString(
+                'clientId',
+                '',
+              )));
+      return _i20.ClientDetails(
+        key: args.key,
+        clientId: args.clientId,
+      );
     },
   );
 }
 
 class ClientDetailsRouteArgs {
-  const ClientDetailsRouteArgs({this.key});
+  const ClientDetailsRouteArgs({
+    this.key,
+    this.clientId = '',
+  });
 
   final _i64.Key? key;
 
+  final String clientId;
+
   @override
   String toString() {
-    return 'ClientDetailsRouteArgs{key: $key}';
+    return 'ClientDetailsRouteArgs{key: $key, clientId: $clientId}';
   }
 }
 

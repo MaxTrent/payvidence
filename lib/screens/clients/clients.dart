@@ -10,6 +10,8 @@ import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
+import '../../data/local/session_constants.dart';
+import '../../data/local/session_manager.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
@@ -40,7 +42,7 @@ class Clients extends ConsumerWidget {
                   padding: EdgeInsets.only(right: 20.w),
                   child: GestureDetector(
                       onTap: () {
-                        locator<PayvidenceAppRouter>().push(AddClientRoute());
+                        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addClient);
                       },
                       child: Text('+ Add New',
                           style: Theme.of(context)
@@ -123,8 +125,11 @@ class Clients extends ConsumerWidget {
                         if (forSelection == true) {
                           Navigator.of(context).pop(data[index]);
                         } else {
-                          locator<PayvidenceAppRouter>().push(ClientDetailsRoute());
-                        }
+                          if (data[index].id != null) {
+                            final businessId = locator<SessionManager>().get(SessionConstants.businessId) as String?;
+                            print("Navigating to ClientDetails with businessId: $businessId");
+                            locator<PayvidenceAppRouter>().push(ClientDetailsRoute(clientId: data[index].id!));
+                          } }
                       },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,

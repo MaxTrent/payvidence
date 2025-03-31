@@ -2,10 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:payvidence/screens/nav_screens/home.dart';
 
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
    
 
 
@@ -20,7 +23,10 @@ class ClientSuccess extends StatelessWidget {
       floatingActionButton: AppButton(
           buttonText: 'Alright!',
           onPressed: (){
-            context.router.replace(LoginRoute());
+            locator<PayvidenceAppRouter>().popUntil(
+                    (route) => route is HomeScreen);
+            locator<PayvidenceAppRouter>()
+                .replaceNamed(PayvidenceRoutes.clients);
           }),
       body: SafeArea(
         child: Padding(

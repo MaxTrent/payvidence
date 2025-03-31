@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/utilities/payvidence_endpoints.dart';
 import '../screens/device_info.dart';
 import '../shared_dependency/shared_dependency.dart';
@@ -265,24 +264,45 @@ class ApiServices{
     return ApiResult.fromJson(response);
   }
 
+  Future<ApiResult> getClientInfo(String businessId, String clientId) async{
+    var response = await locator<NetworkService>().get(PayvidenceEndpoints.getClient(businessId, clientId));
 
-  // Future<ApiResult> addClient(
-  //     String name, String address, String phoneNumber
-  //     ) async {
-  //   final deviceName = await getDeviceName();
-  //
-  //   var requestData = {
-  //     "name": "Samson Okubanjo",
-  //     "address": "6, Jebba str, Yaba, Lagos",
-  //     "phone_number": "09035690829"
-  //   };
-  //
-  //   var response = await locator<NetworkService>().post(
-  //       PayvidenceEndpoints.a,
-  //       data: requestData,
-  //       useToken: true);
-  //
-  //   return ApiResult.fromJson(response);
-  // }
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> deleteClient(String businessId, String clientId) async{
+    var response = await locator<NetworkService>().delete(PayvidenceEndpoints.getClient(businessId, clientId));
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> updateClient(String businessId, String clientId, String newName) async{
+    var requestData = {
+      "name": newName,
+    };
+
+    var response = await locator<NetworkService>().patch(PayvidenceEndpoints.getClient(businessId, clientId), data: requestData);
+
+    return ApiResult.fromJson(response);
+  }
+
+
+  Future<ApiResult> addClient(
+      String name, String address, String phoneNumber, String businessId
+      ) async {
+
+    var requestData = {
+      "name": name,
+      "address": address,
+      "phone_number": phoneNumber
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.createClient(businessId),
+        data: requestData,
+        useToken: true);
+
+    return ApiResult.fromJson(response);
+  }
 
 }

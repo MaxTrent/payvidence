@@ -23,7 +23,7 @@ class PrivacyAndSecurity extends HookConsumerWidget {
     useEffect(() {
       Future<void> loadInitialState() async {
         final savedValue = await locator<SessionManager>().get(SessionConstants.isBiometricLoginEnabled);
-        isBiometricEnabled.value = savedValue ?? false; // Default to false if null
+        isBiometricEnabled.value = savedValue ?? false;
       }
       loadInitialState();
       return null;

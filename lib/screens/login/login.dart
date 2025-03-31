@@ -150,57 +150,47 @@ class Login extends HookConsumerWidget {
                     height: 32.h,
                   ),
                   // viewModel.loginState.isLoading ? const LoadingIndicator():
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FutureBuilder(
-                        future: viewModel.canUseBiometrics,
-                        builder: (context, snapshot) {
-                          final canUseBiometrics = snapshot.hasData && snapshot.data == true;
-                          return AppButton(
-                            width: canUseBiometrics ? 300.w : null,
-                            buttonText: 'Log in',
-                            isDisabled: areFieldsEmpty.value,
-                            isProcessing: viewModel.isLoading,
-                            onPressed: () {
-                              print("Button pressed");
-                              print("Fields empty: ${areFieldsEmpty.value}");
-                              if (formKey.currentState!.validate()) {
-                                print("Form is valid");
-                                FocusScope.of(context).unfocus();
-                                viewModel.login(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                  navigateOnSuccess: () {
-                                    print('Navigating');
-                                    ref.invalidate(getAllBusinessProvider);
-                                    locator<PayvidenceAppRouter>().popUntil(
-                                            (route) => route is OnboardingScreen);
-                                    locator<PayvidenceAppRouter>()
-                                        .replaceNamed(PayvidenceRoutes.home);
-                                  },
-                                );
-                              } else {
-                                print("Form is not valid");
-                              }
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(width: 16.w), // Spacing between button and icon
-                      FutureBuilder(
-                        future: viewModel.canUseBiometrics,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const SizedBox.shrink();
-                          }
-                          if (snapshot.hasData && snapshot.data == true) {
-                            return GestureDetector(
+                  FutureBuilder(
+                    future: viewModel.canUseBiometrics,
+                    builder: (context, snapshot) {
+                      final canUseBiometrics = snapshot.hasData && snapshot.data == true;
+
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: canUseBiometrics ? 5 : 1,
+                            child: AppButton(
+                              buttonText: 'Log in',
+                              isDisabled: areFieldsEmpty.value,
+                              isProcessing: viewModel.isLoading,
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  FocusScope.of(context).unfocus();
+                                  viewModel.login(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim(),
+                                    navigateOnSuccess: () {
+                                      ref.invalidate(getAllBusinessProvider);
+                                      locator<PayvidenceAppRouter>().popUntil(
+                                              (route) => route is OnboardingScreen);
+                                      locator<PayvidenceAppRouter>()
+                                          .replaceNamed(PayvidenceRoutes.home);
+                                    },
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+
+                          if (canUseBiometrics) SizedBox(width: 16.w),
+
+                          if (canUseBiometrics)
+                            GestureDetector(
                               onTap: () {
                                 FocusScope.of(context).unfocus();
                                 viewModel.biometricLogin(
                                   navigateOnSuccess: () {
-                                    print('Navigating to home via biometrics');
                                     ref.invalidate(getAllBusinessProvider);
                                     locator<PayvidenceAppRouter>().popUntil(
                                             (route) => route is OnboardingScreen);
@@ -214,13 +204,12 @@ class Login extends HookConsumerWidget {
                                 size: 44.h,
                                 color: primaryColor2,
                               ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ],
+                            ),
+                        ],
+                      );
+                    },
                   ),
+
                 ],
               ),
             ),
