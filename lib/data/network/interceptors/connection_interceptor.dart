@@ -32,7 +32,7 @@ class ConnectionStatusInterceptor extends InterceptorsWrapper {
     if (err.response?.statusCode == 401) {
       // Redirect to the login page
       locator<PayvidenceAppRouter>()
-          .pushAndPopUntil(LoginRoute(), predicate: (_) => false);
+          .pushAndPopUntil(const LoginRoute(), predicate: (_) => false);
       return;
     }
     handler.next(err);

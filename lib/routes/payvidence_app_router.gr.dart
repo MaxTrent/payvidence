@@ -9,7 +9,6 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i63;
-import 'package:flutter/cupertino.dart' as _i68;
 import 'package:flutter/material.dart' as _i64;
 import 'package:payvidence/model/business_model.dart' as _i66;
 import 'package:payvidence/model/product_model.dart' as _i65;
@@ -158,13 +157,10 @@ class AddBrandRouteArgs {
 
 /// generated route for
 /// [_i3.AddBusiness]
-class AddBusinessRoute extends _i63.PageRouteInfo<AddBusinessRouteArgs> {
-  AddBusinessRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class AddBusinessRoute extends _i63.PageRouteInfo<void> {
+  const AddBusinessRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           AddBusinessRoute.name,
-          args: AddBusinessRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -173,22 +169,9 @@ class AddBusinessRoute extends _i63.PageRouteInfo<AddBusinessRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AddBusinessRouteArgs>(
-          orElse: () => const AddBusinessRouteArgs());
-      return _i3.AddBusiness(key: args.key);
+      return const _i3.AddBusiness();
     },
   );
-}
-
-class AddBusinessRouteArgs {
-  const AddBusinessRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'AddBusinessRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -574,13 +557,10 @@ class BusinessDetailRoute extends _i63.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i16.ChangePassword]
-class ChangePasswordRoute extends _i63.PageRouteInfo<ChangePasswordRouteArgs> {
-  ChangePasswordRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class ChangePasswordRoute extends _i63.PageRouteInfo<void> {
+  const ChangePasswordRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           ChangePasswordRoute.name,
-          args: ChangePasswordRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -589,22 +569,9 @@ class ChangePasswordRoute extends _i63.PageRouteInfo<ChangePasswordRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<ChangePasswordRouteArgs>(
-          orElse: () => const ChangePasswordRouteArgs());
-      return _i16.ChangePassword(key: args.key);
+      return const _i16.ChangePassword();
     },
   );
-}
-
-class ChangePasswordRouteArgs {
-  const ChangePasswordRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'ChangePasswordRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -922,14 +889,10 @@ class CreateAccountRoute extends _i63.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i25.CreateNewPassword]
-class CreateNewPasswordRoute
-    extends _i63.PageRouteInfo<CreateNewPasswordRouteArgs> {
-  CreateNewPasswordRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class CreateNewPasswordRoute extends _i63.PageRouteInfo<void> {
+  const CreateNewPasswordRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           CreateNewPasswordRoute.name,
-          args: CreateNewPasswordRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -938,34 +901,17 @@ class CreateNewPasswordRoute
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<CreateNewPasswordRouteArgs>(
-          orElse: () => const CreateNewPasswordRouteArgs());
-      return _i25.CreateNewPassword(key: args.key);
+      return const _i25.CreateNewPassword();
     },
   );
 }
 
-class CreateNewPasswordRouteArgs {
-  const CreateNewPasswordRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'CreateNewPasswordRouteArgs{key: $key}';
-  }
-}
-
 /// generated route for
 /// [_i26.CreateNewPasswordReset]
-class CreateNewPasswordResetRoute
-    extends _i63.PageRouteInfo<CreateNewPasswordResetRouteArgs> {
-  CreateNewPasswordResetRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class CreateNewPasswordResetRoute extends _i63.PageRouteInfo<void> {
+  const CreateNewPasswordResetRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           CreateNewPasswordResetRoute.name,
-          args: CreateNewPasswordResetRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -974,22 +920,9 @@ class CreateNewPasswordResetRoute
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<CreateNewPasswordResetRouteArgs>(
-          orElse: () => const CreateNewPasswordResetRouteArgs());
-      return _i26.CreateNewPasswordReset(key: args.key);
+      return const _i26.CreateNewPasswordReset();
     },
   );
-}
-
-class CreateNewPasswordResetRouteArgs {
-  const CreateNewPasswordResetRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'CreateNewPasswordResetRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -1095,13 +1028,10 @@ class EmptyCategoryRouteArgs {
 
 /// generated route for
 /// [_i30.ForgotPassword]
-class ForgotPasswordRoute extends _i63.PageRouteInfo<ForgotPasswordRouteArgs> {
-  ForgotPasswordRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class ForgotPasswordRoute extends _i63.PageRouteInfo<void> {
+  const ForgotPasswordRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           ForgotPasswordRoute.name,
-          args: ForgotPasswordRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1110,22 +1040,9 @@ class ForgotPasswordRoute extends _i63.PageRouteInfo<ForgotPasswordRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<ForgotPasswordRouteArgs>(
-          orElse: () => const ForgotPasswordRouteArgs());
-      return _i30.ForgotPassword(key: args.key);
+      return const _i30.ForgotPassword();
     },
   );
-}
-
-class ForgotPasswordRouteArgs {
-  const ForgotPasswordRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'ForgotPasswordRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -1214,13 +1131,10 @@ class GenerateReceiptRouteArgs {
 
 /// generated route for
 /// [_i33.HomePage]
-class HomePageRoute extends _i63.PageRouteInfo<HomePageRouteArgs> {
-  HomePageRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class HomePageRoute extends _i63.PageRouteInfo<void> {
+  const HomePageRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           HomePageRoute.name,
-          args: HomePageRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1229,22 +1143,9 @@ class HomePageRoute extends _i63.PageRouteInfo<HomePageRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<HomePageRouteArgs>(
-          orElse: () => const HomePageRouteArgs());
-      return _i33.HomePage(key: args.key);
+      return const _i33.HomePage();
     },
   );
-}
-
-class HomePageRouteArgs {
-  const HomePageRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'HomePageRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -1330,13 +1231,10 @@ class InvoiceRouteArgs {
 
 /// generated route for
 /// [_i36.Login]
-class LoginRoute extends _i63.PageRouteInfo<LoginRouteArgs> {
-  LoginRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class LoginRoute extends _i63.PageRouteInfo<void> {
+  const LoginRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           LoginRoute.name,
-          args: LoginRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1345,22 +1243,9 @@ class LoginRoute extends _i63.PageRouteInfo<LoginRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args =
-          data.argsAs<LoginRouteArgs>(orElse: () => const LoginRouteArgs());
-      return _i36.Login(key: args.key);
+      return const _i36.Login();
     },
   );
-}
-
-class LoginRouteArgs {
-  const LoginRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'LoginRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -1458,13 +1343,10 @@ class OnboardingScreenRouteArgs {
 
 /// generated route for
 /// [_i41.OtpLogin]
-class OtpLoginRoute extends _i63.PageRouteInfo<OtpLoginRouteArgs> {
-  OtpLoginRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class OtpLoginRoute extends _i63.PageRouteInfo<void> {
+  const OtpLoginRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           OtpLoginRoute.name,
-          args: OtpLoginRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1473,33 +1355,17 @@ class OtpLoginRoute extends _i63.PageRouteInfo<OtpLoginRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<OtpLoginRouteArgs>(
-          orElse: () => const OtpLoginRouteArgs());
-      return _i41.OtpLogin(key: args.key);
+      return const _i41.OtpLogin();
     },
   );
 }
 
-class OtpLoginRouteArgs {
-  const OtpLoginRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'OtpLoginRouteArgs{key: $key}';
-  }
-}
-
 /// generated route for
 /// [_i42.OtpReset]
-class OtpResetRoute extends _i63.PageRouteInfo<OtpResetRouteArgs> {
-  OtpResetRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class OtpResetRoute extends _i63.PageRouteInfo<void> {
+  const OtpResetRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           OtpResetRoute.name,
-          args: OtpResetRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1508,33 +1374,17 @@ class OtpResetRoute extends _i63.PageRouteInfo<OtpResetRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<OtpResetRouteArgs>(
-          orElse: () => const OtpResetRouteArgs());
-      return _i42.OtpReset(key: args.key);
+      return const _i42.OtpReset();
     },
   );
 }
 
-class OtpResetRouteArgs {
-  const OtpResetRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'OtpResetRouteArgs{key: $key}';
-  }
-}
-
 /// generated route for
 /// [_i43.OtpScreen]
-class OtpScreenRoute extends _i63.PageRouteInfo<OtpScreenRouteArgs> {
-  OtpScreenRoute({
-    _i68.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class OtpScreenRoute extends _i63.PageRouteInfo<void> {
+  const OtpScreenRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           OtpScreenRoute.name,
-          args: OtpScreenRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1543,22 +1393,9 @@ class OtpScreenRoute extends _i63.PageRouteInfo<OtpScreenRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<OtpScreenRouteArgs>(
-          orElse: () => const OtpScreenRouteArgs());
-      return _i43.OtpScreen(key: args.key);
+      return const _i43.OtpScreen();
     },
   );
-}
-
-class OtpScreenRouteArgs {
-  const OtpScreenRouteArgs({this.key});
-
-  final _i68.Key? key;
-
-  @override
-  String toString() {
-    return 'OtpScreenRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -1837,13 +1674,10 @@ class ReceiptScreenRouteArgs {
 
 /// generated route for
 /// [_i52.ResetPassword]
-class ResetPasswordRoute extends _i63.PageRouteInfo<ResetPasswordRouteArgs> {
-  ResetPasswordRoute({
-    _i64.Key? key,
-    List<_i63.PageRouteInfo>? children,
-  }) : super(
+class ResetPasswordRoute extends _i63.PageRouteInfo<void> {
+  const ResetPasswordRoute({List<_i63.PageRouteInfo>? children})
+      : super(
           ResetPasswordRoute.name,
-          args: ResetPasswordRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1852,22 +1686,9 @@ class ResetPasswordRoute extends _i63.PageRouteInfo<ResetPasswordRouteArgs> {
   static _i63.PageInfo page = _i63.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<ResetPasswordRouteArgs>(
-          orElse: () => const ResetPasswordRouteArgs());
-      return _i52.ResetPassword(key: args.key);
+      return const _i52.ResetPassword();
     },
   );
-}
-
-class ResetPasswordRouteArgs {
-  const ResetPasswordRouteArgs({this.key});
-
-  final _i64.Key? key;
-
-  @override
-  String toString() {
-    return 'ResetPasswordRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for

@@ -10,6 +10,14 @@ abstract class IReceiptDatasource {
 
   Future<List<Receipt>> fetchAllReceipts(String businessId, String? recordType);
 
+  Future<Receipt> updateReceipt(
+      String recordId, Map<String, dynamic> requestData, bool? publish);
+
+  Future<Receipt> invoiceToReceipt(
+      String recordId, Map<String, dynamic> requestData);
+
+  Future<Receipt> publishReceipt(String recordId);
+
   Future<void> deleteReceipt(String receiptId);
 }
 
@@ -29,7 +37,7 @@ class ReceiptDatasource extends IReceiptDatasource {
       return response.fold((fail) {
         throw fail.error;
       }, (success) {
-        return Receipt.fromJson(success.data);
+        return Receipt.fromJson(success.data["data"]);
       });
     } catch (e) {
       if (kDebugMode) {
@@ -88,6 +96,78 @@ class ReceiptDatasource extends IReceiptDatasource {
       if (kDebugMode) {
         print("Error $e");
       }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Receipt> updateReceipt(
+      String recordId, Map<String, dynamic> requestData, bool? publish) async {
+    try {
+      final Either<Failure, Success> response = await networkService.patch(
+          '${PayvidenceEndpoints.saleRecord}/$recordId',
+          data: requestData);
+      //LoggerService.info("Product Categories:: ${response.toString()}");
+
+      return response.fold((fail) {
+        throw fail.error;
+      }, (success) async {
+        if (publish == true) {
+          return await publishReceipt(recordId);
+        } else {
+          return Receipt.fromJson(success.data["data"]);
+        }
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error $e");
+      }
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Receipt> publishReceipt(String recordId) async {
+    try {
+      final Either<Failure, Success> response = await networkService.post(
+        '${PayvidenceEndpoints.saleRecord}/$recordId/publish',
+      );
+      //LoggerService.info("Product Categories:: ${response.toString()}");
+
+      return response.fold((fail) {
+        throw fail.error;
+      }, (success) {
+        return Receipt.fromJson(success.data["data"]);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error $e");
+      }
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Receipt> invoiceToReceipt(
+      String recordId, Map<String, dynamic> requestData) async {
+    try {
+      final Either<Failure, Success> response = await networkService.post(
+          '${PayvidenceEndpoints.saleRecord}/$recordId/generate-receipt',
+          data: requestData);
+      //LoggerService.info("Product Categories:: ${response.toString()}");
+
+      return response.fold((fail) {
+        throw fail.error;
+      }, (success) {
+        return Receipt.fromJson(success.data["data"]);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error $e");
+      }
+
       rethrow;
     }
   }

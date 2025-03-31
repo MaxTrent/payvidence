@@ -419,6 +419,7 @@ class FormFields extends StatefulWidget {
   final Future<Product?> Function(int index) onPressed;
   final int index;
   Product? product;
+  final bool? invoiceToReceipt;
 
   FormFields(
       {super.key,
@@ -426,7 +427,8 @@ class FormFields extends StatefulWidget {
       required this.discountController,
       required this.onPressed,
       required this.index,
-      this.product});
+      this.product,
+      this.invoiceToReceipt = false});
 
   @override
   State<FormFields> createState() => _FormFieldsState();
@@ -447,6 +449,9 @@ class _FormFieldsState extends State<FormFields> {
         ),
         GestureDetector(
           onTap: () async {
+            if (widget.invoiceToReceipt == true) {
+              return;
+            }
             final Product? result = await widget.onPressed.call(widget.index);
             if (result == null) {
             } else {
@@ -486,6 +491,7 @@ class _FormFieldsState extends State<FormFields> {
             }
             return null;
           },
+          enabled: !widget.invoiceToReceipt!,
         ),
         SizedBox(
           height: 20.h,
@@ -508,6 +514,7 @@ class _FormFieldsState extends State<FormFields> {
                     .displaySmall!
                     .copyWith(fontSize: 14.sp)),
           ),
+          enabled: !widget.invoiceToReceipt!,
         ),
       ],
     );

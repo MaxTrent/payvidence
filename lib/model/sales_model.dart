@@ -42,12 +42,14 @@ class Sales {
 }
 
 class GraphDatum {
-  final int? week;
-  final String? sales;
+  final String? week;
+  final String? salesKey;
+  final dynamic salesValue;
 
   GraphDatum({
     this.week,
-    this.sales,
+    this.salesKey,
+    this.salesValue,
   });
 
   factory GraphDatum.fromRawJson(String str) =>
@@ -55,13 +57,32 @@ class GraphDatum {
 
   String toRawJson() => json.encode(toJson());
 
-  factory GraphDatum.fromJson(Map<String, dynamic> json) => GraphDatum(
-        week: json["week"],
-        sales: json["sales"],
-      );
+  factory GraphDatum.fromJson(Map<String, dynamic> json) {
+    // Identify if the sales key is "week" or "month"
+    String? detectedSalesKey;
+    dynamic detectedSalesValue;
+
+    if (json.containsKey("week")) {
+      detectedSalesKey = "week";
+      detectedSalesValue = json["week"];
+    } else if (json.containsKey("date")) {
+      detectedSalesKey = "date";
+      detectedSalesValue = json["date"];
+    } else if (json.containsKey("month")) {
+      detectedSalesKey = "month";
+      detectedSalesValue = json["month"];
+    }
+
+    return GraphDatum(
+      week: json[detectedSalesKey].toString(), // assuming week is always an int
+      salesKey: detectedSalesKey,
+      salesValue: double.tryParse(json["sales"]),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "week": week,
-        "sales": sales,
+        if (salesKey != null)
+          salesKey!: salesValue, // Only include the detected key
       };
 }
