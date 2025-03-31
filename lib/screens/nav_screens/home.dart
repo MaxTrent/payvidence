@@ -19,6 +19,7 @@ import '../../providers/business_providers/get_all_business_provider.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/extensions.dart';
+import '../my_subscription/my_subscription_vm.dart';
 
 @RoutePage(name: 'HomeScreenRoute')
 class HomeScreen extends HookConsumerWidget {
@@ -30,6 +31,8 @@ class HomeScreen extends HookConsumerWidget {
     final viewModel = ref.watch(homePageViewModel);
     final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
+    final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
+
 
     ref.listen(getAllBusinessProvider, (prev, next) {
       if (next.hasValue && next.value!.isNotEmpty) {
@@ -170,6 +173,7 @@ class HomeScreen extends HookConsumerWidget {
                 ],
               ),
               SizedBox(height: 38.h),
+              useMySubscriptionViewModel.subInfo?.plan.name !=null ? SizedBox.shrink():
               GestureDetector(
                 onTap: () => locator<PayvidenceAppRouter>()
                     .navigateNamed(PayvidenceRoutes.chooseSubscriptionPlan),
