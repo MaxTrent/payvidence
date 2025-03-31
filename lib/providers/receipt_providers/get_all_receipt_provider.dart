@@ -30,8 +30,7 @@ class GetAllReceiptNotifier extends AsyncNotifier<List<Receipt>> {
     return locator<IReceiptRepository>().updateReceipt(id, data, publish);
   }
 
-  Future<Receipt> reIssueReceipt(
-      String id, Map<String, dynamic> data) {
+  Future<Receipt> reIssueReceipt(String id, Map<String, dynamic> data) {
     return locator<IReceiptRepository>().invoiceToReceipt(id, data);
   }
 // Add methods to mutate the state

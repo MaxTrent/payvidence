@@ -20,22 +20,26 @@ class Sales {
   String toRawJson() => json.encode(toJson());
 
   factory Sales.fromJson(Map<String, dynamic> json) => Sales(
-    totalSales: json["total_sales"],
-    totalRevenue: json["total_revenue"],
-    totalReceipts: json["total_receipts"],
-    totalInvoices: json["total_invoices"],
-    graphData: json["graph_data"] == null ? [] : List<GraphDatum>.from(json["graph_data"]!.map((x) => GraphDatum.fromJson(x))),
-  );
+        totalSales: json["total_sales"],
+        totalRevenue: json["total_revenue"],
+        totalReceipts: json["total_receipts"],
+        totalInvoices: json["total_invoices"],
+        graphData: json["graph_data"] == null
+            ? []
+            : List<GraphDatum>.from(
+                json["graph_data"]!.map((x) => GraphDatum.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "total_sales": totalSales,
-    "total_revenue": totalRevenue,
-    "total_receipts": totalReceipts,
-    "total_invoices": totalInvoices,
-    "graph_data": graphData == null ? [] : List<dynamic>.from(graphData!.map((x) => x.toJson())),
-  };
+        "total_sales": totalSales,
+        "total_revenue": totalRevenue,
+        "total_receipts": totalReceipts,
+        "total_invoices": totalInvoices,
+        "graph_data": graphData == null
+            ? []
+            : List<dynamic>.from(graphData!.map((x) => x.toJson())),
+      };
 }
-
 
 class GraphDatum {
   final String? week;
@@ -48,7 +52,8 @@ class GraphDatum {
     this.salesValue,
   });
 
-  factory GraphDatum.fromRawJson(String str) => GraphDatum.fromJson(json.decode(str));
+  factory GraphDatum.fromRawJson(String str) =>
+      GraphDatum.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
@@ -60,7 +65,7 @@ class GraphDatum {
     if (json.containsKey("week")) {
       detectedSalesKey = "week";
       detectedSalesValue = json["week"];
-    }else if (json.containsKey("date")) {
+    } else if (json.containsKey("date")) {
       detectedSalesKey = "date";
       detectedSalesValue = json["date"];
     } else if (json.containsKey("month")) {
@@ -76,8 +81,8 @@ class GraphDatum {
   }
 
   Map<String, dynamic> toJson() => {
-    "week": week,
-    if (salesKey != null) salesKey!: salesValue, // Only include the detected key
-  };
+        "week": week,
+        if (salesKey != null)
+          salesKey!: salesValue, // Only include the detected key
+      };
 }
-

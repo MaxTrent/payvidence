@@ -449,7 +449,7 @@ class _FormFieldsState extends State<FormFields> {
         ),
         GestureDetector(
           onTap: () async {
-            if(widget.invoiceToReceipt==true){
+            if (widget.invoiceToReceipt == true) {
               return;
             }
             final Product? result = await widget.onPressed.call(widget.index);
