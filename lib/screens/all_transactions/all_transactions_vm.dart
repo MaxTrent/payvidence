@@ -56,7 +56,7 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
             response.error?.message ??
             "An error occurred!";
         print("ViewModel: API failed - $errorMessage");
-        handleError(message: errorMessage);
+        // handleError(message: errorMessage);
       }
     } catch (e) {
       print("ViewModel: Exception - $e");

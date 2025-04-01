@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -56,6 +57,8 @@ class AddBusiness extends HookConsumerWidget {
                 AppTextField(
                   hintText: 'Business name',
                   controller: vm.businessNameController,
+                  keyboardType: TextInputType.name,
+                  textCapitalization: TextCapitalization.words,
                   validator: (val) {
                     return Validator.validateName(val);
                   },
@@ -64,6 +67,7 @@ class AddBusiness extends HookConsumerWidget {
                 AppTextField(
                   hintText: 'Business address',
                   controller: vm.businessAddressController,
+                  textCapitalization: TextCapitalization.words,
                   validator: (val) {
                     return Validator.validateName(val);
                   },
@@ -72,6 +76,10 @@ class AddBusiness extends HookConsumerWidget {
                 AppTextField(
                   hintText: 'Business phone number',
                   controller: vm.phoneNumberController,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(11),
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   validator: (val) {
                     return Validator.validatePhoneNumber(val);
                   },
