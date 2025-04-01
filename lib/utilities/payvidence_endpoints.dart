@@ -22,6 +22,7 @@ class PayvidenceEndpoints {
 
   // Business Endpoints //
   static String get business => '/api/business/';
+  static String getBusiness(String businessId) => '/api/business/$businessId';
   //static String get createBusiness => '/api/business';
 
   // Product Endpoints

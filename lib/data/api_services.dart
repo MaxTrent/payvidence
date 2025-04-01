@@ -287,17 +287,59 @@ class ApiServices {
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> updateUserInfo(
-      String firstName) async {
+  Future<ApiResult> updateUserInfo(String firstName) async {
     var requestData = {
       "transactional_alerts": true,
       "security_alerts": true,
       "first_name": firstName,
     };
 
-    var response = await locator<NetworkService>().patch(
-        PayvidenceEndpoints.updateUserInfo,
-        data: requestData);
+    var response = await locator<NetworkService>()
+        .patch(PayvidenceEndpoints.updateUserInfo, data: requestData);
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> getBusinessDetails(String businessId) async {
+    var response = await locator<NetworkService>()
+        .get(PayvidenceEndpoints.getBusiness(businessId));
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> deleteBusiness(String businessId) async {
+    var response = await locator<NetworkService>()
+        .delete(PayvidenceEndpoints.getBusiness(businessId));
+
+    return ApiResult.fromJson(response);
+  }
+
+  Future<ApiResult> updateBusiness(String businessId,{String? address, String? name, String? phone, String? issuer, String? issuerRole, String? bankName, String? accountNumber, String? accountName, File? logo, File? issuerSignature}) async {
+    var requestData = FormData.fromMap({
+      if (name != null) 'name': name,
+      if (address != null) 'address': address,
+      if (phone != null) 'phone_number': phone,
+      if (issuer != null) 'issuer': issuer,
+      if (issuerRole != null) 'issuer_role': issuerRole,
+      if (logo != null) 'logo': await MultipartFile.fromFile(logo.path),
+      if (issuerSignature != null)
+        'issuer_signature': await MultipartFile.fromFile(issuerSignature.path),
+      // "address": address,
+      // "name": name,
+      // "phone": phone,
+      "_method": "PATCH",
+      // "issuer": issuer,
+      // "issuer_role": issuerRole,
+      if (bankName != null) "bank_name": bankName,
+      if (accountNumber != null) "account_number": accountNumber,
+      if (accountName != null) "account_name": accountName,
+      // "logo_image": await MultipartFile.fromFile(logo!.path,
+      //     filename: logo.path.split('/').last),
+      // "issuer_signature_image": await MultipartFile.fromFile(issuerSignature!.path,
+      //     filename: issuerSignature.path.split('/').last),
+    });
+
+    var response = await locator<NetworkService>()
+        .post(PayvidenceEndpoints.getBusiness(businessId), data: requestData);
 
     return ApiResult.fromJson(response);
   }

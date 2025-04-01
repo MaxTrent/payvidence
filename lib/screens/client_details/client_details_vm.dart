@@ -41,8 +41,8 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
           "ViewModel: API response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
-        final userData = response.data!["data"];
-        clientInfo = ClientModel.fromJson(userData as Map<String, dynamic>);
+        final clientData = response.data!["data"];
+        clientInfo = ClientModel.fromJson(clientData as Map<String, dynamic>);
         print("ViewModel: Client info updated - $clientInfo");
       } else {
         var errorMessage = response.error?.errors?.first.message ??

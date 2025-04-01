@@ -161,6 +161,12 @@ class PayvidenceAppRouter extends RootStackRouter {
     AutoRoute(
         page: AccountSuccessRoute.page,
         path: PayvidenceRoutes.accountSuccess),
+    AutoRoute(
+        page: EditBusinessRoute.page,
+        path: PayvidenceRoutes.editBusiness),
+    AutoRoute(
+        page: EditBankDetailsRoute.page,
+        path: PayvidenceRoutes.editBankDetails),
       ];
 }
 
@@ -226,7 +232,7 @@ class PayvidenceRoutes {
   static String get resetPassword => '/resetPassword';
   static String get notificationSettings => '/notificationSettings';
   static String get updateQuantity => '/updateQuantity';
-  static String get businessDetail => '/businessDetail';
+  static String get businessDetail => '/businessDetail/:businessId';
   static String get clients => '/clients';
   static String get clientDetails => '/clientDetails/:businessId/:clientId';
   static String get addClient => '/addClient/:businessId';
@@ -242,4 +248,7 @@ class PayvidenceRoutes {
   static String get paymentScreen => '/paymentScreen/:paymentLink';
   static String get receiptScreen => '/receiptScreen';
   static String get allTransactions => 'allTransactions/:businessId';
+  static String get editBusiness => '/editBusiness/:businessId';
+  static String get editBankDetails => '/editBankDetails/:businessId';
+
 }

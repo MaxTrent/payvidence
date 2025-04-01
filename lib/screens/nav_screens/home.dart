@@ -87,12 +87,9 @@ class HomeScreen extends HookConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                ref.watch(getCurrentBusinessProvider)?.name ??
-                                    '...',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
+                                (ref.watch(getCurrentBusinessProvider)?.name ?? '...')
+                                    .replaceRange(14, null, '...'),
+                                style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
                               ),
                               Row(
                                 children: [

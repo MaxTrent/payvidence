@@ -1,18 +1,24 @@
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
 import '../model/business_model.dart';
+import '../shared_dependency/shared_dependency.dart';
 import 'app_button.dart';
 
 class BusinessCard extends ConsumerWidget {
+
   const BusinessCard({
     required this.business,
     super.key,
+
   });
 
   final Business business;
@@ -38,43 +44,48 @@ class BusinessCard extends ConsumerWidget {
                 SizedBox(
                   width: 12.w,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      business.name ?? '',
-                      style: Theme.of(context).textTheme.displayMedium,
-                    ),
-                    SizedBox(
-                      height: 12.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SvgPicture.asset(Assets.svg.library),
-                        SizedBox(
-                          width: 3.w,
-                        ),
-                        Text('20 receipts',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontSize: 14.sp)),
-                        SizedBox(
-                          width: 12.w,
-                        ),
-                        SvgPicture.asset(Assets.svg.library),
-                        SizedBox(
-                          width: 3.w,
-                        ),
-                        Text('20 invoices',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontSize: 14.sp))
-                      ],
-                    )
-                  ],
+                GestureDetector(
+                  onTap: (){
+                    locator<PayvidenceAppRouter>().push(BusinessDetailRoute(businessId: business.id ?? ''));
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        business.name ?? '',
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                      SizedBox(
+                        height: 12.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(Assets.svg.library),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Text('20 receipts',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(fontSize: 14.sp)),
+                          SizedBox(
+                            width: 12.w,
+                          ),
+                          SvgPicture.asset(Assets.svg.library),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Text('20 invoices',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(fontSize: 14.sp))
+                        ],
+                      )
+                    ],
+                  ),
                 )
               ],
             ),

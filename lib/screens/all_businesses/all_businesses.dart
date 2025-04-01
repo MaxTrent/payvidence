@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
 
 import '../../components/business_card.dart';
 import '../../model/business_model.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'AllBusinessesRoute')
 class AllBusinesses extends ConsumerWidget {
@@ -31,7 +33,9 @@ class AllBusinesses extends ConsumerWidget {
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addBusiness);
+                  },
                   child: Text('+ Add New',
                       style: Theme.of(context)
                           .textTheme
@@ -43,19 +47,21 @@ class AllBusinesses extends ConsumerWidget {
             SizedBox(
               height: 32.h,
             ),
-            ListView.separated(
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return BusinessCard(
-                    business: allBusiness[index],
-                  );
-                },
-                separatorBuilder: (ctx, idx) {
-                  return SizedBox(
-                    height: 24.h,
-                  );
-                },
-                itemCount: allBusiness.length),
+            Expanded(
+              child: ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return BusinessCard(
+                      business: allBusiness[index],
+                    );
+                  },
+                  separatorBuilder: (ctx, idx) {
+                    return SizedBox(
+                      height: 24.h,
+                    );
+                  },
+                  itemCount: allBusiness.length),
+            ),
           ],
         ),
       ),
