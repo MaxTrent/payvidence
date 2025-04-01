@@ -83,8 +83,17 @@ class CreateNewPasswordReset extends HookConsumerWidget {
                     hintText: 'Password',
                     controller: passwordController,
                     validator: (val) {
-                      if (!val!.trim().isValidPassword || val.isEmpty) {
-                        return 'Enter a valid password';
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Password is required';
+                      }
+                      if (val.length < 8) {
+                        return 'Password must be at least 8 characters long';
+                      }
+                      if (!RegExp(r'[A-Za-z]').hasMatch(val)) {
+                        return 'Password must contain at least one letter';
+                      }
+                      if (!RegExp(r'\d').hasMatch(val)) {
+                        return 'Password must contain at least one number';
                       }
                       return null;
                     },
@@ -103,9 +112,10 @@ class CreateNewPasswordReset extends HookConsumerWidget {
                     hintText: 'Re-enter password',
                     controller: confirmPasswordController,
                     validator: (val) {
-                      final password = passwordController.text;
-                      if (!val!.trim().isValidPassword || val.isEmpty) {
-                        return 'Enter a valid password';
+                      final password = passwordController.text.trim();
+
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Please confirm your password';
                       }
                       if (val != password) {
                         return 'Passwords do not match';
@@ -133,7 +143,7 @@ class CreateNewPasswordReset extends HookConsumerWidget {
                               locator<PayvidenceAppRouter>().popUntil(
                                   (route) => route is OnboardingScreen);
                               locator<PayvidenceAppRouter>().navigateNamed(
-                                  PayvidenceRoutes.changePasswordSuccess);
+                                  PayvidenceRoutes.resetPasswordSuccess);
                             });
                       } else {
                         print("Form is not valid");

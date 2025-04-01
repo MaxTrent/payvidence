@@ -6,10 +6,10 @@ class SessionManager {
 
   SessionManager({required this.sharedPreferences});
 
-  // Future<void> clear() async {
-  //   await sharedPreferences.clear();
-  //   print("SharedPreferences cleared");
-  // }
+  Future<void> clear() async {
+    await sharedPreferences.clear();
+    print("SharedPreferences cleared");
+  }
 
   T? get<T>(String key) {
     try {
