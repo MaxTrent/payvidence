@@ -104,7 +104,12 @@ class AddBusiness extends HookConsumerWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(val.name),
+                                  Expanded(
+                                      child: Text(
+                                    val.name,
+                                    overflow: TextOverflow.ellipsis,
+                                  )),
+                                  12.horizontalSpace,
                                   const Text(
                                     "Change",
                                     style: TextStyle(
@@ -155,7 +160,12 @@ class AddBusiness extends HookConsumerWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(val.name),
+                                    Expanded(
+                                        child: Text(
+                                          val.name,
+                                          overflow: TextOverflow.ellipsis,
+                                        )),
+                                    12.horizontalSpace,
                                     const Text(
                                       "Change",
                                       style: TextStyle(
@@ -174,9 +184,9 @@ class AddBusiness extends HookConsumerWidget {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (vm.logo.value == null) {
-                          ToastService.error("Select a logo image");
+                          ToastService.showErrorSnackBar("Select a logo image");
                         } else if (vm.signature.value == null) {
-                          ToastService.error("Select a signature image");
+                          ToastService.showErrorSnackBar("Select a signature image");
                         } else {
                           vm.createBusiness(context);
                         }

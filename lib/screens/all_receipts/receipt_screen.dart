@@ -3,9 +3,9 @@ import 'dart:typed_data';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_image_gallery_saver/flutter_image_gallery_saver.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:payvidence/model/receipt_model.dart';
@@ -64,7 +64,7 @@ class ReceiptScreen extends ConsumerWidget {
           await File(imagePath).writeAsBytes(await imageFile.readAsBytes());
 
       // Save to gallery using ImageGallerySaver (alternative for direct access)
-      await ImageGallerySaver.saveFile(file.path);
+      await FlutterImageGallerySaver.saveFile(file.path);
 
       pd.close(); // Hide the progress dialog
 

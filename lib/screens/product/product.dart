@@ -143,35 +143,37 @@ class Product extends ConsumerWidget {
               }
               productNumber.value = data.length;
 
-              return ListView.separated(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ProductTile(
-                      product: data[index],
-                      ref: ref,
-                      onPressed: () {
-                        if (forProductSelection == true) {
-                          Navigator.of(context).pop(data[index]);
-                        } else {
-                          locator<PayvidenceAppRouter>().navigate(
-                              ProductDetailsRoute(product: data[index]));
-                          ref
-                              .read(getCurrentProductProvider.notifier)
-                              .setCurrentProduct(data[index]);
-                        }
-                      },
-                    );
-                  },
-                  separatorBuilder: (ctx, idx) {
-                    return Column(
-                      children: [
-                        SizedBox(
-                          height: 24.h,
-                        ),
-                      ],
-                    );
-                  },
-                  itemCount: data.length);
+              return Expanded(
+                child: ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return ProductTile(
+                        product: data[index],
+                        ref: ref,
+                        onPressed: () {
+                          if (forProductSelection == true) {
+                            Navigator.of(context).pop(data[index]);
+                          } else {
+                            locator<PayvidenceAppRouter>().navigate(
+                                ProductDetailsRoute(product: data[index]));
+                            ref
+                                .read(getCurrentProductProvider.notifier)
+                                .setCurrentProduct(data[index]);
+                          }
+                        },
+                      );
+                    },
+                    separatorBuilder: (ctx, idx) {
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 24.h,
+                          ),
+                        ],
+                      );
+                    },
+                    itemCount: data.length),
+              );
             }, error: (error, _) {
               return const Text('An error has occurred');
             }, loading: () {

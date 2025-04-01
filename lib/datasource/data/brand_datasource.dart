@@ -25,7 +25,7 @@ class BrandDatasource extends IBrandDatasource {
   ) async {
     try {
       final Either<Failure, Success> response = await networkService.get(
-        '${PayvidenceEndpoints.business}$businessId/brand',
+        '${PayvidenceEndpoints.business}/$businessId/brand',
         //data: requestData,
         //headers: {"Content-Type": "multipart/form-data"}
       );
@@ -56,7 +56,7 @@ class BrandDatasource extends IBrandDatasource {
     //final NetworkService _networkService = locator<NetworkService>();
     try {
       final Either<Failure, Success> response = await networkService.post(
-          '${PayvidenceEndpoints.business}$businessId/brand',
+          '${PayvidenceEndpoints.business}/$businessId/brand',
           data: requestData);
       //LoggerService.info("Product Categories:: ${response.toString()}");
 

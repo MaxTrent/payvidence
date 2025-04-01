@@ -5,7 +5,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/constants/app_colors.dart';
-
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -72,9 +71,9 @@ class PrivacyAndSecurity extends HookConsumerWidget {
                   onChanged: (value) {
                     toggleBiometricLogin(value);
                   },
-                  activeTrackColor: primaryColor2,
+                  activeColor: primaryColor2,
                   thumbColor: appGrey,
-                  inactiveTrackColor: borderColor,
+                  //inactiveColor: borderColor,
                 )
               ],
             ),

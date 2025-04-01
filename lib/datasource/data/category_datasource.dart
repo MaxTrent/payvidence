@@ -25,7 +25,7 @@ class CategoryDatasource extends ICategoryDatasource {
   ) async {
     try {
       final Either<Failure, Success> response = await networkService.get(
-        '${PayvidenceEndpoints.business}$businessId/category',
+        '${PayvidenceEndpoints.business}/$businessId/category',
         //data: requestData,
         //headers: {"Content-Type": "multipart/form-data"}
       );
@@ -56,7 +56,7 @@ class CategoryDatasource extends ICategoryDatasource {
     //final NetworkService _networkService = locator<NetworkService>();
     try {
       final Either<Failure, Success> response = await networkService.post(
-          '${PayvidenceEndpoints.business}$businessId/category',
+          '${PayvidenceEndpoints.business}/$businessId/category',
           data: requestData);
       //LoggerService.info("Product Categories:: ${response.toString()}");
 

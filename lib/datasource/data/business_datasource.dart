@@ -34,7 +34,7 @@ class BusinessDatasource extends IBusinessDatasource {
       return response.fold((fail) {
         throw fail.error;
       }, (success) {
-        return Business.fromJson(success.data);
+        return Business.fromJson(success.data["data"]);
       });
     } catch (e) {
       if (kDebugMode) {
@@ -76,7 +76,7 @@ class BusinessDatasource extends IBusinessDatasource {
   Future<Business> fetchBusiness(String id) async {
     try {
       final Either<Failure, Success> response = await networkService.get(
-        '${PayvidenceEndpoints.business}$id',
+        '${PayvidenceEndpoints.business}/$id',
         //data: requestData,
         //headers: {"Content-Type": "multipart/form-data"}
       );
@@ -101,7 +101,7 @@ class BusinessDatasource extends IBusinessDatasource {
       String id, Map<String, dynamic> requestData) async {
     try {
       final Either<Failure, Success> response = await networkService.patch(
-        '${PayvidenceEndpoints.business}$id',
+        '${PayvidenceEndpoints.business}/$id',
         data: requestData,
       );
       //LoggerService.info("Product Categories:: ${response.toString()}");

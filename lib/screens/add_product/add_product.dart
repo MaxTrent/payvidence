@@ -120,7 +120,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
 
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.success(widget.product == null
+        ToastService.showSnackBar(widget.product == null
             ? "Product created successfully"
             : "Product updated successfully");
         ref.invalidate(getAllProductProvider);
@@ -136,12 +136,12 @@ class _AddProductState extends ConsumerState<AddProduct> {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(
+        ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error('An error has occurred!');
+        ToastService.showErrorSnackBar('An error has occurred!');
       }
     }
 
@@ -414,13 +414,13 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
                         if (currentBrand == null) {
-                          ToastService.error("Select a brand!");
+                          ToastService.showErrorSnackBar("Select a brand!");
                         } else if (currentCategory == null) {
-                          ToastService.error("Select a category!");
+                          ToastService.showErrorSnackBar("Select a category!");
                         }
                         if (productImage.value == null &&
                             widget.product == null) {
-                          ToastService.error("Select a product image");
+                          ToastService.showErrorSnackBar("Select a product image");
                         } else {
                           createProduct();
                         }
