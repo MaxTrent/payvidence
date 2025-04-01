@@ -33,7 +33,7 @@ class AddBrand extends ConsumerWidget {
             await ref.read(getAllBrandProvider.notifier).addBrand(requestData);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success("Brand created successfully");
+        ToastService.showSnackBar("Brand created successfully");
         ref.invalidate(getAllBrandProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
@@ -42,11 +42,11 @@ class AddBrand extends ConsumerWidget {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(
+        ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         Navigator.of(context).pop(); //pop loading dialog on error
-        ToastService.error('An error has occurred!');
+        ToastService.showErrorSnackBar('An error has occurred!');
       }
     }
 

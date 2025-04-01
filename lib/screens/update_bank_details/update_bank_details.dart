@@ -38,7 +38,7 @@ class UpdateBankDetails extends ConsumerWidget {
         print(response.toJson());
         if (!context.mounted) return;
         Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.success("Bank details updated successfully");
+        ToastService.showSnackBar("Bank details updated successfully");
         ref.invalidate(getAllBusinessProvider);
         ref
             .read(getCurrentBusinessProvider.notifier)
@@ -51,12 +51,12 @@ class UpdateBankDetails extends ConsumerWidget {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(
+        ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error('An unknown error has occurred!');
+        ToastService.showErrorSnackBar('An unknown error has occurred!');
       }
     }
 

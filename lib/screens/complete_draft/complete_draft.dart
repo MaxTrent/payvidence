@@ -114,7 +114,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
     // String error = findMissingProducts();
     // if (error == '') {
     // } else {
-    //   ToastService.error(context, error);
+    //   ToastService.showErrorSnackBar(context, error);
     //   return;
     // }
     List<Map<String, dynamic>> productList = [];
@@ -158,7 +158,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
 
       if (!context.mounted) return;
       Navigator.of(context).pop(); //pop loading dialog on success
-      ToastService.success(
+      ToastService.showSnackBar(
           "${(widget.isInvoice == true && widget.inVoiceToReceipt == false) ? "invoice" : "receipt"} generated successfully");
       ref.invalidate(
           widget.isInvoice == true && widget.inVoiceToReceipt == false
@@ -178,12 +178,12 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
       });
     } on DioException catch (e) {
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(
+      ToastService.showErrorSnackBar(
           e.response?.data['message'] ?? 'An unknown error has occurred!!!');
     } catch (e) {
       print(e);
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error('An unknown error has occurred!');
+      ToastService.showErrorSnackBar('An unknown error has occurred!');
     }
   }
 
@@ -379,7 +379,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error("Select a client please");
+                                ToastService.showErrorSnackBar("Select a client please");
                               }
                               isDraft = false;
                               createReceipt();
@@ -396,7 +396,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
                                 if (client == null) {
-                                  ToastService.error("Select a client please");
+                                  ToastService.showErrorSnackBar("Select a client please");
                                 }
                                 isDraft = true;
                                 createReceipt();
