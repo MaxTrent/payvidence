@@ -68,7 +68,7 @@ class ForgotPassword extends HookConsumerWidget {
                   hintText: 'Email address',
                   controller: emailController,
                   validator: (val) {
-                    if (!val!.isValidEmail || val.isEmpty) {
+                    if (!val!.trim().isValidEmail || val.isEmpty) {
                       return 'Enter valid email address';
                     }
                     return null;
@@ -82,24 +82,24 @@ class ForgotPassword extends HookConsumerWidget {
                   isProcessing: viewModel.isLoading,
                   buttonText: 'Continue',
                   onPressed: () {
-                    locator<PayvidenceAppRouter>()
-                        .navigateNamed(PayvidenceRoutes.otpLogin);
+                    // locator<PayvidenceAppRouter>()
+                    //     .navigateNamed(PayvidenceRoutes.otpLogin);
 
-                    // if (_formKey.currentState!.validate()) {
-                    //   print("Form is valid");
-                    //   FocusScope.of(context).unfocus();
-                    //   viewModel.forgotPasswordInit(
-                    //     email: emailController.text.trim(),
-                    //     navigateOnSuccess: () {
-                    //       print('navigating');
-                    //       locator<PayvidenceAppRouter>().popUntil(
-                    //               (route) => route is OnboardingScreen);
-                    //       locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otpLogin);
-                    //     },
-                    //   );
-                    // } else {
-                    //   print("Form is not valid");
-                    // }
+                    if (formKey.currentState!.validate()) {
+                      print("Form is valid");
+                      FocusScope.of(context).unfocus();
+                      viewModel.forgotPasswordInit(
+                        email: emailController.text.trim(),
+                        navigateOnSuccess: () {
+                          print('navigating');
+                          // locator<PayvidenceAppRouter>().popUntil(
+                          //         (route) => route is OnboardingScreen);
+                          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otpLogin);
+                        },
+                      );
+                    } else {
+                      print("Form is not valid");
+                    }
                   },
                 ),
               ],

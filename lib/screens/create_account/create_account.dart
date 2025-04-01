@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
-import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/create_account/create_account_vm.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
@@ -115,7 +115,7 @@ class CreateAccountScreen extends HookConsumerWidget {
                     // ref.watch(
                     //     CreateAccountViewModel.firstNameControllerProvider),
                     validator: (val) {
-                      if (!val!.isValidName || val.isEmpty) {
+                      if (!val!.trim().isValidName || val.isEmpty) {
                         return 'Enter a valid name';
                       }
                       return null;
@@ -135,7 +135,7 @@ class CreateAccountScreen extends HookConsumerWidget {
                     hintText: 'Last Name',
                     controller: lastNameController,
                     validator: (val) {
-                      if (!val!.isValidName || val.isEmpty) {
+                      if (!val!.trim().isValidName || val.trim().isEmpty) {
                         return 'Enter a valid password';
                       }
                       return null;
@@ -155,7 +155,7 @@ class CreateAccountScreen extends HookConsumerWidget {
                     hintText: 'Email address',
                     controller: emailController,
                     validator: (val) {
-                      if (!val!.isValidEmail || val.isEmpty) {
+                      if (!val!.trim().isValidEmail || val.isEmpty) {
                         return 'Enter valid email address';
                       }
                       return null;
@@ -175,8 +175,12 @@ class CreateAccountScreen extends HookConsumerWidget {
                     hintText: 'Phone number',
                     keyboardType: TextInputType.number,
                     controller: phoneController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                     validator: (val) {
-                      if (!val!.isValidPhone || val.isEmpty) {
+                      if (!val!.trim().isValidPhone || val.isEmpty) {
                         return 'Enter a valid phone number';
                       }
                       return null;
@@ -195,8 +199,17 @@ class CreateAccountScreen extends HookConsumerWidget {
                   AppTextField(
                     hintText: 'Password (8+ characters)',
                     validator: (val) {
-                      if (!val!.isValidPassword || val.isEmpty) {
-                        return 'Enter a valid password';
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Password is required';
+                      }
+                      if (val.length < 8) {
+                        return 'Password must be at least 8 characters long';
+                      }
+                      if (!RegExp(r'[A-Za-z]').hasMatch(val)) {
+                        return 'Password must contain at least one letter';
+                      }
+                      if (!RegExp(r'\d').hasMatch(val)) {
+                        return 'Password must contain at least one number';
                       }
                       return null;
                     },
@@ -225,9 +238,10 @@ class CreateAccountScreen extends HookConsumerWidget {
                     controller: passwordConfirmController,
                     obscureText: obscurePasswordConfirmText.value,
                     validator: (val) {
-                      final password = passwordController.text;
-                      if (!val!.isValidPassword || val.isEmpty) {
-                        return 'Enter a valid password';
+                      final password = passwordController.text.trim();
+
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Please confirm your password';
                       }
                       if (val != password) {
                         return 'Passwords do not match';
@@ -281,9 +295,9 @@ class CreateAccountScreen extends HookConsumerWidget {
                     isDisabled: _areFieldsEmpty.value,
                     isProcessing: viewModel.isLoading,
                     onPressed: () {
-                      print("Button pressed");
+                      debugPrint("Button pressed");
                       if (_formKey.currentState!.validate()) {
-                        print("Form is valid");
+                        debugPrint("Form is valid");
                         FocusScope.of(context).unfocus();
                         viewModel.createAccount(
                             firstName: firstNameController.text.trim(),
@@ -294,8 +308,8 @@ class CreateAccountScreen extends HookConsumerWidget {
                             passwordConfirm:
                                 passwordConfirmController.text.trim(),
                             navigateOnSuccess: () {
-                              locator<PayvidenceAppRouter>().popUntil(
-                                  (route) => route is OnboardingScreen);
+                              // locator<PayvidenceAppRouter>().popUntil(
+                              //     (route) => route is OnboardingScreen);
                               locator<PayvidenceAppRouter>()
                                   .navigateNamed(PayvidenceRoutes.otp);
                             });
@@ -303,6 +317,9 @@ class CreateAccountScreen extends HookConsumerWidget {
                         print("Form is not valid");
                       }
                     },
+                  ),
+                  SizedBox(
+                    height: 36.h,
                   ),
                 ],
               ),

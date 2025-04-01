@@ -6,15 +6,18 @@ class SessionManager {
 
   SessionManager({required this.sharedPreferences});
 
-  Future<void> clear() async {
-    await sharedPreferences.clear();
-  }
+  // Future<void> clear() async {
+  //   await sharedPreferences.clear();
+  //   print("SharedPreferences cleared");
+  // }
 
   T? get<T>(String key) {
     try {
       switch (T) {
         case String:
-          return sharedPreferences.getString(key) as T?;
+          final value = sharedPreferences.getString(key);
+          print("Get: key='$key', value='$value'");
+          return value as T?;
         case double:
           return sharedPreferences.getDouble(key) as T?;
         case bool:
@@ -22,36 +25,42 @@ class SessionManager {
         case int:
           return sharedPreferences.getInt(key) as T?;
         case Map:
-          return json.decode(sharedPreferences.getString(key)!) as T?;
+          final stringValue = sharedPreferences.getString(key);
+          return stringValue != null ? json.decode(stringValue) as T? : null;
         default:
           return null;
       }
     } catch (e) {
-      // handle exception
+      print("Error getting key='$key': $e");
       return null;
     }
   }
 
   Future<void> save<T>({required String key, required T value}) async {
-    switch (T) {
-      case String:
-        await sharedPreferences.setString(key, value as String);
-        break;
-      case double:
-        await sharedPreferences.setDouble(key, value as double);
-        break;
-      case bool:
-        await sharedPreferences.setBool(key, value as bool);
-        break;
-      case int:
-        await sharedPreferences.setInt(key, value as int);
-        break;
-      case const (List<String>):
-        await sharedPreferences.setStringList(key, value as List<String>);
-        break;
-      case Map:
-        await sharedPreferences.setString(key, json.encode(value));
-        break;
+    try {
+      switch (T) {
+        case String:
+          await sharedPreferences.setString(key, value as String);
+          print("Saved: key='$key', value='$value'");
+          break;
+        case double:
+          await sharedPreferences.setDouble(key, value as double);
+          break;
+        case bool:
+          await sharedPreferences.setBool(key, value as bool);
+          break;
+        case int:
+          await sharedPreferences.setInt(key, value as int);
+          break;
+        case const (List<String>):
+          await sharedPreferences.setStringList(key, value as List<String>);
+          break;
+        case Map:
+          await sharedPreferences.setString(key, json.encode(value));
+          break;
+      }
+    } catch (e) {
+      print("Error saving key='$key': $e");
     }
   }
 }

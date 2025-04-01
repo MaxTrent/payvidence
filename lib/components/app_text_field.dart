@@ -20,7 +20,7 @@ class AppTextField extends StatelessWidget {
     this.radius = 8,
     this.width,
     this.focusNode,
-    this.keyboardType = TextInputType.number,
+    this.keyboardType,
     this.inputFormatters,
     super.key,
   });
@@ -39,7 +39,7 @@ class AppTextField extends StatelessWidget {
   final double? width;
   final bool obscureText;
   final FocusNode? focusNode;
-  final TextInputType keyboardType;
+  final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
 
   @override

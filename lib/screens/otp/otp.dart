@@ -13,6 +13,7 @@ import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../onboarding/onboarding.dart';
 import 'otp_vm.dart';
 
 @RoutePage(name: 'OtpScreenRoute')
@@ -119,8 +120,10 @@ class OtpScreen extends HookConsumerWidget {
                       print("Form is valid");
                       FocusScope.of(context).unfocus();
                       viewModel.verifyOtp(
-                        otp: pinController.text,
+                        otp: pinController.text.trim(),
                         navigateOnSuccess: () {
+                          locator<PayvidenceAppRouter>().popUntil(
+                                  (route) => route is OnboardingScreen);
                           locator<PayvidenceAppRouter>()
                               .navigateNamed(PayvidenceRoutes.accountSuccess);
                         },

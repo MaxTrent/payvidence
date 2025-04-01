@@ -160,34 +160,36 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 40.h,
-          ),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .displayLarge!
-                .copyWith(fontWeight: FontWeight.w600),
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          Text(subtext,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 40.h,
+            ),
+            Text(
+              text,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  fontWeight: FontWeight.w400, color: const Color(0xff333030))),
-          SizedBox(
-            height: 85.h,
-          ),
-          Image.asset(image)
-        ],
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
+            Text(subtext,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                    fontWeight: FontWeight.w400, color: const Color(0xff333030))),
+            SizedBox(
+              height: 85.h,
+            ),
+            Image.asset(image)
+          ],
+        ),
       ),
     );
   }

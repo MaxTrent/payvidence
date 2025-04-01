@@ -36,6 +36,7 @@ class ChangePasswordViewModel extends BaseChangeNotifier {
         handleError(message: errorMessage);
       }
     } catch (e) {
+      print(e);
       handleError(message: "Something went wrong.");
     } finally {
       _setLoading(false);

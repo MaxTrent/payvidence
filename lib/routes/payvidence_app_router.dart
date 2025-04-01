@@ -98,6 +98,7 @@ class PayvidenceAppRouter extends RootStackRouter {
             page: MySubscriptionRoute.page,
             path: PayvidenceRoutes.mySubscription),
         AutoRoute(page: OtpLoginRoute.page, path: PayvidenceRoutes.otpLogin),
+    AutoRoute(page: OtpScreenRoute.page, path: PayvidenceRoutes.otp),
         AutoRoute(
             page: CreateNewPasswordRoute.page,
             path: PayvidenceRoutes.createNewPassword),
@@ -157,6 +158,9 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(
             page: ClientSuccessRoute.page,
             path: PayvidenceRoutes.clientSuccess),
+    AutoRoute(
+        page: AccountSuccessRoute.page,
+        path: PayvidenceRoutes.accountSuccess),
       ];
 }
 

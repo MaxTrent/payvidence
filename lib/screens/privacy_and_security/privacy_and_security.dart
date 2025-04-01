@@ -21,7 +21,7 @@ class PrivacyAndSecurity extends HookConsumerWidget {
     useEffect(() {
       Future<void> loadInitialState() async {
         final savedValue = await locator<SessionManager>()
-            .get(SessionConstants.isBiometricLoginEnabled);
+            .get<bool>(SessionConstants.isBiometricLoginEnabled);
         isBiometricEnabled.value = savedValue ?? false;
       }
 
@@ -72,9 +72,9 @@ class PrivacyAndSecurity extends HookConsumerWidget {
                   onChanged: (value) {
                     toggleBiometricLogin(value);
                   },
-                  activeColor: primaryColor2,
+                  activeTrackColor: primaryColor2,
                   thumbColor: appGrey,
-                  trackColor: borderColor,
+                  inactiveTrackColor: borderColor,
                 )
               ],
             ),

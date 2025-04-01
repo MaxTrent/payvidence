@@ -89,7 +89,7 @@ class Login extends HookConsumerWidget {
                     hintText: 'Email address',
                     controller: emailController,
                     validator: (val) {
-                      if (!val!.isValidEmail || val.isEmpty) {
+                      if (!val!.trim().isValidEmail || val.isEmpty) {
                         return 'Enter valid email address';
                       }
                       return null;
@@ -110,7 +110,7 @@ class Login extends HookConsumerWidget {
                     hintText: 'Password',
                     controller: passwordController,
                     validator: (val) {
-                      if (!val!.isValidPassword || val.isEmpty) {
+                      if (!val!.trim().isValidPassword || val.isEmpty) {
                         return 'Enter a valid password';
                       }
                       return null;
@@ -164,35 +164,41 @@ class Login extends HookConsumerWidget {
                               isDisabled: areFieldsEmpty.value,
                               isProcessing: viewModel.isLoading,
                               onPressed: () {
+                                print("Login button pressed");
                                 if (formKey.currentState!.validate()) {
+                                  print("Form validation passed");
                                   FocusScope.of(context).unfocus();
                                   viewModel.login(
                                     email: emailController.text.trim(),
                                     password: passwordController.text.trim(),
                                     navigateOnSuccess: () {
+                                      print("Login successful, navigating to home");
                                       ref.invalidate(getAllBusinessProvider);
                                       locator<PayvidenceAppRouter>().popUntil(
-                                          (route) => route is OnboardingScreen);
-                                      locator<PayvidenceAppRouter>()
-                                          .replaceNamed(PayvidenceRoutes.home);
+                                              (route) => route is OnboardingScreen);
+                                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
                                     },
                                   );
+                                } else {
+                                  print("Form validation failed");
                                 }
                               },
+
                             ),
                           ),
                           if (canUseBiometrics) SizedBox(width: 16.w),
                           if (canUseBiometrics)
                             GestureDetector(
                               onTap: () {
+                                print("Biometric login triggered");
                                 FocusScope.of(context).unfocus();
                                 viewModel.biometricLogin(
                                   navigateOnSuccess: () {
+                                    print("Biometric login successful, navigating to home");
                                     ref.invalidate(getAllBusinessProvider);
                                     locator<PayvidenceAppRouter>().popUntil(
-                                        (route) => route is OnboardingScreen);
-                                    locator<PayvidenceAppRouter>()
-                                        .replaceNamed(PayvidenceRoutes.home);
+                                            (route) => route is OnboardingScreen);
+                                    locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.home);
                                   },
                                 );
                               },

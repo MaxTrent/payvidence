@@ -83,7 +83,7 @@ class CreateNewPassword extends HookConsumerWidget {
                     hintText: 'Password',
                     controller: passwordController,
                     validator: (val) {
-                      if (!val!.isValidPassword || val.isEmpty) {
+                      if (!val!.trim().isValidPassword || val.isEmpty) {
                         return 'Enter a valid password';
                       }
                       return null;
@@ -104,7 +104,7 @@ class CreateNewPassword extends HookConsumerWidget {
                     controller: confirmPasswordController,
                     validator: (val) {
                       final password = passwordController.text;
-                      if (!val!.isValidPassword || val.isEmpty) {
+                      if (!val!.trim().isValidPassword || val.isEmpty) {
                         return 'Enter a valid password';
                       }
                       if (val != password) {

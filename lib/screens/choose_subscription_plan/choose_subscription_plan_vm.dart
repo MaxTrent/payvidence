@@ -60,7 +60,7 @@ class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier {
       }
     } catch (e) {
       print("ViewModel: Exception - $e");
-      throw Exception(e);
+      handleError(message: "Something went wrong. Please try again.");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -89,7 +89,7 @@ class ChooseSubscriptionPlanViewModel extends BaseChangeNotifier {
       }
     } catch (e) {
       print("ViewModel: Exception - $e");
-      throw Exception(e);
+      handleError(message: "Something went wrong. Please try again.");
     } finally {
       _isLoading = false;
       notifyListeners();

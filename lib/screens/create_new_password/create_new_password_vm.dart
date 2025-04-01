@@ -27,9 +27,9 @@ class CreateNewPasswordViewModel extends BaseChangeNotifier {
   }) async {
     _setLoading(true);
     try {
-      final userId = locator<SessionManager>().get(SessionConstants.userId);
+      final userId = locator<SessionManager>().get<String>(SessionConstants.userId);
       final response = await apiServices.forgotPasswordComplete(
-          password, confirmPassword, userId);
+          password, confirmPassword, userId!);
 
       if (response.success) {
         navigateOnSuccess();
@@ -40,6 +40,7 @@ class CreateNewPasswordViewModel extends BaseChangeNotifier {
         handleError(message: errorMessage);
       }
     } catch (e) {
+      print(e);
       handleError(message: "Something went wrong.");
     } finally {
       _setLoading(false);

@@ -483,7 +483,7 @@ class _FormFieldsState extends State<FormFields> {
           controller: widget.qtyController,
           keyboardType: TextInputType.number,
           validator: (val) {
-            if (val!.isEmpty) {
+            if (val!.trim().isEmpty) {
               return 'Enter quantity purchased';
             }
             if (int.tryParse(val)! <= 0) {

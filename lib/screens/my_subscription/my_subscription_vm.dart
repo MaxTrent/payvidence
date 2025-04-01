@@ -71,7 +71,7 @@ class MySubscriptionViewModel extends BaseChangeNotifier {
       }
     } catch (e) {
       print("ViewModel: Exception - $e");
-      throw Exception(e);
+      handleError(message: "Something went wrong. Please try again.");
     }
   }
 }

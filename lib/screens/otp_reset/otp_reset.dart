@@ -21,7 +21,7 @@ class OtpReset extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
-    final email = locator<SessionManager>().get(SessionConstants.userEmail);
+    final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
     final viewModel = ref.read(otpViewModelProvider);
     final pinController = useTextEditingController();
     final seconds = useState(17);

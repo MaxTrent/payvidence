@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
@@ -13,9 +14,11 @@ final createAccountViewModelProvider =
 
 class CreateAccountViewModel extends BaseChangeNotifier {
   final Ref ref;
+
   CreateAccountViewModel(this.ref);
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   Future<void> createAccount({
@@ -40,8 +43,6 @@ class CreateAccountViewModel extends BaseChangeNotifier {
       );
 
       if (response.success) {
-        _isLoading = false;
-        notifyListeners();
         var user = User.fromJson(response.data!["data"]);
         saveUserCredentials(
             userId: user.account.id,
@@ -49,23 +50,33 @@ class CreateAccountViewModel extends BaseChangeNotifier {
             lastName: user.account.lastName,
             email: user.account.email,
             phoneNumber: user.account.phoneNumber,
-            token: user.token ?? "");
-
+            // token: user.token ?? ""
+        );
+        final retrievedUserId = locator<SessionManager>().get<String>(SessionConstants.userId);
+        print("After saveUserCredentials, retrieved User ID: $retrievedUserId");
+        // await Future.delayed(Duration(milliseconds: 100)); // Ensure write completion
+        final finalCheck = locator<SessionManager>().get<String>(SessionConstants.userId);
+        print("Before navigation, final User ID check: $finalCheck");
         navigateOnSuccess();
+        await Future.delayed(Duration(milliseconds: 1000)); // Extended delay for clarity
+        final postNav = locator<SessionManager>().get<String>(SessionConstants.userId);
+        print("Post-navigation User ID in CreateAccountViewModel: $postNav");
       } else {
-        _isLoading = false;
-        notifyListeners();
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??
             "An error occurred!";
         handleError(message: errorMessage);
       }
     } catch (e) {
+      handleError(message: "Something went wrong. Please try again.");
+      debugPrint("Error: ${e.toString()}");
+    }
+    finally {
       _isLoading = false;
       notifyListeners();
-      throw Exception(e);
     }
-  }
+
+}
 
   Future<void> saveUserCredentials({
     required String userId,
@@ -74,9 +85,9 @@ class CreateAccountViewModel extends BaseChangeNotifier {
     required String email,
     required String phoneNumber,
     // required String profilePictureUrl,
-    required String token,
+    // required String token,
   }) async {
-    locator<SessionManager>().save(key: SessionConstants.userId, value: userId);
+    await locator<SessionManager>().save(key: SessionConstants.userId, value: userId);
 
     await locator<SessionManager>()
         .save(key: SessionConstants.userFirstName, value: firstName);
@@ -93,7 +104,7 @@ class CreateAccountViewModel extends BaseChangeNotifier {
     // await locator<SessionManager>().save(
     //     key: SessionConstants.profilePictureUrl, value: profilePictureUrl);
 
-    await locator<SessionManager>()
-        .save(key: SessionConstants.accessTokenPref, value: token);
+    // await locator<SessionManager>()
+    //     .save(key: SessionConstants.accessTokenPref, value: token);
   }
 }

@@ -24,7 +24,7 @@ class AllTransactions extends HookConsumerWidget {
     final viewModel = ref.watch(allTransactionsViewModelProvider);
     final searchController = useTextEditingController();
     final businessId =
-        locator<SessionManager>().get(SessionConstants.businessId) as String?;
+        locator<SessionManager>().get<String>(SessionConstants.businessId);
     final filterType = useState('All');
     final searchQuery = useState('');
 

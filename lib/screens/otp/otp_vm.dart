@@ -16,6 +16,7 @@ class OtpViewModel extends BaseChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -27,8 +28,9 @@ class OtpViewModel extends BaseChangeNotifier {
   }) async {
     _setLoading(true);
     try {
-      final userId = locator<SessionManager>().get(SessionConstants.userId);
-      final response = await apiServices.verifyOtp(otp, userId);
+      final userId = locator<SessionManager>().get<String>(SessionConstants.userId);
+      print('userId: $userId');
+      final response = await apiServices.verifyOtp(otp, userId!);
 
       if (response.success) {
         navigateOnSuccess();
@@ -39,6 +41,7 @@ class OtpViewModel extends BaseChangeNotifier {
         handleError(message: errorMessage);
       }
     } catch (e) {
+      print(e);
       handleError(message: "Something went wrong.");
     } finally {
       _setLoading(false);
@@ -47,8 +50,8 @@ class OtpViewModel extends BaseChangeNotifier {
 
   Future<void> resendOtp() async {
     try {
-      final userId = locator<SessionManager>().get(SessionConstants.userId);
-      final response = await apiServices.resendOtp(userId);
+      final userId = locator<SessionManager>().get<String>(SessionConstants.userId);
+      final response = await apiServices.resendOtp(userId!);
 
       if (!response.success) {
         var errorMessage = response.error?.errors?.first.message ??
@@ -57,6 +60,7 @@ class OtpViewModel extends BaseChangeNotifier {
         handleError(message: errorMessage);
       }
     } catch (e) {
+      print(e);
       handleError(message: "Something went wrong.");
     }
   }

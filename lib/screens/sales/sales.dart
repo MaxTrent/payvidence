@@ -17,7 +17,6 @@ import '../../model/sales_model.dart';
 class Sales extends ConsumerWidget {
   Sales({super.key});
 
-  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

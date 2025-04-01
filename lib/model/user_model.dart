@@ -33,10 +33,19 @@ class User {
   User({required this.account, this.token});
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      account: Account.fromJson(json['account'] as Map<String, dynamic>),
-      token: json['token'] as String?,
-    );
+
+    if (json.containsKey('account')) {
+      return User(
+        account: Account.fromJson(json['account'] as Map<String, dynamic>),
+        token: json['token'] as String?,
+      );
+    } else {
+
+      return User(
+        account: Account.fromJson(json),
+        token: json['token'] as String?,
+      );
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -53,11 +62,11 @@ class Account {
   final String lastName;
   final String email;
   final String phoneNumber;
-  final String status;
+  final String? status;
   final String? profilePictureUrl;
-  final bool transactionalAlerts;
-  final bool promotionalUpdates;
-  final bool securityAlerts;
+  final bool? transactionalAlerts;
+  final bool? promotionalUpdates;
+  final bool? securityAlerts;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -67,11 +76,11 @@ class Account {
     required this.lastName,
     required this.email,
     required this.phoneNumber,
-    required this.status,
+    this.status,
     this.profilePictureUrl,
-    required this.transactionalAlerts,
-    required this.promotionalUpdates,
-    required this.securityAlerts,
+    this.transactionalAlerts = false,
+    this.promotionalUpdates = false,
+    this.securityAlerts = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -83,11 +92,11 @@ class Account {
       lastName: json['last_name'] as String,
       email: json['email'] as String,
       phoneNumber: json['phone_number'] as String,
-      status: json['status'] as String,
+      status: json['status'] as String?,
       profilePictureUrl: json['profile_picture_url'] as String?,
-      transactionalAlerts: json['transactional_alerts'] as bool,
-      promotionalUpdates: json['promotional_updates'] as bool,
-      securityAlerts: json['security_alerts'] as bool,
+      transactionalAlerts: json['transactional_alerts'] as bool?,
+      promotionalUpdates: json['promotional_updates'] as bool?,
+      securityAlerts: json['security_alerts'] as bool?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );

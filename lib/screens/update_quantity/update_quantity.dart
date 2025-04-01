@@ -132,7 +132,7 @@ class UpdateQuantity extends ConsumerWidget {
                     controller: restockController,
                     keyboardType: TextInputType.number,
                     validator: (val) {
-                      if (val!.isEmpty) {
+                      if (val!.trim().isEmpty) {
                         return 'Enter a valid quantity';
                       }
                       return null;

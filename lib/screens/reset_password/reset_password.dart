@@ -69,7 +69,7 @@ class ResetPassword extends HookConsumerWidget {
                   hintText: 'Email address',
                   controller: emailController,
                   validator: (val) {
-                    if (!val!.isValidEmail || val.isEmpty) {
+                    if (!val!.trim().isValidEmail || val.isEmpty) {
                       return 'Enter valid email address';
                     }
                     return null;
