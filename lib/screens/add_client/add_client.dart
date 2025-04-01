@@ -84,6 +84,8 @@ class AddClient extends HookConsumerWidget {
                   AppTextField(
                     hintText: 'Client name',
                     controller: nameController,
+                    keyboardType: TextInputType.name,
+                    textCapitalization: TextCapitalization.words,
                     validator: (val) {
                       if (val == null || val.isEmpty) {
                         return 'Client name is required';
@@ -102,14 +104,14 @@ class AddClient extends HookConsumerWidget {
                   SizedBox(height: 8.h),
                   AppTextField(
                     hintText: 'Client phone number',
+                    keyboardType: TextInputType.number,
                     controller: phoneNumberController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                     validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return 'Phone number is required';
-                      }
-                      if (!val.isValidPhone) {
+                      if (!val!.trim().isValidPhone || val.isEmpty) {
                         return 'Enter a valid phone number';
                       }
                       return null;

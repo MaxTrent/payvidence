@@ -22,6 +22,8 @@ class AppTextField extends StatelessWidget {
     this.focusNode,
     this.keyboardType,
     this.inputFormatters,
+    this.autofillHints,
+    this.textCapitalization,
     super.key,
   });
 
@@ -41,6 +43,8 @@ class AppTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final List<String>? autofillHints;
+  final TextCapitalization? textCapitalization;
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +55,29 @@ class AppTextField extends StatelessWidget {
         onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();
         },
+        textInputAction: TextInputAction.next,
+        autofillHints: autofillHints,
         enabled: enabled,
         controller: controller,
         cursorColor: Colors.black,
         validator: validator,
         keyboardType: keyboardType,
+        textCapitalization: textCapitalization ?? TextCapitalization.none,
         inputFormatters: inputFormatters,
         showCursor: true,
         obscureText: obscureText,
         style: Theme.of(context).textTheme.displaySmall!,
         focusNode: focusNode,
+        autocorrect: false,
+          enableSuggestions: false,
+          onFieldSubmitted: (_) {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild == null) {
+              currentFocus.unfocus();
+            } else {
+              currentFocus.nextFocus();
+            }
+          },
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(8.h),
           filled: filled,

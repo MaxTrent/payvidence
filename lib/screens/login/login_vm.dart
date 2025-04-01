@@ -52,11 +52,11 @@ class LoginViewModel extends BaseChangeNotifier {
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
         await saveUserCredentials(
-          userId: user.account.id,
-          firstName: user.account.firstName,
-          lastName: user.account.lastName,
-          email: user.account.email,
-          phoneNumber: user.account.phoneNumber,
+          userId: user.account.id?? '',
+          firstName: user.account.firstName?? '',
+          lastName: user.account.lastName?? '',
+          email: user.account.email?? '',
+          phoneNumber: user.account.phoneNumber?? '',
           profilePictureUrl: user.account.profilePictureUrl ?? "",
           token: user.token ?? "",
         );

@@ -15,6 +15,7 @@ class PayvidenceEndpoints {
       '/api/account/reset-password/new-password';
   static String get changePassword => '/api/account/change-password';
   static String get logout => '/api/account/logout';
+  static String get updateUserInfo => '/api/account';
 
   //Profile Endpoints
   static String get updateProfilePicture => '/api/account/profile-picture';

@@ -286,4 +286,19 @@ class ApiServices {
 
     return ApiResult.fromJson(response);
   }
+
+  Future<ApiResult> updateUserInfo(
+      String firstName) async {
+    var requestData = {
+      "transactional_alerts": true,
+      "security_alerts": true,
+      "first_name": firstName,
+    };
+
+    var response = await locator<NetworkService>().patch(
+        PayvidenceEndpoints.updateUserInfo,
+        data: requestData);
+
+    return ApiResult.fromJson(response);
+  }
 }

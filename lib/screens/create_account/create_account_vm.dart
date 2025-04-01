@@ -45,11 +45,11 @@ class CreateAccountViewModel extends BaseChangeNotifier {
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
         saveUserCredentials(
-            userId: user.account.id,
-            firstName: user.account.firstName,
-            lastName: user.account.lastName,
-            email: user.account.email,
-            phoneNumber: user.account.phoneNumber,
+            userId: user.account.id ?? '',
+            firstName: user.account.firstName?? '',
+            lastName: user.account.lastName?? '',
+            email: user.account.email?? '',
+            phoneNumber: user.account.phoneNumber?? '',
             // token: user.token ?? ""
         );
         final retrievedUserId = locator<SessionManager>().get<String>(SessionConstants.userId);

@@ -4,9 +4,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
+import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
+import '../../routes/payvidence_app_router.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'UpdatePersonalDetailsRoute')
 class UpdatePersonalDetails extends HookConsumerWidget {
@@ -21,6 +24,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
     final lastNameController = useTextEditingController();
     final emailController = useTextEditingController();
     final phoneController = useTextEditingController();
+    final originalFirstName = useState("");
+    final firstNameFocusNode = useFocusNode();
 
     useEffect(() {
       print("fetching user info");
@@ -35,11 +40,17 @@ class UpdatePersonalDetails extends HookConsumerWidget {
         lastNameController.text = viewModel.userInfo?.account.lastName ?? "";
         emailController.text = viewModel.userInfo?.account.email ?? "";
         phoneController.text = viewModel.userInfo?.account.phoneNumber ?? "";
+        originalFirstName.value = viewModel.userInfo?.account.firstName ?? "";
         print(
             "Controllers set - FirstName: ${firstNameController.text}, LastName: ${lastNameController.text}");
       }
       return null;
     }, [viewModel.userInfo, viewModel.isLoading]);
+
+    // Function to check if firstName has changed
+    bool hasChanges() {
+      return firstNameController.text != originalFirstName.value;
+    }
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -89,16 +100,25 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                         style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     AppTextField(
-                      hintText: 'First Name',
-                      enabled: false,
+                      hintText: 'First name',
+                      enabled: viewModel.isEditing,
                       controller: firstNameController,
+                      keyboardType: TextInputType.name,
+                      focusNode: firstNameFocusNode,
+                      textCapitalization: TextCapitalization.words,// Assign FocusNode
+                      validator: (val) {
+                        if (!val!.trim().isValidName || val.isEmpty) {
+                          return 'Enter a valid name';
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 20.h),
                     Text('Last name',
                         style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: 8.h),
                     AppTextField(
-                      hintText: 'Last Name',
+                      hintText: 'Last name',
                       enabled: false,
                       controller: lastNameController,
                     ),
@@ -123,12 +143,27 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                   ],
                   SizedBox(height: 32.h),
                   AppButton(
-                    buttonText: 'Update details',
-                    onPressed: viewModel.isLoading
-                        ? null
-                        : () {
-                            // context.router.replace(HomePageRoute());
-                          },
+                    isProcessing: viewModel.isLoading,
+                    buttonText: viewModel.isEditing ? 'Save' : 'Update details',
+                    // isDisabled: viewModel.isEditing && !hasChanges(),
+                    onPressed: () {
+                      if (!viewModel.isEditing) {
+                        viewModel.toggleEditing();
+                        firstNameFocusNode.requestFocus();
+                      } else if (hasChanges()) {
+                        if (formKey.currentState!.validate()) {
+                          viewModel.updateUserInfo(
+                            newFirstName: firstNameController.text.trim(),
+                            navigateOnSuccess: () {
+                              locator<PayvidenceAppRouter>().back();
+                            },
+                          );
+                        }
+                      } else {
+                        print("No changes detected, exiting edit mode");
+                        viewModel.toggleEditing();
+                      }
+                    },
                   ),
                 ],
               ),

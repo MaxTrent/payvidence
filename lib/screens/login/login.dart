@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -86,15 +87,20 @@ class Login extends HookConsumerWidget {
                     height: 8.h,
                   ),
                   AppTextField(
-                    hintText: 'Email address',
-                    controller: emailController,
-                    validator: (val) {
-                      if (!val!.trim().isValidEmail || val.isEmpty) {
-                        return 'Enter valid email address';
-                      }
-                      return null;
-                    },
-                  ),
+                  hintText: 'Email address',
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
+                  autofillHints: const [AutofillHints.email],
+                  validator: (val) {
+                    if (!val!.trim().isValidEmail || val.isEmpty) {
+                      return 'Enter valid email address';
+                    }
+                    return null;
+                  },
+                ),
 
                   SizedBox(
                     height: 20.h,

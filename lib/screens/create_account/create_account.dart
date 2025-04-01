@@ -112,9 +112,12 @@ class CreateAccountScreen extends HookConsumerWidget {
                   AppTextField(
                     hintText: 'First Name',
                     controller: firstNameController,
+                    keyboardType: TextInputType.name,
+                    textCapitalization: TextCapitalization.words,
                     // ref.watch(
                     //     CreateAccountViewModel.firstNameControllerProvider),
                     validator: (val) {
+
                       if (!val!.trim().isValidName || val.isEmpty) {
                         return 'Enter a valid name';
                       }
@@ -134,6 +137,8 @@ class CreateAccountScreen extends HookConsumerWidget {
                   AppTextField(
                     hintText: 'Last Name',
                     controller: lastNameController,
+                    keyboardType: TextInputType.name,
+                    textCapitalization: TextCapitalization.words,
                     validator: (val) {
                       if (!val!.trim().isValidName || val.trim().isEmpty) {
                         return 'Enter a valid password';
@@ -152,15 +157,20 @@ class CreateAccountScreen extends HookConsumerWidget {
                     height: 8.h,
                   ),
                   AppTextField(
-                    hintText: 'Email address',
-                    controller: emailController,
-                    validator: (val) {
-                      if (!val!.trim().isValidEmail || val.isEmpty) {
-                        return 'Enter valid email address';
-                      }
-                      return null;
-                    },
-                  ),
+                  hintText: 'Email address',
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                  ],
+                  autofillHints: const [AutofillHints.email],
+                  validator: (val) {
+                    if (!val!.trim().isValidEmail || val.isEmpty) {
+                      return 'Enter valid email address';
+                    }
+                    return null;
+                  },
+                ),
                   SizedBox(
                     height: 20.h,
                   ),
