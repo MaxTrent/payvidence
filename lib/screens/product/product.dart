@@ -148,17 +148,17 @@ class Product extends ConsumerWidget {
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return ProductTile(
-                        product: data[0],
+                        product: data[index],
                         ref: ref,
                         onPressed: () {
                           if (forProductSelection == true) {
-                            Navigator.of(context).pop(data[0]);
+                            Navigator.of(context).pop(data[index]);
                           } else {
                             locator<PayvidenceAppRouter>().navigate(
-                                ProductDetailsRoute(product: data[0]));
+                                ProductDetailsRoute(product: data[index]));
                             ref
                                 .read(getCurrentProductProvider.notifier)
-                                .setCurrentProduct(data[0]);
+                                .setCurrentProduct(data[index]);
                           }
                         },
                       );
@@ -172,7 +172,7 @@ class Product extends ConsumerWidget {
                         ],
                       );
                     },
-                    itemCount: 10),
+                    itemCount: data.length),
               );
             }, error: (error, _) {
               return const Text('An error has occurred');
