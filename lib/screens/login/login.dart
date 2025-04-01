@@ -110,8 +110,17 @@ class Login extends HookConsumerWidget {
                     hintText: 'Password',
                     controller: passwordController,
                     validator: (val) {
-                      if (!val!.trim().isValidPassword || val.isEmpty) {
-                        return 'Enter a valid password';
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Password is required';
+                      }
+                      if (val.length < 8) {
+                        return 'Password must be at least 8 characters long';
+                      }
+                      if (!RegExp(r'[A-Za-z]').hasMatch(val)) {
+                        return 'Password must contain at least one letter';
+                      }
+                      if (!RegExp(r'\d').hasMatch(val)) {
+                        return 'Password must contain at least one number';
                       }
                       return null;
                     },
