@@ -84,6 +84,8 @@ class EditBusinessDetail extends HookConsumerWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: ListView(
+              shrinkWrap: true,
+              // physics: const NeverScrollableScrollPhysics(),
               children: [
                 Text(
                   'Edit business details',

@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:payvidence/components/loading_indicator.dart';
+import 'package:payvidence/components/custom_shimmer.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/model/notification_model.dart';
 import '../../gen/assets.gen.dart';
@@ -32,36 +32,67 @@ class Notifications extends HookConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 8.h,
-            ),
+            SizedBox(height: 8.h),
             Text(
               'Notifications',
               style: Theme.of(context).textTheme.displayLarge,
             ),
-            SizedBox(
-              height: 28.h,
-            ),
+            SizedBox(height: 28.h),
             Expanded(
               child: viewModel.isLoading
-                  ? const LoadingIndicator()
+                  ? ListView.builder(
+                itemCount: 3, // Show 3 shimmer placeholders
+                itemBuilder: (context, index) {
+                  return _buildShimmerPlaceholder(context);
+                },
+              )
                   : viewModel.notifications.isEmpty
-                      ? Center(
-                          child: Text('No notifications available',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 16.sp)))
-                      : ListView.builder(
-                          itemCount: viewModel.notifications.length,
-                          itemBuilder: (context, index) {
-                            final notification = viewModel.notifications[index];
-                            return NotificationTile(notification: notification);
-                          },
-                        ),
+                  ? Center(
+                child: Text(
+                  'No notifications available',
+                  style: Theme.of(context)
+                      .textTheme
+                      .displaySmall!
+                      .copyWith(fontSize: 16.sp),
+                ),
+              )
+                  : ListView.builder(
+                itemCount: viewModel.notifications.length,
+                itemBuilder: (context, index) {
+                  final notification = viewModel.notifications[index];
+                  return NotificationTile(notification: notification);
+                },
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerPlaceholder(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 18.h),
+      child: Row(
+        children: [
+          CustomShimmer(
+            height: 62.h,
+            width: 58.w,
+            // borderRadius: BorderRadius.circular(31.h), // Circular shape
+          ),
+          SizedBox(width: 16.w), // Matches ListTile's default leading-to-title spacing
+          Expanded(
+            child: CustomShimmer(
+              height: 16.h,
+              width: double.infinity,
+            ),
+          ),
+          SizedBox(width: 16.w), // Matches ListTile's default title-to-trailing spacing
+          CustomShimmer(
+            height: 14.h,
+            width: 50.w, // Approximate width of the time text (e.g., "12:00PM")
+          ),
+        ],
       ),
     );
   }
@@ -101,8 +132,7 @@ class NotificationTile extends StatelessWidget {
       ),
       title: Text(
         notification.details,
-        style:
-            Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 16.sp),
+        style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 16.sp),
       ),
       trailing: Text(
         _formatTime(notification.createdAt),
