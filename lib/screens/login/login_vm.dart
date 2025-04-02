@@ -15,22 +15,23 @@ final loginViewModelProvider = ChangeNotifierProvider<LoginViewModel>((ref) {
 class LoginViewModel extends BaseChangeNotifier {
   final Ref ref;
 
-  LoginViewModel(this.ref);
+  LoginViewModel(this.ref) {
+    init();
+  }
 
   bool _isLoading = false;
   bool _canUseBiometrics = false;
   String _errorMessage = '';
 
   bool get isLoading => _isLoading;
+  bool get canUseBiometrics => _canUseBiometrics;
+  String get errorMessage => _errorMessage;
 
-  Future<bool> get canUseBiometrics async {
-    final isBiometricEnabled = locator<SessionManager>()
-        .get<bool>(SessionConstants.isBiometricLoginEnabled) ??
-        false;
-    return _canUseBiometrics && isBiometricEnabled;
+  bool get isBiometricEnabled {
+    return locator<SessionManager>().get<bool>(SessionConstants.isBiometricLoginEnabled) ?? false;
   }
 
-  String get errorMessage => _errorMessage;
+  bool get shouldUseBiometricLogin => _canUseBiometrics && isBiometricEnabled;
 
   void init() async {
     _canUseBiometrics = await BiometricService.canCheckBiometrics();
@@ -52,11 +53,11 @@ class LoginViewModel extends BaseChangeNotifier {
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
         await saveUserCredentials(
-          userId: user.account.id?? '',
-          firstName: user.account.firstName?? '',
-          lastName: user.account.lastName?? '',
-          email: user.account.email?? '',
-          phoneNumber: user.account.phoneNumber?? '',
+          userId: user.account.id ?? '',
+          firstName: user.account.firstName ?? '',
+          lastName: user.account.lastName ?? '',
+          email: user.account.email ?? '',
+          phoneNumber: user.account.phoneNumber ?? '',
           profilePictureUrl: user.account.profilePictureUrl ?? "",
           token: user.token ?? "",
         );
@@ -74,10 +75,10 @@ class LoginViewModel extends BaseChangeNotifier {
     } catch (e, stackTrace) {
       print(e.toString());
       developer.log(
-          'Login error',
-          error: e.toString(),
-          stackTrace: stackTrace,
-          name: 'LoginViewModel'
+        'Login error',
+        error: e.toString(),
+        stackTrace: stackTrace,
+        name: 'LoginViewModel',
       );
       _errorMessage = "Something went wrong. Please try again.";
       notifyListeners();
@@ -96,20 +97,13 @@ class LoginViewModel extends BaseChangeNotifier {
     notifyListeners();
 
     try {
-      if (!await BiometricService.canCheckBiometrics()) {
-        _errorMessage = "Biometric authentication is not available.";
-        notifyListeners();
-        handleError(message: _errorMessage);
-        return;
-      }
-
-      bool authenticated = await BiometricService.authenticate(
+      final result = await BiometricService.authenticate(
         reason: "Login with your biometric credentials",
       );
 
-      if (authenticated) {
-        final email = await locator<SessionManager>().get<String>(SessionConstants.userEmail);
-        final token = await locator<SessionManager>().get(SessionConstants.accessTokenPref);
+      if (result.success) {
+        final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
+        final token = locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
 
         if (email != null && token != null) {
           await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
@@ -120,12 +114,12 @@ class LoginViewModel extends BaseChangeNotifier {
           handleError(message: _errorMessage);
         }
       } else {
-        _errorMessage = "Biometric authentication failed.";
-        notifyListeners(); // Update UI with error before handleError
+        _errorMessage = result.errorMessage ?? "Biometric authentication failed.";
+        notifyListeners();
         handleError(message: _errorMessage);
       }
     } catch (e) {
-      _errorMessage = "An error occurred during biometric login.";
+      _errorMessage = "An unexpected error occurred during biometric login: $e";
       notifyListeners();
       handleError(message: _errorMessage);
     } finally {
@@ -144,23 +138,11 @@ class LoginViewModel extends BaseChangeNotifier {
     required String token,
   }) async {
     await locator<SessionManager>().save(key: SessionConstants.userId, value: userId);
-
-    await locator<SessionManager>()
-        .save(key: SessionConstants.userFirstName, value: firstName);
-
-    await locator<SessionManager>()
-        .save(key: SessionConstants.userLastName, value: lastName);
-
-    await locator<SessionManager>()
-        .save(key: SessionConstants.userEmail, value: email);
-
-    await locator<SessionManager>()
-        .save(key: SessionConstants.userPhone, value: phoneNumber);
-
-    await locator<SessionManager>().save(
-        key: SessionConstants.profilePictureUrl, value: profilePictureUrl);
-
-    await locator<SessionManager>()
-        .save(key: SessionConstants.accessTokenPref, value: token);
+    await locator<SessionManager>().save(key: SessionConstants.userFirstName, value: firstName);
+    await locator<SessionManager>().save(key: SessionConstants.userLastName, value: lastName);
+    await locator<SessionManager>().save(key: SessionConstants.userEmail, value: email);
+    await locator<SessionManager>().save(key: SessionConstants.userPhone, value: phoneNumber);
+    await locator<SessionManager>().save(key: SessionConstants.profilePictureUrl, value: profilePictureUrl);
+    await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: token);
   }
 }
