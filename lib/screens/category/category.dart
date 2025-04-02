@@ -27,9 +27,14 @@ class EmptyCategory extends ConsumerWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: AppTextField(
-          prefixIcon: Padding(
-            padding: EdgeInsets.all(16.h),
-            child: SvgPicture.asset(Assets.svg.backbutton),
+          prefixIcon: GestureDetector(
+            onTap: (){
+              Navigator.pop(context);
+            },
+            child: Padding(
+              padding: EdgeInsets.all(16.h),
+              child: SvgPicture.asset(Assets.svg.backbutton),
+            ),
           ),
           hintText: 'Search for category',
           controller: _searchController,
