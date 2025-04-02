@@ -112,7 +112,7 @@ class HomeScreen extends HookConsumerWidget {
                       GestureDetector(
                         onTap: () {
                           locator<PayvidenceAppRouter>()
-                              .push(AllBusinessesRoute(allBusiness: data));
+                              .push(AllBusinessesRoute());
                         },
                         child: Container(
                           height: 40.h,

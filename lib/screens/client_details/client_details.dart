@@ -259,7 +259,9 @@ class ClientDetails extends HookConsumerWidget {
                                           SizedBox(height: 8.h),
                                           AppButton(
                                             buttonText: 'Cancel',
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
                                             backgroundColor: Colors.transparent,
                                             textColor: Colors.black,
                                           ),

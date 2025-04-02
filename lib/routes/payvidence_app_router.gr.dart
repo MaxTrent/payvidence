@@ -10,9 +10,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i65;
 import 'package:flutter/material.dart' as _i66;
-import 'package:payvidence/model/business_model.dart' as _i68;
 import 'package:payvidence/model/product_model.dart' as _i67;
-import 'package:payvidence/model/receipt_model.dart' as _i69;
+import 'package:payvidence/model/receipt_model.dart' as _i68;
 import 'package:payvidence/screens/account_success/account_success.dart' as _i1;
 import 'package:payvidence/screens/add_brand/add_brand.dart' as _i2;
 import 'package:payvidence/screens/add_business/add_business.dart' as _i3;
@@ -353,17 +352,10 @@ class AddProductSuccessRoute extends _i65.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i9.AllBusinesses]
-class AllBusinessesRoute extends _i65.PageRouteInfo<AllBusinessesRouteArgs> {
-  AllBusinessesRoute({
-    required List<_i68.Business> allBusiness,
-    _i66.Key? key,
-    List<_i65.PageRouteInfo>? children,
-  }) : super(
+class AllBusinessesRoute extends _i65.PageRouteInfo<void> {
+  const AllBusinessesRoute({List<_i65.PageRouteInfo>? children})
+      : super(
           AllBusinessesRoute.name,
-          args: AllBusinessesRouteArgs(
-            allBusiness: allBusiness,
-            key: key,
-          ),
           initialChildren: children,
         );
 
@@ -372,29 +364,9 @@ class AllBusinessesRoute extends _i65.PageRouteInfo<AllBusinessesRouteArgs> {
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AllBusinessesRouteArgs>();
-      return _i9.AllBusinesses(
-        args.allBusiness,
-        key: args.key,
-      );
+      return const _i9.AllBusinesses();
     },
   );
-}
-
-class AllBusinessesRouteArgs {
-  const AllBusinessesRouteArgs({
-    required this.allBusiness,
-    this.key,
-  });
-
-  final List<_i68.Business> allBusiness;
-
-  final _i66.Key? key;
-
-  @override
-  String toString() {
-    return 'AllBusinessesRouteArgs{allBusiness: $allBusiness, key: $key}';
-  }
 }
 
 /// generated route for
@@ -853,7 +825,7 @@ class ClientsRouteArgs {
 class CompleteDraftRoute extends _i65.PageRouteInfo<CompleteDraftRouteArgs> {
   CompleteDraftRoute({
     _i66.Key? key,
-    required _i69.Receipt draft,
+    required _i68.Receipt draft,
     bool? isInvoice = false,
     bool? inVoiceToReceipt = false,
     List<_i65.PageRouteInfo>? children,
@@ -894,7 +866,7 @@ class CompleteDraftRouteArgs {
 
   final _i66.Key? key;
 
-  final _i69.Receipt draft;
+  final _i68.Receipt draft;
 
   final bool? isInvoice;
 
@@ -1769,7 +1741,7 @@ class ReceiptRoute extends _i65.PageRouteInfo<void> {
 /// [_i53.ReceiptScreen]
 class ReceiptScreenRoute extends _i65.PageRouteInfo<ReceiptScreenRouteArgs> {
   ReceiptScreenRoute({
-    required _i69.Receipt record,
+    required _i68.Receipt record,
     required bool? isInvoice,
     _i66.Key? key,
     List<_i65.PageRouteInfo>? children,
@@ -1805,7 +1777,7 @@ class ReceiptScreenRouteArgs {
     this.key,
   });
 
-  final _i69.Receipt record;
+  final _i68.Receipt record;
 
   final bool? isInvoice;
 

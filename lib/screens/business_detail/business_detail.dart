@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/business_detail/business_detail_vm.dart';
 
@@ -11,6 +12,7 @@ import '../../components/app_button.dart';
 import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../providers/client_providers/get_all_client_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
@@ -39,14 +41,14 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(context, viewModel),
+          _buildHeader(context, viewModel, ref),
           Expanded(child: _buildDetails(context, viewModel)),
         ],
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, BusinessDetailViewModel viewModel) {
+  Widget _buildHeader(BuildContext context, BusinessDetailViewModel viewModel, WidgetRef ref) {
     return Container(
       height: 320.h,
       width: double.infinity,
@@ -66,7 +68,7 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _iconButton(context, Assets.svg.backArrow, () => Navigator.of(context).pop()),
-              _iconButton(context, Assets.svg.delete, () => _buildConfirmDeleteBottomSheet(context, viewModel)),
+              _iconButton(context, Assets.svg.delete, () => _buildConfirmDeleteBottomSheet(context, viewModel, ref)),
             ],
           ),
         ),
@@ -204,7 +206,7 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
     );
   }
 
-  Future<dynamic> _buildConfirmDeleteBottomSheet(BuildContext context, BusinessDetailViewModel viewModel) {
+  Future<dynamic> _buildConfirmDeleteBottomSheet(BuildContext context, BusinessDetailViewModel viewModel, WidgetRef ref) {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -226,8 +228,9 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                 AppButton(buttonText: 'Delete business', onPressed: () {
                   viewModel.deleteBusiness(
                     navigateOnSuccess: () {
-                      // Navigator.of(context).pop(); // Close the bottom sheet
-                      locator<PayvidenceAppRouter>().back();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                      // locator<PayvidenceAppRouter>().back();
                     },
                   );
                 }, backgroundColor: appRed),

@@ -180,6 +180,7 @@ Future<void> deleteBusiness({
           response.error?.message ??
           "An error occurred!";
       print("ViewModel: Delete failed - $errorMessage");
+      navigateOnSuccess();
       handleError(message: errorMessage);
       notifyListeners();
     }
