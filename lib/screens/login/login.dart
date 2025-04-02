@@ -156,16 +156,16 @@ class Login extends HookConsumerWidget {
                       SizedBox(height: 32.h),
                     ],
                     // Display error message if present
-                    if (viewModel.errorMessage.isNotEmpty) ...[
-                      Text(
-                        viewModel.errorMessage,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(color: Colors.red),
-                      ),
-                      SizedBox(height: 16.h),
-                    ],
+                    // if (viewModel.errorMessage.isNotEmpty) ...[
+                    //   Text(
+                    //     viewModel.errorMessage,
+                    //     style: Theme.of(context)
+                    //         .textTheme
+                    //         .displaySmall!
+                    //         .copyWith(color: Colors.red),
+                    //   ),
+                    //   SizedBox(height: 16.h),
+                    // ],
                     // Show link if biometric login failed
                     if (useBiometricLogin && viewModel.errorMessage.isNotEmpty) ...[
                       GestureDetector(
