@@ -75,7 +75,7 @@ class AllBusinesses extends HookConsumerWidget with AutoRouteAware {
                 separatorBuilder: (ctx, idx) {
                   return SizedBox(height: 24.h);
                 },
-                itemCount: 3, // Show 3 shimmer placeholders
+                itemCount: 3,
               )
                   : viewModel.allBusinesses.isEmpty
                   ? Center(
@@ -97,6 +97,7 @@ class AllBusinesses extends HookConsumerWidget with AutoRouteAware {
                 itemCount: viewModel.allBusinesses.length,
               ),
             ),
+            SizedBox(height: 14.h,),
           ],
         ),
       ),

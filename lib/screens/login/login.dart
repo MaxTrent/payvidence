@@ -30,7 +30,7 @@ class Login extends HookConsumerWidget {
 
     final areFieldsEmpty = useState(true);
     final obscureText = useState(true);
-    final showManualLogin = useState(false); // Track if we should show email/password fields after biometric failure
+    final showManualLogin = useState(false);
 
     bool checkFieldsEmpty() {
       return emailController.text.toString().isEmpty ||
@@ -79,6 +79,7 @@ class Login extends HookConsumerWidget {
                       style: Theme.of(context).textTheme.displaySmall!,
                     ),
                     SizedBox(height: 32.h),
+
                     // Show email/password fields if not using biometric login
                     if (!useBiometricLogin) ...[
                       Text(
@@ -165,7 +166,7 @@ class Login extends HookConsumerWidget {
                       ),
                       SizedBox(height: 16.h),
                     ],
-                    // Show "Log in with email/password" link if biometric login failed
+                    // Show link if biometric login failed
                     if (useBiometricLogin && viewModel.errorMessage.isNotEmpty) ...[
                       GestureDetector(
                         onTap: () {
@@ -181,7 +182,7 @@ class Login extends HookConsumerWidget {
                       ),
                       SizedBox(height: 32.h),
                     ],
-                    // Single "Log in" button for both login methods
+
                     AppButton(
                       buttonText: 'Log in',
                       isDisabled: !useBiometricLogin && areFieldsEmpty.value,
