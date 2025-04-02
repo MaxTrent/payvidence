@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/product_model.dart';
 
 import '../constants/app_colors.dart';
+import 'app_naira.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
@@ -80,6 +81,7 @@ class ProductTile extends StatelessWidget {
                   // mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    const AppNaira(fontSize: 14,),
                     Text(product.price ?? '',
                         style: Theme.of(context)
                             .textTheme

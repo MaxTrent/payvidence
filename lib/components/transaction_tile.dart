@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
+import 'app_naira.dart';
+//TODO: Display Naira properly
 
 class TransactionTile extends StatelessWidget {
   String productName;
@@ -21,6 +23,7 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       height: 101.h,
       // width: double.infinity,
@@ -81,11 +84,16 @@ class TransactionTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('₦$amount',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayMedium!
-                            .copyWith(fontSize: 14.sp)),
+                    Row(
+                      children: [
+                        const AppNaira(fontSize: 14,),
+                        Text(amount,
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(fontSize: 14.sp)),
+                      ],
+                    ),
                     Container(
                       height: 23.h,
                       padding:
@@ -126,3 +134,5 @@ class TransactionTile extends StatelessWidget {
     );
   }
 }
+
+

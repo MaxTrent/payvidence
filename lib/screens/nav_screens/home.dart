@@ -62,6 +62,7 @@ class HomeScreen extends HookConsumerWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: ListView(
+            physics: const BouncingScrollPhysics(),
             children: [
               8.verticalSpace,
               getAllBusiness.when(

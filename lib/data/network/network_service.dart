@@ -25,6 +25,8 @@ class NetworkService {
         receiveDataWhenStatusError: true,
         connectTimeout: const Duration(seconds: 20),
         receiveTimeout: const Duration(seconds: 20));
+    // connectTimeout: const Duration(seconds: 120),
+    // receiveTimeout: const Duration(seconds: 120));
 
     dio.options = options;
 
