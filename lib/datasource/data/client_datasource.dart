@@ -19,7 +19,7 @@ class ClientDatasource extends IClientDatasource {
     //final NetworkService _networkService = locator<NetworkService>();
     try {
       final Either<Failure, Success> response = await networkService
-          .get('${PayvidenceEndpoints.business}$businessId/client');
+          .get('${PayvidenceEndpoints.business}/$businessId/client');
       //LoggerService.info("Product Categories:: ${response.toString()}");
 
       return response.fold((fail) {

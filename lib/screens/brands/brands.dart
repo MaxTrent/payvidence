@@ -91,26 +91,28 @@ class Brands extends ConsumerWidget {
                       ),
                     );
                   }
-                  return ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return CategoryTile(
-                          title: data[index].name ?? '',
-                          subtitle: data[index].description ?? '',
-                          onPressed: () {
-                            ref
-                                .read(getCurrentBrandProvider.notifier)
-                                .setCurrentBrand(data[index]);
-                            Navigator.of(context).pop();
-                          },
-                        );
-                      },
-                      separatorBuilder: (ctx, idx) {
-                        return SizedBox(
-                          height: 24.h,
-                        );
-                      },
-                      itemCount: data.length);
+                  return Expanded(
+                    child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return CategoryTile(
+                            title: data[index].name ?? '',
+                            subtitle: data[index].description ?? '',
+                            onPressed: () {
+                              ref
+                                  .read(getCurrentBrandProvider.notifier)
+                                  .setCurrentBrand(data[index]);
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        },
+                        separatorBuilder: (ctx, idx) {
+                          return SizedBox(
+                            height: 24.h,
+                          );
+                        },
+                        itemCount: data.length),
+                  );
                 }, error: (error, _) {
                   return const Text('An error has occurred');
                 }, loading: () {

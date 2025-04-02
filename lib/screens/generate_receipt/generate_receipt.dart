@@ -146,7 +146,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       String error = findMissingProducts();
       if (error == '') {
       } else {
-        ToastService.error(error);
+        ToastService.showErrorSnackBar(error);
         return;
       }
       List<Map<String, dynamic>> productList = [];
@@ -155,7 +155,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         final product = products[index]!;
 
         if (qtyControllers[index - 1].text.isEmpty) {
-          ToastService.error('Enter the qty purchased for product $index');
+          ToastService.showErrorSnackBar('Enter the qty purchased for product $index');
           return; // Stops the entire function execution
         } else {
           productList.add({
@@ -185,7 +185,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
             .addReceipt(requestData);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success("Receipt generated successfully");
+        ToastService.showSnackBar("Receipt generated successfully");
         ref.invalidate(widget.isInvoice == true
             ? getAllInvoiceProvider
             : getAllReceiptProvider);
@@ -203,12 +203,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(
+        ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error('An unknown error has occurred!');
+        ToastService.showErrorSnackBar('An unknown error has occurred!');
       }
     }
 
@@ -371,7 +371,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error("Select a client please");
+                                ToastService.showErrorSnackBar("Select a client please");
                               }
                               isDraft = false;
                               createReceipt();
@@ -386,7 +386,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (client == null) {
-                                ToastService.error("Select a client please");
+                                ToastService.showErrorSnackBar("Select a client please");
                               }
                               isDraft = true;
                               createReceipt();

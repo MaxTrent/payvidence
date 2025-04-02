@@ -36,7 +36,7 @@ class ProductDetails extends ConsumerWidget {
             .deleteProduct(currentProduct?.id ?? '');
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success("Product deleted successfully");
+        ToastService.showSnackBar("Product deleted successfully");
         ref.invalidate(getAllProductProvider);
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
@@ -45,12 +45,12 @@ class ProductDetails extends ConsumerWidget {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(
+        ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error('An unknown error has occurred!');
+        ToastService.showErrorSnackBar('An unknown error has occurred!');
       }
     }
 

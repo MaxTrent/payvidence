@@ -40,7 +40,7 @@ class Drafts extends ConsumerWidget {
             await ref.read(getAllReceiptProvider.notifier).deleteDraft(id);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
-        ToastService.success("Draft deleted successfully");
+        ToastService.showSnackBar("Draft deleted successfully");
         ref.invalidate(
             isInvoice == true ? getAllInvoiceProvider : getAllReceiptProvider);
         Future.delayed(const Duration(seconds: 2), () {
@@ -50,12 +50,12 @@ class Drafts extends ConsumerWidget {
         });
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error(
+        ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.error('An unknown error has occurred!');
+        ToastService.showErrorSnackBar('An unknown error has occurred!');
       }
     }
 

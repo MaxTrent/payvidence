@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 import 'package:payvidence/repositories/repository/business_repository.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 import 'package:payvidence/utilities/toast_service.dart';
@@ -70,7 +71,8 @@ class AddBusinessViewModel extends BaseChangeNotifier {
           await businessRepository.addBusiness(requestData);
       if (!context.mounted) return;
       Navigator.of(context).pop(); // pop loading dialog on success
-      ToastService.success("Business created successfully");
+      ToastService.showSnackBar("Business created successfully");
+      ref.invalidate(getAllBusinessProvider);
       Future.delayed(const Duration(seconds: 2), () {
         if (!context.mounted) return;
         context.router.back();
@@ -80,12 +82,12 @@ class AddBusinessViewModel extends BaseChangeNotifier {
       });
     } on DioException catch (e) {
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error(
+      ToastService.showErrorSnackBar(
           e.response?.data['message'] ?? 'An unknown error has occurred!!!');
     } catch (e) {
       print(e);
       Navigator.of(context).pop(); // pop loading dialog on error
-      ToastService.error('An error has occurred!');
+      ToastService.showErrorSnackBar('An error has occurred!');
     }
   }
 }
