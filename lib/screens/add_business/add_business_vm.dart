@@ -11,7 +11,9 @@ import 'package:payvidence/utilities/base_notifier.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/loading_dialog.dart';
 import '../../model/business_model.dart';
+import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../onboarding/onboarding.dart';
 
 final addBusinessViewModelProvider =
     ChangeNotifierProvider<AddBusinessViewModel>((ref) {
@@ -77,9 +79,14 @@ class AddBusinessViewModel extends BaseChangeNotifier {
       ref.invalidate(getAllBusinessProvider);
       Future.delayed(const Duration(seconds: 2), () {
 
-        if (!context.mounted) return;
-        context.router.back();
-        context.router.back();
+        locator<PayvidenceAppRouter>().popUntil(
+                (route) => route is OnboardingScreen);
+        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allBusiness);
+
+        // if (!context.mounted) return;
+        // context.router.back();
+        // context.router.back();
 
         //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
       });
