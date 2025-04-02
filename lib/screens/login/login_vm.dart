@@ -102,11 +102,13 @@ class LoginViewModel extends BaseChangeNotifier {
       );
 
       if (result.success) {
-        final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
-        final token = locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
+        final email = await locator<SessionManager>().get<String>(SessionConstants.userEmail);
+        final token = await locator<SessionManager>().get(SessionConstants.accessTokenPref);
 
         if (email != null && token != null) {
           await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
+          _errorMessage = '';
+          notifyListeners();
           navigateOnSuccess();
         } else {
           _errorMessage = "No saved credentials found. Please login manually first.";
