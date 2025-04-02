@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +76,7 @@ class AddBusinessViewModel extends BaseChangeNotifier {
       ToastService.showSnackBar("Business created successfully");
       ref.invalidate(getAllBusinessProvider);
       Future.delayed(const Duration(seconds: 2), () {
+
         if (!context.mounted) return;
         context.router.back();
         context.router.back();
@@ -81,10 +84,17 @@ class AddBusinessViewModel extends BaseChangeNotifier {
         //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
       });
     } on DioException catch (e) {
+      // developer.log(
+      //     'Login error',
+      //     error: e.toString(),
+      //     stackTrace: stackTrace,
+      //     name: 'LoginViewModel'
+      // );
       Navigator.of(context).pop(); // pop loading dialog on error
       ToastService.showErrorSnackBar(
           e.response?.data['message'] ?? 'An unknown error has occurred!!!');
     } catch (e) {
+
       print(e);
       Navigator.of(context).pop(); // pop loading dialog on error
       ToastService.showErrorSnackBar('An error has occurred!');

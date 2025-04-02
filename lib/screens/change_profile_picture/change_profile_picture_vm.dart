@@ -93,12 +93,12 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??
             "An error occurred!";
-        _selectedImage = null; // Reset the selected image
+        _selectedImage = null;
         handleError(message: errorMessage);
-        notifyListeners(); // Update UI to show "Choose image" again
+        notifyListeners();
       }
     } catch (e) {
-      _selectedImage = null; // Reset on exception
+      _selectedImage = null;
       handleError(message: "Something went wrong: $e");
       notifyListeners();
     } finally {

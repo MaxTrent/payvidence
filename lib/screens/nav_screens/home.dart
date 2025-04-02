@@ -87,12 +87,11 @@ class HomeScreen extends HookConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                ref.watch(getCurrentBusinessProvider)?.name ??
-                                    '...',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
+                                (() {
+                                  final name = ref.watch(getCurrentBusinessProvider)?.name ?? '...';
+                                  return name.length > 14 ? '${name.substring(0, 14)}...' : name;
+                                })(),
+                                style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
                               ),
                               Row(
                                 children: [
@@ -115,7 +114,7 @@ class HomeScreen extends HookConsumerWidget {
                       GestureDetector(
                         onTap: () {
                           locator<PayvidenceAppRouter>()
-                              .push(AllBusinessesRoute(allBusiness: data));
+                              .push(AllBusinessesRoute());
                         },
                         child: Container(
                           height: 40.h,
