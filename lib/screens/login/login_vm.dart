@@ -67,13 +67,10 @@ class LoginViewModel extends BaseChangeNotifier {
 
         navigateOnSuccess();
       } else {
-        var errorMessage = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";
-        _errorMessage = errorMessage;
-        notifyListeners();
-        handleError(message: errorMessage);
+        _errorMessage = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";
+        handleError(message: _errorMessage);
       }
     } catch (e, stackTrace) {
-      print(e.toString());
       developer.log(
         'Login error',
         error: e.toString(),
@@ -81,8 +78,7 @@ class LoginViewModel extends BaseChangeNotifier {
         name: 'LoginViewModel',
       );
       _errorMessage = "Something went wrong. Please try again.";
-      notifyListeners();
-      handleError(message: "Something went wrong. Please try again.");
+      handleError(message: _errorMessage);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -102,8 +98,8 @@ class LoginViewModel extends BaseChangeNotifier {
       );
 
       if (result.success) {
-        final email = await locator<SessionManager>().get<String>(SessionConstants.userEmail);
-        final token = await locator<SessionManager>().get(SessionConstants.accessTokenPref);
+        final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
+        final token = locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
 
         if (email != null && token != null) {
           await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);

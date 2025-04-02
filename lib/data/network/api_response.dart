@@ -16,13 +16,8 @@ class ApiResult<T> extends Equatable {
 
   factory ApiResult.fromJson(Either<Failure, Success> json) {
     return json.fold(
-      (failure) => ApiResult(
-        error: failure.error,
-      ),
-      (success) => ApiResult(
-        success: true,
-        data: success.data,
-      ),
+          (failure) => ApiResult(error: failure.error),
+          (success) => ApiResult(success: true, data: success.data),
     );
   }
 
@@ -46,50 +41,58 @@ class Failure extends ApiResponse with EquatableMixin {
 
   factory Failure.fromMap(Map<String, dynamic> json) {
     return Failure(
-        ApiErrorResponseV2.fromMap(json["message"], json["results"]));
+      ApiErrorResponseV2.fromMap(
+        json["message"]?.toString() ?? "Unknown error",
+        json["errors"] ?? json,
+      ),
+    );
   }
 
   @override
   List<Object?> get props => [error];
 }
 
-enum ApiErrorType { unknown }
-
 class ApiErrorResponseV2 extends Equatable {
   final String? message;
-
   final List<ApiError>? errors;
 
   const ApiErrorResponseV2({this.message, this.errors});
 
-  factory ApiErrorResponseV2.fromMap(
-      String message, Map<String, dynamic>? json) {
-    var apiErrors = json?["errors"] as List?;
+  factory ApiErrorResponseV2.fromMap(String message, dynamic errorData) {
+    try {
+      List<ApiError>? errors;
 
-    List<ApiError>? errors =
-        apiErrors?.map((e) => ApiError.fromMap(e)).toList();
+      if (errorData is List) {
+        errors = errorData.map((e) => ApiError.fromMap(e)).toList();
+      }
+      else if (errorData is String) {
+        errors = [ApiError(message: errorData)];
+      }
+      else if (errorData is Map<String, dynamic>) {
+        errors = [];
+        errorData.forEach((key, value) {
+          if (value is List) {
+            errors!.addAll(value.map((e) => ApiError(field: key, message: e.toString())));
+          } else {
+            errors!.add(ApiError(field: key, message: value.toString()));
+          }
+        });
+      }
 
-    return ApiErrorResponseV2(message: message, errors: errors);
+      return ApiErrorResponseV2(
+        message: message,
+        errors: errors,
+      );
+    } catch (e) {
+      return ApiErrorResponseV2(
+        message: "Error parsing response: $message",
+        errors: const [ApiError(message: "Failed to parse error details")],
+      );
+    }
   }
 
   @override
-  List<Object?> get props => [message, props];
-}
-
-class ApiErrorResponse extends Equatable {
-  final List<ApiError>? errors;
-
-  const ApiErrorResponse({this.errors});
-
-  factory ApiErrorResponse.fromMap(Map<String, dynamic> json) {
-    var apiErrors = json["errors"] as List;
-
-    List<ApiError> errors = apiErrors.map((e) => ApiError.fromMap(e)).toList();
-    return ApiErrorResponse(errors: errors);
-  }
-
-  @override
-  List<Object?> get props => [errors];
+  List<Object?> get props => [message, errors];
 }
 
 class ApiError extends Equatable {
@@ -99,9 +102,19 @@ class ApiError extends Equatable {
 
   const ApiError({this.rule, this.field, this.message});
 
-  factory ApiError.fromMap(Map<String, dynamic> json) {
-    return ApiError(
-        rule: json["rule"], field: json["field"], message: json["message"]);
+  factory ApiError.fromMap(dynamic json) {
+    try {
+      if (json is Map<String, dynamic>) {
+        return ApiError(
+          rule: json["rule"]?.toString(),
+          field: json["field"]?.toString(),
+          message: json["message"]?.toString(),
+        );
+      }
+      return ApiError(message: json.toString());
+    } catch (e) {
+      return const ApiError(message: "Invalid error format");
+    }
   }
 
   @override
