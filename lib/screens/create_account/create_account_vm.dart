@@ -52,15 +52,8 @@ class CreateAccountViewModel extends BaseChangeNotifier {
             phoneNumber: user.account.phoneNumber?? '',
             // token: user.token ?? ""
         );
-        final retrievedUserId = locator<SessionManager>().get<String>(SessionConstants.userId);
-        print("After saveUserCredentials, retrieved User ID: $retrievedUserId");
-        // await Future.delayed(Duration(milliseconds: 100)); // Ensure write completion
-        final finalCheck = locator<SessionManager>().get<String>(SessionConstants.userId);
-        print("Before navigation, final User ID check: $finalCheck");
-        navigateOnSuccess();
-        await Future.delayed(Duration(milliseconds: 1000)); // Extended delay for clarity
-        final postNav = locator<SessionManager>().get<String>(SessionConstants.userId);
-        print("Post-navigation User ID in CreateAccountViewModel: $postNav");
+         navigateOnSuccess();
+
       } else {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??

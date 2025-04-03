@@ -6,10 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/app_provider_observer.dart';
+import 'package:payvidence/utilities/scroll_behaviour.dart';
 import 'package:payvidence/utilities/toast_service.dart';
-import 'package:toastification/toastification.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
+
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,14 +49,14 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(390, 844),
       minTextAdapt: true,
-      builder: (_, child) => ToastificationWrapper(
-        child: MaterialApp.router(
-          scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
-          title: 'Payvidence',
-          debugShowCheckedModeBanner: false,
-          theme: appTheme.light,
-          routerConfig: appRouter.config(),
-        ),
+      builder: (_, child) => MaterialApp.router(
+        scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
+        scrollBehavior: AppScrollBehaviour(),
+
+        title: 'Payvidence',
+        debugShowCheckedModeBanner: false,
+        theme: appTheme.light,
+        routerConfig: appRouter.config(),
       ),
     );
   }

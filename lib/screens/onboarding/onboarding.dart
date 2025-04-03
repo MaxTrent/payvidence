@@ -65,11 +65,11 @@ class OnboardingScreen extends HookConsumerWidget {
                     color: scaffoldBackground,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black, // Shadow color with transparency
+                        color: Colors.black,
                         offset:
-                            Offset(0, -2.h), // Horizontal and vertical offset
-                        blurRadius: 4.r, // Amount of blur
-                        spreadRadius: 10, // Spread of the shadow
+                            Offset(0, -2.h),
+                        blurRadius: 4.r,
+                        spreadRadius: 10,
                       ),
                     ],
                   ),
@@ -147,16 +147,16 @@ class PageIndicator extends StatelessWidget {
 }
 
 class OnboardingPage extends StatelessWidget {
-  OnboardingPage({
+  const OnboardingPage({
     required this.image,
     required this.subtext,
     required this.text,
     super.key,
   });
 
-  String text;
-  String subtext;
-  String image;
+  final String text;
+  final String subtext;
+  final String image;
 
   @override
   Widget build(BuildContext context) {

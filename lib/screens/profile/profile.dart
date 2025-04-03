@@ -10,6 +10,7 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
 import '../../components/loading_dialog.dart';
+import '../../data/local/session_manager.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../my_subscription/my_subscription_vm.dart';
@@ -273,7 +274,7 @@ class Profile extends HookConsumerWidget {
                     if (!context.mounted) return;
                     LoadingDialog.show(context);
                     viewModel.logout(navigateOnSuccess: () {
-                      // locator<SessionManager>().clear();
+                      locator<SessionManager>().clear();
                       locator<PayvidenceAppRouter>()
                           .popUntil((route) => route is OnboardingScreen);
                       locator<PayvidenceAppRouter>()

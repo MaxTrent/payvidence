@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../gen/assets.gen.dart';
+import 'app_naira.dart';
 
 class SubscriptionCard extends StatelessWidget {
   SubscriptionCard({
@@ -103,18 +104,25 @@ class SubscriptionCard extends StatelessWidget {
             SizedBox(
               height: 6.h,
             ),
-            Text.rich(TextSpan(
-                text: '₦$price ',
-                style: Theme.of(context).textTheme.displayLarge,
-                children: [
-                  TextSpan(
-                    text: '/year',
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayMedium!
-                        .copyWith(color: const Color(0xff444444)),
-                  )
-                ])),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const AppNaira(fontSize: 28,),
+                Text.rich(
+                    TextSpan(
+                    text: price,
+                    style: Theme.of(context).textTheme.displayLarge,
+                    children: [
+                      TextSpan(
+                        text: '/year',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(color: const Color(0xff444444)),
+                      )
+                    ])),
+              ],
+            ),
             checkOut
                 ? SizedBox(
                     height: 4.h,

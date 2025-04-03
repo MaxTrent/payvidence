@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:payvidence/data/local/session_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionManager {
@@ -7,7 +8,11 @@ class SessionManager {
   SessionManager({required this.sharedPreferences});
 
   Future<void> clear() async {
-    await sharedPreferences.clear();
+    await sharedPreferences.remove(SessionConstants.isUserLoggedIn);
+    await sharedPreferences.remove(SessionConstants.accessTokenPref);
+    await sharedPreferences.remove(SessionConstants.businessId);
+    await sharedPreferences.remove(SessionConstants.userId);
+    await sharedPreferences.remove(SessionConstants.userEmail);
     print("SharedPreferences cleared");
   }
 

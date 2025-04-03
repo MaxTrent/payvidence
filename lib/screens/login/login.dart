@@ -30,6 +30,7 @@ class Login extends HookConsumerWidget {
 
     final areFieldsEmpty = useState(true);
     final obscureText = useState(true);
+    final showManualLogin = useState(false);
 
     bool checkFieldsEmpty() {
       return emailController.text.toString().isEmpty ||
@@ -51,183 +52,180 @@ class Login extends HookConsumerWidget {
       };
     }, []);
 
+    final useBiometricLogin = viewModel.shouldUseBiometricLogin && !showManualLogin.value;
+
     return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus!.unfocus,
+      onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
       child: Scaffold(
         body: Form(
           key: formKey,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 16.h,
-                  ),
-                  Text(
-                    'Log in',
-                    style: Theme.of(context).textTheme.displayLarge,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  Text(
-                    'Log in with your email address and password',
-                    style: Theme.of(context).textTheme.displaySmall!,
-                  ),
-                  SizedBox(
-                    height: 32.h,
-                  ),
-                  Text(
-                    'Email address',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  AppTextField(
-                  hintText: 'Email address',
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                  ],
-                  autofillHints: const [AutofillHints.email],
-                  validator: (val) {
-                    if (!val!.trim().isValidEmail || val.isEmpty) {
-                      return 'Enter valid email address';
-                    }
-                    return null;
-                  },
-                ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Log in',
+                      style: Theme.of(context).textTheme.displayLarge,
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      useBiometricLogin
+                          ? 'Log in with your biometric credentials'
+                          : 'Log in with your email address and password',
+                      style: Theme.of(context).textTheme.displaySmall!,
+                    ),
+                    SizedBox(height: 32.h),
 
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    'Password',
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  AppTextField(
-                    hintText: 'Password',
-                    controller: passwordController,
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return 'Password is required';
-                      }
-                      if (val.length < 8) {
-                        return 'Password must be at least 8 characters long';
-                      }
-                      if (!RegExp(r'[A-Za-z]').hasMatch(val)) {
-                        return 'Password must contain at least one letter';
-                      }
-                      if (!RegExp(r'\d').hasMatch(val)) {
-                        return 'Password must contain at least one number';
-                      }
-                      return null;
-                    },
-                    suffixIcon: Padding(
-                      padding: EdgeInsets.all(16.h),
-                      child: GestureDetector(
-                        onTap: () => obscureText.value = !obscureText.value,
-                        child: SvgPicture.asset(
-                          Assets.svg.password,
-                          height: 24.h,
-                          width: 24.w,
-                        ),
+                    // Show email/password fields if not using biometric login
+                    if (!useBiometricLogin) ...[
+                      Text(
+                        'Email address',
+                        style: Theme.of(context).textTheme.displaySmall,
                       ),
-                    ),
-                    obscureText: obscureText.value,
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.forgotPassword);
-                    },
-                    child: Text(
-                      'Forgot password?',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(fontSize: 14.sp, color: primaryColor2),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 32.h,
-                  ),
-                  // viewModel.loginState.isLoading ? const LoadingIndicator():
-                  FutureBuilder(
-                    future: viewModel.canUseBiometrics,
-                    builder: (context, snapshot) {
-                      final canUseBiometrics =
-                          snapshot.hasData && snapshot.data == true;
-
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: canUseBiometrics ? 5 : 1,
-                            child: AppButton(
-                              buttonText: 'Log in',
-                              isDisabled: areFieldsEmpty.value,
-                              isProcessing: viewModel.isLoading,
-                              onPressed: () {
-                                print("Login button pressed");
-                                if (formKey.currentState!.validate()) {
-                                  print("Form validation passed");
-                                  FocusScope.of(context).unfocus();
-                                  viewModel.login(
-                                    email: emailController.text.trim(),
-                                    password: passwordController.text.trim(),
-                                    navigateOnSuccess: () {
-                                      print("Login successful, navigating to home");
-                                      ref.invalidate(getAllBusinessProvider);
-                                      locator<PayvidenceAppRouter>().popUntil(
-                                              (route) => route is OnboardingScreen);
-                                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
-                                    },
-                                  );
-                                } else {
-                                  print("Form validation failed");
-                                }
-                              },
-
+                      SizedBox(height: 8.h),
+                      AppTextField(
+                        hintText: 'Email address',
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                        ],
+                        autofillHints: const [AutofillHints.email],
+                        validator: (val) {
+                          if (!val!.trim().isValidEmail || val.isEmpty) {
+                            return 'Enter valid email address';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 20.h),
+                      Text(
+                        'Password',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      SizedBox(height: 8.h),
+                      AppTextField(
+                        hintText: 'Password',
+                        controller: passwordController,
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Password is required';
+                          }
+                          if (val.length < 8) {
+                            return 'Password must be at least 8 characters long';
+                          }
+                          if (!RegExp(r'[A-Za-z]').hasMatch(val)) {
+                            return 'Password must contain at least one letter';
+                          }
+                          if (!RegExp(r'\d').hasMatch(val)) {
+                            return 'Password must contain at least one number';
+                          }
+                          return null;
+                        },
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.all(16.h),
+                          child: GestureDetector(
+                            onTap: () => obscureText.value = !obscureText.value,
+                            child: SvgPicture.asset(
+                              Assets.svg.password,
+                              height: 24.h,
+                              width: 24.w,
                             ),
                           ),
-                          if (canUseBiometrics) SizedBox(width: 16.w),
-                          if (canUseBiometrics)
-                            GestureDetector(
-                              onTap: () {
-                                print("Biometric login triggered");
-                                FocusScope.of(context).unfocus();
-                                viewModel.biometricLogin(
-                                  navigateOnSuccess: () {
-                                    print("Biometric login successful, navigating to home");
-                                    ref.invalidate(getAllBusinessProvider);
-                                    locator<PayvidenceAppRouter>().popUntil(
-                                            (route) => route is OnboardingScreen);
-                                    locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.home);
-                                  },
-                                );
+                        ),
+                        obscureText: obscureText.value,
+                      ),
+                      SizedBox(height: 20.h),
+                      GestureDetector(
+                        onTap: () {
+                          locator<PayvidenceAppRouter>()
+                              .navigateNamed(PayvidenceRoutes.forgotPassword);
+                        },
+                        child: Text(
+                          'Forgot password?',
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(fontSize: 14.sp, color: primaryColor2),
+                        ),
+                      ),
+                      SizedBox(height: 32.h),
+                    ],
+                    // Display error message if present
+                    // if (viewModel.errorMessage.isNotEmpty) ...[
+                    //   Text(
+                    //     viewModel.errorMessage,
+                    //     style: Theme.of(context)
+                    //         .textTheme
+                    //         .displaySmall!
+                    //         .copyWith(color: Colors.red),
+                    //   ),
+                    //   SizedBox(height: 16.h),
+                    // ],
+                    // Show link if biometric login failed
+                    if (useBiometricLogin && viewModel.errorMessage.isNotEmpty) ...[
+                      GestureDetector(
+                        onTap: () {
+                          showManualLogin.value = true; // Switch to email/password login
+                        },
+                        child: Text(
+                          'Log in with email/password',
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(fontSize: 14.sp, color: primaryColor2),
+                        ),
+                      ),
+                      SizedBox(height: 32.h),
+                    ],
+
+                    AppButton(
+                      buttonText: 'Log in',
+                      isDisabled: !useBiometricLogin && areFieldsEmpty.value,
+                      isProcessing: viewModel.isLoading,
+                      onPressed: () {
+                        print("Login button pressed");
+                        FocusScope.of(context).unfocus();
+                        if (useBiometricLogin) {
+                          // Use biometric login
+                          print("Using biometric login");
+                          viewModel.biometricLogin(
+                            navigateOnSuccess: () {
+                              print("Biometric login successful, navigating to home");
+                              ref.invalidate(getAllBusinessProvider);
+                              locator<PayvidenceAppRouter>().popUntil(
+                                      (route) => route is OnboardingScreen);
+                              locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.home);
+                            },
+                          );
+                        } else {
+                          // Use email/password login
+                          if (formKey.currentState!.validate()) {
+                            print("Form validation passed");
+                            viewModel.login(
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim(),
+                              navigateOnSuccess: () {
+                                print("Email/password login successful, navigating to home");
+                                ref.invalidate(getAllBusinessProvider);
+                                locator<PayvidenceAppRouter>().popUntil(
+                                        (route) => route is OnboardingScreen);
+                                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
                               },
-                              child: Icon(
-                                Icons.fingerprint,
-                                size: 44.h,
-                                color: primaryColor2,
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+                            );
+                          } else {
+                            print("Form validation failed");
+                          }
+                        }
+                      },
+                    ),
+                    SizedBox(height: 16.h), // Add some padding at the bottom
+                  ],
+                ),
               ),
             ),
           ),

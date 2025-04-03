@@ -73,6 +73,7 @@ class AllTransactions extends HookConsumerWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: ListView(
+
           children: [
             SizedBox(height: 32.h),
             Row(

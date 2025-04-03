@@ -9,6 +9,7 @@ import 'package:payvidence/providers/sales_providers/sales_data_provider.dart';
 import 'package:payvidence/providers/sales_providers/sales_fillter_provider.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../components/app_naira.dart';
 import '../../components/custom_shimmer.dart';
 import '../../gen/assets.gen.dart';
 import '../../model/sales_model.dart';
@@ -147,14 +148,15 @@ class Sales extends ConsumerWidget {
                       children: [
                         SalesInfoTile(
                           icon: Assets.svg.statusUp,
-                          amount:
-                              '₦${data.totalRevenue.toString().commaSeparated()}',
+                          amount: data.totalRevenue.toString().toKMB(),
                           description: 'Total revenue',
+                          showCurrency: true,
                         ),
                         SalesInfoTile(
                           icon: Assets.svg.boxTick,
                           amount: data.totalSales.toString().commaSeparated(),
                           description: 'Total sales',
+                          showCurrency: false,
                         ),
                       ],
                     ),
@@ -169,12 +171,14 @@ class Sales extends ConsumerWidget {
                           amount:
                               data.totalReceipts.toString().commaSeparated(),
                           description: 'Total receipts',
+                          showCurrency: false,
                         ),
                         SalesInfoTile(
                           icon: Assets.svg.archiveBook,
                           amount:
                               data.totalInvoices.toString().commaSeparated(),
                           description: 'Total invoices',
+                          showCurrency: false,
                         ),
                       ],
                     ),
@@ -207,12 +211,13 @@ class SalesInfoTile extends StatelessWidget {
     required this.icon,
     required this.amount,
     required this.description,
-    super.key,
+    super.key, required this.showCurrency,
   });
 
   final String amount;
   final String description;
   final String icon;
+  final bool showCurrency;
 
   @override
   Widget build(BuildContext context) {
@@ -247,13 +252,19 @@ class SalesInfoTile extends StatelessWidget {
                   width: 8.w,
                 ),
                 Expanded(
-                  child: Text(
-                    amount,
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayLarge!
-                        .copyWith(fontSize: 14.sp),
-                    overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      showCurrency ? const AppNaira(fontSize: 22,): const SizedBox.shrink(),
+                      Text(
+                        amount,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayLarge!
+                            .copyWith(fontSize: 22.sp),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 )
               ],

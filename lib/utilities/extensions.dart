@@ -57,6 +57,25 @@ extension DateTimeFormatting on DateTime? {
   }
 }
 
+
+extension StringNumberFormatting on String {
+  String toKMB() {
+    final numValue = num.tryParse(this);
+
+    if (numValue == null || numValue < 0) {
+      return this;
+    }
+
+    if (numValue >= 1000000) {
+      return '${(numValue / 1000000).toStringAsFixed(0)}M';
+    } else if (numValue >= 1000) {
+      return '${(numValue / 1000).toStringAsFixed(0)}K';
+    } else {
+      return numValue.toStringAsFixed(0);
+    }
+  }
+}
+
 extension StringDateFormatting on String? {
   String toFormattedIsoDate() {
     if (this == null || this!.isEmpty) return "";

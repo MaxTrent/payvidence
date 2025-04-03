@@ -35,7 +35,7 @@ class AppButton extends StatelessWidget {
         onPressed: isProcessing || isDisabled ? null : onPressed,
         style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(
-                isDisabled ? Colors.grey : backgroundColor),
+                isDisabled ? const Color.fromRGBO(78, 56, 178, 0.4) : backgroundColor),
             foregroundColor: WidgetStateProperty.all(textColor),
             elevation: WidgetStateProperty.all(0),
             minimumSize: WidgetStateProperty.all(Size(350.w, 60.h)),
