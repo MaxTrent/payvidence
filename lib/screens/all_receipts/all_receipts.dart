@@ -27,6 +27,12 @@ class AllReceipts extends ConsumerWidget {
     final allReceipts = ref.watch(getAllReceiptProvider);
     ValueNotifier<int?> productNumber = ValueNotifier(null);
 
+
+    Future<void> onRefresh() async {
+      await ref.refresh(getAllReceiptProvider.future);
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,

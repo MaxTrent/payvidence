@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/data/local/session_constants.dart';
 import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
@@ -30,7 +31,6 @@ class AllTransactions extends HookConsumerWidget {
 
     useEffect(() {
       Future.microtask(() {
-        print('Fetching transactions with businessId: $businessId');
         viewModel.fetchTransactions(businessId!);
       });
 
@@ -62,6 +62,12 @@ class AllTransactions extends HookConsumerWidget {
       return matchesFilter && matchesSearch;
     }).toList();
 
+    Future<void> onRefresh() async {
+      if (businessId != null) {
+        await viewModel.fetchTransactions(businessId!);
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -72,126 +78,129 @@ class AllTransactions extends HookConsumerWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: ListView(
+        child: PullToRefresh(
+          onRefresh: onRefresh,
+          child: ListView(
 
-          children: [
-            SizedBox(height: 32.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AppTextField(
-                  width: 282.w,
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(16.h),
-                    child: SvgPicture.asset(Assets.svg.search),
+            children: [
+              SizedBox(height: 32.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppTextField(
+                    width: 282.w,
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(16.h),
+                      child: SvgPicture.asset(Assets.svg.search),
+                    ),
+                    hintText: 'Search for transaction',
+                    controller: searchController,
+                    radius: 80,
+                    filled: true,
+                    fillColor: appGrey5,
                   ),
-                  hintText: 'Search for transaction',
-                  controller: searchController,
-                  radius: 80,
-                  filled: true,
-                  fillColor: appGrey5,
+                  GestureDetector(
+                    onTap: () {
+                      buildFilterBottomSheet(context, filterType);
+                    },
+                    child: Container(
+                      height: 48.h,
+                      // width: 56.w,
+                      decoration: BoxDecoration(
+                        color: borderColor,
+                        borderRadius: BorderRadius.circular(56.r),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(14.h),
+                        child: SvgPicture.asset(Assets.svg.filter),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 24.h),
+              if (viewModel.isLoading) ...[
+                CustomShimmer(height: 101.h),
+                SizedBox(height: 24.h),
+                CustomShimmer(height: 101.h),
+                SizedBox(height: 24.h),
+                CustomShimmer(height: 101.h),
+                SizedBox(height: 24.h),
+                CustomShimmer(height: 101.h),
+              ] else if (filteredTransactions.isEmpty) ...[
+                SizedBox(height: 20.h),
+                SvgPicture.asset(Assets.svg.emptyTransaction),
+                SizedBox(height: 40.h),
+                Text(
+                  filterType.value != 'All' && viewModel.transactions.isNotEmpty
+                      ? 'No ${filterType.value}s found!'
+                      : 'No transaction yet!',
+                  style: Theme.of(context).textTheme.displayLarge,
+                  textAlign: TextAlign.center,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    buildFilterBottomSheet(context, filterType);
+                SizedBox(height: 10.h),
+                Text(
+                  filterType.value != 'All' && viewModel.transactions.isNotEmpty
+                      ? 'Try adjusting your filter or search.'
+                      : 'Start generating receipts and invoices for your business. All transactions will show here.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .displaySmall!
+                      .copyWith(fontSize: 14.sp),
+                ),
+              ] else ...[
+                ...filteredTransactions.map(
+                  (transaction) {
+                    final firstProductDetail =
+                        transaction.recordProductDetails.first;
+                    return GestureDetector(
+                      onTap: () {
+                        // final receipt = Receipt(
+                        //   id: transaction.id,
+                        //   business: Business(
+                        //     name: transaction.business.name,
+                        //     address: transaction.business.address,
+                        //     phoneNumber: transaction.business.phoneNumber,
+                        //     accountNumber: transaction.business.accountNumber,
+                        //     bankName: transaction.business.bankName,
+                        //     accountName: transaction.business.accountName,
+                        //   ),
+                        //   client: ClientModel(
+                        //     name: transaction.client.name,
+                        //     phoneNumber: transaction.client.phoneNumber,
+                        //     address: transaction.client.address,
+                        //   ),
+                        //   recordProductDetails: transaction.recordProductDetails,
+                        //   total: transaction.total.toString(),
+                        //   createdAt: transaction.createdAt,
+                        //   modeOfPayment: transaction.modeOfPayment,
+                        // );
+                        // final isInvoice = transaction.status == 'pending';
+                        // locator<PayvidenceAppRouter>().push(
+                        //   ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
+                        // );
+                      },
+                      child: TransactionTile(
+                        amount: firstProductDetail.product.price
+                            .toString()
+                            .toCommaSeparated(),
+                        dateTime: firstProductDetail.product.createdAt
+                            .toString()
+                            .toFormattedIsoDate(),
+                        productName: firstProductDetail.product.name,
+                        receiptOrInvoice: transaction.status == 'pending'
+                            ? 'Invoice'
+                            : 'Receipt',
+                        unitSold:
+                            firstProductDetail.product.quantitySold.toString(),
+                      ),
+                    );
                   },
-                  child: Container(
-                    height: 48.h,
-                    // width: 56.w,
-                    decoration: BoxDecoration(
-                      color: borderColor,
-                      borderRadius: BorderRadius.circular(56.r),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(14.h),
-                      child: SvgPicture.asset(Assets.svg.filter),
-                    ),
-                  ),
                 ),
               ],
-            ),
-            SizedBox(height: 24.h),
-            if (viewModel.isLoading) ...[
-              CustomShimmer(height: 101.h),
-              SizedBox(height: 24.h),
-              CustomShimmer(height: 101.h),
-              SizedBox(height: 24.h),
-              CustomShimmer(height: 101.h),
-              SizedBox(height: 24.h),
-              CustomShimmer(height: 101.h),
-            ] else if (filteredTransactions.isEmpty) ...[
-              SizedBox(height: 20.h),
-              SvgPicture.asset(Assets.svg.emptyTransaction),
-              SizedBox(height: 40.h),
-              Text(
-                filterType.value != 'All' && viewModel.transactions.isNotEmpty
-                    ? 'No ${filterType.value}s found!'
-                    : 'No transaction yet!',
-                style: Theme.of(context).textTheme.displayLarge,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 10.h),
-              Text(
-                filterType.value != 'All' && viewModel.transactions.isNotEmpty
-                    ? 'Try adjusting your filter or search.'
-                    : 'Start generating receipts and invoices for your business. All transactions will show here.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .displaySmall!
-                    .copyWith(fontSize: 14.sp),
-              ),
-            ] else ...[
-              ...filteredTransactions.map(
-                (transaction) {
-                  final firstProductDetail =
-                      transaction.recordProductDetails.first;
-                  return GestureDetector(
-                    onTap: () {
-                      // final receipt = Receipt(
-                      //   id: transaction.id,
-                      //   business: Business(
-                      //     name: transaction.business.name,
-                      //     address: transaction.business.address,
-                      //     phoneNumber: transaction.business.phoneNumber,
-                      //     accountNumber: transaction.business.accountNumber,
-                      //     bankName: transaction.business.bankName,
-                      //     accountName: transaction.business.accountName,
-                      //   ),
-                      //   client: ClientModel(
-                      //     name: transaction.client.name,
-                      //     phoneNumber: transaction.client.phoneNumber,
-                      //     address: transaction.client.address,
-                      //   ),
-                      //   recordProductDetails: transaction.recordProductDetails,
-                      //   total: transaction.total.toString(),
-                      //   createdAt: transaction.createdAt,
-                      //   modeOfPayment: transaction.modeOfPayment,
-                      // );
-                      // final isInvoice = transaction.status == 'pending';
-                      // locator<PayvidenceAppRouter>().push(
-                      //   ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
-                      // );
-                    },
-                    child: TransactionTile(
-                      amount: firstProductDetail.product.price
-                          .toString()
-                          .toCommaSeparated(),
-                      dateTime: firstProductDetail.product.createdAt
-                          .toString()
-                          .toFormattedIsoDate(),
-                      productName: firstProductDetail.product.name,
-                      receiptOrInvoice: transaction.status == 'pending'
-                          ? 'Invoice'
-                          : 'Receipt',
-                      unitSold:
-                          firstProductDetail.product.quantitySold.toString(),
-                    ),
-                  );
-                },
-              ),
             ],
-          ],
+          ),
         ),
       ),
     );

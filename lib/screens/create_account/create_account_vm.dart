@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
-
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../model/user_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
+
 
 final createAccountViewModelProvider =
     ChangeNotifierProvider<CreateAccountViewModel>((ref) {
