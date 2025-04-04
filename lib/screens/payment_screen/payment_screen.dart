@@ -16,8 +16,8 @@ class PaymentWebViewPage extends StatefulHookConsumerWidget {
   const PaymentWebViewPage({
     super.key,
     @QueryParam('paymentLink') this.paymentLink = '',
-    this.callbackUrl = 'https://hello.pstk.xyz/callback', // Adjust based on your setup
-    this.cancelUrl = 'https://your-cancel-url.com',       // Adjust based on your setup
+    this.callbackUrl = 'https://hello.pstk.xyz/callback',
+    this.cancelUrl = 'https://your-cancel-url.com',
   });
 
   @override
@@ -30,7 +30,7 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
     connectTimeout: const Duration(seconds: 20),
     receiveTimeout: const Duration(seconds: 20),
     headers: {
-      'Authorization': 'Bearer sk_test_xxx', // Replace with your Paystack secret key
+      'Authorization': 'Bearer sk_test_xxx',
       'Content-Type': 'application/json',
     },
   ));

@@ -5,10 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
 import 'package:payvidence/components/product_tile.dart';
+import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/providers/category_providers/get_all_category_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/providers/product_providers/product_fillter_provider.dart';
-
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
@@ -17,6 +17,8 @@ import '../../providers/product_providers/current_product_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+
+
 
 @RoutePage(name: 'ProductRoute')
 class Product extends ConsumerWidget {
@@ -31,13 +33,18 @@ class Product extends ConsumerWidget {
     final allProducts = ref.watch(getAllProductProvider);
     ValueNotifier<int?> productNumber = ValueNotifier(null);
 
+
+    Future<void> onRefresh() async {
+      await ref.refresh(getAllProductProvider.future);
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         title: ValueListenableBuilder(
           builder: (context, value, _) {
             return Text(
-              'All products (${value ?? ''})',
+              'All products (${value ?? '0'})',
               style: Theme.of(context).textTheme.displayLarge!.copyWith(),
             );
           },
@@ -109,73 +116,87 @@ class Product extends ConsumerWidget {
                 productNumber.value = 0;
 
                 return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'No product available!',
-                        style: Theme.of(context).textTheme.displayLarge,
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      Text('All added products will appear here.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(
-                                fontSize: 14.sp,
-                              )),
-                      SizedBox(
-                        height: 48.h,
-                      ),
-                      AppButton(
-                          buttonText: 'Add product',
-                          onPressed: () {
-                            locator<PayvidenceAppRouter>()
-                                .navigateNamed(PayvidenceRoutes.addProduct);
-                          })
-                    ],
+                  child: PullToRefresh(
+                    onRefresh: onRefresh,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'No product available!',
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Text('All added products will appear here.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(
+                                  fontSize: 14.sp,
+                                )),
+                        SizedBox(
+                          height: 48.h,
+                        ),
+                        AppButton(
+                            buttonText: 'Add product',
+                            onPressed: () {
+                              locator<PayvidenceAppRouter>()
+                                  .navigateNamed(PayvidenceRoutes.addProduct);
+                            })
+                      ],
+                    ),
                   ),
                 );
               }
               productNumber.value = data.length;
 
               return Expanded(
-                child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return ProductTile(
-                        product: data[index],
-                        ref: ref,
-                        onPressed: () {
-                          if (forProductSelection == true) {
-                            Navigator.of(context).pop(data[index]);
-                          } else {
-                            locator<PayvidenceAppRouter>().navigate(
-                                ProductDetailsRoute(product: data[index]));
-                            ref
-                                .read(getCurrentProductProvider.notifier)
-                                .setCurrentProduct(data[index]);
-                          }
-                        },
-                      );
-                    },
-                    separatorBuilder: (ctx, idx) {
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 24.h,
-                          ),
-                        ],
-                      );
-                    },
-                    itemCount: data.length),
+                child: PullToRefresh(
+                  onRefresh: onRefresh,
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ProductTile(
+                          product: data[index],
+                          ref: ref,
+                          onPressed: () {
+                            if (forProductSelection == true) {
+                              Navigator.of(context).pop(data[index]);
+                            } else {
+                              locator<PayvidenceAppRouter>().navigate(
+                                  ProductDetailsRoute(product: data[index]));
+                              ref
+                                  .read(getCurrentProductProvider.notifier)
+                                  .setCurrentProduct(data[index]);
+                            }
+                          },
+                        );
+                      },
+                      separatorBuilder: (ctx, idx) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 24.h,
+                            ),
+                          ],
+                        );
+                      },
+                      itemCount: data.length),
+                ),
               );
             }, error: (error, _) {
-              return const Text('An error has occurred');
+              return PullToRefresh(
+                onRefresh: onRefresh,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(child: Text('An error has occurred')),
+                  ],
+                ),
+              );
             }, loading: () {
               return const CustomShimmer();
             })
