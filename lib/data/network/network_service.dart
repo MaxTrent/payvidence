@@ -2,12 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-
 import '../../shared_dependency/shared_dependency.dart';
 import '../local/session_constants.dart';
 import '../local/session_manager.dart';
 import 'api_response.dart';
 import 'interceptors/connection_interceptor.dart';
+
 
 enum RequestMethod { get, post, patch, delete }
 
@@ -179,8 +179,10 @@ class NetworkService {
 
       if (e.response!.statusCode == 401 &&
           e.response!.data is Map &&
-          e.response!.data['message'] == 'Unauthenticated') {
+          e.response!.data['message'] == 'unauthorized') {
         // await logOut();
+        print(e.response);
+        await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: false);
         return Left(Failure(const ApiErrorResponseV2(
             message: 'Session expired. Please log in again.')));
       }
@@ -193,7 +195,6 @@ class NetworkService {
     var accessToken =
         locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
 
-    locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
     print('token: $accessToken');
     final accessData = {
       "Authorization": "Bearer $accessToken",

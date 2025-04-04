@@ -98,7 +98,7 @@ class PayvidenceAppRouter extends RootStackRouter {
             page: MySubscriptionRoute.page,
             path: PayvidenceRoutes.mySubscription),
         AutoRoute(page: OtpLoginRoute.page, path: PayvidenceRoutes.otpLogin),
-    AutoRoute(page: OtpScreenRoute.page, path: PayvidenceRoutes.otp),
+        AutoRoute(page: OtpScreenRoute.page, path: PayvidenceRoutes.otp),
         AutoRoute(
             page: CreateNewPasswordRoute.page,
             path: PayvidenceRoutes.createNewPassword),
@@ -158,13 +158,13 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(
             page: ClientSuccessRoute.page,
             path: PayvidenceRoutes.clientSuccess),
-    AutoRoute(
+        AutoRoute(
         page: AccountSuccessRoute.page,
         path: PayvidenceRoutes.accountSuccess),
-    AutoRoute(
+        AutoRoute(
         page: EditBusinessRoute.page,
         path: PayvidenceRoutes.editBusiness),
-    AutoRoute(
+        AutoRoute(
         page: EditBankDetailsRoute.page,
         path: PayvidenceRoutes.editBankDetails),
       ];
@@ -174,10 +174,10 @@ class AuthRouteGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
     var isUserLoggedIn =
-        locator<SessionManager>().get<bool>(SessionConstants.isUserLoggedIn);
+    locator<SessionManager>().get<bool>(SessionConstants.isUserLoggedIn);
 
-    if ((isUserLoggedIn ?? false) == true) {
-      resolver.next(true);
+    if (isUserLoggedIn == true) {
+      resolver.next();
     } else {
       resolver.redirect(OnboardingScreenRoute());
     }
@@ -250,5 +250,4 @@ class PayvidenceRoutes {
   static String get allTransactions => 'allTransactions/:businessId';
   static String get editBusiness => '/editBusiness/:businessId';
   static String get editBankDetails => '/editBankDetails/:businessId';
-
 }

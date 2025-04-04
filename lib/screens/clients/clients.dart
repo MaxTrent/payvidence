@@ -58,27 +58,36 @@ class Clients extends HookConsumerWidget {
           style: Theme.of(context).textTheme.displayLarge!.copyWith(),
         ),
         actions: [
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(right: 20.w),
-              child: GestureDetector(
-                onTap: () async {
-                  print("Navigating to AddClientRoute");
-                  await locator<PayvidenceAppRouter>()
-                      .navigate(AddClientRoute(businessId: businessId));
+          allClients.when(data: (data){
+            if (data.isEmpty){
+             return const SizedBox.shrink();
+            }
+            return  Center(
+              child: Padding(
+                padding: EdgeInsets.only(right: 20.w),
+                child: GestureDetector(
+                  onTap: () async {
+                    await locator<PayvidenceAppRouter>()
+                        .navigate(AddClientRoute(businessId: businessId));
 
-                  ref.read(getAllClientsProvider.notifier).fetchClients();
-                },
-                child: Text(
-                  '+ Add New',
-                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                        fontSize: 14.sp,
-                        color: primaryColor2,
-                      ),
+                    ref.read(getAllClientsProvider.notifier).fetchClients();
+                  },
+                  child: Text(
+                    '+ Add New',
+                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                      fontSize: 14.sp,
+                      color: primaryColor2,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          }, error: (error, _){
+            return const SizedBox.shrink();
+          }, loading: (){
+            return const SizedBox.shrink();
+          })
+
         ],
       ),
       body: Padding(
@@ -146,8 +155,6 @@ class Clients extends HookConsumerWidget {
                             Navigator.of(context).pop(data[index]);
                           } else {
                             if (data[index].id != null) {
-                              print(
-                                  "Navigating to ClientDetails with businessId: $businessId, clientId: ${data[index].id}");
                               await locator<PayvidenceAppRouter>().push(
                                 ClientDetailsRoute(
                                     businessId: businessId,

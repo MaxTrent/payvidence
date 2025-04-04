@@ -6,10 +6,13 @@ import '../../data/network/api_response.dart';
 import '../../data/network/network_service.dart';
 import '../../utilities/payvidence_endpoints.dart';
 
+
 abstract class ISalesDatasource {
   Future<Sales> fetchSales(String businessId,
       {String? startDate, String? endDate, String? interval});
 }
+
+
 
 class SalesDatasource extends ISalesDatasource {
   final NetworkService networkService;

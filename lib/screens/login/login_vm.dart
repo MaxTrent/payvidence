@@ -1,5 +1,4 @@
 import 'dart:developer' as developer;
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 import '../../data/local/session_constants.dart';
@@ -7,6 +6,7 @@ import '../../data/local/session_manager.dart';
 import '../../model/user_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/biometric_service.dart';
+
 
 final loginViewModelProvider = ChangeNotifierProvider<LoginViewModel>((ref) {
   return LoginViewModel(ref);
@@ -54,7 +54,7 @@ class LoginViewModel extends BaseChangeNotifier {
         var user = User.fromJson(response.data!["data"]);
         await saveUserCredentials(
           userId: user.account.id ?? '',
-          firstName: user.account.firstName ?? '',
+          firstName: user.account.firstName,
           lastName: user.account.lastName ?? '',
           email: user.account.email ?? '',
           phoneNumber: user.account.phoneNumber ?? '',
@@ -70,13 +70,7 @@ class LoginViewModel extends BaseChangeNotifier {
         _errorMessage = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";
         handleError(message: _errorMessage);
       }
-    } catch (e, stackTrace) {
-      developer.log(
-        'Login error',
-        error: e.toString(),
-        stackTrace: stackTrace,
-        name: 'LoginViewModel',
-      );
+    } catch (e) {
       _errorMessage = "Something went wrong. Please try again.";
       handleError(message: _errorMessage);
     } finally {
@@ -101,6 +95,7 @@ class LoginViewModel extends BaseChangeNotifier {
         final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
         final token = locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
 
+        print('auth token: $token');
         if (email != null && token != null) {
           await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
           _errorMessage = '';
@@ -119,6 +114,7 @@ class LoginViewModel extends BaseChangeNotifier {
     } catch (e) {
       _errorMessage = "An unexpected error occurred during biometric login: $e";
       notifyListeners();
+
       handleError(message: _errorMessage);
     } finally {
       _isLoading = false;

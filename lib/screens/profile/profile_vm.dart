@@ -1,6 +1,10 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
+import '../../data/local/session_constants.dart';
+import '../../data/local/session_manager.dart';
+import '../../shared_dependency/shared_dependency.dart';
+
 final profileViewModelProvider =
     ChangeNotifierProvider((ref) => ProfileViewModel(ref));
 
@@ -25,6 +29,8 @@ class ProfileViewModel extends BaseChangeNotifier {
       final response = await apiServices.logout();
 
       if (response.success) {
+        await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: false);
+
         navigateOnSuccess();
       } else {
         var errorMessage = response.error?.errors?.first.message ??

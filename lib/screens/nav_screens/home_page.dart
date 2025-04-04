@@ -8,8 +8,8 @@ import 'package:payvidence/screens/all_transactions/all_transactions.dart';
 import 'package:payvidence/screens/nav_screens/home.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/screens/sales/sales.dart';
-
 import '../../gen/assets.gen.dart';
+
 
 @RoutePage(name: 'HomePageRoute')
 class HomePage extends HookConsumerWidget {

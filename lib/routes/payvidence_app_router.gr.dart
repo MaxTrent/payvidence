@@ -1521,12 +1521,16 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
   PaymentWebViewRoute({
     _i66.Key? key,
     String paymentLink = '',
+    String callbackUrl = 'https://hello.pstk.xyz/callback',
+    String cancelUrl = 'https://your-cancel-url.com',
     List<_i65.PageRouteInfo>? children,
   }) : super(
           PaymentWebViewRoute.name,
           args: PaymentWebViewRouteArgs(
             key: key,
             paymentLink: paymentLink,
+            callbackUrl: callbackUrl,
+            cancelUrl: cancelUrl,
           ),
           rawQueryParams: {'paymentLink': paymentLink},
           initialChildren: children,
@@ -1547,6 +1551,8 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
       return _i46.PaymentWebViewPage(
         key: args.key,
         paymentLink: args.paymentLink,
+        callbackUrl: args.callbackUrl,
+        cancelUrl: args.cancelUrl,
       );
     },
   );
@@ -1556,15 +1562,21 @@ class PaymentWebViewRouteArgs {
   const PaymentWebViewRouteArgs({
     this.key,
     this.paymentLink = '',
+    this.callbackUrl = 'https://hello.pstk.xyz/callback',
+    this.cancelUrl = 'https://your-cancel-url.com',
   });
 
   final _i66.Key? key;
 
   final String paymentLink;
 
+  final String callbackUrl;
+
+  final String cancelUrl;
+
   @override
   String toString() {
-    return 'PaymentWebViewRouteArgs{key: $key, paymentLink: $paymentLink}';
+    return 'PaymentWebViewRouteArgs{key: $key, paymentLink: $paymentLink, callbackUrl: $callbackUrl, cancelUrl: $cancelUrl}';
   }
 }
 

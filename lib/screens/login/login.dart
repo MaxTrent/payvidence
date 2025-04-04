@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/login/login_vm.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/validators.dart';
@@ -170,8 +171,7 @@ class Login extends HookConsumerWidget {
                     if (useBiometricLogin && viewModel.errorMessage.isNotEmpty) ...[
                       GestureDetector(
                         onTap: () {
-                          showManualLogin.value = true; // Switch to email/password login
-                        },
+                          showManualLogin.value = true;},
                         child: Text(
                           'Log in with email/password',
                           style: Theme.of(context)
@@ -197,9 +197,11 @@ class Login extends HookConsumerWidget {
                             navigateOnSuccess: () {
                               print("Biometric login successful, navigating to home");
                               ref.invalidate(getAllBusinessProvider);
-                              locator<PayvidenceAppRouter>().popUntil(
-                                      (route) => route is OnboardingScreen);
-                              locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.home);
+                              AutoRouter.of(context).push(HomeScreenRoute(onViewAllTransactions: (){}));
+                              print('navigating back');
+                              // locator<PayvidenceAppRouter>().popUntil(
+                              //         (route) => route is OnboardingScreen);
+                              // locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
                             },
                           );
                         } else {
@@ -212,9 +214,12 @@ class Login extends HookConsumerWidget {
                               navigateOnSuccess: () {
                                 print("Email/password login successful, navigating to home");
                                 ref.invalidate(getAllBusinessProvider);
-                                locator<PayvidenceAppRouter>().popUntil(
-                                        (route) => route is OnboardingScreen);
-                                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+                                AutoRouter.of(context).push(HomeScreenRoute(onViewAllTransactions: (){}));
+                                print('navigating back');
+
+                                // locator<PayvidenceAppRouter>().popUntil(
+                                //         (route) => route is OnboardingScreen);
+                                // locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
                               },
                             );
                           } else {

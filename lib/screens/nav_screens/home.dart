@@ -5,13 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
+import 'package:payvidence/components/loading_indicator.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/data/local/session_constants.dart';
 import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
-import 'package:payvidence/screens/nav_screens/homepage_vm.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../components/app_card.dart';
 import '../../components/transaction_tile.dart';
 import '../../gen/assets.gen.dart';
@@ -28,10 +29,15 @@ class HomeScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(homePageViewModel);
     final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
+
+    final refreshController = useMemoized(() => RefreshController(initialRefresh: false));
+
+    useEffect(() {
+      return () => refreshController.dispose();
+    }, []);
 
     ref.listen(getAllBusinessProvider, (prev, next) {
       if (next.hasValue && next.value!.isNotEmpty) {
@@ -45,7 +51,6 @@ class HomeScreen extends HookConsumerWidget {
     if (businessId != null) {
       locator<SessionManager>()
           .save(key: SessionConstants.businessId, value: businessId);
-      print('business id saved: $businessId');
     }
 
     useEffect(() {
@@ -57,211 +62,237 @@ class HomeScreen extends HookConsumerWidget {
       return null;
     }, [businessId]);
 
+    Future<void> onRefresh() async {
+      try {
+        await ref.refresh(getAllBusinessProvider.future);
+        if (businessId != null) {
+          await transactionsViewModel.fetchTransactions(businessId);
+        }
+        refreshController.refreshCompleted();
+      } catch (e) {
+        refreshController.refreshFailed();
+        print('Refresh error: $e');
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: ListView(
-            physics: const BouncingScrollPhysics(),
-            children: [
-              8.verticalSpace,
-              getAllBusiness.when(
-                data: (data) {
-                  if (data.isEmpty) {
-                    locator<PayvidenceAppRouter>()
-                        .navigateNamed(PayvidenceRoutes.emptyBusiness);
-                    return const SizedBox.shrink();
-                  }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 20.r,
-                            backgroundColor: Colors.black,
-                            backgroundImage:
-                                NetworkImage(data.last.logoUrl ?? ''),
-                          ),
-                          SizedBox(width: 10.w),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                (() {
-                                  final name = ref.watch(getCurrentBusinessProvider)?.name ?? '...';
-                                  return name.length > 14 ? '${name.substring(0, 14)}...' : name;
-                                })(),
-                                style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
-                              ),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(Assets.svg.ribbon),
-                                  SizedBox(width: 2.w),
-                                  Text(
-                                    'Starter plan',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall!
-                                        .copyWith(fontSize: 12.sp),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 15.w),
-                      GestureDetector(
-                        onTap: () {
-                          locator<PayvidenceAppRouter>()
-                              .push(AllBusinessesRoute());
-                        },
-                        child: Container(
-                          height: 40.h,
-                          width: 157.w,
-                          decoration: BoxDecoration(
-                            color: appGrey2,
-                            borderRadius: BorderRadius.circular(24.r),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: SmartRefresher(
+            controller: refreshController,
+            enablePullDown: true,
+            enablePullUp: false,
+            header: CustomHeader(
+              builder: (BuildContext context, RefreshStatus? mode) {
+                if (mode == RefreshStatus.refreshing) {
+                  return const LoadingIndicator();
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            onRefresh: onRefresh,
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                8.verticalSpace,
+                getAllBusiness.when(
+                  data: (data) {
+                    if (data.isEmpty) {
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.emptyBusiness);
+                      return const SizedBox.shrink();
+                    }
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor: Colors.black,
+                              backgroundImage:
+                              NetworkImage(data.last.logoUrl ?? ''),
+                            ),
+                            SizedBox(width: 10.w),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Switch business',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displayMedium!
-                                      .copyWith(fontSize: 14.sp),
+                                  (() {
+                                    final name = ref.watch(getCurrentBusinessProvider)?.name ?? '...';
+                                    return name.length > 14 ? '${name.substring(0, 14)}...' : name;
+                                  })(),
+                                  style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
                                 ),
-                                SvgPicture.asset(Assets.svg.store),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(Assets.svg.ribbon),
+                                    SizedBox(width: 2.w),
+                                    Text(
+                                      'Starter plan',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: 12.sp),
+                                    ),
+                                  ],
+                                ),
                               ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 15.w),
+                        GestureDetector(
+                          onTap: () {
+                            locator<PayvidenceAppRouter>()
+                                .push(const AllBusinessesRoute());
+                          },
+                          child: Container(
+                            height: 40.h,
+                            width: 157.w,
+                            decoration: BoxDecoration(
+                              color: appGrey2,
+                              borderRadius: BorderRadius.circular(24.r),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12.w),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Switch business',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium!
+                                        .copyWith(fontSize: 14.sp),
+                                  ),
+                                  SvgPicture.asset(Assets.svg.store),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-                error: (error, _) => const Text("Error fetching businesses"),
-                loading: () => const CustomShimmer(),
-              ),
-              SizedBox(height: 32.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.allReceipts);
-                    },
-                    child: AppCard(text: 'Receipts', icon: Assets.svg.receipt),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.allInvoices);
-                    },
-                    child: AppCard(text: 'Invoices', icon: Assets.svg.invoice),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigate(ClientsRoute(businessId: businessId!));
-                    },
-                    child: AppCard(text: 'Clients', icon: Assets.svg.client),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.product);
-                    },
-                    child: AppCard(text: 'Products', icon: Assets.svg.product),
-                  ),
-                ],
-              ),
-              SizedBox(height: 38.h),
-              useMySubscriptionViewModel.subInfo?.plan.name != null
-                  ? const SizedBox.shrink()
-                  : GestureDetector(
-                      onTap: () => locator<PayvidenceAppRouter>().navigateNamed(
-                          PayvidenceRoutes.chooseSubscriptionPlan),
-                      child: SvgPicture.asset(Assets.svg.subscribe),
-                    ),
-              SizedBox(height: 40.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Recent transactions',
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                  GestureDetector(
-                    onTap: onViewAllTransactions,
-                    child: Text(
-                      'View all',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(fontSize: 12.sp),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.h),
-              if (transactionsViewModel.isLoading) ...[
-                CustomShimmer(height: 101.h),
-                SizedBox(height: 24.h),
-                CustomShimmer(height: 101.h),
-              ] else if (transactionsViewModel.transactions.isEmpty) ...[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                      ],
+                    );
+                  },
+                  error: (error, _) => const Text("Error fetching businesses"),
+                  loading: () => const CustomShimmer(),
+                ),
+                SizedBox(height: 32.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SvgPicture.asset(Assets.svg.emptyTransaction),
-                    SizedBox(height: 32.h),
-                    Text(
-                      'No transaction yet!',
-                      style: Theme.of(context).textTheme.displayLarge,
+                    GestureDetector(
+                      onTap: () {
+                        locator<PayvidenceAppRouter>()
+                            .navigateNamed(PayvidenceRoutes.allReceipts);
+                      },
+                      child: AppCard(text: 'Receipts', icon: Assets.svg.receipt),
                     ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      'Start generating receipts and invoices for your business. All transactions will show here.',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall!
-                          .copyWith(fontSize: 14.sp),
+                    GestureDetector(
+                      onTap: () {
+                        locator<PayvidenceAppRouter>()
+                            .navigateNamed(PayvidenceRoutes.allInvoices);
+                      },
+                      child: AppCard(text: 'Invoices', icon: Assets.svg.invoice),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        locator<PayvidenceAppRouter>()
+                            .navigate(ClientsRoute(businessId: businessId!));
+                      },
+                      child: AppCard(text: 'Clients', icon: Assets.svg.client),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        locator<PayvidenceAppRouter>()
+                            .navigateNamed(PayvidenceRoutes.product);
+                      },
+                      child: AppCard(text: 'Products', icon: Assets.svg.product),
                     ),
                   ],
                 ),
-              ] else ...[
-                ...transactionsViewModel.transactions.take(5).map(
-                  (transaction) {
-                    final firstProductDetail =
-                        transaction.recordProductDetails.isNotEmpty
-                            ? transaction.recordProductDetails.first
-                            : null;
-                    return TransactionTile(
-                      amount: firstProductDetail!.product.price
-                          .toString()
-                          .toCommaSeparated(),
-                      dateTime: firstProductDetail.product.createdAt
-                          .toString()
-                          .toFormattedIsoDate(),
-                      productName: firstProductDetail.product.name,
-                      receiptOrInvoice: transaction.status == 'pending'
-                          ? 'Invoice'
-                          : 'Receipt',
-                      unitSold:
-                          firstProductDetail.product.quantitySold.toString() ??
-                              '0',
-                    );
-                  },
+                SizedBox(height: 38.h),
+                useMySubscriptionViewModel.subInfo?.plan.name != null
+                    ? const SizedBox.shrink()
+                    : GestureDetector(
+                  onTap: () => locator<PayvidenceAppRouter>().navigateNamed(
+                      PayvidenceRoutes.chooseSubscriptionPlan),
+                  child: SvgPicture.asset(Assets.svg.subscribe),
                 ),
+                SizedBox(height: 40.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Recent transactions',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                    GestureDetector(
+                      onTap: onViewAllTransactions,
+                      child: Text(
+                        'View all',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(fontSize: 12.sp),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24.h),
+                if (transactionsViewModel.isLoading) ...[
+                  CustomShimmer(height: 101.h),
+                  SizedBox(height: 24.h),
+                  CustomShimmer(height: 101.h),
+                ] else if (transactionsViewModel.transactions.isEmpty) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(Assets.svg.emptyTransaction),
+                      SizedBox(height: 32.h),
+                      Text(
+                        'No transaction yet!',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(height: 10.h),
+                      Text(
+                        'Start generating receipts and invoices for your business. All transactions will show here.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(fontSize: 14.sp),
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  ...transactionsViewModel.transactions.take(5).map(
+                        (transaction) {
+                      final firstProductDetail =
+                      transaction.recordProductDetails.isNotEmpty
+                          ? transaction.recordProductDetails.first
+                          : null;
+                      return TransactionTile(
+                        amount: firstProductDetail!.product.price
+                            .toString()
+                            .toCommaSeparated(),
+                        dateTime: firstProductDetail.product.createdAt
+                            .toString()
+                            .toFormattedIsoDate(),
+                        productName: firstProductDetail.product.name,
+                        receiptOrInvoice: transaction.status == 'pending'
+                            ? 'Invoice'
+                            : 'Receipt',
+                        unitSold:
+                        firstProductDetail.product.quantitySold.toString(),
+                      );
+                    },
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
