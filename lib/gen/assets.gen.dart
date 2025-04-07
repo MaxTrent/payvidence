@@ -35,18 +35,6 @@ class $AssetsPngGen {
   /// File path: assets/png/onboard3.png
   AssetGenImage get onboard3 => const AssetGenImage('assets/png/onboard3.png');
 
-  /// File path: assets/png/onboarding1.png
-  AssetGenImage get onboarding1 =>
-      const AssetGenImage('assets/png/onboarding1.png');
-
-  /// File path: assets/png/onboarding2.png
-  AssetGenImage get onboarding2 =>
-      const AssetGenImage('assets/png/onboarding2.png');
-
-  /// File path: assets/png/onboarding3.png
-  AssetGenImage get onboarding3 =>
-      const AssetGenImage('assets/png/onboarding3.png');
-
   /// File path: assets/png/payvidence_logo.png
   AssetGenImage get payvidenceLogo =>
       const AssetGenImage('assets/png/payvidence_logo.png');
@@ -72,9 +60,6 @@ class $AssetsPngGen {
         onboard1,
         onboard2,
         onboard3,
-        onboarding1,
-        onboarding2,
-        onboarding3,
         payvidenceLogo,
         productPicture,
         productpic,
