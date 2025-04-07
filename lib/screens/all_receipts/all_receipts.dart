@@ -39,7 +39,7 @@ class AllReceipts extends ConsumerWidget {
         title: ValueListenableBuilder(
           builder: (context, value, _) {
             return Text(
-              'All receipts (${value ?? ''})',
+              'All receipts (${value ?? '0'})',
               style: Theme.of(context).textTheme.displayLarge!.copyWith(),
             );
           },
