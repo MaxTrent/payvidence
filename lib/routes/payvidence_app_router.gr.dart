@@ -160,10 +160,13 @@ class AddBrandRouteArgs {
 
 /// generated route for
 /// [_i3.AddBusiness]
-class AddBusinessRoute extends _i65.PageRouteInfo<void> {
-  const AddBusinessRoute({List<_i65.PageRouteInfo>? children})
-      : super(
+class AddBusinessRoute extends _i65.PageRouteInfo<AddBusinessRouteArgs> {
+  AddBusinessRoute({
+    _i66.Key? key,
+    List<_i65.PageRouteInfo>? children,
+  }) : super(
           AddBusinessRoute.name,
+          args: AddBusinessRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -172,9 +175,22 @@ class AddBusinessRoute extends _i65.PageRouteInfo<void> {
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      return const _i3.AddBusiness();
+      final args = data.argsAs<AddBusinessRouteArgs>(
+          orElse: () => const AddBusinessRouteArgs());
+      return _i3.AddBusiness(key: args.key);
     },
   );
+}
+
+class AddBusinessRouteArgs {
+  const AddBusinessRouteArgs({this.key});
+
+  final _i66.Key? key;
+
+  @override
+  String toString() {
+    return 'AddBusinessRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for
@@ -1841,13 +1857,10 @@ class ResetPasswordSuccessRoute extends _i65.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i56.Sales]
-class SalesRoute extends _i65.PageRouteInfo<SalesRouteArgs> {
-  SalesRoute({
-    _i66.Key? key,
-    List<_i65.PageRouteInfo>? children,
-  }) : super(
+class SalesRoute extends _i65.PageRouteInfo<void> {
+  const SalesRoute({List<_i65.PageRouteInfo>? children})
+      : super(
           SalesRoute.name,
-          args: SalesRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1856,22 +1869,9 @@ class SalesRoute extends _i65.PageRouteInfo<SalesRouteArgs> {
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      final args =
-          data.argsAs<SalesRouteArgs>(orElse: () => const SalesRouteArgs());
-      return _i56.Sales(key: args.key);
+      return const _i56.Sales();
     },
   );
-}
-
-class SalesRouteArgs {
-  const SalesRouteArgs({this.key});
-
-  final _i66.Key? key;
-
-  @override
-  String toString() {
-    return 'SalesRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for

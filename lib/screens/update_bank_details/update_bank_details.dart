@@ -127,6 +127,8 @@ class UpdateBankDetails extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Account name',
+                    filled: true,
+                    fillColor: const Color(0xFFD9D9D9),
                     controller: accountNameController,
                     validator: (val) => Validator.validateEmpty(val),
                   ),
