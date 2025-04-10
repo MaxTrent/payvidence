@@ -64,7 +64,12 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
   }
 
   Future<void> updateUserInfo({
-    required String newFirstName,
+    String? newFirstName,
+    String? newLastName,
+    String? newPhoneNumber,
+    bool? transactionalAlerts,
+    bool? promotionalUpdates,
+    bool? securityAlerts,
     required Function() navigateOnSuccess,
   }) async {
     try {
@@ -72,7 +77,7 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
       notifyListeners();
 
       print("ViewModel: Updating user with newFirstName: $newFirstName");
-      final response = await apiServices.updateUserInfo(newFirstName);
+      final response = await apiServices.updateUserInfo(firstName: newFirstName, lastName: newLastName, phoneNumber: newPhoneNumber);
       print(
           "ViewModel: Update response - success: ${response.success}, data: ${response.data}");
 
@@ -89,7 +94,12 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
           ) ??
               User(
                 account: Account(
-                  firstName: newFirstName,
+                  firstName: newFirstName ?? '',
+                  lastName: newLastName,
+                  phoneNumber: newPhoneNumber,
+                  transactionalAlerts: transactionalAlerts,
+                  promotionalUpdates: promotionalUpdates,
+                  securityAlerts: securityAlerts
                 ),
                 token: null,
               );

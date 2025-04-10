@@ -144,7 +144,9 @@ class MySubscription extends HookConsumerWidget {
                     SizedBox(
                       height: 26.h,
                     ),
-                    GestureDetector(
+                    viewModel.subInfo?.startDate == null
+                        ? const SizedBox.shrink()
+                        : GestureDetector(
                         onTap: () {
                           _buildCancelSubBottomSheet(context);
                         },

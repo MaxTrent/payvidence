@@ -1,10 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:payvidence/constants/app_colors.dart';
+import '../../components/app_switch.dart';
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -66,15 +65,9 @@ class PrivacyAndSecurity extends HookConsumerWidget {
                       .displaySmall!
                       .copyWith(fontSize: 22.sp),
                 ),
-                CupertinoSwitch(
-                  value: isBiometricEnabled.value,
-                  onChanged: (value) {
-                    toggleBiometricLogin(value);
-                  },
-                  activeColor: primaryColor2,
-                  thumbColor: appGrey,
-                  //inactiveColor: borderColor,
-                )
+                AppSwitch(isSwitchEnabled: isBiometricEnabled.value, onChanged: (value) {
+                  toggleBiometricLogin(value);
+                },)
               ],
             ),
             SizedBox(
@@ -117,3 +110,5 @@ class PrivacyAndSecurity extends HookConsumerWidget {
     );
   }
 }
+
+

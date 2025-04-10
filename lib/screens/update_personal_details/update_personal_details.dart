@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,37 +20,41 @@ class UpdatePersonalDetails extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(updatePersonalDetailsViewModelProvider);
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
-
     final firstNameController = useTextEditingController();
     final lastNameController = useTextEditingController();
     final emailController = useTextEditingController();
     final phoneController = useTextEditingController();
     final originalFirstName = useState("");
+    final originalLastName = useState("");
+    final originalPhoneNumber = useState("");
     final firstNameFocusNode = useFocusNode();
+    final lastNameFocusNode = useFocusNode();
+    final phoneFocusNode = useFocusNode();
+
 
     useEffect(() {
-      print("fetching user info");
       viewModel.fetchUserInformation();
       return null;
     }, []);
 
     useEffect(() {
       if (viewModel.userInfo != null && !viewModel.isLoading) {
-        print("useEffect - userInfo: ${viewModel.userInfo}");
         firstNameController.text = viewModel.userInfo?.account.firstName ?? "";
         lastNameController.text = viewModel.userInfo?.account.lastName ?? "";
         emailController.text = viewModel.userInfo?.account.email ?? "";
         phoneController.text = viewModel.userInfo?.account.phoneNumber ?? "";
         originalFirstName.value = viewModel.userInfo?.account.firstName ?? "";
-        print(
-            "Controllers set - FirstName: ${firstNameController.text}, LastName: ${lastNameController.text}");
-      }
+        originalLastName.value = viewModel.userInfo?.account.lastName ?? ""; // Set original last name
+        originalPhoneNumber.value = viewModel.userInfo?.account.phoneNumber ?? ""; // Set original phone number
+        }
       return null;
     }, [viewModel.userInfo, viewModel.isLoading]);
 
-    // Function to check if firstName has changed
+
     bool hasChanges() {
-      return firstNameController.text != originalFirstName.value;
+      return firstNameController.text != originalFirstName.value ||
+          lastNameController.text != originalLastName.value ||
+          phoneController.text != originalPhoneNumber.value;
     }
 
     return GestureDetector(
@@ -105,7 +110,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                       controller: firstNameController,
                       keyboardType: TextInputType.name,
                       focusNode: firstNameFocusNode,
-                      textCapitalization: TextCapitalization.words,// Assign FocusNode
+                      textCapitalization: TextCapitalization.words,
                       validator: (val) {
                         if (!val!.trim().isValidName || val.isEmpty) {
                           return 'Enter a valid name';
@@ -119,8 +124,17 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     SizedBox(height: 8.h),
                     AppTextField(
                       hintText: 'Last name',
-                      enabled: false,
+                      enabled: viewModel.isEditing,
                       controller: lastNameController,
+                      keyboardType: TextInputType.name,
+                      focusNode: lastNameFocusNode,
+                      textCapitalization: TextCapitalization.words,
+                      validator: (val) {
+                        if (!val!.trim().isValidName || val.isEmpty) {
+                          return 'Enter a valid name';
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 20.h),
                     Text('Email address',
@@ -128,7 +142,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     SizedBox(height: 8.h),
                     AppTextField(
                       hintText: 'Email address',
-                      enabled: false,
+                      enabled: false, // Email remains disabled
                       controller: emailController,
                     ),
                     SizedBox(height: 20.h),
@@ -137,8 +151,20 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     SizedBox(height: 8.h),
                     AppTextField(
                       hintText: 'Phone number',
-                      enabled: false,
+                      enabled: viewModel.isEditing,
                       controller: phoneController,
+                      keyboardType: TextInputType.phone,
+                      focusNode: phoneFocusNode,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(11),
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      validator: (val) {
+                        if (val!.trim().isEmpty || !val.isValidPhone) {
+                          return 'Enter a valid phone number';
+                        }
+                        return null;
+                      },
                     ),
                   ],
                   SizedBox(height: 32.h),
@@ -154,6 +180,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                         if (formKey.currentState!.validate()) {
                           viewModel.updateUserInfo(
                             newFirstName: firstNameController.text.trim(),
+                            newLastName: lastNameController.text.trim(),
+                            newPhoneNumber: phoneController.text.trim(),
                             navigateOnSuccess: () {
                               locator<PayvidenceAppRouter>().back();
                             },

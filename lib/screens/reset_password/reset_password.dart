@@ -88,6 +88,8 @@ class ResetPassword extends HookConsumerWidget {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       print("Form is valid");
+
+
                       FocusScope.of(context).unfocus();
                       viewModel.resetPasswordInit(
                         email: emailController.text.trim(),
