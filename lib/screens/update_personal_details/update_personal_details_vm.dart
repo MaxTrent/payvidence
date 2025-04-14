@@ -2,6 +2,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 import '../../model/user_model.dart';
 
+
+
+
 final updatePersonalDetailsViewModelProvider =
 ChangeNotifierProvider((ref) => UpdatePersonalDetailsViewModel(ref));
 
@@ -10,13 +13,16 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
 
   UpdatePersonalDetailsViewModel(this.ref);
 
+
   User? _user;
   bool _isLoading = false;
   bool _isEditing = false;
 
+
   User? get userInfo => _user;
   bool get isLoading => _isLoading;
   bool get isEditing => _isEditing;
+
 
   set userInfo(User? user) {
     _user = user;
@@ -29,6 +35,7 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
     notifyListeners();
     print("ViewModel: Editing mode toggled to $_isEditing");
   }
+
 
   Future<void> fetchUserInformation() async {
     try {
@@ -62,6 +69,7 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
       notifyListeners();
     }
   }
+
 
   Future<void> updateUserInfo({
     String? newFirstName,

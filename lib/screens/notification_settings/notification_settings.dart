@@ -1,13 +1,13 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_switch.dart';
-import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
-import '../../shared_dependency/shared_dependency.dart';
+
+
+
 
 @RoutePage(name: 'NotificationSettingsRoute')
 class NotificationSettings extends HookConsumerWidget {
@@ -29,7 +29,6 @@ class NotificationSettings extends HookConsumerWidget {
       return null;
     }, []);
 
-    // Update switch states when user info is loaded
     useEffect(() {
       if (viewModel.userInfo != null && !viewModel.isLoading) {
         print("Updating switch states with user info: ${viewModel.userInfo}");
@@ -40,13 +39,11 @@ class NotificationSettings extends HookConsumerWidget {
       return null;
     }, [viewModel.userInfo, viewModel.isLoading]);
 
-    // Function to update notification settings
     void updateNotificationSettings({
       bool? transactionalAlerts,
       bool? promotionalUpdates,
       bool? securityAlerts,
     }) {
-      // Use current switch states if specific values aren't provided
       final updatedTransactionalAlerts = transactionalAlerts ?? isTransactionAlertEnabled.value;
       final updatedPromotionalUpdates = promotionalUpdates ?? isPromotionalUpdateEnabled.value;
       final updatedSecurityAlerts = securityAlerts ?? isSecurityAlertEnabled.value;
@@ -57,7 +54,6 @@ class NotificationSettings extends HookConsumerWidget {
         securityAlerts: updatedSecurityAlerts,
         navigateOnSuccess: () {
           print("Notification settings updated successfully");
-          // Optionally navigate back or stay on the screen
           // locator<PayvidenceAppRouter>().back();
         },
       );

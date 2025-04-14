@@ -67,9 +67,10 @@ class SubscriptionPlans extends HookConsumerWidget {
                   );
                   subscriptionPlansVm.createSubscription(
                     planId: selectedPlan.id,
-                    navigateOnSuccess: (paymentLink) {
+                    navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
                       locator<PayvidenceAppRouter>()
-                          .push(PaymentWebViewRoute(paymentLink: paymentLink));
+                          .push(PaymentWebViewRoute(paymentLink: paymentLink,
+                      callbackUrl: callbackUrl, cancelAction: cancelAction));
                     },
                   );
                 },
