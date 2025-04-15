@@ -15,6 +15,8 @@ class Business extends Equatable {
   final dynamic bankName;
   final dynamic accountNumber;
   final dynamic accountName;
+  final dynamic noOfReceipts;
+  final dynamic noOfInvoices;
   final int? vat;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -35,6 +37,8 @@ class Business extends Equatable {
     this.vat,
     this.createdAt,
     this.updatedAt,
+    this.noOfReceipts,
+    this.noOfInvoices,
   });
 
   @override
@@ -52,6 +56,8 @@ class Business extends Equatable {
         accountNumber,
         accountName,
         vat,
+        noOfReceipts,
+        noOfInvoices,
         createdAt,
         updatedAt,
       ];
@@ -75,6 +81,8 @@ class Business extends Equatable {
         accountNumber: json["account_number"],
         accountName: json["account_name"],
         vat: json["vat"],
+        noOfInvoices: json["no_of_invoices"],
+        noOfReceipts: json["no_of_receipts"],
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
@@ -97,6 +105,8 @@ class Business extends Equatable {
         "account_number": accountNumber,
         "account_name": accountName,
         "vat": vat,
+        "no_of_receipts": noOfReceipts,
+        "no_of_invoices": noOfInvoices,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
       };

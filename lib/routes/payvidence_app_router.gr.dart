@@ -160,10 +160,13 @@ class AddBrandRouteArgs {
 
 /// generated route for
 /// [_i3.AddBusiness]
-class AddBusinessRoute extends _i65.PageRouteInfo<void> {
-  const AddBusinessRoute({List<_i65.PageRouteInfo>? children})
-      : super(
+class AddBusinessRoute extends _i65.PageRouteInfo<AddBusinessRouteArgs> {
+  AddBusinessRoute({
+    _i66.Key? key,
+    List<_i65.PageRouteInfo>? children,
+  }) : super(
           AddBusinessRoute.name,
+          args: AddBusinessRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -172,9 +175,22 @@ class AddBusinessRoute extends _i65.PageRouteInfo<void> {
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      return const _i3.AddBusiness();
+      final args = data.argsAs<AddBusinessRouteArgs>(
+          orElse: () => const AddBusinessRouteArgs());
+      return _i3.AddBusiness(key: args.key);
     },
   );
+}
+
+class AddBusinessRouteArgs {
+  const AddBusinessRouteArgs({this.key});
+
+  final _i66.Key? key;
+
+  @override
+  String toString() {
+    return 'AddBusinessRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for

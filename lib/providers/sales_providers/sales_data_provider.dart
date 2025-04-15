@@ -14,17 +14,23 @@ final salesDataProvider =
 class GetSalesDataNotifier extends AsyncNotifier<Sales> {
   @override
   Future<Sales> build() {
+    final Map<String, dynamic> filterData = ref.read(salesFilterProvider);
+
     //final userModel = getUser();
-    return locator<ISalesRepository>()
-        .fetchSales(ref.watch(getCurrentBusinessProvider)!.id!);
+    return locator<ISalesRepository>().fetchSales(
+        ref.watch(getCurrentBusinessProvider)!.id!,
+        interval: filterData['interval'],
+        startDate: filterData['startDate'],
+        endDate: filterData['endDate']);
   }
 
   Future<void> setFilter() async {
     final Map<String, dynamic> filterData = ref.read(salesFilterProvider);
-    print(filterData);
     state = AsyncData(await locator<ISalesRepository>().fetchSales(
         ref.watch(getCurrentBusinessProvider)!.id!,
-        interval: filterData['interval'] ?? ''));
+        interval: filterData['interval'],
+        startDate: filterData['startDate'],
+        endDate: filterData['endDate']));
     //name: filterData['name'] ?? ''));
   }
 }

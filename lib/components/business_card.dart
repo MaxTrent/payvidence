@@ -36,24 +36,28 @@ class BusinessCard extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 32.r,
-                  backgroundImage: business.logoUrl != null && business.logoUrl!.isNotEmpty
-                      ? NetworkImage(business.logoUrl!)
-                      : null,
-                  backgroundColor: business.logoUrl != null && business.logoUrl!.isNotEmpty ? null : Colors.black,
-                  onBackgroundImageError: (exception, stackTrace) {
-                   },
+                  backgroundImage:
+                      business.logoUrl != null && business.logoUrl!.isNotEmpty
+                          ? NetworkImage(business.logoUrl!)
+                          : null,
+                  backgroundColor:
+                      business.logoUrl != null && business.logoUrl!.isNotEmpty
+                          ? null
+                          : Colors.black,
+                  onBackgroundImageError: (exception, stackTrace) {},
                   child: business.logoUrl == null || business.logoUrl!.isEmpty
                       ? const Icon(
-                    Icons.business,
-                    color: Colors.white,
-                    size: 32,
-                  )
+                          Icons.business,
+                          color: Colors.white,
+                          size: 32,
+                        )
                       : null,
                 ),
                 SizedBox(width: 12.w),
                 GestureDetector(
                   onTap: () {
-                    locator<PayvidenceAppRouter>().push(BusinessDetailRoute(businessId: business.id ?? ''));
+                    locator<PayvidenceAppRouter>().push(
+                        BusinessDetailRoute(businessId: business.id ?? ''));
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,15 +73,25 @@ class BusinessCard extends ConsumerWidget {
                           SvgPicture.asset(Assets.svg.library),
                           SizedBox(width: 3.w),
                           Text(
-                            '20 receipts',
-                            style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Colors.black),
+
+                            '${business.noOfReceipts} receipts',
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(fontSize: 14.sp),
+
                           ),
                           SizedBox(width: 12.w),
                           SvgPicture.asset(Assets.svg.library),
                           SizedBox(width: 3.w),
                           Text(
-                            '20 invoices',
-                            style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Colors.black),
+
+                            '${business.noOfInvoices} invoices',
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(fontSize: 14.sp),
+
                           ),
                         ],
                       ),
@@ -90,7 +104,9 @@ class BusinessCard extends ConsumerWidget {
               buttonText: 'Switch to business',
               isDisabled: business.id == currentBusiness?.id,
               onPressed: () {
-                ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
+                ref
+                    .read(getCurrentBusinessProvider.notifier)
+                    .setCurrentBusiness(business);
               },
             ),
           ],
