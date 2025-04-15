@@ -41,12 +41,13 @@ class NetworkService {
   Future<Either<Failure, Success>> get(
     path, {
     bool useToken = true,
+        bool isAccessToken = true,
     dynamic data,
     Map<String, dynamic> headers = const {},
   }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
-      authorizedHeader = await getAuthorizedHeader();
+      authorizedHeader = await getAuthorizedHeader(isAccessToken: isAccessToken);
     }
 
     return request(
@@ -64,7 +65,7 @@ class NetworkService {
   }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
-      authorizedHeader = await getAuthorizedHeader();
+      authorizedHeader = await getAuthorizedHeader(isAccessToken: true);
     }
 
     return request(
@@ -82,7 +83,7 @@ class NetworkService {
   }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
-      authorizedHeader = await getAuthorizedHeader();
+      authorizedHeader = await getAuthorizedHeader(isAccessToken: true);
     }
 
     return request(
@@ -100,7 +101,7 @@ class NetworkService {
   }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
-      authorizedHeader = await getAuthorizedHeader();
+      authorizedHeader = await getAuthorizedHeader(isAccessToken: true);
     }
 
     return request(
@@ -191,13 +192,15 @@ class NetworkService {
     }
   }
 
-  Future<Map<String, dynamic>> getAuthorizedHeader() async {
+  Future<Map<String, dynamic>> getAuthorizedHeader({required bool isAccessToken}) async {
     var accessToken =
         locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
+    var refreshToken =
+    locator<SessionManager>().get<String>(SessionConstants.refreshToken);
 
-    print('token: $accessToken');
+    print('token: ${isAccessToken ? accessToken : refreshToken}');
     final accessData = {
-      "Authorization": "Bearer $accessToken",
+      "Authorization": "Bearer ${isAccessToken?accessToken:refreshToken}",
     };
 
     return accessData;

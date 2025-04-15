@@ -31,7 +31,7 @@ class HomeScreen extends HookConsumerWidget {
     final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
-
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen(getAllBusinessProvider, (prev, next) {
       if (next.hasValue && next.value!.isNotEmpty) {
@@ -141,7 +141,7 @@ class HomeScreen extends HookConsumerWidget {
                                     style: Theme.of(context)
                                         .textTheme
                                         .displayMedium!
-                                        .copyWith(fontSize: 14.sp),
+                                        .copyWith(fontSize: 14.sp, color: Colors.black),
                                   ),
                                   SvgPicture.asset(Assets.svg.store),
                                 ],

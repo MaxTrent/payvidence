@@ -19,16 +19,20 @@ class SubscriptionPlansViewModel extends BaseChangeNotifier {
 
   Future<void> createSubscription({
     required String planId,
-    required Function(String paymentLink) navigateOnSuccess,
+    required Function(String paymentLink, String callBackUrl, String cancelAction) navigateOnSuccess,
   }) async {
+
     _setLoading(true);
     try {
       final response = await apiServices.createSubscription(planId);
 
       if (response.success && response.data != null) {
         final paymentLink = response.data!['data']['payment_link'] as String?;
-        if (paymentLink != null) {
-          navigateOnSuccess(paymentLink);
+        final callBackUrl = response.data!['data']['callback_url'] as String?;
+        final cancelAction = response.data!['data']['cancel_action'] as String?;
+
+        if (paymentLink != null && callBackUrl != null && cancelAction != null) {
+          navigateOnSuccess(paymentLink, callBackUrl, cancelAction);
         }
       } else {
         var errorMessage = response.error?.errors?.first.message ??

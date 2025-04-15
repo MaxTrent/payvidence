@@ -16,6 +16,7 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 
 
 
@@ -30,6 +31,7 @@ class Clients extends HookConsumerWidget {
       @QueryParam('businessId') this.businessId = ''});
 
   final _searchController = TextEditingController();
+
 
   static const List<Color> avatarColors = [
     Colors.lightGreen,
@@ -50,6 +52,9 @@ class Clients extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allClients = ref.watch(getAllClientsProvider);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
 
 
     Future<void> onRefresh() async {
@@ -218,7 +223,7 @@ class Clients extends HookConsumerWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        SvgPicture.asset(Assets.svg.location),
+                                        SvgPicture.asset(Assets.svg.location, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                                         SizedBox(width: 6.w),
                                         Expanded(
                                           child: Text(

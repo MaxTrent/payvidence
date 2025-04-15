@@ -16,19 +16,26 @@ class ForgotPassword extends HookConsumerWidget {
   const ForgotPassword({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final viewModel = ref.watch(forgotPasswordViewModelProvider);
     final emailController = useTextEditingController();
     final isTextFieldEmpty = useState(true);
+    final isEmailValid = useState(false);
+
+    bool checkEmailValid(String email) {
+      return email.trim().isValidEmail;
+    }
 
     useEffect(() {
-      void listener() {
-        isTextFieldEmpty.value = emailController.text.isEmpty;
+      void updateFieldStatus() {
+        isTextFieldEmpty.value = emailController.text.trim().isEmpty;
+        isEmailValid.value = checkEmailValid(emailController.text);
+        print("Field empty: ${isTextFieldEmpty.value}, Email valid: ${isEmailValid.value}");
       }
 
-      emailController.addListener(listener);
-      return () => emailController.removeListener(listener);
+      emailController.addListener(updateFieldStatus);
+      return () => emailController.removeListener(updateFieldStatus);
     }, []);
 
     return Scaffold(
@@ -41,30 +48,22 @@ class ForgotPassword extends HookConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 16.h,
-                ),
+                SizedBox(height: 16.h),
                 Text(
                   'Recover account',
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
-                SizedBox(
-                  height: 8.h,
-                ),
+                SizedBox(height: 8.h),
                 Text(
                   'Enter email address used for registration.',
                   style: Theme.of(context).textTheme.displaySmall!,
                 ),
-                SizedBox(
-                  height: 32.h,
-                ),
+                SizedBox(height: 32.h),
                 Text(
                   'Email address',
                   style: Theme.of(context).textTheme.displaySmall,
                 ),
-                SizedBox(
-                  height: 8.h,
-                ),
+                SizedBox(height: 8.h),
                 AppTextField(
                   hintText: 'Email address',
                   controller: emailController,
@@ -80,18 +79,12 @@ class ForgotPassword extends HookConsumerWidget {
                     return null;
                   },
                 ),
-
-                SizedBox(
-                  height: 32.h,
-                ),
+                SizedBox(height: 32.h),
                 AppButton(
-                  isDisabled: isTextFieldEmpty.value,
+                  isDisabled: isTextFieldEmpty.value || !isEmailValid.value,
                   isProcessing: viewModel.isLoading,
                   buttonText: 'Continue',
                   onPressed: () {
-                    // locator<PayvidenceAppRouter>()
-                    //     .navigateNamed(PayvidenceRoutes.otpLogin);
-
                     if (formKey.currentState!.validate()) {
                       print("Form is valid");
                       FocusScope.of(context).unfocus();
@@ -99,8 +92,6 @@ class ForgotPassword extends HookConsumerWidget {
                         email: emailController.text.trim(),
                         navigateOnSuccess: () {
                           print('navigating');
-                          // locator<PayvidenceAppRouter>().popUntil(
-                          //         (route) => route is OnboardingScreen);
                           locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.otpLogin);
                         },
                       );

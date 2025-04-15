@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
-import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/login/login_vm.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/validators.dart';
@@ -22,7 +21,7 @@ class Login extends HookConsumerWidget {
   const Login({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final viewModel = ref.watch(loginViewModelProvider);
 
@@ -30,26 +29,31 @@ class Login extends HookConsumerWidget {
     final passwordController = useTextEditingController();
 
     final areFieldsEmpty = useState(true);
+    final isEmailValid = useState(false);
     final obscureText = useState(true);
     final showManualLogin = useState(false);
 
     bool checkFieldsEmpty() {
-      return emailController.text.toString().isEmpty ||
-          passwordController.text.toString().isEmpty;
+      return emailController.text.trim().isEmpty || passwordController.text.trim().isEmpty;
+    }
+
+    bool checkEmailValid(String email) {
+      return email.trim().isValidEmail;
     }
 
     useEffect(() {
-      void updateFieldsEmptyStatus() {
+      void updateFieldsStatus() {
         areFieldsEmpty.value = checkFieldsEmpty();
-        print("Fields empty: ${areFieldsEmpty.value}");
+        isEmailValid.value = checkEmailValid(emailController.text);
+        print("Fields empty: ${areFieldsEmpty.value}, Email valid: ${isEmailValid.value}");
       }
 
-      emailController.addListener(updateFieldsEmptyStatus);
-      passwordController.addListener(updateFieldsEmptyStatus);
+      emailController.addListener(updateFieldsStatus);
+      passwordController.addListener(updateFieldsStatus);
 
       return () {
-        emailController.removeListener(updateFieldsEmptyStatus);
-        passwordController.removeListener(updateFieldsEmptyStatus);
+        emailController.removeListener(updateFieldsStatus);
+        passwordController.removeListener(updateFieldsStatus);
       };
     }, []);
 
@@ -81,7 +85,7 @@ class Login extends HookConsumerWidget {
                     ),
                     SizedBox(height: 32.h),
 
-                    // Show email/password fields if not using biometric login
+
                     if (!useBiometricLogin) ...[
                       Text(
                         'Email address',
@@ -156,22 +160,12 @@ class Login extends HookConsumerWidget {
                       ),
                       SizedBox(height: 32.h),
                     ],
-                    // Display error message if present
-                    // if (viewModel.errorMessage.isNotEmpty) ...[
-                    //   Text(
-                    //     viewModel.errorMessage,
-                    //     style: Theme.of(context)
-                    //         .textTheme
-                    //         .displaySmall!
-                    //         .copyWith(color: Colors.red),
-                    //   ),
-                    //   SizedBox(height: 16.h),
-                    // ],
                     // Show link if biometric login failed
                     if (useBiometricLogin && viewModel.errorMessage.isNotEmpty) ...[
                       GestureDetector(
                         onTap: () {
-                          showManualLogin.value = true;},
+                          showManualLogin.value = true;
+                        },
                         child: Text(
                           'Log in with email/password',
                           style: Theme.of(context)
@@ -185,27 +179,27 @@ class Login extends HookConsumerWidget {
 
                     AppButton(
                       buttonText: 'Log in',
-                      isDisabled: !useBiometricLogin && areFieldsEmpty.value,
+                      isDisabled: useBiometricLogin
+                          ? false
+                          : (areFieldsEmpty.value || !isEmailValid.value), // Updated condition
                       isProcessing: viewModel.isLoading,
                       onPressed: () {
                         print("Login button pressed");
                         FocusScope.of(context).unfocus();
                         if (useBiometricLogin) {
-                          // Use biometric login
                           print("Using biometric login");
                           viewModel.biometricLogin(
                             navigateOnSuccess: () {
                               print("Biometric login successful, navigating to home");
                               ref.invalidate(getAllBusinessProvider);
-                              AutoRouter.of(context).push(HomeScreenRoute(onViewAllTransactions: (){}));
+                              locator<PayvidenceAppRouter>().popUntil(
+                                      (route) => route is OnboardingScreen);
+                              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+
                               print('navigating back');
-                              // locator<PayvidenceAppRouter>().popUntil(
-                              //         (route) => route is OnboardingScreen);
-                              // locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
                             },
                           );
                         } else {
-                          // Use email/password login
                           if (formKey.currentState!.validate()) {
                             print("Form validation passed");
                             viewModel.login(
@@ -214,12 +208,10 @@ class Login extends HookConsumerWidget {
                               navigateOnSuccess: () {
                                 print("Email/password login successful, navigating to home");
                                 ref.invalidate(getAllBusinessProvider);
-                                AutoRouter.of(context).push(HomeScreenRoute(onViewAllTransactions: (){}));
+                                locator<PayvidenceAppRouter>().popUntil(
+                                        (route) => route is OnboardingScreen);
+                                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
                                 print('navigating back');
-
-                                // locator<PayvidenceAppRouter>().popUntil(
-                                //         (route) => route is OnboardingScreen);
-                                // locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
                               },
                             );
                           } else {
@@ -228,7 +220,7 @@ class Login extends HookConsumerWidget {
                         }
                       },
                     ),
-                    SizedBox(height: 16.h), // Add some padding at the bottom
+                    SizedBox(height: 16.h),
                   ],
                 ),
               ),

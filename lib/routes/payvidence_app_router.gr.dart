@@ -1537,8 +1537,8 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
   PaymentWebViewRoute({
     _i66.Key? key,
     String paymentLink = '',
-    String callbackUrl = 'https://hello.pstk.xyz/callback',
-    String cancelUrl = 'https://your-cancel-url.com',
+    String callbackUrl = '',
+    String cancelAction = '',
     List<_i65.PageRouteInfo>? children,
   }) : super(
           PaymentWebViewRoute.name,
@@ -1546,9 +1546,13 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
             key: key,
             paymentLink: paymentLink,
             callbackUrl: callbackUrl,
-            cancelUrl: cancelUrl,
+            cancelAction: cancelAction,
           ),
-          rawQueryParams: {'paymentLink': paymentLink},
+          rawQueryParams: {
+            'paymentLink': paymentLink,
+            'callbackUrl': callbackUrl,
+            'cancelAction': cancelAction,
+          },
           initialChildren: children,
         );
 
@@ -1560,15 +1564,24 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
       final queryParams = data.queryParams;
       final args = data.argsAs<PaymentWebViewRouteArgs>(
           orElse: () => PaymentWebViewRouteArgs(
-                  paymentLink: queryParams.getString(
-                'paymentLink',
-                '',
-              )));
+                paymentLink: queryParams.getString(
+                  'paymentLink',
+                  '',
+                ),
+                callbackUrl: queryParams.getString(
+                  'callbackUrl',
+                  '',
+                ),
+                cancelAction: queryParams.getString(
+                  'cancelAction',
+                  '',
+                ),
+              ));
       return _i46.PaymentWebViewPage(
         key: args.key,
         paymentLink: args.paymentLink,
         callbackUrl: args.callbackUrl,
-        cancelUrl: args.cancelUrl,
+        cancelAction: args.cancelAction,
       );
     },
   );
@@ -1578,8 +1591,8 @@ class PaymentWebViewRouteArgs {
   const PaymentWebViewRouteArgs({
     this.key,
     this.paymentLink = '',
-    this.callbackUrl = 'https://hello.pstk.xyz/callback',
-    this.cancelUrl = 'https://your-cancel-url.com',
+    this.callbackUrl = '',
+    this.cancelAction = '',
   });
 
   final _i66.Key? key;
@@ -1588,11 +1601,11 @@ class PaymentWebViewRouteArgs {
 
   final String callbackUrl;
 
-  final String cancelUrl;
+  final String cancelAction;
 
   @override
   String toString() {
-    return 'PaymentWebViewRouteArgs{key: $key, paymentLink: $paymentLink, callbackUrl: $callbackUrl, cancelUrl: $cancelUrl}';
+    return 'PaymentWebViewRouteArgs{key: $key, paymentLink: $paymentLink, callbackUrl: $callbackUrl, cancelAction: $cancelAction}';
   }
 }
 

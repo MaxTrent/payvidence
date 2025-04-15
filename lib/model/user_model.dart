@@ -1,19 +1,22 @@
 class User {
   final Account account;
   final String? token;
+  final String? refreshToken;
 
-  User({required this.account, this.token});
+  User({required this.account, this.token, this.refreshToken});
 
   factory User.fromJson(Map<String, dynamic> json) {
     if (json.containsKey('account')) {
       return User(
         account: Account.fromJson(json['account'] as Map<String, dynamic>),
         token: json['token'] as String?,
+        refreshToken: json['refresh_token'] as String?,
       );
     } else {
       return User(
         account: Account.fromJson(json),
         token: json['token'] as String?,
+        refreshToken: json['refresh_token'] as String?,
       );
     }
   }
@@ -22,21 +25,22 @@ class User {
     return {
       'account': account.toJson(),
       'token': token,
+      'refresh_token': refreshToken,
     };
   }
 
-  // Add copyWith method
-  User copyWith({Account? account, String? token}) {
+  User copyWith({Account? account, String? token, String? refreshToken}) {
     return User(
       account: account ?? this.account,
       token: token ?? this.token,
+      refreshToken: refreshToken ?? this.refreshToken,
     );
   }
 }
 
 class Account {
   final String? id;
-  final String firstName; // Only required field
+  final String firstName;
   final String? lastName;
   final String? email;
   final String? phoneNumber;
@@ -66,7 +70,7 @@ class Account {
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
       id: json['id'] as String?,
-      firstName: json['first_name'] as String? ?? '', // Fallback to empty string if null
+      firstName: json['first_name'] as String? ?? '',
       lastName: json['last_name'] as String?,
       email: json['email'] as String?,
       phoneNumber: json['phone_number'] as String?,
@@ -101,7 +105,6 @@ class Account {
     };
   }
 
-  // Keep the copyWith method for immutable updates
   Account copyWith({
     String? id,
     String? firstName,

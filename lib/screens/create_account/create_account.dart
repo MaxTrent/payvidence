@@ -318,8 +318,8 @@ class CreateAccountScreen extends HookConsumerWidget {
                             passwordConfirm:
                                 passwordConfirmController.text.trim(),
                             navigateOnSuccess: () {
-                              // locator<PayvidenceAppRouter>().popUntil(
-                              //     (route) => route is OnboardingScreen);
+                              locator<PayvidenceAppRouter>().popUntil(
+                                  (route) => route is OnboardingScreen);
                               locator<PayvidenceAppRouter>()
                                   .navigateNamed(PayvidenceRoutes.otp);
                             });

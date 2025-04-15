@@ -49,7 +49,7 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
               CustomShimmer(height: 108.h),
             ] else ...[
               ...viewModel.plans.map(
-                (plan) => Padding(
+                    (plan) => Padding(
                   padding: EdgeInsets.only(bottom: 24.h),
                   child: GestureDetector(
                     onTap: () {
@@ -65,14 +65,7 @@ class ChooseSubscriptionPlan extends HookConsumerWidget {
                   ),
                 ),
               ),
-            ]
-            // SubscriptionCard(subscriptionTier: 'Starter subscription plan', price: '0', active: true,),
-            // SizedBox(height: 24.h,),
-            // SubscriptionCard(recommended: true, subscriptionTier: 'Business subscription plan', price: '10,000'),
-            // SizedBox(height: 24.h,),
-            // GestureDetector(
-            //     onTap: ()=> locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.subscriptionPlans),
-            //     child: SubscriptionCard(subscriptionTier: 'Premium subscription plan', price: '50,000')),
+            ],
           ],
         ),
       ),

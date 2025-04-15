@@ -5,7 +5,7 @@ import 'package:payvidence/utilities/base_notifier.dart';
 import '../update_personal_details/update_personal_details_vm.dart';
 
 final changeProfilePictureViewModelProvider =
-    ChangeNotifierProvider((ref) => ChangeProfilePictureViewModel(ref));
+ChangeNotifierProvider((ref) => ChangeProfilePictureViewModel(ref));
 
 class ChangeProfilePictureViewModel extends BaseChangeNotifier {
   final Ref ref;
@@ -38,7 +38,7 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
       final response = await apiServices.getAccount();
       if (response.success && response.data != null) {
         _currentProfilePictureUrl =
-            response.data!['data']['profile_picture_url'] as String?;
+        response.data!['data']['profile_picture_url'] as String?;
         print("Fetched profile picture URL: $_currentProfilePictureUrl");
         if (_currentProfilePictureUrl == null ||
             _currentProfilePictureUrl!.isEmpty) {
@@ -50,7 +50,7 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
             "Failed to fetch profile picture: ${response.error?.message ?? 'Unknown error'}");
       }
     } catch (e) {
-      _currentProfilePictureUrl = null; // Reset on exception
+      _currentProfilePictureUrl = null;
       print("Error fetching current profile picture: $e");
     } finally {
       _setLoading(false);
@@ -60,21 +60,23 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
   Future<void> pickImage() async {
     try {
       final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
       if (pickedFile != null) {
         _selectedImage = File(pickedFile.path);
         notifyListeners();
-        print("Image selected: ${_selectedImage?.path}");
+        print("Photo captured: ${_selectedImage?.path}");
+      } else {
+        print("No photo captured (user cancelled)");
       }
     } catch (e) {
-      print("Error picking image: $e");
-      handleError(message: "Failed to pick image: $e");
+      print("Error capturing photo: $e");
+      handleError(message: "Failed to capture photo: $e");
     }
   }
 
   Future<void> uploadImage({required Function() navigateOnSuccess}) async {
     if (_selectedImage == null) {
-      handleError(message: "No image selected");
+      handleError(message: "No photo selected");
       return;
     }
 
@@ -84,7 +86,7 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
 
       if (response.success) {
         _currentProfilePictureUrl =
-            response.data!['profile_picture_url'] as String?;
+        response.data!['profile_picture_url'] as String?;
         _selectedImage = null;
         showSuccess(message: "Profile picture updated");
         notifyListeners();

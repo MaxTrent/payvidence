@@ -287,11 +287,20 @@ class ApiServices {
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> updateUserInfo(String firstName) async {
+  Future<ApiResult> updateUserInfo(
+      {String? firstName,
+      String? lastName,
+      String? phoneNumber,
+      bool? transactionalAlerts,
+      bool? promotionalUpdates,
+      bool? securityAlerts}) async {
     var requestData = {
-      "transactional_alerts": true,
-      "security_alerts": true,
+      "transactional_alerts": transactionalAlerts,
+      "security_alerts": securityAlerts,
+      "promotional_updates": promotionalUpdates,
       "first_name": firstName,
+      "last_name": lastName,
+      "phone_number": phoneNumber,
     };
 
     var response = await locator<NetworkService>()
@@ -313,7 +322,17 @@ class ApiServices {
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> updateBusiness(String businessId,{String? address, String? name, String? phone, String? issuer, String? issuerRole, String? bankName, String? accountNumber, String? accountName, File? logo, File? issuerSignature}) async {
+  Future<ApiResult> updateBusiness(String businessId,
+      {String? address,
+      String? name,
+      String? phone,
+      String? issuer,
+      String? issuerRole,
+      String? bankName,
+      String? accountNumber,
+      String? accountName,
+      File? logo,
+      File? issuerSignature}) async {
     var requestData = FormData.fromMap({
       if (name != null) 'name': name,
       if (address != null) 'address': address,
@@ -323,19 +342,10 @@ class ApiServices {
       if (logo != null) 'logo': await MultipartFile.fromFile(logo.path),
       if (issuerSignature != null)
         'issuer_signature': await MultipartFile.fromFile(issuerSignature.path),
-      // "address": address,
-      // "name": name,
-      // "phone": phone,
       "_method": "PATCH",
-      // "issuer": issuer,
-      // "issuer_role": issuerRole,
       if (bankName != null) "bank_name": bankName,
       if (accountNumber != null) "account_number": accountNumber,
       if (accountName != null) "account_name": accountName,
-      // "logo_image": await MultipartFile.fromFile(logo!.path,
-      //     filename: logo.path.split('/').last),
-      // "issuer_signature_image": await MultipartFile.fromFile(issuerSignature!.path,
-      //     filename: issuerSignature.path.split('/').last),
     });
 
     var response = await locator<NetworkService>()
@@ -343,4 +353,12 @@ class ApiServices {
 
     return ApiResult.fromJson(response);
   }
+
+  Future<ApiResult> refreshToken() async {
+    var response = await locator<NetworkService>()
+        .get(PayvidenceEndpoints.refreshToken, isAccessToken: false);
+
+    return ApiResult.fromJson(response);
+  }
+
 }

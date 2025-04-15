@@ -39,19 +39,19 @@ class OnboardingScreen extends HookConsumerWidget {
                     text: 'Your digital transaction evidence',
                     subtext:
                         'Easily issue receipts, invoices, and purchase orders to clients on the go.',
-                    image: Assets.png.onboarding1.path,
+                    image: Assets.png.onboard1.path,
                   ),
                   OnboardingPage(
                     text: 'Simplify your inventory management',
                     subtext:
                         'Manage all your transactions, invoices, receipts, and sales reports in one centralized location.',
-                    image: Assets.png.onboarding2.path,
+                    image: Assets.png.onboard2.path,
                   ),
                   OnboardingPage(
                     text: 'Gain Insights with Analytics',
                     subtext:
                         'Access reports to understand sales performance and make smarter decisions.',
-                    image: Assets.png.onboarding3.path,
+                    image: Assets.png.onboard3.path,
                   )
                 ]),
             Align(
@@ -175,7 +175,7 @@ class OnboardingPage extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .displayLarge!
-                  .copyWith(fontWeight: FontWeight.w600),
+                  .copyWith(fontWeight: FontWeight.w600,color: Colors.black),
             ),
             SizedBox(
               height: 10.h,
