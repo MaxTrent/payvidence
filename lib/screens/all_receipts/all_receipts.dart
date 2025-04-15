@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
@@ -15,9 +16,10 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'AllReceiptsRoute')
-class AllReceipts extends ConsumerWidget {
+class AllReceipts extends HookConsumerWidget {
   AllReceipts({super.key});
 
   final _searchController = TextEditingController();
@@ -26,6 +28,8 @@ class AllReceipts extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allReceipts = ref.watch(getAllReceiptProvider);
     ValueNotifier<int?> productNumber = ValueNotifier(null);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
 
 
     Future<void> onRefresh() async {
@@ -75,13 +79,13 @@ class AllReceipts extends ConsumerWidget {
                 // width: 282.w,
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(16.h),
-                  child: SvgPicture.asset(Assets.svg.search),
+                  child: SvgPicture.asset(Assets.svg.search,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                 ),
                 hintText: 'Search for receipt',
                 controller: _searchController,
                 radius: 80,
                 filled: true,
-                fillColor: appGrey5,
+                fillColor: isDarkMode ? Colors.black : appGrey5,
               ),
               SizedBox(
                 height: 20.h,
@@ -162,9 +166,10 @@ class AllReceipts extends ConsumerWidget {
                     itemCount: actualData.length);
               }, error: (error, _) {
                 return const Text('An error has occurred');
-              }, loading: () {
-                return const CustomShimmer();
-              })
+              },  loading: () => ListView.builder(
+                itemCount: 5,
+                itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+              ),)
             ],
           ),
         ),

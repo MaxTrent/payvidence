@@ -141,7 +141,7 @@ class MySubscription extends HookConsumerWidget {
                     AppButton(
                         buttonText: 'Manage subscription',
                         onPressed: () {
-                          _buildManageSubscriptionBottomSheet(context, isDarkMode);
+                          _buildManageSubscriptionBottomSheet(context, isDarkMode, viewModel);
                         }),
                     SizedBox(
                       height: 26.h,
@@ -239,7 +239,7 @@ class MySubscription extends HookConsumerWidget {
   }
 
   Future<dynamic> _buildManageSubscriptionBottomSheet(
-      BuildContext context, bool isDarkMode) {
+      BuildContext context, bool isDarkMode, MySubscriptionViewModel viewModel) {
     return showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
@@ -247,7 +247,7 @@ class MySubscription extends HookConsumerWidget {
         context: context,
         builder: (context) {
           return Container(
-            height: 398.h,
+            height:  viewModel.subInfo?.startDate == null ? 300.h : 398.h,
             decoration: BoxDecoration(
                 color: isDarkMode ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.only(
@@ -309,32 +309,32 @@ class MySubscription extends HookConsumerWidget {
                       SizedBox(
                         height: 40.h,
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.h),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              Assets.svg.upgradeplan,
-                              colorFilter: ColorFilter.mode(
-                                  isDarkMode ? Colors.white : Colors.black,
-                                  BlendMode.srcIn),
-                            ),
-                            SizedBox(
-                              width: 16.w,
-                            ),
-                            Text(
-                              'Upgrade plan',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: 14.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 1.h,
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(vertical: 24.h),
+                      //   child: Row(
+                      //     children: [
+                      //       SvgPicture.asset(
+                      //         Assets.svg.upgradeplan,
+                      //         colorFilter: ColorFilter.mode(
+                      //             isDarkMode ? Colors.white : Colors.black,
+                      //             BlendMode.srcIn),
+                      //       ),
+                      //       SizedBox(
+                      //         width: 16.w,
+                      //       ),
+                      //       Text(
+                      //         'Upgrade plan',
+                      //         style: Theme.of(context)
+                      //             .textTheme
+                      //             .displaySmall!
+                      //             .copyWith(fontSize: 14.sp),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // Divider(
+                      //   height: 1.h,
+                      // ),
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).pop();
@@ -365,10 +365,10 @@ class MySubscription extends HookConsumerWidget {
                           ),
                         ),
                       ),
-                      Divider(
+                      viewModel.subInfo?.startDate == null ? const SizedBox.shrink() : Divider(
                         height: 1.h,
                       ),
-                      Padding(
+                      viewModel.subInfo?.startDate == null ? const SizedBox.shrink() : Padding(
                         padding: EdgeInsets.symmetric(vertical: 24.h),
                         child: Row(
                           children: [

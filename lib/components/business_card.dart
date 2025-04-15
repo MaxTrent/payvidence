@@ -37,34 +37,34 @@ class BusinessCard extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 32.r,
-                  backgroundImage:
-                      business.logoUrl != null && business.logoUrl!.isNotEmpty
-                          ? NetworkImage(business.logoUrl!)
-                          : null,
-                  backgroundColor:
-                      business.logoUrl != null && business.logoUrl!.isNotEmpty
-                          ? null
-                          : Colors.black,
-                  onBackgroundImageError: (exception, stackTrace) {},
-                  child: business.logoUrl == null || business.logoUrl!.isEmpty
-                      ? const Icon(
-                          Icons.business,
-                          color: Colors.white,
-                          size: 32,
-                        )
-                      : null,
-                ),
-                SizedBox(width: 12.w),
-                GestureDetector(
-                  onTap: () {
-                    locator<PayvidenceAppRouter>().push(
-                        BusinessDetailRoute(businessId: business.id ?? ''));
-                  },
-                  child: Column(
+            GestureDetector(
+              onTap: () {
+                locator<PayvidenceAppRouter>().push(
+                    BusinessDetailRoute(businessId: business.id ?? ''));
+              },
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 32.r,
+                    backgroundImage:
+                        business.logoUrl != null && business.logoUrl!.isNotEmpty
+                            ? NetworkImage(business.logoUrl!)
+                            : null,
+                    backgroundColor:
+                        business.logoUrl != null && business.logoUrl!.isNotEmpty
+                            ? null
+                            : Colors.black,
+                    onBackgroundImageError: (exception, stackTrace) {},
+                    child: business.logoUrl == null || business.logoUrl!.isEmpty
+                        ? const Icon(
+                            Icons.business,
+                            color: Colors.white,
+                            size: 32,
+                          )
+                        : null,
+                  ),
+                  SizedBox(width: 12.w),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -75,7 +75,7 @@ class BusinessCard extends HookConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SvgPicture.asset(Assets.svg.library),
+                          SvgPicture.asset(Assets.svg.library, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                           SizedBox(width: 3.w),
                           Text(
 
@@ -102,8 +102,8 @@ class BusinessCard extends HookConsumerWidget {
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             AppButton(
               buttonText: 'Switch to business',

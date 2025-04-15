@@ -1,7 +1,8 @@
-import 'dart:math';
+import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -18,20 +19,16 @@ import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/theme_mode.dart';
 
-
-
 @RoutePage(name: 'ClientsRoute')
 class Clients extends HookConsumerWidget {
   final bool? forSelection;
   final String businessId;
 
-  Clients(
-      {super.key,
-      this.forSelection = false,
-      @QueryParam('businessId') this.businessId = ''});
-
-  final _searchController = TextEditingController();
-
+  Clients({
+    super.key,
+    this.forSelection = false,
+    @QueryParam('businessId') this.businessId = '',
+  });
 
   static const List<Color> avatarColors = [
     Colors.lightGreen,
@@ -44,9 +41,9 @@ class Clients extends HookConsumerWidget {
     Colors.cyan,
   ];
 
-  Color getRandomColor() {
-    final random = Random();
-    return avatarColors[random.nextInt(avatarColors.length)];
+  Color getClientColor(dynamic client) {
+    final hash = client.id?.hashCode ?? client.name?.hashCode ?? 0;
+    return avatarColors[hash.abs() % avatarColors.length];
   }
 
   @override
@@ -54,10 +51,29 @@ class Clients extends HookConsumerWidget {
     final allClients = ref.watch(getAllClientsProvider);
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
+    final searchController = useTextEditingController();
+    final searchQuery = useState<String>('');
 
+    // Debounced search listener
+    useEffect(() {
+      Timer? timer;
+      void listener() {
+        timer?.cancel();
+        timer = Timer(const Duration(milliseconds: 300), () {
+          searchQuery.value = searchController.text.trim();
+        });
+      }
 
+      searchController.addListener(listener);
+      return () {
+        timer?.cancel();
+        searchController.removeListener(listener);
+      };
+    }, [searchController]);
 
     Future<void> onRefresh() async {
+      searchController.clear();
+      searchQuery.value = '';
       await ref.refresh(getAllClientsProvider.future);
     }
 
@@ -69,36 +85,34 @@ class Clients extends HookConsumerWidget {
           style: Theme.of(context).textTheme.displayLarge!.copyWith(),
         ),
         actions: [
-          allClients.when(data: (data){
-            if (data.isEmpty){
-             return const SizedBox.shrink();
-            }
-            return  Center(
-              child: Padding(
-                padding: EdgeInsets.only(right: 20.w),
-                child: GestureDetector(
-                  onTap: () async {
-                    await locator<PayvidenceAppRouter>()
-                        .navigate(AddClientRoute(businessId: businessId));
-
-                    ref.read(getAllClientsProvider.notifier).fetchClients();
-                  },
-                  child: Text(
-                    '+ Add New',
-                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                      fontSize: 14.sp,
-                      color: primaryColor2,
+          allClients.when(
+            data: (data) {
+              if (data.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 20.w),
+                  child: GestureDetector(
+                    onTap: () async {
+                      await locator<PayvidenceAppRouter>()
+                          .navigate(AddClientRoute(businessId: businessId));
+                      ref.read(getAllClientsProvider.notifier).fetchClients();
+                    },
+                    child: Text(
+                      '+ Add New',
+                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                        fontSize: 14.sp,
+                        color: primaryColor2,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }, error: (error, _){
-            return const SizedBox.shrink();
-          }, loading: (){
-            return const SizedBox.shrink();
-          })
-
+              );
+            },
+            error: (error, _) => const SizedBox.shrink(),
+            loading: () => const SizedBox.shrink(),
+          ),
         ],
       ),
       body: Padding(
@@ -110,18 +124,27 @@ class Clients extends HookConsumerWidget {
             AppTextField(
               prefixIcon: Padding(
                 padding: EdgeInsets.all(16.h),
-                child: SvgPicture.asset(Assets.svg.search),
+                child: SvgPicture.asset(Assets.svg.search,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
               ),
               hintText: 'Search for client',
-              controller: _searchController,
+              controller: searchController,
               radius: 80,
               filled: true,
-              fillColor: appGrey5,
+              fillColor: isDarkMode ? Colors.black : appGrey5 ,
             ),
             SizedBox(height: 20.h),
             allClients.when(
               data: (data) {
-                if (data.isEmpty) {
+                // Filter clients
+                final filteredClients = searchQuery.value.isEmpty
+                    ? data
+                    : data
+                    .where((client) => client.name
+                    ?.toLowerCase()
+                    .contains(searchQuery.value.toLowerCase()) ?? false)
+                    .toList();
+
+                if (filteredClients.isEmpty) {
                   return Expanded(
                     child: PullToRefresh(
                       onRefresh: onRefresh,
@@ -130,29 +153,35 @@ class Clients extends HookConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'No clients available!',
+                            searchQuery.value.isEmpty
+                                ? 'No clients available!'
+                                : 'No clients found!',
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                           SizedBox(height: 10.h),
                           Text(
-                            'All added clients will appear here.',
+                            searchQuery.value.isEmpty
+                                ? 'All added clients will appear here.'
+                                : 'Try a different search term.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
                                 .copyWith(fontSize: 14.sp),
                           ),
-                          SizedBox(height: 48.h),
-                          AppButton(
-                            buttonText: 'Add client',
-                            onPressed: () async {
-                              await locator<PayvidenceAppRouter>().navigate(
-                                  AddClientRoute(businessId: businessId));
-                              ref
-                                  .read(getAllClientsProvider.notifier)
-                                  .fetchClients();
-                            },
-                          ),
+                          if (searchQuery.value.isEmpty) ...[
+                            SizedBox(height: 48.h),
+                            AppButton(
+                              buttonText: 'Add client',
+                              onPressed: () async {
+                                await locator<PayvidenceAppRouter>().navigate(
+                                    AddClientRoute(businessId: businessId));
+                                ref
+                                    .read(getAllClientsProvider.notifier)
+                                    .fetchClients();
+                              },
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -168,13 +197,14 @@ class Clients extends HookConsumerWidget {
                         return GestureDetector(
                           onTap: () async {
                             if (forSelection == true) {
-                              Navigator.of(context).pop(data[index]);
+                              Navigator.of(context).pop(filteredClients[index]);
                             } else {
-                              if (data[index].id != null) {
+                              if (filteredClients[index].id != null) {
                                 await locator<PayvidenceAppRouter>().push(
                                   ClientDetailsRoute(
-                                      businessId: businessId,
-                                      clientId: data[index].id!),
+                                    businessId: businessId,
+                                    clientId: filteredClients[index].id!,
+                                  ),
                                 );
                                 ref
                                     .read(getAllClientsProvider.notifier)
@@ -190,18 +220,19 @@ class Clients extends HookConsumerWidget {
                                 width: 56.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: getRandomColor(),
+                                  color: getClientColor(filteredClients[index]),
                                 ),
                                 child: Center(
                                   child: Text(
-                                    data[index].name?.substring(0, 2) ?? 'NA',
+                                    filteredClients[index].name?.substring(0, 2) ??
+                                        'NA',
                                     style: Theme.of(context)
                                         .textTheme
                                         .displaySmall!
                                         .copyWith(
-                                          fontSize: 20.sp,
-                                          color: Colors.white,
-                                        ),
+                                      fontSize: 20.sp,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -212,7 +243,7 @@ class Clients extends HookConsumerWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      data[index].name ?? '',
+                                      filteredClients[index].name ?? '',
                                       style: Theme.of(context)
                                           .textTheme
                                           .displayMedium,
@@ -221,13 +252,19 @@ class Clients extends HookConsumerWidget {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
-                                        SvgPicture.asset(Assets.svg.location, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
+                                        SvgPicture.asset(
+                                          Assets.svg.location,
+                                          colorFilter: ColorFilter.mode(
+                                            isDarkMode ? Colors.white : Colors.black,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
                                         SizedBox(width: 6.w),
                                         Expanded(
                                           child: Text(
-                                            data[index].address ?? '',
+                                            filteredClients[index].address ?? '',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .displaySmall!
@@ -241,7 +278,7 @@ class Clients extends HookConsumerWidget {
                                     Row(
                                       children: [
                                         Text(
-                                          data[index].phoneNumber ?? '',
+                                          filteredClients[index].phoneNumber ?? '',
                                           style: Theme.of(context)
                                               .textTheme
                                               .displaySmall!
@@ -251,8 +288,10 @@ class Clients extends HookConsumerWidget {
                                         GestureDetector(
                                           onTap: () {
                                             Clipboard.setData(ClipboardData(
-                                                text: data[index].phoneNumber ??
-                                                    ''));
+                                              text: filteredClients[index]
+                                                  .phoneNumber ??
+                                                  '',
+                                            ));
                                             ToastService.showSnackBar(
                                                 'Copied to clipboard');
                                             ScaffoldMessenger.of(context)
@@ -264,16 +303,17 @@ class Clients extends HookConsumerWidget {
                                                       .textTheme
                                                       .displaySmall!
                                                       .copyWith(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.w400),
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                    FontWeight.w400,
+                                                  ),
                                                 ),
                                                 backgroundColor: primaryColor2,
                                               ),
                                             );
                                           },
                                           child:
-                                              SvgPicture.asset(Assets.svg.copy),
+                                          SvgPicture.asset(Assets.svg.copy),
                                         ),
                                       ],
                                     ),
@@ -285,7 +325,7 @@ class Clients extends HookConsumerWidget {
                         );
                       },
                       separatorBuilder: (ctx, idx) => SizedBox(height: 24.h),
-                      itemCount: data.length,
+                      itemCount: filteredClients.length,
                     ),
                   ),
                 );
@@ -301,7 +341,10 @@ class Clients extends HookConsumerWidget {
                   ),
                 ),
               ),
-              loading: () => CustomShimmer(height: 60.h),
+              loading: () => ListView.builder(
+                itemCount: 5,
+                itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+              ),
             ),
           ],
         ),

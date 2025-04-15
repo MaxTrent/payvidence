@@ -12,6 +12,7 @@ import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
+import '../../utilities/theme_mode.dart';
 import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'CreateAccountRoute')
@@ -23,6 +24,8 @@ class CreateAccountScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final viewModel = ref.watch(createAccountViewModelProvider);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
 
     final firstNameController = useTextEditingController();
     final lastNameController = useTextEditingController();
@@ -230,7 +233,7 @@ class CreateAccountScreen extends HookConsumerWidget {
                       child: GestureDetector(
                           onTap: () => obscurePasswordText.value =
                               !obscurePasswordText.value,
-                          child: SvgPicture.asset(Assets.svg.password)),
+                          child: SvgPicture.asset(Assets.svg.password, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),)),
                     ),
                   ),
                   SizedBox(
@@ -263,7 +266,7 @@ class CreateAccountScreen extends HookConsumerWidget {
                       child: GestureDetector(
                           onTap: () => obscurePasswordConfirmText.value =
                               !obscurePasswordConfirmText.value,
-                          child: SvgPicture.asset(Assets.svg.password)),
+                          child: SvgPicture.asset(Assets.svg.password,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),)),
                     ),
                   ),
                   SizedBox(

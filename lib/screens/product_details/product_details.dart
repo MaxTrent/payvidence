@@ -254,7 +254,7 @@ class ProductDetails extends ConsumerWidget {
                     AppButton(
                       buttonText: 'Generate invoice',
                       onPressed: () {},
-                      backgroundColor: Colors.white,
+                      backgroundColor: Colors.transparent,
                       textColor: primaryColor2,
                     ),
                   ],

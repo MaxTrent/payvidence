@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/brand_providers/get_all_brand_provider.dart';
 
@@ -14,15 +15,19 @@ import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'BrandsRoute')
-class Brands extends ConsumerWidget {
+class Brands extends HookConsumerWidget {
   Brands({super.key});
 
   final _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
     final allBrand = ref.watch(getAllBrandProvider);
 
     return Scaffold(
@@ -31,13 +36,13 @@ class Brands extends ConsumerWidget {
         title: AppTextField(
           prefixIcon: Padding(
             padding: EdgeInsets.all(16.h),
-            child: SvgPicture.asset(Assets.svg.backbutton),
+            child: SvgPicture.asset(Assets.svg.backbutton,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
           ),
           hintText: 'Search for brand',
           controller: _searchController,
           radius: 80,
           filled: true,
-          fillColor: appGrey5,
+          fillColor: isDarkMode ?Colors.black : appGrey5,
         ),
       ),
       floatingActionButton: FloatingActionButton(

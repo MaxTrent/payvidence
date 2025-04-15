@@ -198,7 +198,7 @@ class AddBusiness extends HookConsumerWidget {
                 AppTextField(
                   hintText: '',
                   controller: issuerController,
-                  fillColor: borderColor,
+                  fillColor: textFieldGrey,
                   filled: true,
                   validator: (val) {
                     return Validator.validateName(val);

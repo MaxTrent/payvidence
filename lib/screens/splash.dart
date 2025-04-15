@@ -25,17 +25,19 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkAuthState() async {
     final sessionManager = locator<SessionManager>();
     final isLoggedIn = sessionManager.get<bool>(SessionConstants.isUserLoggedIn) ?? false;
-    final isOnboarded = sessionManager.get<bool>(SessionConstants.isOnboarded) ?? false;
+    // final isOnboarded = sessionManager.get<bool>(SessionConstants.isOnboarded) ?? false;
 
-    developer.log('Splash: isLoggedIn=$isLoggedIn, isOnboarded=$isOnboarded');
+    // developer.log('Splash: isLoggedIn=$isLoggedIn,  isOnboarded=$isOnboarded' );
 
     final router = AutoRouter.of(context);
     if (isLoggedIn) {
       router.replace(const HomePageRoute());
-    } else if (!isOnboarded) {
-      router.replace(OnboardingScreenRoute());
-    } else {
-      router.replace(const LoginRoute());
+    }
+    // else if (!isOnboarded) {
+    //   router.replace(OnboardingScreenRoute());
+    // }
+    else {
+      router.replace( OnboardingScreenRoute());
     }
   }
 

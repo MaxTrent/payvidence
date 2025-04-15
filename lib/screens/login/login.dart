@@ -14,6 +14,7 @@ import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../utilities/theme_mode.dart';
 import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'LoginRoute')
@@ -24,7 +25,8 @@ class Login extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
     final viewModel = ref.watch(loginViewModelProvider);
-
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
 
@@ -139,6 +141,7 @@ class Login extends HookConsumerWidget {
                               Assets.svg.password,
                               height: 24.h,
                               width: 24.w,
+                              colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
                             ),
                           ),
                         ),
@@ -160,6 +163,9 @@ class Login extends HookConsumerWidget {
                       ),
                       SizedBox(height: 32.h),
                     ],
+
+                    useBiometricLogin ? Center(child: Image.asset(Assets.png.faceId.path, color: isDarkMode ? Colors.white : Colors.black, height: 200.h,)) : const SizedBox.shrink(),
+                    SizedBox(height: 32.h),
                     // Show link if biometric login failed
                     if (useBiometricLogin && viewModel.errorMessage.isNotEmpty) ...[
                       GestureDetector(
@@ -175,8 +181,8 @@ class Login extends HookConsumerWidget {
                         ),
                       ),
                       SizedBox(height: 32.h),
-                    ],
 
+                    ],
                     AppButton(
                       buttonText: 'Log in',
                       isDisabled: useBiometricLogin

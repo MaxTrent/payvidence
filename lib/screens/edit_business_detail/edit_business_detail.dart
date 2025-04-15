@@ -1,4 +1,3 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,7 +62,6 @@ class EditBusinessDetail extends HookConsumerWidget {
       return null;
     }, [viewModel.businessInfo, viewModel.isLoading]);
 
-
     // Function to check if there are any changes
     bool hasChanges() {
       return nameController.text != originalName.value ||
@@ -85,7 +83,6 @@ class EditBusinessDetail extends HookConsumerWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: ListView(
               shrinkWrap: true,
-              // physics: const NeverScrollableScrollPhysics(),
               children: [
                 Text(
                   'Edit business details',
@@ -134,20 +131,62 @@ class EditBusinessDetail extends HookConsumerWidget {
                     viewModel.pickLogoImage();
                   },
                   child: viewModel.selectedLogoImage != null
-                      ? Image.file(
-                    viewModel.selectedLogoImage!,
-                    height: 260.h,
-                    width: 120.w,
-                    fit: BoxFit.cover,
+                      ? Stack(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Image.file(
+                          viewModel.selectedLogoImage!,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey,
+                          ),
+                          child: const Text(
+                            "Tap to Change",
+                            style: TextStyle(color: Colors.white, fontSize: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                       : viewModel.currentLogo != null
-                      ? Image.network(
-                    viewModel.currentLogo!,
-                    height: 260.h,
-                    width: 120.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        SvgPicture.asset(Assets.svg.uploadImage),
+                      ? Stack(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Image.network(
+                          viewModel.currentLogo!,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              SvgPicture.asset(Assets.svg.uploadImage),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey,
+                          ),
+                          child: const Text(
+                            "Tap to Change",
+                            style: TextStyle(color: Colors.white, fontSize: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                       : SvgPicture.asset(Assets.svg.uploadImage),
                 ),
@@ -175,27 +214,68 @@ class EditBusinessDetail extends HookConsumerWidget {
                     viewModel.pickSignatureImage();
                   },
                   child: viewModel.selectedSignatureImage != null
-                      ? Image.file(
-                    viewModel.selectedSignatureImage!,
-                    height: 260.h,
-                    width: 120.w,
-                    fit: BoxFit.cover,
+                      ? Stack(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Image.file(
+                          viewModel.selectedSignatureImage!,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey,
+                          ),
+                          child: const Text(
+                            "Tap to Change",
+                            style: TextStyle(color: Colors.white, fontSize: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                       : viewModel.currentSignature != null
-                      ? Image.network(
-                    viewModel.currentSignature!,
-                    height: 260.h,
-                    width: 120.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        SvgPicture.asset(Assets.svg.uploadImage),
+                      ? Stack(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Image.network(
+                          viewModel.currentSignature!,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              SvgPicture.asset(Assets.svg.uploadImage),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey,
+                          ),
+                          child: const Text(
+                            "Tap to Change",
+                            style: TextStyle(color: Colors.white, fontSize: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                       : SvgPicture.asset(Assets.svg.uploadImage),
                 ),
                 SizedBox(height: 32.h),
                 AppButton(
                   buttonText: 'Update business details',
-                  // isDisabled: !hasChanges(),
                   isProcessing: viewModel.isLoading,
                   onPressed: () {
                     if (formKey.currentState!.validate() && hasChanges()) {

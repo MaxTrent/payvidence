@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
@@ -12,10 +13,11 @@ import '../../providers/receipt_providers/get_all_invoice_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 import '../all_receipts/all_receipts.dart';
 
 @RoutePage(name: 'AllInvoicesRoute')
-class AllInvoices extends ConsumerWidget {
+class AllInvoices extends HookConsumerWidget {
   AllInvoices({super.key});
 
   final _searchController = TextEditingController();
@@ -23,6 +25,9 @@ class AllInvoices extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allInvoices = ref.watch(getAllInvoiceProvider);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
     ValueNotifier<int?> productNumber = ValueNotifier(null);
 
     return Scaffold(
@@ -31,7 +36,7 @@ class AllInvoices extends ConsumerWidget {
         title: ValueListenableBuilder(
           builder: (context, value, _) {
             return Text(
-              'All invoices (${value ?? ''})',
+              'All invoices (${value ?? '0'})',
               style: Theme.of(context).textTheme.displayLarge!.copyWith(),
             );
           },
@@ -67,13 +72,12 @@ class AllInvoices extends ConsumerWidget {
                 // width: 282.w,
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(16.h),
-                  child: SvgPicture.asset(Assets.svg.search),
+                  child: SvgPicture.asset(Assets.svg.search,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                 ),
                 hintText: 'Search for invoice',
                 controller: _searchController,
                 radius: 80,
-                filled: true,
-                fillColor: appGrey5,
+                filled: true, fillColor:  isDarkMode ? Colors.black : appGrey5
               ),
               SizedBox(
                 height: 20.h,
@@ -142,9 +146,11 @@ class AllInvoices extends ConsumerWidget {
                     itemCount: actualData.length);
               }, error: (error, _) {
                 return const Text('An error has occurred');
-              }, loading: () {
-                return const CustomShimmer();
-              }),
+              },  loading: () => ListView.builder(
+                itemCount: 5,
+                itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+              ),
+              ),
 
               // ReceiptTile(),
               // ReceiptTile(),

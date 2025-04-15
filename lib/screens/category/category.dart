@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/app_text_field.dart';
 import 'package:payvidence/components/category_tile.dart';
@@ -13,15 +14,20 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import '../../components/custom_shimmer.dart';
 import '../../gen/assets.gen.dart';
+import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'EmptyCategoryRoute')
-class EmptyCategory extends ConsumerWidget {
+class EmptyCategory extends HookConsumerWidget {
   EmptyCategory({super.key});
 
   final _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
+
     final allCategory = ref.watch(getAllCategoryProvider);
     return Scaffold(
       appBar: AppBar(
@@ -33,14 +39,14 @@ class EmptyCategory extends ConsumerWidget {
             },
             child: Padding(
               padding: EdgeInsets.all(16.h),
-              child: SvgPicture.asset(Assets.svg.backbutton),
+              child: SvgPicture.asset(Assets.svg.backbutton,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
             ),
           ),
           hintText: 'Search for category',
           controller: _searchController,
           radius: 80,
           filled: true,
-          fillColor: appGrey5,
+          fillColor: isDarkMode ? Colors.black : appGrey5,
         ),
       ),
       floatingActionButton: FloatingActionButton(

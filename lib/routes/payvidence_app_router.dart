@@ -23,7 +23,8 @@ class PayvidenceAppRouter extends RootStackRouter {
               AutoRoute(
                   page: HomeScreenRoute.page,
                   path: PayvidenceRoutes.homeScreen,
-                  initial: true),
+                  // initial: true
+              ),
               AutoRoute(
                   page: AllTransactionsRoute.page,
                   path: PayvidenceRoutes.allTransactions),

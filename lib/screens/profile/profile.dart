@@ -7,7 +7,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
+import 'package:payvidence/screens/splash.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 import '../../components/loading_dialog.dart';
@@ -82,9 +84,9 @@ class Profile extends HookConsumerWidget {
                                   width: 1.w,
                                 ),
                               ),
-                              child: CachedNetworkImage(
-                                imageUrl: useUpdatePersonalDetailsViewModel
-                                    .userInfo!.account.profilePictureUrl!,
+                              child: (useUpdatePersonalDetailsViewModel.userInfo?.account.profilePictureUrl != null)
+                                  ? CachedNetworkImage(
+                                imageUrl: useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!,
                                 imageBuilder: (context, imageProvider) => Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -102,6 +104,10 @@ class Profile extends HookConsumerWidget {
                                   Assets.svg.defaultProfilepic,
                                   fit: BoxFit.cover,
                                 ),
+                              )
+                                  : SvgPicture.asset(
+                                Assets.svg.defaultProfilepic,
+                                fit: BoxFit.cover,
                               ),
                             ),
                             Positioned(
@@ -254,9 +260,9 @@ class Profile extends HookConsumerWidget {
                     LoadingDialog.show(context);
                     viewModel.logout(navigateOnSuccess: () async {
                       locator<PayvidenceAppRouter>()
-                          .popUntil((route) => route is OnboardingScreen);
+                          .popUntil((route) => route is SplashScreen);
                       locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.login);
+                          .navigateNamed(PayvidenceRoutes.onboarding);
                     });
                   },
                   icon: Assets.svg.logout,

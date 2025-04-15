@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,18 +11,16 @@ import 'package:payvidence/components/product_tile.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/providers/category_providers/get_all_category_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
-import 'package:payvidence/providers/product_providers/product_fillter_provider.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../providers/product_providers/current_product_provider.dart';
+import '../../providers/product_providers/product_fillter_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/theme_mode.dart';
-
-
 
 @RoutePage(name: 'ProductRoute')
 class Product extends HookConsumerWidget {
@@ -28,18 +28,35 @@ class Product extends HookConsumerWidget {
 
   Product({super.key, this.forProductSelection = false});
 
-  final _searchController = TextEditingController();
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allProducts = ref.watch(getAllProductProvider);
     ValueNotifier<int?> productNumber = ValueNotifier(null);
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
+    final searchController = useTextEditingController();
+    final searchQuery = useState<String>('');
 
+    // Debounced search listener
+    useEffect(() {
+      Timer? timer;
+      void listener() {
+        timer?.cancel();
+        timer = Timer(const Duration(milliseconds: 300), () {
+          searchQuery.value = searchController.text.trim();
+        });
+      }
 
+      searchController.addListener(listener);
+      return () {
+        timer?.cancel();
+        searchController.removeListener(listener);
+      };
+    }, [searchController]);
 
     Future<void> onRefresh() async {
+      searchController.clear();
+      searchQuery.value = '';
       await ref.refresh(getAllProductProvider.future);
     }
 
@@ -59,36 +76,28 @@ class Product extends HookConsumerWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.start,
-          // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 32.h,
-            ),
+            SizedBox(height: 32.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: AppTextField(
-                    //width: 282.w,
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        ref
-                            .read(productFilterProvider.notifier)
-                            .setKey('name', _searchController.text);
-                        ref.read(getAllProductProvider.notifier).setFilter();
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.all(16.h),
-                        child: SvgPicture.asset(Assets.svg.search),
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(16.h),
+                      child: SvgPicture.asset(
+                        Assets.svg.search,
+                        colorFilter: ColorFilter.mode(
+                          isDarkMode ? Colors.white : Colors.black,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                     hintText: 'Search for product',
-                    controller: _searchController,
+                    controller: searchController,
                     radius: 80,
                     filled: true,
-                    fillColor: appGrey5,
-                    appBorderColor: Colors.transparent,
+                    fillColor: isDarkMode ? Colors.black : appGrey5,
                   ),
                 ),
                 12.horizontalSpace,
@@ -100,8 +109,9 @@ class Product extends HookConsumerWidget {
                     height: 48.h,
                     width: 56.w,
                     decoration: BoxDecoration(
-                        color: borderColor,
-                        borderRadius: BorderRadius.circular(56.r)),
+                      color: borderColor,
+                      borderRadius: BorderRadius.circular(56.r),
+                    ),
                     child: Padding(
                       padding: EdgeInsets.all(14.h),
                       child: SvgPicture.asset(Assets.svg.filter),
@@ -110,101 +120,110 @@ class Product extends HookConsumerWidget {
                 ),
               ],
             ),
-            // SizedBox(height: 72.h,),
-            // SvgPicture.asset(Assets.svg.emptyProduct),
-            // SizedBox(height: 40.h,),
-            // Text('No product yet!', style: Theme.of(context).textTheme.displayLarge,),
-            // SizedBox(height: 10.h,),
-            // Text('Add products to your business account. All products added will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, ))
-            allProducts.when(data: (data) {
-              if (data.isEmpty) {
-                productNumber.value = 0;
+            allProducts.when(
+              data: (data) {
+                // Filter products by name
+                final filteredProducts = searchQuery.value.isEmpty
+                    ? data
+                    : data
+                    .where((product) => product.name
+                    ?.toLowerCase()
+                    .contains(searchQuery.value.toLowerCase()) ?? false)
+                    .toList();
 
-                return Expanded(
-                  child: PullToRefresh(
-                    onRefresh: onRefresh,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'No product available!',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Text('All added products will appear here.',
+                if (filteredProducts.isEmpty) {
+                  productNumber.value = 0;
+                  return Expanded(
+                    child: PullToRefresh(
+                      onRefresh: onRefresh,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            searchQuery.value.isEmpty
+                                ? 'No product available!'
+                                : 'No products found!',
+                            style: Theme.of(context).textTheme.displayLarge,
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            searchQuery.value.isEmpty
+                                ? 'All added products will appear here.'
+                                : 'Try a different search term.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(
-                                  fontSize: 14.sp,
-                                )),
-                        SizedBox(
-                          height: 48.h,
-                        ),
-                        AppButton(
-                            buttonText: 'Add product',
-                            onPressed: () {
-                              locator<PayvidenceAppRouter>()
-                                  .navigateNamed(PayvidenceRoutes.addProduct);
-                            })
-                      ],
+                                .copyWith(fontSize: 14.sp),
+                          ),
+                          if (searchQuery.value.isEmpty) ...[
+                            SizedBox(height: 48.h),
+                            AppButton(
+                              buttonText: 'Add product',
+                              onPressed: () {
+                                locator<PayvidenceAppRouter>()
+                                    .navigateNamed(PayvidenceRoutes.addProduct);
+                              },
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }
-              productNumber.value = data.length;
+                  );
+                }
+                productNumber.value = filteredProducts.length;
 
-              return Expanded(
-                child: PullToRefresh(
-                  onRefresh: onRefresh,
-                  child: ListView.separated(
+                return Expanded(
+                  child: PullToRefresh(
+                    onRefresh: onRefresh,
+                    child: ListView.separated(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         return ProductTile(
-                          product: data[index],
+                          product: filteredProducts[index],
                           ref: ref,
                           onPressed: () {
                             if (forProductSelection == true) {
-                              Navigator.of(context).pop(data[index]);
+                              Navigator.of(context).pop(filteredProducts[index]);
                             } else {
                               locator<PayvidenceAppRouter>().navigate(
-                                  ProductDetailsRoute(product: data[index]));
+                                  ProductDetailsRoute(
+                                      product: filteredProducts[index]));
                               ref
                                   .read(getCurrentProductProvider.notifier)
-                                  .setCurrentProduct(data[index]);
+                                  .setCurrentProduct(filteredProducts[index]);
                             }
                           },
                         );
                       },
                       separatorBuilder: (ctx, idx) {
                         return Column(
-                          children: [
-                            SizedBox(
-                              height: 24.h,
-                            ),
-                          ],
+                          children: [SizedBox(height: 24.h)],
                         );
                       },
-                      itemCount: data.length),
-                ),
-              );
-            }, error: (error, _) {
-              return PullToRefresh(
-                onRefresh: onRefresh,
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(child: Text('An error has occurred')),
-                  ],
-                ),
-              );
-            }, loading: () {
-              return const CustomShimmer();
-            })
+                      itemCount: filteredProducts.length,
+                    ),
+                  ),
+                );
+              },
+              error: (error, _) {
+                return Expanded(
+                  child: PullToRefresh(
+                    onRefresh: onRefresh,
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(child: Text('An error has occurred')),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              loading: () {
+                return const CustomShimmer();
+              },
+            ),
           ],
         ),
       ),
@@ -219,213 +238,39 @@ class Product extends HookConsumerWidget {
           size: 40.h,
         ),
       ),
-      // AppButton(buttonText: 'Add product', onPressed: (){
-      //   context.push(AppRoutes.addProduct);
-      // }),
     );
   }
-
-// Future<dynamic> buildFilterBottomSheet(BuildContext context, WidgetRef ref) {
-//   return showModalBottomSheet(
-//       isScrollControlled: true,
-//       backgroundColor: Colors.transparent,
-//       clipBehavior: Clip.none,
-//       context: context,
-//       builder: (context) {
-//         final allCategory = ref.watch(getAllCategoryProvider);
-//         return Container(
-//           decoration: BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.only(
-//                   topRight: Radius.circular(40.r),
-//                   topLeft: Radius.circular(40.r))),
-//           child: Padding(
-//             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-//             child: Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 Padding(
-//                   padding: EdgeInsets.symmetric(horizontal: 140.w),
-//                   child: Container(
-//                     height: 5.h,
-//                     width: 67.w,
-//                     decoration: BoxDecoration(
-//                       color: const Color(0xffd9d9d9),
-//                       borderRadius: BorderRadius.circular(100.r),
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(
-//                   height: 38.h,
-//                 ),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     const SizedBox.shrink(),
-//                     Center(
-//                       child: Text(
-//                         'Filter products',
-//                         style: Theme.of(context)
-//                             .textTheme
-//                             .displayLarge!
-//                             .copyWith(
-//                               fontSize: 22.sp,
-//                               fontWeight: FontWeight.w600,
-//                             ),
-//                       ),
-//                     ),
-//                     GestureDetector(
-//                         onTap: () => Navigator.of(context).pop(),
-//                         child: const Icon(
-//                           Icons.close,
-//                         ))
-//                   ],
-//                 ),
-//                 SizedBox(
-//                   height: 12.h,
-//                 ),
-//                 Center(
-//                   child: Text(
-//                     'Select category you’ll like to see.',
-//                     style: Theme.of(context).textTheme.displaySmall,
-//                   ),
-//                 ),
-//                 SizedBox(
-//                   height: 40.h,
-//                 ),
-//                 allCategory.when(data: (data) {
-//                   if (data.isEmpty) {
-//                     return Expanded(
-//                       child: Column(
-//                         mainAxisAlignment: MainAxisAlignment.center,
-//                         crossAxisAlignment: CrossAxisAlignment.center,
-//                         children: [
-//                           Text(
-//                             'No category added!',
-//                             style: Theme.of(context).textTheme.displayLarge,
-//                           ),
-//                           SizedBox(
-//                             height: 10.h,
-//                           ),
-//                           Text('All added categories will appear here.',
-//                               textAlign: TextAlign.center,
-//                               style: Theme.of(context)
-//                                   .textTheme
-//                                   .displaySmall!
-//                                   .copyWith(
-//                                     fontSize: 14.sp,
-//                                   )),
-//                           SizedBox(
-//                             height: 48.h,
-//                           ),
-//                           AppButton(
-//                               buttonText: 'Add category',
-//                               onPressed: () {
-//                                 locator<PayvidenceAppRouter>().navigateNamed(
-//                                     PayvidenceRoutes.addCategory);
-//                               })
-//                         ],
-//                       ),
-//                     );
-//                   }
-//                   return ListView.separated(
-//                       shrinkWrap: true,
-//                       itemBuilder: (context, index) {
-//                         return GestureDetector(
-//                           onTap: () {
-//                             if (ref.read(
-//                                     productFilterProvider)['category_id'] ==
-//                                 data[index].id) {
-//                               ref
-//                                   .read(productFilterProvider.notifier)
-//                                   .removeFilter();
-//                             } else {
-//                               ref
-//                                   .read(productFilterProvider.notifier)
-//                                   .setKey('category_id', data[index].id);
-//                             }
-//                             ref
-//                                 .read(getAllProductProvider.notifier)
-//                                 .setFilter();
-//                           },
-//                           child: Padding(
-//                             padding: EdgeInsets.symmetric(vertical: 24.h),
-//                             child: Row(
-//                               mainAxisAlignment:
-//                                   MainAxisAlignment.spaceBetween,
-//                               children: [
-//                                 Row(
-//                                   mainAxisAlignment: MainAxisAlignment.start,
-//                                   children: [
-//                                     SvgPicture.asset(Assets.svg.shapes),
-//                                     SizedBox(
-//                                       width: 16.w,
-//                                     ),
-//                                     Text(
-//                                       data[index].name ?? '',
-//                                       style: Theme.of(context)
-//                                           .textTheme
-//                                           .displaySmall!
-//                                           .copyWith(fontSize: 14.sp),
-//                                     ),
-//                                   ],
-//                                 ),
-//                                 if (ref.read(productFilterProvider)[
-//                                         'category_id'] ==
-//                                     data[index].id)
-//                                   Icon(Icons.check)
-//                               ],
-//                             ),
-//                           ),
-//                         );
-//                       },
-//                       separatorBuilder: (ctx, idx) {
-//                         return const Column(
-//                           children: [
-//                             Divider(),
-//                           ],
-//                         );
-//                       },
-//                       itemCount: data.length);
-//                 }, error: (error, _) {
-//                   return const Text('An error has occurred');
-//                 }, loading: () {
-//                   return const CustomShimmer();
-//                 }),
-//               ],
-//             ),
-//           ),
-//         );
-//       });
-// }
 }
 
 class FilterBottomSheet extends HookConsumerWidget {
-const FilterBottomSheet._();
+  const FilterBottomSheet._();
 
-static show(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-    ),
-    builder: (context) => const FilterBottomSheet._(),
-  );
-}
+  static show(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      builder: (context) => const FilterBottomSheet._(),
+    );
+  }
 
-@override
-Widget build(BuildContext context, WidgetRef ref) {
-  final theme = useThemeMode();
-  final isDarkMode = theme.mode == ThemeMode.dark;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
     final allCategory = ref.watch(getAllCategoryProvider);
 
     return Container(
       decoration: BoxDecoration(
-          color: isDarkMode ?Colors.black : Colors.white,
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(40.r), topLeft: Radius.circular(40.r))),
+        color: isDarkMode ? Colors.black : Colors.white,
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(40.r),
+          topLeft: Radius.circular(40.r),
+        ),
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
         child: Column(
@@ -437,14 +282,12 @@ Widget build(BuildContext context, WidgetRef ref) {
                 height: 5.h,
                 width: 67.w,
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.black: Color(0xffd9d9d9),
+                  color: isDarkMode ? Colors.black : Color(0xffd9d9d9),
                   borderRadius: BorderRadius.circular(100.r),
                 ),
               ),
             ),
-            SizedBox(
-              height: 38.h,
-            ),
+            SizedBox(height: 38.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -453,76 +296,64 @@ Widget build(BuildContext context, WidgetRef ref) {
                   child: Text(
                     'Filter products',
                     style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.w600,
-
-                        ),
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(
-                      Icons.close,
-                    ))
+                  onTap: () => Navigator.of(context).pop(),
+                  child: const Icon(Icons.close),
+                ),
               ],
             ),
-            SizedBox(
-              height: 12.h,
-            ),
+            SizedBox(height: 12.h),
             Center(
               child: Text(
                 'Select category you’ll like to see.',
                 style: Theme.of(context).textTheme.displaySmall,
               ),
             ),
-            SizedBox(
-              height: 40.h,
-            ),
-            allCategory.when(data: (data) {
-              if (data.isEmpty) {
-                return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'No category added!',
-                        style: Theme.of(context).textTheme.displayLarge,
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      Text('All added categories will appear here.',
+            SizedBox(height: 40.h),
+            allCategory.when(
+              data: (data) {
+                if (data.isEmpty) {
+                  return Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'No category added!',
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        SizedBox(height: 10.h),
+                        Text(
+                          'All added categories will appear here.',
                           textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(
-                                fontSize: 14.sp,
-                              )),
-                      SizedBox(
-                        height: 12.h,
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return ListView.separated(
+                              .copyWith(fontSize: 14.sp),
+                        ),
+                        SizedBox(height: 12.h),
+                      ],
+                    ),
+                  );
+                }
+                return ListView.separated(
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
                         if (ref.read(productFilterProvider)['category_id'] ==
                             data[index].id) {
-                          ref
-                              .read(productFilterProvider.notifier)
-                              .removeFilter();
+                          ref.read(productFilterProvider.notifier).removeFilter();
                         } else {
                           ref
                               .read(productFilterProvider.notifier)
                               .setKey('category_id', data[index].id);
                         }
-
                         ref.read(getAllProductProvider.notifier).setFilter();
                       },
                       child: Padding(
@@ -533,10 +364,14 @@ Widget build(BuildContext context, WidgetRef ref) {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SvgPicture.asset(Assets.svg.shapes, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
-                                SizedBox(
-                                  width: 16.w,
+                                SvgPicture.asset(
+                                  Assets.svg.shapes,
+                                  colorFilter: ColorFilter.mode(
+                                    isDarkMode ? Colors.white : Colors.black,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
+                                SizedBox(width: 16.w),
                                 Text(
                                   data[index].name ?? '',
                                   style: Theme.of(context)
@@ -548,30 +383,30 @@ Widget build(BuildContext context, WidgetRef ref) {
                             ),
                             Icon(
                               Icons.check,
-                              color: ref.read(productFilterProvider)[
-                                          'category_id'] ==
-                                      data[index].id
+                              color: ref.read(productFilterProvider)['category_id'] ==
+                                  data[index].id
                                   ? Colors.black
                                   : Colors.transparent,
-                            )
+                            ),
                           ],
                         ),
                       ),
                     );
                   },
                   separatorBuilder: (ctx, idx) {
-                    return const Column(
-                      children: [
-                        Divider(),
-                      ],
-                    );
+                    return const Column(children: [Divider()]);
                   },
-                  itemCount: data.length);
-            }, error: (error, _) {
-              return const Text('An error has occurred');
-            }, loading: () {
-              return const CustomShimmer();
-            }),
+                  itemCount: data.length,
+                );
+              },
+              error: (error, _) {
+                return const Text('An error has occurred');
+              },
+              loading: () => ListView.builder(
+                itemCount: 5,
+                itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+              ),
+            ),
           ],
         ),
       ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import '../../components/app_text_field.dart';
@@ -16,10 +17,11 @@ import '../../providers/receipt_providers/get_all_receipt_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 import '../../utilities/toast_service.dart';
 
 @RoutePage(name: 'DraftsRoute')
-class Drafts extends ConsumerWidget {
+class Drafts extends HookConsumerWidget {
   final bool? isInvoice;
 
   Drafts({super.key, this.isInvoice = false});
@@ -28,6 +30,9 @@ class Drafts extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
     final allReceipts = isInvoice == true
         ? ref.watch(getAllInvoiceProvider)
         : ref.watch(getAllReceiptProvider);
@@ -66,7 +71,7 @@ class Drafts extends ConsumerWidget {
         title: ValueListenableBuilder(
           builder: (context, value, _) {
             return Text(
-              'All drafts (${value ?? ''})',
+              'All drafts (${value ?? '0'})',
               style: Theme.of(context).textTheme.displayLarge!.copyWith(),
             );
           },
@@ -86,13 +91,13 @@ class Drafts extends ConsumerWidget {
                 // width: 282.w,
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(16.h),
-                  child: SvgPicture.asset(Assets.svg.search),
+                  child: SvgPicture.asset(Assets.svg.search,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                 ),
                 hintText: 'Search for product',
                 controller: _searchController,
                 radius: 80,
                 filled: true,
-                fillColor: appGrey5,
+                fillColor: isDarkMode ? Colors.black : appGrey5,
               ),
               SizedBox(
                 height: 20.h,
