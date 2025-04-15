@@ -82,29 +82,26 @@ class Profile extends HookConsumerWidget {
                                   width: 1.w,
                                 ),
                               ),
-                              child: CircleAvatar(
-                                radius: 36.r,
-                                child: useUpdatePersonalDetailsViewModel
-                                            .userInfo
-                                            ?.account
-                                            .profilePictureUrl !=
-                                        null
-                                    ? CachedNetworkImage(
-                                        imageUrl:
-                                            useUpdatePersonalDetailsViewModel
-                                                .userInfo!
-                                                .account
-                                                .profilePictureUrl!,
-                                        placeholder: (context, url) =>
-                                            SvgPicture.asset(
-                                                Assets.svg.defaultProfilepic),
-                                        errorWidget: (context, url, error) =>
-                                            SvgPicture.asset(
-                                                Assets.svg.defaultProfilepic),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : SvgPicture.asset(
-                                        Assets.svg.defaultProfilepic),
+                              child: CachedNetworkImage(
+                                imageUrl: useUpdatePersonalDetailsViewModel
+                                    .userInfo!.account.profilePictureUrl!,
+                                imageBuilder: (context, imageProvider) => Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                placeholder: (context, url) => SvgPicture.asset(
+                                  Assets.svg.defaultProfilepic,
+                                  fit: BoxFit.cover,
+                                ),
+                                errorWidget: (context, url, error) => SvgPicture.asset(
+                                  Assets.svg.defaultProfilepic,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                             Positioned(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/gen/assets.gen.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
@@ -10,9 +11,10 @@ import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import '../constants/app_colors.dart';
 import '../model/business_model.dart';
 import '../shared_dependency/shared_dependency.dart';
+import '../utilities/theme_mode.dart';
 import 'app_button.dart';
 
-class BusinessCard extends ConsumerWidget {
+class BusinessCard extends HookConsumerWidget {
   const BusinessCard({
     required this.business,
     super.key,
@@ -23,10 +25,13 @@ class BusinessCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentBusiness = ref.watch(getCurrentBusinessProvider);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
 
     return Container(
       height: 184.h,
-      decoration: const BoxDecoration(color: appGrey1),
+      decoration:  BoxDecoration(color: isDarkMode?const Color(0xFF444444) : appGrey1),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 21.h),
         child: Column(
@@ -64,7 +69,7 @@ class BusinessCard extends ConsumerWidget {
                     children: [
                       Text(
                         business.name ?? '',
-                        style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.black),
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(color: isDarkMode? Colors.white: Colors.black),
                       ),
                       SizedBox(height: 12.h),
                       Row(
@@ -78,11 +83,11 @@ class BusinessCard extends ConsumerWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: 14.sp),
+                                .copyWith(fontSize: 14.sp, color: isDarkMode ? Colors.white : Colors.black),
 
                           ),
                           SizedBox(width: 12.w),
-                          SvgPicture.asset(Assets.svg.library),
+                          SvgPicture.asset(Assets.svg.library, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                           SizedBox(width: 3.w),
                           Text(
 
@@ -90,7 +95,7 @@ class BusinessCard extends ConsumerWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: 14.sp),
+                                .copyWith(fontSize: 14.sp, color: isDarkMode ? Colors.white : Colors.black),
 
                           ),
                         ],
