@@ -148,7 +148,7 @@ class SubscriptionPlans extends HookConsumerWidget {
       onTap: onTap,
       child: Container(
         height: 45.h,
-        width: 83.w,
+        // width: 83.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(43.r),
           color: isSelected ? primaryColor2 : Colors.transparent,
@@ -156,11 +156,14 @@ class SubscriptionPlans extends HookConsumerWidget {
             color: isSelected ? primaryColor2 : isDarkMode ? Colors.white : Colors.black,
           ),
         ),
-        child: Center(
-          child: Text(
-            tier,
-            style: Theme.of(context).textTheme.displaySmall!.copyWith(
-              color: isSelected ? Colors.white : isDarkMode ? Colors.white : Colors.black,
+        child: Padding(
+          padding:  EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          child: Center(
+            child: Text(
+              tier,
+              style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                color: isSelected ? Colors.white : isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
           ),
         ),

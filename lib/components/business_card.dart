@@ -75,7 +75,7 @@ class BusinessCard extends HookConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SvgPicture.asset(Assets.svg.library),
+                          SvgPicture.asset(Assets.svg.library, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                           SizedBox(width: 3.w),
                           Text(
 
