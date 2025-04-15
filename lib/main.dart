@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/app_provider_observer.dart';
 import 'package:payvidence/utilities/scroll_behaviour.dart';
+import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
@@ -37,13 +39,14 @@ Future<void> main() async {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends HookWidget {
   final AppTheme appTheme;
 
   const MyApp({super.key, required this.appTheme});
 
   @override
   Widget build(BuildContext context) {
+    final theme = useThemeMode();
     final appRouter = locator<PayvidenceAppRouter>();
 
     return ScreenUtilInit(
@@ -56,6 +59,8 @@ class MyApp extends StatelessWidget {
         title: 'Payvidence',
         debugShowCheckedModeBanner: false,
         theme: appTheme.light,
+        darkTheme: appTheme.dark,
+        themeMode: theme.mode,
         routerConfig: appRouter.config(),
       ),
     );

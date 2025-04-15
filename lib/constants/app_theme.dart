@@ -3,79 +3,124 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../gen/assets.gen.dart';
 
-
-
 class AppTheme {
   ThemeData get light => ThemeData(
-      actionIconTheme: ActionIconThemeData(
-          backButtonIconBuilder: (BuildContext context) =>
-              SvgPicture.asset(Assets.svg.backbutton)),
-      appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          scrolledUnderElevation: 0,
-          elevation: 0.0),
-      splashColor: Colors.transparent,
-      useMaterial3: false,
-      highlightColor: Colors.transparent,
-      applyElevationOverlayColor: true,
-      scaffoldBackgroundColor: Colors.white,
-      primaryColor: Colors.black,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-      textTheme: TextTheme(
-        displayLarge: TextStyle(
-          fontFamily: 'Polysans',
-          color: Colors.black,
-          fontSize: 28.sp,
-          fontWeight: FontWeight.w600,
-        ),
-        displayMedium: TextStyle(
-          fontFamily: 'Polysans',
-          color: Colors.black,
-          fontSize: 18.sp,
-          fontWeight: FontWeight.w600,
-        ),
-        displaySmall: TextStyle(
-          fontFamily: 'Polysans',
-          color: Colors.black,
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w400,
-        ),
-      ));
-
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (BuildContext context) =>
+          SvgPicture.asset(Assets.svg.backbutton),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.white,
+      scrolledUnderElevation: 0,
+      elevation: 0.0,
+    ),
+    splashColor: Colors.transparent,
+    useMaterial3: false,
+    highlightColor: Colors.transparent,
+    applyElevationOverlayColor: true,
+    scaffoldBackgroundColor: Colors.white,
+    primaryColor: Colors.black,
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.black,
+        fontSize: 28.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      displayMedium: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.black,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      displaySmall: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.black,
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w400,
+      ),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.black.withOpacity(0.5),
+      selectedLabelStyle: TextStyle(
+        fontFamily: 'Polysans',
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+          color: Colors.black
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontFamily: 'Polysans',
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w400,
+        color: Colors.black
+      ),
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+    ),
+  );
 
   ThemeData get dark => ThemeData(
-      actionIconTheme: ActionIconThemeData(
-          backButtonIconBuilder: (BuildContext context) =>
-              SvgPicture.asset(Assets.svg.backbutton)),
-      appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          scrolledUnderElevation: 0,
-          elevation: 0.0),
-      splashColor: Colors.transparent,
-      useMaterial3: false,
-      highlightColor: Colors.transparent,
-      applyElevationOverlayColor: true,
-      scaffoldBackgroundColor: const Color(0xff121212),
-      primaryColor: Colors.black,
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-      textTheme: TextTheme(
-        displayLarge: TextStyle(
-          fontFamily: 'Polysans',
-          color: Colors.white,
-          fontSize: 28.sp,
-          fontWeight: FontWeight.w600,
-        ),
-        displayMedium: TextStyle(
-          fontFamily: 'Polysans',
-          color: Colors.white,
-          fontSize: 18.sp,
-          fontWeight: FontWeight.w600,
-        ),
-        displaySmall: TextStyle(
-          fontFamily: 'Polysans',
-          color: Colors.white,
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w400,
-        ),
-      ));
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (BuildContext context) => SvgPicture.asset(
+        Assets.svg.backbutton,
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.black,
+      scrolledUnderElevation: 0,
+      elevation: 0.0,
+    ),
+    splashColor: Colors.transparent,
+    useMaterial3: false,
+    highlightColor: Colors.transparent,
+    applyElevationOverlayColor: true,
+    scaffoldBackgroundColor: const Color(0xff121212),
+    primaryColor: Colors.black,
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.white,
+        fontSize: 28.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      displayMedium: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.white,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      displaySmall: TextStyle(
+        fontFamily: 'Polysans',
+        color: Colors.white,
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w400,
+      ),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: const Color(0xff121212),
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white.withOpacity(0.5),
+      selectedLabelStyle: TextStyle(
+        fontFamily: 'Polysans',
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+          color: Colors.white
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontFamily: 'Polysans',
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w400,
+        color: Colors.white
+      ),
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+    ),
+  );
 }

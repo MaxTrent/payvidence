@@ -28,7 +28,6 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
   Widget build(BuildContext context) {
     final isLoading = useState(true);
 
-    // Log received parameters for debugging
     print('PaymentWebViewPage: paymentLink=${widget.paymentLink}, callbackUrl=${widget.callbackUrl}, cancelAction=${widget.cancelAction}');
 
     final controller = useMemoized(
@@ -49,7 +48,6 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
               final url = request.url;
               print('Navigation request: $url');
 
-              // Normalize URLs
               final normalizedUrl = url.split('?')[0].replaceAll(RegExp(r'/$'), '').toLowerCase();
               final normalizedCallbackUrl = widget.callbackUrl.isNotEmpty
                   ? widget.callbackUrl.split('?')[0].replaceAll(RegExp(r'/$'), '').toLowerCase()
@@ -58,7 +56,6 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
                   ? widget.cancelAction.split('?')[0].replaceAll(RegExp(r'/$'), '').toLowerCase()
                   : '';
 
-              // Handle callback
               if (normalizedCallbackUrl.isNotEmpty && normalizedUrl == normalizedCallbackUrl) {
                 print('Intercepted callback: $url');
                 ToastService.showSnackBar('Payment completed!');
@@ -66,14 +63,12 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
                 return NavigationDecision.prevent;
               }
 
-              // Paystack close
               if (url == 'https://standard.paystack.co/close') {
                 print('Intercepted close: $url');
                 Navigator.pop(context);
                 return NavigationDecision.prevent;
               }
 
-              // Handle cancel
               if (normalizedCancelAction.isNotEmpty && normalizedUrl == normalizedCancelAction) {
                 print('Intercepted cancel: $url');
                 Navigator.pop(context);
@@ -81,7 +76,7 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
                 return NavigationDecision.prevent;
               }
 
-              // Allow payment page to load
+
               if (url.contains('checkout.paystack.com')) {
                 print('Allowing payment page: $url');
                 return NavigationDecision.navigate;

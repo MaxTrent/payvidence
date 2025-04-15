@@ -19,7 +19,7 @@ class AppSwitch extends StatelessWidget {
       onChanged: onChanged,
       activeTrackColor: primaryColor2,
       thumbColor: appGrey,
-      //inactiveColor: borderColor,
+      inactiveTrackColor: borderColor,
     );
   }
 }
