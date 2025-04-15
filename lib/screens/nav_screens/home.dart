@@ -5,14 +5,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
-import 'package:payvidence/components/loading_indicator.dart';
+import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/data/local/session_constants.dart';
 import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../components/app_card.dart';
 import '../../components/transaction_tile.dart';
 import '../../gen/assets.gen.dart';
@@ -32,12 +31,7 @@ class HomeScreen extends HookConsumerWidget {
     final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
-
-    final refreshController = useMemoized(() => RefreshController(initialRefresh: false));
-
-    useEffect(() {
-      return () => refreshController.dispose();
-    }, []);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen(getAllBusinessProvider, (prev, next) {
       if (next.hasValue && next.value!.isNotEmpty) {
@@ -63,15 +57,8 @@ class HomeScreen extends HookConsumerWidget {
     }, [businessId]);
 
     Future<void> onRefresh() async {
-      try {
-        await ref.refresh(getAllBusinessProvider.future);
-        if (businessId != null) {
-          await transactionsViewModel.fetchTransactions(businessId);
-        }
-        refreshController.refreshCompleted();
-      } catch (e) {
-        refreshController.refreshFailed();
-        print('Refresh error: $e');
+      if (businessId != null) {
+        await transactionsViewModel.fetchTransactions(businessId);
       }
     }
 
@@ -79,18 +66,7 @@ class HomeScreen extends HookConsumerWidget {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SmartRefresher(
-            controller: refreshController,
-            enablePullDown: true,
-            enablePullUp: false,
-            header: CustomHeader(
-              builder: (BuildContext context, RefreshStatus? mode) {
-                if (mode == RefreshStatus.refreshing) {
-                  return const LoadingIndicator();
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+          child: PullToRefresh(
             onRefresh: onRefresh,
             child: ListView(
               physics: const BouncingScrollPhysics(),
@@ -165,7 +141,7 @@ class HomeScreen extends HookConsumerWidget {
                                     style: Theme.of(context)
                                         .textTheme
                                         .displayMedium!
-                                        .copyWith(fontSize: 14.sp),
+                                        .copyWith(fontSize: 14.sp, color: Colors.black),
                                   ),
                                   SvgPicture.asset(Assets.svg.store),
                                 ],

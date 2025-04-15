@@ -22,6 +22,9 @@ class SubscriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.light;
+
+
     return Container(
       // height: 108.h,
       decoration: BoxDecoration(
@@ -92,7 +95,7 @@ class SubscriptionCard extends StatelessWidget {
                                 style: Theme.of(context)
                                     .textTheme
                                     .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
+                                    .copyWith(fontSize: 14.sp, color: Colors.black),
                               ),
                             ],
                           ),
@@ -111,7 +114,7 @@ class SubscriptionCard extends StatelessWidget {
                 Text.rich(
                     TextSpan(
                     text: price,
-                    style: Theme.of(context).textTheme.displayLarge,
+                    style: Theme.of(context).textTheme.displayLarge!.copyWith(color: Colors.black),
                     children: [
                       TextSpan(
                         text: '/year',
@@ -134,7 +137,7 @@ class SubscriptionCard extends StatelessWidget {
                     children: [
                       Text(
                         'Check it out',
-                        style: Theme.of(context).textTheme.displaySmall,
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.black),
                       ),
                       SizedBox(
                         width: 8.w,

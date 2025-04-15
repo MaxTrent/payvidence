@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
 import 'package:payvidence/components/product_tile.dart';
+import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/providers/category_providers/get_all_category_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/providers/product_providers/product_fillter_provider.dart';
-
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
@@ -17,9 +18,12 @@ import '../../providers/product_providers/current_product_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
+
+
 
 @RoutePage(name: 'ProductRoute')
-class Product extends ConsumerWidget {
+class Product extends HookConsumerWidget {
   final bool? forProductSelection;
 
   Product({super.key, this.forProductSelection = false});
@@ -30,6 +34,14 @@ class Product extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allProducts = ref.watch(getAllProductProvider);
     ValueNotifier<int?> productNumber = ValueNotifier(null);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
+
+
+    Future<void> onRefresh() async {
+      await ref.refresh(getAllProductProvider.future);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +49,7 @@ class Product extends ConsumerWidget {
         title: ValueListenableBuilder(
           builder: (context, value, _) {
             return Text(
-              'All products (${value ?? ''})',
+              'All products (${value ?? '0'})',
               style: Theme.of(context).textTheme.displayLarge!.copyWith(),
             );
           },
@@ -109,73 +121,87 @@ class Product extends ConsumerWidget {
                 productNumber.value = 0;
 
                 return Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'No product available!',
-                        style: Theme.of(context).textTheme.displayLarge,
-                      ),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      Text('All added products will appear here.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(
-                                fontSize: 14.sp,
-                              )),
-                      SizedBox(
-                        height: 48.h,
-                      ),
-                      AppButton(
-                          buttonText: 'Add product',
-                          onPressed: () {
-                            locator<PayvidenceAppRouter>()
-                                .navigateNamed(PayvidenceRoutes.addProduct);
-                          })
-                    ],
+                  child: PullToRefresh(
+                    onRefresh: onRefresh,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'No product available!',
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Text('All added products will appear here.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(
+                                  fontSize: 14.sp,
+                                )),
+                        SizedBox(
+                          height: 48.h,
+                        ),
+                        AppButton(
+                            buttonText: 'Add product',
+                            onPressed: () {
+                              locator<PayvidenceAppRouter>()
+                                  .navigateNamed(PayvidenceRoutes.addProduct);
+                            })
+                      ],
+                    ),
                   ),
                 );
               }
               productNumber.value = data.length;
 
               return Expanded(
-                child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return ProductTile(
-                        product: data[index],
-                        ref: ref,
-                        onPressed: () {
-                          if (forProductSelection == true) {
-                            Navigator.of(context).pop(data[index]);
-                          } else {
-                            locator<PayvidenceAppRouter>().navigate(
-                                ProductDetailsRoute(product: data[index]));
-                            ref
-                                .read(getCurrentProductProvider.notifier)
-                                .setCurrentProduct(data[index]);
-                          }
-                        },
-                      );
-                    },
-                    separatorBuilder: (ctx, idx) {
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 24.h,
-                          ),
-                        ],
-                      );
-                    },
-                    itemCount: data.length),
+                child: PullToRefresh(
+                  onRefresh: onRefresh,
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ProductTile(
+                          product: data[index],
+                          ref: ref,
+                          onPressed: () {
+                            if (forProductSelection == true) {
+                              Navigator.of(context).pop(data[index]);
+                            } else {
+                              locator<PayvidenceAppRouter>().navigate(
+                                  ProductDetailsRoute(product: data[index]));
+                              ref
+                                  .read(getCurrentProductProvider.notifier)
+                                  .setCurrentProduct(data[index]);
+                            }
+                          },
+                        );
+                      },
+                      separatorBuilder: (ctx, idx) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 24.h,
+                            ),
+                          ],
+                        );
+                      },
+                      itemCount: data.length),
+                ),
               );
             }, error: (error, _) {
-              return const Text('An error has occurred');
+              return PullToRefresh(
+                onRefresh: onRefresh,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(child: Text('An error has occurred')),
+                  ],
+                ),
+              );
             }, loading: () {
               return const CustomShimmer();
             })
@@ -374,29 +400,30 @@ class Product extends ConsumerWidget {
 // }
 }
 
-class FilterBottomSheet extends ConsumerWidget {
-  static show(
-    BuildContext context,
-  ) {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-        builder: (context) {
-          return const FilterBottomSheet._();
-        });
-  }
+class FilterBottomSheet extends HookConsumerWidget {
+const FilterBottomSheet._();
 
-  const FilterBottomSheet._();
+static show(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+    ),
+    builder: (context) => const FilterBottomSheet._(),
+  );
+}
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
+@override
+Widget build(BuildContext context, WidgetRef ref) {
+  final theme = useThemeMode();
+  final isDarkMode = theme.mode == ThemeMode.dark;
     final allCategory = ref.watch(getAllCategoryProvider);
+
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDarkMode ?Colors.black : Colors.white,
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(40.r), topLeft: Radius.circular(40.r))),
       child: Padding(
@@ -410,7 +437,7 @@ class FilterBottomSheet extends ConsumerWidget {
                 height: 5.h,
                 width: 67.w,
                 decoration: BoxDecoration(
-                  color: const Color(0xffd9d9d9),
+                  color: isDarkMode ? Colors.black: Color(0xffd9d9d9),
                   borderRadius: BorderRadius.circular(100.r),
                 ),
               ),
@@ -428,6 +455,7 @@ class FilterBottomSheet extends ConsumerWidget {
                     style: Theme.of(context).textTheme.displayLarge!.copyWith(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.w600,
+
                         ),
                   ),
                 ),
@@ -505,7 +533,7 @@ class FilterBottomSheet extends ConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SvgPicture.asset(Assets.svg.shapes),
+                                SvgPicture.asset(Assets.svg.shapes, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                                 SizedBox(
                                   width: 16.w,
                                 ),

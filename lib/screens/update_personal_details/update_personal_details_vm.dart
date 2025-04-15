@@ -13,10 +13,12 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
   User? _user;
   bool _isLoading = false;
   bool _isEditing = false;
+  bool _isUpdating = false;
 
   User? get userInfo => _user;
   bool get isLoading => _isLoading;
   bool get isEditing => _isEditing;
+  bool get isUpdating => _isUpdating;
 
   set userInfo(User? user) {
     _user = user;
@@ -64,15 +66,29 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
   }
 
   Future<void> updateUserInfo({
-    required String newFirstName,
+    String? newFirstName,
+    String? newLastName,
+    String? newPhoneNumber,
+    bool? transactionalAlerts,
+    bool? promotionalUpdates,
+    bool? securityAlerts,
+    bool? showToast,
     required Function() navigateOnSuccess,
   }) async {
     try {
       _isLoading = true;
+      _isUpdating = true;
       notifyListeners();
 
-      print("ViewModel: Updating user with newFirstName: $newFirstName");
-      final response = await apiServices.updateUserInfo(newFirstName);
+      print("ViewModel: Updating user with transactionalAlerts: $transactionalAlerts, promotionalUpdates: $promotionalUpdates, securityAlerts: $securityAlerts");
+      final response = await apiServices.updateUserInfo(
+        firstName: newFirstName,
+        lastName: newLastName,
+        phoneNumber: newPhoneNumber,
+        transactionalAlerts: transactionalAlerts,
+        promotionalUpdates: promotionalUpdates,
+        securityAlerts: securityAlerts,
+      );
       print(
           "ViewModel: Update response - success: ${response.success}, data: ${response.data}");
 
@@ -85,32 +101,46 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
           );
         } else {
           _user = _user?.copyWith(
-            account: _user!.account.copyWith(firstName: newFirstName),
+            account: _user!.account.copyWith(
+              firstName: newFirstName,
+              lastName: newLastName,
+              phoneNumber: newPhoneNumber,
+              transactionalAlerts: transactionalAlerts ?? _user!.account.transactionalAlerts,
+              promotionalUpdates: promotionalUpdates ?? _user!.account.promotionalUpdates,
+              securityAlerts: securityAlerts ?? _user!.account.securityAlerts,
+            ),
           ) ??
               User(
                 account: Account(
-                  firstName: newFirstName,
+                  firstName: newFirstName ?? '',
+                  lastName: newLastName,
+                  phoneNumber: newPhoneNumber,
+                  transactionalAlerts: transactionalAlerts ?? false,
+                  promotionalUpdates: promotionalUpdates ?? false,
+                  securityAlerts: securityAlerts ?? false,
                 ),
                 token: null,
               );
         }
         _isEditing = false;
-        showSuccess(message: 'User details updated!');
+        if (showToast == true) {
+          showSuccess(message: 'User Info updated!');
+        }
         notifyListeners();
         navigateOnSuccess();
       } else {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??
-            "Failed to update user!";
+            "Failed to update settings!";
         print("ViewModel: Update failed - $errorMessage");
         handleError(message: errorMessage);
       }
     } catch (e) {
       print("ViewModel: Exception during update - $e");
-      handleError(
-          message: "An unexpected error occurred while updating the user.");
+      handleError(message: "An unexpected error occurred while updating settings.");
     } finally {
       _isLoading = false;
+      _isUpdating = false;
       notifyListeners();
     }
   }

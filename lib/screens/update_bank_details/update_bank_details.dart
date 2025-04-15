@@ -50,10 +50,13 @@ class UpdateBankDetails extends ConsumerWidget {
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
       } on DioException catch (e) {
+        print("here");
         Navigator.of(context).pop(); // pop loading dialog on error
         ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
+        print("let go");
+
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
         ToastService.showErrorSnackBar('An unknown error has occurred!');
@@ -113,7 +116,12 @@ class UpdateBankDetails extends ConsumerWidget {
                   AppTextField(
                     hintText: 'Account number',
                     controller: accountNumberController,
-                    validator: (val) => Validator.validateEmpty(val),
+                    validator: (val) {
+                      if (val?.length != 10) {
+                        return 'Account number must be of length 10';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(
                     height: 20.h,
@@ -127,6 +135,8 @@ class UpdateBankDetails extends ConsumerWidget {
                   ),
                   AppTextField(
                     hintText: 'Account name',
+                    filled: true,
+                    fillColor: const Color(0xFFD9D9D9),
                     controller: accountNameController,
                     validator: (val) => Validator.validateEmpty(val),
                   ),
@@ -135,10 +145,18 @@ class UpdateBankDetails extends ConsumerWidget {
                   ),
                   AppButton(
                     buttonText: 'Save bank details',
-                    onPressed: () {
+                    onPressed: () async {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
-                        updateBank();
+                        // Usage:
+                        final shouldProceed = await showConfirmationDialog(
+                          context: context,
+                          title: 'Update Bank Details',
+                          content: 'Proceed to update bank details?',
+                        );
+                        if (shouldProceed) {
+                          updateBank();
+                        }
                         //createReceipt();
                       } // context.push(AppRoutes.receipt);
                     },
@@ -151,4 +169,31 @@ class UpdateBankDetails extends ConsumerWidget {
       ),
     );
   }
+}
+
+Future<bool> showConfirmationDialog({
+  required BuildContext context,
+  required String title,
+  required String content,
+}) async {
+  return await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Confirm'),
+              ),
+            ],
+          );
+        },
+      ) ??
+      false; // Returns false if dialog is dismissed
 }

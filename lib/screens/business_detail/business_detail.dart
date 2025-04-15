@@ -192,11 +192,13 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
         ),
         SizedBox(height: 8.h),
         AppButton(
+
           buttonText: 'Edit bank details',
           onPressed: () {
             locator<PayvidenceAppRouter>().navigate(EditBankDetailsRoute(businessId: businessId));
           },
-          backgroundColor: Colors.white,
+
+          backgroundColor: Colors.transparent,
           textColor: primaryColor2,
         ),
         SizedBox(height: 14.h),

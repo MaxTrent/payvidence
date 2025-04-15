@@ -160,10 +160,13 @@ class AddBrandRouteArgs {
 
 /// generated route for
 /// [_i3.AddBusiness]
-class AddBusinessRoute extends _i65.PageRouteInfo<void> {
-  const AddBusinessRoute({List<_i65.PageRouteInfo>? children})
-      : super(
+class AddBusinessRoute extends _i65.PageRouteInfo<AddBusinessRouteArgs> {
+  AddBusinessRoute({
+    _i66.Key? key,
+    List<_i65.PageRouteInfo>? children,
+  }) : super(
           AddBusinessRoute.name,
+          args: AddBusinessRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -172,9 +175,22 @@ class AddBusinessRoute extends _i65.PageRouteInfo<void> {
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      return const _i3.AddBusiness();
+      final args = data.argsAs<AddBusinessRouteArgs>(
+          orElse: () => const AddBusinessRouteArgs());
+      return _i3.AddBusiness(key: args.key);
     },
   );
+}
+
+class AddBusinessRouteArgs {
+  const AddBusinessRouteArgs({this.key});
+
+  final _i66.Key? key;
+
+  @override
+  String toString() {
+    return 'AddBusinessRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for
@@ -1521,8 +1537,8 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
   PaymentWebViewRoute({
     _i66.Key? key,
     String paymentLink = '',
-    String callbackUrl = 'https://hello.pstk.xyz/callback',
-    String cancelUrl = 'https://your-cancel-url.com',
+    String callbackUrl = '',
+    String cancelAction = '',
     List<_i65.PageRouteInfo>? children,
   }) : super(
           PaymentWebViewRoute.name,
@@ -1530,9 +1546,13 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
             key: key,
             paymentLink: paymentLink,
             callbackUrl: callbackUrl,
-            cancelUrl: cancelUrl,
+            cancelAction: cancelAction,
           ),
-          rawQueryParams: {'paymentLink': paymentLink},
+          rawQueryParams: {
+            'paymentLink': paymentLink,
+            'callbackUrl': callbackUrl,
+            'cancelAction': cancelAction,
+          },
           initialChildren: children,
         );
 
@@ -1544,15 +1564,24 @@ class PaymentWebViewRoute extends _i65.PageRouteInfo<PaymentWebViewRouteArgs> {
       final queryParams = data.queryParams;
       final args = data.argsAs<PaymentWebViewRouteArgs>(
           orElse: () => PaymentWebViewRouteArgs(
-                  paymentLink: queryParams.getString(
-                'paymentLink',
-                '',
-              )));
+                paymentLink: queryParams.getString(
+                  'paymentLink',
+                  '',
+                ),
+                callbackUrl: queryParams.getString(
+                  'callbackUrl',
+                  '',
+                ),
+                cancelAction: queryParams.getString(
+                  'cancelAction',
+                  '',
+                ),
+              ));
       return _i46.PaymentWebViewPage(
         key: args.key,
         paymentLink: args.paymentLink,
         callbackUrl: args.callbackUrl,
-        cancelUrl: args.cancelUrl,
+        cancelAction: args.cancelAction,
       );
     },
   );
@@ -1562,8 +1591,8 @@ class PaymentWebViewRouteArgs {
   const PaymentWebViewRouteArgs({
     this.key,
     this.paymentLink = '',
-    this.callbackUrl = 'https://hello.pstk.xyz/callback',
-    this.cancelUrl = 'https://your-cancel-url.com',
+    this.callbackUrl = '',
+    this.cancelAction = '',
   });
 
   final _i66.Key? key;
@@ -1572,11 +1601,11 @@ class PaymentWebViewRouteArgs {
 
   final String callbackUrl;
 
-  final String cancelUrl;
+  final String cancelAction;
 
   @override
   String toString() {
-    return 'PaymentWebViewRouteArgs{key: $key, paymentLink: $paymentLink, callbackUrl: $callbackUrl, cancelUrl: $cancelUrl}';
+    return 'PaymentWebViewRouteArgs{key: $key, paymentLink: $paymentLink, callbackUrl: $callbackUrl, cancelAction: $cancelAction}';
   }
 }
 
@@ -1841,13 +1870,10 @@ class ResetPasswordSuccessRoute extends _i65.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i56.Sales]
-class SalesRoute extends _i65.PageRouteInfo<SalesRouteArgs> {
-  SalesRoute({
-    _i66.Key? key,
-    List<_i65.PageRouteInfo>? children,
-  }) : super(
+class SalesRoute extends _i65.PageRouteInfo<void> {
+  const SalesRoute({List<_i65.PageRouteInfo>? children})
+      : super(
           SalesRoute.name,
-          args: SalesRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1856,22 +1882,9 @@ class SalesRoute extends _i65.PageRouteInfo<SalesRouteArgs> {
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      final args =
-          data.argsAs<SalesRouteArgs>(orElse: () => const SalesRouteArgs());
-      return _i56.Sales(key: args.key);
+      return const _i56.Sales();
     },
   );
-}
-
-class SalesRouteArgs {
-  const SalesRouteArgs({this.key});
-
-  final _i66.Key? key;
-
-  @override
-  String toString() {
-    return 'SalesRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for

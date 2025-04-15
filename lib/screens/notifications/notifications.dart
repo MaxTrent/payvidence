@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
+import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/model/notification_model.dart';
 import '../../gen/assets.gen.dart';
@@ -24,6 +25,10 @@ class Notifications extends HookConsumerWidget {
       }
       return null;
     }, []);
+
+    Future<void> onRefresh() async {
+        await viewModel.fetchNotifications();
+    }
 
     return Scaffold(
       appBar: AppBar(),
@@ -47,22 +52,32 @@ class Notifications extends HookConsumerWidget {
                 },
               )
                   : viewModel.notifications.isEmpty
-                  ? Center(
-                child: Text(
-                  'No notifications available',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall!
-                      .copyWith(fontSize: 16.sp),
-                ),
-              )
-                  : ListView.builder(
-                itemCount: viewModel.notifications.length,
-                itemBuilder: (context, index) {
-                  final notification = viewModel.notifications[index];
-                  return NotificationTile(notification: notification);
-                },
-              ),
+                  ? PullToRefresh(
+                onRefresh: onRefresh,
+                    child: ListView(
+                      children: [
+                        Center(
+                                        child: Text(
+                        'No notifications available',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(fontSize: 16.sp),
+                                        ),
+                                      ),
+                      ],
+                    ),
+                  )
+                  : PullToRefresh(
+                onRefresh: onRefresh,
+                    child: ListView.builder(
+                                    itemCount: viewModel.notifications.length,
+                                    itemBuilder: (context, index) {
+                    final notification = viewModel.notifications[index];
+                    return NotificationTile(notification: notification);
+                                    },
+                                  ),
+                  ),
             ),
           ],
         ),

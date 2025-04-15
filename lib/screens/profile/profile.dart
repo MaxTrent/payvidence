@@ -9,9 +9,8 @@ import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
+import 'package:payvidence/utilities/theme_mode.dart';
 import '../../components/loading_dialog.dart';
-import '../../data/local/session_constants.dart';
-import '../../data/local/session_manager.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../my_subscription/my_subscription_vm.dart';
@@ -27,7 +26,8 @@ class Profile extends HookConsumerWidget {
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
     final useUpdatePersonalDetailsViewModel =
         ref.watch(updatePersonalDetailsViewModelProvider);
-
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
     // final rateMyApp = RateMyApp(
     //   minDays: 7, // Show after 7 days
     //   minLaunches: 10, // Show after 10 launches
@@ -41,10 +41,12 @@ class Profile extends HookConsumerWidget {
       Future.microtask(() {
         useUpdatePersonalDetailsViewModel.fetchUserInformation();
         useMySubscriptionViewModel.fetchSubscriptions();
-        // rateMyApp.init();
       });
       return null;
     }, []);
+
+    // Debug theme state
+    print('Profile: Theme mode = ${theme.mode}, Brightness = ${Theme.of(context).brightness}');
 
     return Scaffold(
       body: Column(
@@ -76,14 +78,12 @@ class Profile extends HookConsumerWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white, // Border color
-                                  width: 1.w, // Border thickness
+                                  color: Colors.white,
+                                  width: 1.w,
                                 ),
                               ),
                               child: CircleAvatar(
                                 radius: 36.r,
-                                // backgroundColor: Colors
-                                //     .grey.shade200,
                                 child: useUpdatePersonalDetailsViewModel
                                             .userInfo
                                             ?.account
@@ -114,7 +114,6 @@ class Profile extends HookConsumerWidget {
                                 onTap: () {
                                   locator<PayvidenceAppRouter>().navigateNamed(
                                       PayvidenceRoutes.changeProfilePicture);
-                                  // context.router.push(ChangeProfilePictureRoute());
                                 },
                                 child: CircleAvatar(
                                   radius: 14.r,
@@ -130,7 +129,6 @@ class Profile extends HookConsumerWidget {
                           ],
                         ),
                         Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
                                 onTap: () {
@@ -156,7 +154,6 @@ class Profile extends HookConsumerWidget {
                       height: 24.h,
                     ),
                     Container(
-                      // height: 80.h,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12.r),
@@ -179,17 +176,21 @@ class Profile extends HookConsumerWidget {
                                   style: Theme.of(context)
                                       .textTheme
                                       .displaySmall!
-                                      .copyWith(fontSize: 14.sp),
+                                      .copyWith(
+                                          fontSize: 14.sp, color: Colors.black),
                                 )
                               ],
                             ),
                             SizedBox(
-                              height: 2..h,
+                              height: 2.h,
                             ),
                             Text(
                               useMySubscriptionViewModel.subInfo?.plan.name ??
                                   'Starter plan',
-                              style: Theme.of(context).textTheme.displayLarge,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayLarge!
+                                  .copyWith(color: Colors.black),
                             )
                           ],
                         ),
@@ -200,14 +201,11 @@ class Profile extends HookConsumerWidget {
               ),
             ),
           ),
-          // Text('Profile ooo'),
           Expanded(
             child: ListView(
               children: [
-                // SizedBox(
-                //   height: 20.h,
-                // ),
                 ProfileOptionTile(
+                  isDarkMode: isDarkMode,
                   onTap: () {
                     locator<PayvidenceAppRouter>()
                         .navigateNamed(PayvidenceRoutes.updatePersonalDetails);
@@ -219,54 +217,37 @@ class Profile extends HookConsumerWidget {
                   height: 24.h,
                 ),
                 ProfileOptionTile(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.mySubscription);
-
-                      // context.router.push(MySubscriptionRoute());
-                    },
-                    icon: Assets.svg.medalStar,
-                    title: 'Manage subscription plan'),
-                SizedBox(
-                  height: 24.h,
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.mySubscription);
+                  },
+                  icon: Assets.svg.medalStar,
+                  title: 'Manage subscription plan',
                 ),
-                // ProfileOptionTile(
-                //     onTap: () {
-                //       locator<PayvidenceAppRouter>()
-                //           .navigateNamed(PayvidenceRoutes.businessData);
-                //       // context.router.push(BusinessDataRoute());
-                //     },
-                //     // navigateTo: ,
-                //     icon: Assets.svg.chart,
-                //     title: 'Access business data'),
-                // SizedBox(
-                //   height: 24.h,
-                // ),
-                ProfileOptionTile(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.payvidenceInfo);
-                      // context.router.push(PayvidenceInfoRoute());
-                    },
-                    icon: Assets.svg.documentText,
-                    title: 'View Payvidence information'),
                 SizedBox(
                   height: 24.h,
                 ),
                 ProfileOptionTile(
-                    onTap: () {
-                      // rateMyApp.showRateDialog(
-                      //   context,
-                      //   title: 'Rate Payvidence',
-                      //   message: 'If you enjoy using Payvidence, would you mind rating us?',
-                      //   rateButton: 'Rate Now',
-                      //   noButton: 'No Thanks',
-                      //   laterButton: 'Maybe Later',
-                      //   onDismissed: () => rateMyApp.callEvent(RateMyAppEventType.laterButtonPressed),
-                      // );
-                    },
-                    icon: Assets.svg.like,
-                    title: 'Rate app'),
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.payvidenceInfo);
+                  },
+                  icon: Assets.svg.documentText,
+                  title: 'View Payvidence information',
+                ),
+                SizedBox(
+                  height: 24.h,
+                ),
+                ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    // Handle rate app logic if needed
+                  },
+                  icon: Assets.svg.like,
+                  title: 'Rate app',
+                ),
                 SizedBox(
                   height: 24.h,
                 ),
@@ -275,8 +256,6 @@ class Profile extends HookConsumerWidget {
                     if (!context.mounted) return;
                     LoadingDialog.show(context);
                     viewModel.logout(navigateOnSuccess: () async {
-                      // locator<SessionManager>().clear();
-
                       locator<PayvidenceAppRouter>()
                           .popUntil((route) => route is OnboardingScreen);
                       locator<PayvidenceAppRouter>()
@@ -287,6 +266,8 @@ class Profile extends HookConsumerWidget {
                   title: 'Log out',
                   showTrailing: false,
                   color: appRed,
+                  isLogout: true,
+                  isDarkMode: isDarkMode,
                 ),
               ],
             ),
@@ -298,34 +279,32 @@ class Profile extends HookConsumerWidget {
 }
 
 class ProfileOptionTile extends ConsumerWidget {
-  ProfileOptionTile({
+  const ProfileOptionTile({
     required this.icon,
     required this.title,
     this.showTrailing = true,
-    // required this.navigateTo,
     this.color,
     this.onTap,
+    this.isLogout = false,
+    required this.isDarkMode,
     super.key,
   });
 
-  String title;
-  String icon;
-  bool showTrailing;
-  Color? color;
-  // String navigateTo;
-  VoidCallback? onTap;
+  final String title;
+  final String icon;
+  final bool showTrailing;
+  final Color? color;
+  final bool isLogout;
+  final bool isDarkMode;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context, ref) {
     final viewModel = ref.watch(profileViewModelProvider);
-
-    return Column(
+   return Column(
       children: [
         GestureDetector(
           onTap: viewModel.isLoading ? null : onTap,
-          //     (){
-          //   context.push(navigateTo);
-          // },
           child: ListTile(
             title: Text(
               title,
@@ -338,6 +317,14 @@ class ProfileOptionTile extends ConsumerWidget {
               icon,
               height: 32.h,
               width: 32.w,
+              colorFilter: ColorFilter.mode(
+                isLogout
+                    ? appRed
+                    : isDarkMode
+                        ? Colors.white
+                        : Colors.black,
+                BlendMode.srcIn,
+              ),
             ),
             trailing: showTrailing
                 ? const Icon(Icons.keyboard_arrow_right)

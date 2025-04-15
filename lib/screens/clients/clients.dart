@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/app_button.dart';
@@ -15,6 +16,7 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 
 
 
@@ -29,6 +31,7 @@ class Clients extends HookConsumerWidget {
       @QueryParam('businessId') this.businessId = ''});
 
   final _searchController = TextEditingController();
+
 
   static const List<Color> avatarColors = [
     Colors.lightGreen,
@@ -49,6 +52,14 @@ class Clients extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allClients = ref.watch(getAllClientsProvider);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
+
+
+    Future<void> onRefresh() async {
+      await ref.refresh(getAllClientsProvider.future);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -112,168 +123,184 @@ class Clients extends HookConsumerWidget {
               data: (data) {
                 if (data.isEmpty) {
                   return Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'No clients available!',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
-                        SizedBox(height: 10.h),
-                        Text(
-                          'All added clients will appear here.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(fontSize: 14.sp),
-                        ),
-                        SizedBox(height: 48.h),
-                        AppButton(
-                          buttonText: 'Add client',
-                          onPressed: () async {
-                            await locator<PayvidenceAppRouter>().navigate(
-                                AddClientRoute(businessId: businessId));
-                            ref
-                                .read(getAllClientsProvider.notifier)
-                                .fetchClients();
-                          },
-                        ),
-                      ],
+                    child: PullToRefresh(
+                      onRefresh: onRefresh,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'No clients available!',
+                            style: Theme.of(context).textTheme.displayLarge,
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            'All added clients will appear here.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(fontSize: 14.sp),
+                          ),
+                          SizedBox(height: 48.h),
+                          AppButton(
+                            buttonText: 'Add client',
+                            onPressed: () async {
+                              await locator<PayvidenceAppRouter>().navigate(
+                                  AddClientRoute(businessId: businessId));
+                              ref
+                                  .read(getAllClientsProvider.notifier)
+                                  .fetchClients();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
 
                 return Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () async {
-                          if (forSelection == true) {
-                            Navigator.of(context).pop(data[index]);
-                          } else {
-                            if (data[index].id != null) {
-                              await locator<PayvidenceAppRouter>().push(
-                                ClientDetailsRoute(
-                                    businessId: businessId,
-                                    clientId: data[index].id!),
-                              );
-                              ref
-                                  .read(getAllClientsProvider.notifier)
-                                  .fetchClients();
+                  child: PullToRefresh(
+                    onRefresh: onRefresh,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () async {
+                            if (forSelection == true) {
+                              Navigator.of(context).pop(data[index]);
+                            } else {
+                              if (data[index].id != null) {
+                                await locator<PayvidenceAppRouter>().push(
+                                  ClientDetailsRoute(
+                                      businessId: businessId,
+                                      clientId: data[index].id!),
+                                );
+                                ref
+                                    .read(getAllClientsProvider.notifier)
+                                    .fetchClients();
+                              }
                             }
-                          }
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 56.h,
-                              width: 56.h,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: getRandomColor(),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  data[index].name?.substring(0, 2) ?? 'NA',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(
-                                        fontSize: 20.sp,
-                                        color: Colors.white,
-                                      ),
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 56.h,
+                                width: 56.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: getRandomColor(),
                                 ),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    data[index].name ?? '',
+                                child: Center(
+                                  child: Text(
+                                    data[index].name?.substring(0, 2) ?? 'NA',
                                     style: Theme.of(context)
                                         .textTheme
-                                        .displayMedium,
+                                        .displaySmall!
+                                        .copyWith(
+                                          fontSize: 20.sp,
+                                          color: Colors.white,
+                                        ),
                                   ),
-                                  SizedBox(height: 8.h),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SvgPicture.asset(Assets.svg.location),
-                                      SizedBox(width: 6.w),
-                                      Expanded(
-                                        child: Text(
-                                          data[index].address ?? '',
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      data[index].name ?? '',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium,
+                                    ),
+                                    SizedBox(height: 8.h),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SvgPicture.asset(Assets.svg.location, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
+                                        SizedBox(width: 6.w),
+                                        Expanded(
+                                          child: Text(
+                                            data[index].address ?? '',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .displaySmall!
+                                                .copyWith(fontSize: 14.sp),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 12.h),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          data[index].phoneNumber ?? '',
                                           style: Theme.of(context)
                                               .textTheme
                                               .displaySmall!
                                               .copyWith(fontSize: 14.sp),
-                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 12.h),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        data[index].phoneNumber ?? '',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displaySmall!
-                                            .copyWith(fontSize: 14.sp),
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Clipboard.setData(ClipboardData(
-                                              text: data[index].phoneNumber ??
-                                                  ''));
-                                          ToastService.showSnackBar(
-                                              'Copied to clipboard');
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Copied to clipboard',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .displaySmall!
-                                                    .copyWith(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w400),
+                                        SizedBox(width: 8.w),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: data[index].phoneNumber ??
+                                                    ''));
+                                            ToastService.showSnackBar(
+                                                'Copied to clipboard');
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Copied to clipboard',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .displaySmall!
+                                                      .copyWith(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                ),
+                                                backgroundColor: primaryColor2,
                                               ),
-                                              backgroundColor: primaryColor2,
-                                            ),
-                                          );
-                                        },
-                                        child:
-                                            SvgPicture.asset(Assets.svg.copy),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                            );
+                                          },
+                                          child:
+                                              SvgPicture.asset(Assets.svg.copy),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    separatorBuilder: (ctx, idx) => SizedBox(height: 24.h),
-                    itemCount: data.length,
+                            ],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (ctx, idx) => SizedBox(height: 24.h),
+                      itemCount: data.length,
+                    ),
                   ),
                 );
               },
-              error: (error, _) => const Text('An error has occurred'),
+              error: (error, _) => Expanded(
+                child: PullToRefresh(
+                  onRefresh: onRefresh,
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('An error has occurred'),
+                    ],
+                  ),
+                ),
+              ),
               loading: () => CustomShimmer(height: 60.h),
             ),
           ],

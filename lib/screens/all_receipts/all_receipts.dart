@@ -27,13 +27,19 @@ class AllReceipts extends ConsumerWidget {
     final allReceipts = ref.watch(getAllReceiptProvider);
     ValueNotifier<int?> productNumber = ValueNotifier(null);
 
+
+    Future<void> onRefresh() async {
+      await ref.refresh(getAllReceiptProvider.future);
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
         title: ValueListenableBuilder(
           builder: (context, value, _) {
             return Text(
-              'All receipts (${value ?? ''})',
+              'All receipts (${value ?? '0'})',
               style: Theme.of(context).textTheme.displayLarge!.copyWith(),
             );
           },
