@@ -353,4 +353,12 @@ class ApiServices {
 
     return ApiResult.fromJson(response);
   }
+
+  Future<ApiResult> refreshToken() async {
+    var response = await locator<NetworkService>()
+        .get(PayvidenceEndpoints.refreshToken, isAccessToken: false);
+
+    return ApiResult.fromJson(response);
+  }
+
 }
