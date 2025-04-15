@@ -532,6 +532,7 @@ Future<DateTime?> showMonthPicker({
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
+
         title: const Text('Select Month'),
         content: SizedBox(
           width: 300,
@@ -672,13 +673,13 @@ Future<DateTime?> selectDay(BuildContext context) async {
       return Theme(
         data: Theme.of(context).copyWith(
           colorScheme: const ColorScheme.light(
-            primary: Colors.blue, // Header background color
-            onPrimary: Colors.white, // Header text color
-            onSurface: Colors.black, // Body text color
+            primary: primaryColor2,
+            onPrimary: Colors.white,
+            onSurface: Colors.black,
           ),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blue, // Button text color
+              foregroundColor:primaryColor2
             ),
           ),
         ),

@@ -48,8 +48,7 @@ class PayvidenceInfo extends HookWidget {
             ),
             Divider(
               thickness: 1.h,
-              color: isDarkMode ? Colors.white54 : Colors.black54,
-            ),
+             ),
             ProfileOptionTile(
               isDarkMode: isDarkMode,
               icon: Assets.svg.privacy,
@@ -171,6 +170,7 @@ class PayvidenceInfo extends HookWidget {
                     ),
                     GestureDetector(
                       onTap: () async {
+                        Navigator.of(context).pop();
                         final uri = Uri.parse('mailto:message@payvidence.com');
                         if (await canLaunchUrl(uri)) {
                           await launchUrl(uri);
@@ -222,10 +222,11 @@ class PayvidenceInfo extends HookWidget {
                     ),
                     GestureDetector(
                       onTap: () async {
+                        Navigator.of(context).pop();
                         final uri = Uri.parse('tel:+2348034433434');
-                        if (await canLaunchUrl(uri)) {
+                        try {
                           await launchUrl(uri);
-                        } else {
+                        } catch (e) {
                           ToastService.showErrorSnackBar('Unable to open dialer');
                         }
                       },
@@ -272,6 +273,7 @@ class PayvidenceInfo extends HookWidget {
                     ),
                     GestureDetector(
                       onTap: () async {
+                        Navigator.of(context).pop();
                         final message = Uri.encodeComponent('Hello, I want to know more about Payvidence');
                         final uri = Uri.parse('https://wa.me/+2348172331900?text=$message');
                         if (await canLaunchUrl(uri)) {

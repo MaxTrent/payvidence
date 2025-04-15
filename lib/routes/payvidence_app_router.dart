@@ -8,13 +8,14 @@ import '../shared_dependency/shared_dependency.dart';
 class PayvidenceAppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
+    AutoRoute(page: SplashRoute.page, initial: true),
         AutoRoute(
             page: OnboardingScreenRoute.page,
             path: PayvidenceRoutes.onboarding),
         AutoRoute(
             page: HomePageRoute.page,
             path: PayvidenceRoutes.home,
-            initial: true,
+            // initial: true,
             guards: [
               AuthRouteGuard(),
             ],

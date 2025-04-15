@@ -15,4 +15,5 @@ class SessionConstants {
   static const isBiometricLoginEnabled = "isBiometricLoginEnabled";
   static const themeMode = "themeMode";
   static const refreshToken = "refreshToken";
+  static const isOnboarded = "isOnboarded";
 }

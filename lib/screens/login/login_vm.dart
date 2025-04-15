@@ -66,7 +66,8 @@ class LoginViewModel extends BaseChangeNotifier {
 
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
         await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: user.token);
-
+        await locator<SessionManager>().save(key: SessionConstants.isOnboarded, value: true);
+        
         navigateOnSuccess();
       } else {
         _errorMessage = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";

@@ -13,7 +13,6 @@ import 'package:payvidence/utilities/toast_service.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
@@ -34,7 +33,7 @@ Future<void> main() async {
       ),
     ));
   } catch (e) {
-    print(e);
+    print('Initialization error: $e');
   }
 }
 
@@ -54,7 +53,6 @@ class MyApp extends HookWidget {
       builder: (_, child) => MaterialApp.router(
         scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
         scrollBehavior: AppScrollBehaviour(),
-
         title: 'Payvidence',
         debugShowCheckedModeBanner: false,
         theme: appTheme.light,
