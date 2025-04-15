@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../constants/app_colors.dart';
+
 
 class AppTextField extends StatelessWidget {
   const AppTextField({
@@ -26,6 +26,9 @@ class AppTextField extends StatelessWidget {
     this.textCapitalization,
     super.key,
   });
+
+
+
 
   final String hintText;
   final TextEditingController controller;
@@ -59,6 +62,7 @@ class AppTextField extends StatelessWidget {
         autofillHints: autofillHints,
         enabled: enabled,
         controller: controller,
+        cursorErrorColor: appRed,
         cursorColor: Colors.black,
         validator: validator,
         keyboardType: keyboardType,

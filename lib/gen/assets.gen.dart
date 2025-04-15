@@ -26,17 +26,14 @@ class $AssetsPngGen {
   AssetGenImage get keekee24158PM =>
       const AssetGenImage('assets/png/keekee 2.41.58 PM.png');
 
-  /// File path: assets/png/onboarding1.png
-  AssetGenImage get onboarding1 =>
-      const AssetGenImage('assets/png/onboarding1.png');
+  /// File path: assets/png/onboard1.png
+  AssetGenImage get onboard1 => const AssetGenImage('assets/png/onboard1.png');
 
-  /// File path: assets/png/onboarding2.png
-  AssetGenImage get onboarding2 =>
-      const AssetGenImage('assets/png/onboarding2.png');
+  /// File path: assets/png/onboard2.png
+  AssetGenImage get onboard2 => const AssetGenImage('assets/png/onboard2.png');
 
-  /// File path: assets/png/onboarding3.png
-  AssetGenImage get onboarding3 =>
-      const AssetGenImage('assets/png/onboarding3.png');
+  /// File path: assets/png/onboard3.png
+  AssetGenImage get onboard3 => const AssetGenImage('assets/png/onboard3.png');
 
   /// File path: assets/png/payvidence_logo.png
   AssetGenImage get payvidenceLogo =>
@@ -60,9 +57,9 @@ class $AssetsPngGen {
   /// List of all assets
   List<AssetGenImage> get values => [
         keekee24158PM,
-        onboarding1,
-        onboarding2,
-        onboarding3,
+        onboard1,
+        onboard2,
+        onboard3,
         payvidenceLogo,
         productPicture,
         productpic,
@@ -196,6 +193,15 @@ class $AssetsSvgGen {
 
   /// File path: assets/svg/notification.svg
   String get notification => 'assets/svg/notification.svg';
+
+  /// File path: assets/svg/onboarding1.svg
+  String get onboarding1 => 'assets/svg/onboarding1.svg';
+
+  /// File path: assets/svg/onboarding2.svg
+  String get onboarding2 => 'assets/svg/onboarding2.svg';
+
+  /// File path: assets/svg/onboarding3.svg
+  String get onboarding3 => 'assets/svg/onboarding3.svg';
 
   /// File path: assets/svg/otherplans.svg
   String get otherplans => 'assets/svg/otherplans.svg';
@@ -352,6 +358,9 @@ class $AssetsSvgGen {
         noteText,
         notificationBing,
         notification,
+        onboarding1,
+        onboarding2,
+        onboarding3,
         otherplans,
         passwordCheck,
         password,

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
+import '../utilities/theme_mode.dart';
 import 'app_naira.dart';
 //TODO: Display Naira properly
 
-class TransactionTile extends StatelessWidget {
+class TransactionTile extends HookWidget {
   String productName;
   String unitSold;
   String dateTime;
@@ -23,6 +25,9 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
 
     return Container(
       height: 101.h,
@@ -100,7 +105,7 @@ class TransactionTile extends StatelessWidget {
                           EdgeInsets.symmetric(horizontal: 6.w, vertical: 5.h),
                       // width: 71.w,
                       decoration: BoxDecoration(
-                          color: primaryColor2.withOpacity(0.2),
+                          color: isDarkMode ?  primaryColor2:primaryColor2.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(6.r)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,8 +115,8 @@ class TransactionTile extends StatelessWidget {
                             receiptOrInvoice.trim().toLowerCase() == 'receipt'
                                 ? Assets.svg.receipt
                                 : Assets.svg.invoice,
-                            colorFilter: const ColorFilter.mode(
-                                primaryColor2, BlendMode.dstIn),
+                            colorFilter:  ColorFilter.mode(
+                               isDarkMode?  Colors.white: primaryColor2, BlendMode.srcIn),
                           ),
                           Text(
                             receiptOrInvoice,
@@ -119,7 +124,7 @@ class TransactionTile extends StatelessWidget {
                                 .textTheme
                                 .displaySmall!
                                 .copyWith(
-                                    fontSize: 12.sp, color: primaryColor2),
+                                    fontSize: 12.sp, color: isDarkMode ? Colors.white: primaryColor2),
                           ),
                         ],
                       ),

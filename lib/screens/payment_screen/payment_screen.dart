@@ -1,23 +1,27 @@
 import 'package:auto_route/annotations.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/loading_indicator.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/screens/my_subscription/my_subscription_vm.dart';
+import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'PaymentWebViewRoute')
 class PaymentWebViewPage extends StatefulHookConsumerWidget {
   final String paymentLink;
   final String callbackUrl;
-  final String cancelUrl;
+  final String cancelAction;
 
   const PaymentWebViewPage({
     super.key,
     @QueryParam('paymentLink') this.paymentLink = '',
-    this.callbackUrl = 'https://hello.pstk.xyz/callback',
-    this.cancelUrl = 'https://your-cancel-url.com',
+    @QueryParam('callbackUrl') this.callbackUrl = '',
+    @QueryParam('cancelAction') this.cancelAction = '',
   });
 
   @override
@@ -25,38 +29,13 @@ class PaymentWebViewPage extends StatefulHookConsumerWidget {
 }
 
 class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
-  final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'https://api.paystack.co',
-    connectTimeout: const Duration(seconds: 20),
-    receiveTimeout: const Duration(seconds: 20),
-    headers: {
-      'Authorization': 'Bearer sk_test_xxx',
-      'Content-Type': 'application/json',
-    },
-  ));
-
-  Future<void> verifyTransaction(String reference) async {
-    try {
-      final response = await _dio.get('/transaction/verify/$reference');
-      final data = response.data;
-
-      if (data['status'] == true && data['data']['status'] == 'success') {
-        ToastService.showSnackBar('Payment completed successfully!');
-        Navigator.pop(context);
-      } else {
-        ToastService.showErrorSnackBar('Payment verification failed.');
-      }
-    } on DioException catch (e) {
-      ToastService.showErrorSnackBar('Error verifying payment: ${e.message}');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isLoading = useState(true);
-    final isVerifying = useState(false);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
 
-   final reference = Uri.parse(widget.paymentLink).pathSegments.last;
+    print('PaymentWebViewPage: paymentLink=${widget.paymentLink}, callbackUrl=${widget.callbackUrl}, cancelAction=${widget.cancelAction}, isDarkMode=$isDarkMode');
 
     final controller = useMemoized(
           () => WebViewController()
@@ -76,45 +55,67 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
               final url = request.url;
               print('Navigation request: $url');
 
-              if (url == widget.callbackUrl) {
-                isVerifying.value = true;
-                verifyTransaction(reference).then((_) {
-                  isVerifying.value = false;
+              final normalizedUrl = url.split('?')[0].replaceAll(RegExp(r'/$'), '').toLowerCase();
+              final normalizedCallbackUrl = widget.callbackUrl.isNotEmpty
+                  ? widget.callbackUrl.split('?')[0].replaceAll(RegExp(r'/$'), '').toLowerCase()
+                  : '';
+              final normalizedCancelAction = widget.cancelAction.isNotEmpty
+                  ? widget.cancelAction.split('?')[0].replaceAll(RegExp(r'/$'), '').toLowerCase()
+                  : '';
+
+              if (normalizedCallbackUrl.isNotEmpty && normalizedUrl == normalizedCallbackUrl) {
+                print('Intercepted callback: $url');
+                ToastService.showSnackBar('Payment completed!');
+                // Refresh subscription and navigate to MySubscription
+                ref.read(mySubscriptionViewModel).fetchSubscriptions().then((_) {
+                  Navigator.pop(context);
+                  locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.mySubscription);
                 });
                 return NavigationDecision.prevent;
               }
 
               if (url == 'https://standard.paystack.co/close') {
+                print('Intercepted close: $url');
                 Navigator.pop(context);
                 return NavigationDecision.prevent;
               }
 
-              if (url == widget.cancelUrl) {
+              if (normalizedCancelAction.isNotEmpty && normalizedUrl == normalizedCancelAction) {
+                print('Intercepted cancel: $url');
                 Navigator.pop(context);
                 ToastService.showSnackBar('Payment cancelled.');
                 return NavigationDecision.prevent;
               }
 
+              if (url.contains('checkout.paystack.com')) {
+                print('Allowing payment page: $url');
+                return NavigationDecision.navigate;
+              }
+
+              print('Allowing navigation: $url');
               return NavigationDecision.navigate;
             },
             onWebResourceError: (error) {
               isLoading.value = false;
+              print('WebView error: ${error.description}');
               ToastService.showErrorSnackBar('Error: ${error.description}');
             },
           ),
         )
-        ..loadRequest(Uri.parse(widget.paymentLink)),
+        ..loadRequest(Uri.parse(widget.paymentLink.isNotEmpty ? widget.paymentLink : 'about:blank')),
       [widget.paymentLink],
     );
 
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
             WebViewWidget(controller: controller),
-            if (isLoading.value) const LoadingIndicator(),
-            if (isVerifying.value)
-              const Center(child: LoadingIndicator()),
+            if (isLoading.value)
+              LoadingIndicator(
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
           ],
         ),
       ),

@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/constants/app_colors.dart';
@@ -14,9 +16,10 @@ import '../../components/app_naira.dart';
 import '../../components/custom_shimmer.dart';
 import '../../gen/assets.gen.dart';
 import '../../model/sales_model.dart';
+import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'SalesRoute')
-class Sales extends ConsumerWidget {
+class Sales extends HookConsumerWidget {
   const Sales({super.key});
 
 
@@ -24,6 +27,9 @@ class Sales extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final salesData = ref.watch(salesDataProvider);
     final interval = ref.watch(salesFilterProvider)["interval"];
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
 
     Future<void> onRefresh() async {
       await ref.refresh(salesDataProvider.future);
@@ -65,7 +71,7 @@ class Sales extends ConsumerWidget {
                               .textTheme
                               .displaySmall!
                               .copyWith(
-                                  color: interval == "weekly"
+                                  color: (interval == "weekly" || isDarkMode)
                                       ? Colors.white
                                       : Colors.black),
                         )),
@@ -97,7 +103,7 @@ class Sales extends ConsumerWidget {
                               .textTheme
                               .displaySmall!
                               .copyWith(
-                                  color: interval == "monthly"
+                                  color: (interval == "monthly" || isDarkMode)
                                       ? Colors.white
                                       : Colors.black),
                         )),
@@ -129,7 +135,7 @@ class Sales extends ConsumerWidget {
                               .textTheme
                               .displaySmall!
                               .copyWith(
-                                  color: interval == "yearly"
+                                  color: (interval == "yearly" || isDarkMode)
                                       ? Colors.white
                                       : Colors.black),
                         )),
@@ -230,6 +236,8 @@ class SalesInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Container(
       height: 98.h,
       width: 167.w,
@@ -270,7 +278,7 @@ class SalesInfoTile extends StatelessWidget {
                         style: Theme.of(context)
                             .textTheme
                             .displayLarge!
-                            .copyWith(fontSize: 22.sp),
+                            .copyWith(fontSize: 22.sp, color: Colors.black),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -286,7 +294,7 @@ class SalesInfoTile extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .displaySmall!
-                  .copyWith(fontSize: 14.sp),
+                  .copyWith(fontSize: 14.sp, color: Colors.black),
             )
           ],
         ),

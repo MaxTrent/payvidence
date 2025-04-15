@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
 import 'package:payvidence/components/product_tile.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
@@ -17,11 +18,12 @@ import '../../providers/product_providers/current_product_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 
 
 
 @RoutePage(name: 'ProductRoute')
-class Product extends ConsumerWidget {
+class Product extends HookConsumerWidget {
   final bool? forProductSelection;
 
   Product({super.key, this.forProductSelection = false});
@@ -32,6 +34,9 @@ class Product extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allProducts = ref.watch(getAllProductProvider);
     ValueNotifier<int?> productNumber = ValueNotifier(null);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
 
 
     Future<void> onRefresh() async {
@@ -395,29 +400,30 @@ class Product extends ConsumerWidget {
 // }
 }
 
-class FilterBottomSheet extends ConsumerWidget {
-  static show(
-    BuildContext context,
-  ) {
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-        builder: (context) {
-          return const FilterBottomSheet._();
-        });
-  }
+class FilterBottomSheet extends HookConsumerWidget {
+const FilterBottomSheet._();
 
-  const FilterBottomSheet._();
+static show(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+    ),
+    builder: (context) => const FilterBottomSheet._(),
+  );
+}
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
+@override
+Widget build(BuildContext context, WidgetRef ref) {
+  final theme = useThemeMode();
+  final isDarkMode = theme.mode == ThemeMode.dark;
     final allCategory = ref.watch(getAllCategoryProvider);
+
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDarkMode ?Colors.black : Colors.white,
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(40.r), topLeft: Radius.circular(40.r))),
       child: Padding(
@@ -431,7 +437,7 @@ class FilterBottomSheet extends ConsumerWidget {
                 height: 5.h,
                 width: 67.w,
                 decoration: BoxDecoration(
-                  color: const Color(0xffd9d9d9),
+                  color: isDarkMode ? Colors.black: Color(0xffd9d9d9),
                   borderRadius: BorderRadius.circular(100.r),
                 ),
               ),
@@ -449,6 +455,7 @@ class FilterBottomSheet extends ConsumerWidget {
                     style: Theme.of(context).textTheme.displayLarge!.copyWith(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.w600,
+
                         ),
                   ),
                 ),
@@ -526,7 +533,7 @@ class FilterBottomSheet extends ConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SvgPicture.asset(Assets.svg.shapes),
+                                SvgPicture.asset(Assets.svg.shapes, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
                                 SizedBox(
                                   width: 16.w,
                                 ),

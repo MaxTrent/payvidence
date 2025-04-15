@@ -15,6 +15,7 @@ import '../../components/custom_shimmer.dart';
 import '../../components/transaction_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'AllTransactionsRoute')
 class AllTransactions extends HookConsumerWidget {
@@ -28,6 +29,9 @@ class AllTransactions extends HookConsumerWidget {
         locator<SessionManager>().get<String>(SessionConstants.businessId);
     final filterType = useState('All');
     final searchQuery = useState('');
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
 
     useEffect(() {
       Future.microtask(() {
@@ -101,7 +105,7 @@ class AllTransactions extends HookConsumerWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      buildFilterBottomSheet(context, filterType);
+                      buildFilterBottomSheet(context, filterType, isDarkMode);
                     },
                     child: Container(
                       height: 48.h,
@@ -207,7 +211,7 @@ class AllTransactions extends HookConsumerWidget {
   }
 
   Future<dynamic> buildFilterBottomSheet(
-      BuildContext context, ValueNotifier<String?> filterType) {
+      BuildContext context, ValueNotifier<String?> filterType, bool isDarkMode) {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -217,7 +221,7 @@ class AllTransactions extends HookConsumerWidget {
         return Container(
           height: 326.h,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDarkMode ? Colors.black :Colors.white,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(40.r),
               topLeft: Radius.circular(40.r),
@@ -259,7 +263,7 @@ class AllTransactions extends HookConsumerWidget {
                         ),
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
-                          child: const Icon(Icons.close),
+                          child:  Icon(Icons.close, color: isDarkMode? Colors.white: Colors.black,),
                         ),
                       ],
                     ),
@@ -281,7 +285,7 @@ class AllTransactions extends HookConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SvgPicture.asset(Assets.svg.receipt),
+                            SvgPicture.asset(Assets.svg.receipt, colorFilter: ColorFilter.mode(isDarkMode? Colors.white: Colors.black, BlendMode.srcIn),),
                             SizedBox(width: 16.w),
                             Text(
                               'Receipt',
@@ -305,7 +309,7 @@ class AllTransactions extends HookConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SvgPicture.asset(Assets.svg.invoice),
+                            SvgPicture.asset(Assets.svg.invoice, colorFilter: ColorFilter.mode(isDarkMode? Colors.white: Colors.black, BlendMode.srcIn)),
                             SizedBox(width: 16.w),
                             Text(
                               'Invoice',

@@ -9,6 +9,7 @@ import 'package:payvidence/screens/nav_screens/home.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/screens/sales/sales.dart';
 import '../../gen/assets.gen.dart';
+import '../../utilities/theme_mode.dart';
 
 
 @RoutePage(name: 'HomePageRoute')
@@ -17,6 +18,9 @@ class HomePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
     final selectedIndex = useState(0);
 
     void onItemTapped(int index) {
@@ -38,37 +42,42 @@ class HomePage extends HookConsumerWidget {
       body: pages[selectedIndex.value],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.black,
           currentIndex: selectedIndex.value,
           onTap: onItemTapped,
+
           selectedLabelStyle: Theme.of(context)
-              .textTheme
-              .displaySmall!
-              .copyWith(fontSize: 12.sp, fontWeight: FontWeight.w600),
-          unselectedLabelStyle: Theme.of(context)
-              .textTheme
-              .displaySmall!
-              .copyWith(fontSize: 12.sp),
+              .bottomNavigationBarTheme.selectedLabelStyle,
+          unselectedLabelStyle:  Theme.of(context)
+              .bottomNavigationBarTheme.unselectedLabelStyle,
           items: [
+
             BottomNavigationBarItem(
-                icon: selectedIndex.value == 0
-                    ? SvgPicture.asset(Assets.svg.home)
-                    : SvgPicture.asset(Assets.svg.homeOl),
+                icon: SvgPicture.asset(selectedIndex.value == 0 ? Assets.svg.home: Assets.svg.homeOl,
+                colorFilter: ColorFilter.mode( selectedIndex.value == 0
+                    ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor!
+                    : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor!,  BlendMode.srcIn,),
+                ),
                 label: 'Home'),
             BottomNavigationBarItem(
-                icon: selectedIndex.value == 1
-                    ? SvgPicture.asset(Assets.svg.transaction)
-                    : SvgPicture.asset(Assets.svg.transactionOl),
+                icon: SvgPicture.asset(selectedIndex.value == 1 ? Assets.svg.transaction: Assets.svg.transactionOl,
+                  colorFilter: ColorFilter.mode( selectedIndex.value == 1
+                      ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor!
+                      : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor!,  BlendMode.srcIn,),
+                ),
                 label: 'Transactions'),
             BottomNavigationBarItem(
-                icon: selectedIndex.value == 2
-                    ? SvgPicture.asset(Assets.svg.wallet)
-                    : SvgPicture.asset(Assets.svg.walletOl),
+                icon: SvgPicture.asset(selectedIndex.value == 2 ? Assets.svg.wallet: Assets.svg.walletOl,
+                  colorFilter: ColorFilter.mode( selectedIndex.value == 2
+                      ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor!
+                      : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor!,  BlendMode.srcIn,),
+                ),
                 label: 'Sales'),
             BottomNavigationBarItem(
-                icon: selectedIndex.value == 3
-                    ? SvgPicture.asset(Assets.svg.profile)
-                    : SvgPicture.asset(Assets.svg.profileOl),
+                icon: SvgPicture.asset(selectedIndex.value == 3 ? Assets.svg.profile: Assets.svg.profileOl,
+                  colorFilter: ColorFilter.mode( selectedIndex.value == 3
+                      ? Theme.of(context).bottomNavigationBarTheme.selectedItemColor!
+                      : Theme.of(context).bottomNavigationBarTheme.unselectedItemColor!,  BlendMode.srcIn,),
+                ),
                 label: 'Account'),
           ]),
     );

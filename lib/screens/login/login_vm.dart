@@ -7,7 +7,6 @@ import '../../model/user_model.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/biometric_service.dart';
 
-
 final loginViewModelProvider = ChangeNotifierProvider<LoginViewModel>((ref) {
   return LoginViewModel(ref);
 });
@@ -48,10 +47,12 @@ class LoginViewModel extends BaseChangeNotifier {
     notifyListeners();
 
     try {
+      developer.log('Attempting login with email: $email');
       final response = await apiServices.login(email, password);
 
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
+        developer.log('Login successful, user: ${user.account.id}');
         await saveUserCredentials(
           userId: user.account.id ?? '',
           firstName: user.account.firstName,
@@ -60,6 +61,7 @@ class LoginViewModel extends BaseChangeNotifier {
           phoneNumber: user.account.phoneNumber ?? '',
           profilePictureUrl: user.account.profilePictureUrl ?? "",
           token: user.token ?? "",
+          refreshToken: user.refreshToken ?? "",
         );
 
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
@@ -68,14 +70,45 @@ class LoginViewModel extends BaseChangeNotifier {
         navigateOnSuccess();
       } else {
         _errorMessage = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";
+        developer.log('Login failed: $_errorMessage');
         handleError(message: _errorMessage);
       }
     } catch (e) {
       _errorMessage = "Something went wrong. Please try again.";
+      developer.log('Login exception: $e');
       handleError(message: _errorMessage);
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<bool> _refreshAccessToken(String refreshToken) async {
+    try {
+      developer.log('Attempting to refresh token');
+      final response = await apiServices.refreshToken();
+      developer.log('Refresh response: success=${response.success}, data=${response.data}');
+
+      if (response.success && response.data?['data'] != null) {
+        final newToken = response.data!['data']['access_token'] as String?;
+        if (newToken != null) {
+          developer.log('Token refresh successful: $newToken');
+          await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: newToken);
+          return true;
+        } else {
+          _errorMessage = "No access token in response.";
+          developer.log('Token refresh failed: $_errorMessage');
+          return false;
+        }
+      } else {
+        _errorMessage = response.error?.message ?? "Failed to refresh token.";
+        developer.log('Token refresh failed: $_errorMessage');
+        return false;
+      }
+    } catch (e) {
+      _errorMessage = "Error refreshing token: $e";
+      developer.log('Token refresh exception: $e');
+      return false;
     }
   }
 
@@ -87,6 +120,7 @@ class LoginViewModel extends BaseChangeNotifier {
     notifyListeners();
 
     try {
+      developer.log('Starting biometric login');
       final result = await BiometricService.authenticate(
         reason: "Login with your biometric credentials",
       );
@@ -94,27 +128,36 @@ class LoginViewModel extends BaseChangeNotifier {
       if (result.success) {
         final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
         final token = locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
+        final refreshToken = locator<SessionManager>().get<String>(SessionConstants.refreshToken);
 
-        print('auth token: $token');
-        if (email != null && token != null) {
+        developer.log('Biometric auth success, email: $email, token: $token, refreshToken: $refreshToken');
+
+        if (email == null || refreshToken == null) {
+          _errorMessage = "No saved credentials found. Please login manually first.";
+          developer.log(_errorMessage);
+          handleError(message: _errorMessage);
+          return;
+        }
+
+        // Attempt to refresh token (assumes token is invalid post-logout)
+        bool refreshSuccess = await _refreshAccessToken(refreshToken);
+        if (refreshSuccess) {
+          developer.log('Token refreshed, proceeding with login');
           await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
-          _errorMessage = '';
-          notifyListeners();
           navigateOnSuccess();
         } else {
-          _errorMessage = "No saved credentials found. Please login manually first.";
-          notifyListeners();
+          _errorMessage = "Unable to refresh session. Please login manually.";
+          developer.log(_errorMessage);
           handleError(message: _errorMessage);
         }
       } else {
         _errorMessage = result.errorMessage ?? "Biometric authentication failed.";
-        notifyListeners();
+        developer.log('Biometric auth failed: $_errorMessage');
         handleError(message: _errorMessage);
       }
     } catch (e) {
       _errorMessage = "An unexpected error occurred during biometric login: $e";
-      notifyListeners();
-
+      developer.log('Biometric login exception: $e');
       handleError(message: _errorMessage);
     } finally {
       _isLoading = false;
@@ -130,7 +173,9 @@ class LoginViewModel extends BaseChangeNotifier {
     required String phoneNumber,
     required String profilePictureUrl,
     required String token,
+    required String refreshToken,
   }) async {
+    developer.log('Saving user credentials: userId=$userId, email=$email, refreshToken=$refreshToken');
     await locator<SessionManager>().save(key: SessionConstants.userId, value: userId);
     await locator<SessionManager>().save(key: SessionConstants.userFirstName, value: firstName);
     await locator<SessionManager>().save(key: SessionConstants.userLastName, value: lastName);
@@ -138,5 +183,6 @@ class LoginViewModel extends BaseChangeNotifier {
     await locator<SessionManager>().save(key: SessionConstants.userPhone, value: phoneNumber);
     await locator<SessionManager>().save(key: SessionConstants.profilePictureUrl, value: profilePictureUrl);
     await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: token);
+    await locator<SessionManager>().save(key: SessionConstants.refreshToken, value: refreshToken);
   }
 }
