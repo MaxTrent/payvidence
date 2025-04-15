@@ -14,7 +14,6 @@ import 'constants/app_theme.dart';
 import 'env_config.dart';
 
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(

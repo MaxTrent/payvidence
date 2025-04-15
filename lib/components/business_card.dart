@@ -23,6 +23,7 @@ class BusinessCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentBusiness = ref.watch(getCurrentBusinessProvider);
+
     return Container(
       height: 184.h,
       decoration: const BoxDecoration(color: appGrey1),
@@ -59,7 +60,7 @@ class BusinessCard extends ConsumerWidget {
                     children: [
                       Text(
                         business.name ?? '',
-                        style: Theme.of(context).textTheme.displayMedium,
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.black),
                       ),
                       SizedBox(height: 12.h),
                       Row(
@@ -69,14 +70,14 @@ class BusinessCard extends ConsumerWidget {
                           SizedBox(width: 3.w),
                           Text(
                             '20 receipts',
-                            style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
+                            style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Colors.black),
                           ),
                           SizedBox(width: 12.w),
                           SvgPicture.asset(Assets.svg.library),
                           SizedBox(width: 3.w),
                           Text(
                             '20 invoices',
-                            style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
+                            style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, color: Colors.black),
                           ),
                         ],
                       ),

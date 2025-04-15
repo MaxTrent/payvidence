@@ -9,6 +9,7 @@ import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/loading_indicator.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture_vm.dart';
+import 'package:payvidence/utilities/theme_mode.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
 
@@ -20,6 +21,8 @@ class ChangeProfilePicture extends HookConsumerWidget {
   Widget build(BuildContext context, ref) {
     final viewModel = ref.watch(changeProfilePictureViewModelProvider);
     final isImageSelected = useState(viewModel.selectedImage != null);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
 
     useEffect(() {
       void listener() {
@@ -33,7 +36,11 @@ class ChangeProfilePicture extends HookConsumerWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        appBar: AppBar(),
+        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+        appBar: AppBar(
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
+        ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
@@ -42,12 +49,16 @@ class ChangeProfilePicture extends HookConsumerWidget {
               SizedBox(height: 16.h),
               Text(
                 'Change profile picture',
-                style: Theme.of(context).textTheme.displayLarge,
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
               ),
               SizedBox(height: 8.h),
               Text(
                 'You can update your picture here.',
-                style: Theme.of(context).textTheme.displaySmall!,
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
               ),
               SizedBox(height: 32.h),
               Center(
@@ -57,34 +68,43 @@ class ChangeProfilePicture extends HookConsumerWidget {
                   child: ClipOval(
                     child: viewModel.selectedImage != null
                         ? Image.file(
-                            viewModel.selectedImage!,
+                      viewModel.selectedImage!,
+                      fit: BoxFit.cover,
+                      width: 200.r,
+                      height: 200.r,
+                    )
+                        : viewModel.currentProfilePictureUrl != null &&
+                        viewModel.currentProfilePictureUrl!.isNotEmpty
+                        ? CachedNetworkImage(
+                      imageUrl: viewModel.currentProfilePictureUrl!,
+                      fit: BoxFit.cover,
+                      width: 200.r,
+                      height: 200.r,
+                      placeholder: (context, url) => LoadingIndicator(
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
+                      errorWidget: (context, url, error) =>
+                          SvgPicture.asset(
+                            Assets.svg.defaultProfilepic,
                             fit: BoxFit.cover,
                             width: 200.r,
                             height: 200.r,
-                          )
-                        : viewModel.currentProfilePictureUrl != null &&
-                                viewModel.currentProfilePictureUrl!.isNotEmpty
-                            ? CachedNetworkImage(
-                                imageUrl: viewModel.currentProfilePictureUrl!,
-                                fit: BoxFit.cover,
-                                width: 200.r,
-                                height: 200.r,
-                                placeholder: (context, url) =>
-                                    const LoadingIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    SvgPicture.asset(
-                                  Assets.svg.defaultProfilepic,
-                                  fit: BoxFit.cover,
-                                  width: 200.r,
-                                  height: 200.r,
-                                ),
-                              )
-                            : SvgPicture.asset(
-                                Assets.svg.defaultProfilepic,
-                                fit: BoxFit.cover,
-                                width: 200.r,
-                                height: 200.r,
-                              ),
+                            colorFilter: ColorFilter.mode(
+                              isDarkMode ? Colors.white : Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                    )
+                        : SvgPicture.asset(
+                      Assets.svg.defaultProfilepic,
+                      fit: BoxFit.cover,
+                      width: 200.r,
+                      height: 200.r,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -93,8 +113,8 @@ class ChangeProfilePicture extends HookConsumerWidget {
                 isProcessing: viewModel.isLoading,
                 isDisabled: viewModel.isLoading,
                 buttonText: viewModel.selectedImage == null
-                    ? 'Choose image'
-                    : 'Upload image',
+                    ? 'Take photo'
+                    : 'Upload photo',
                 onPressed: () {
                   if (viewModel.selectedImage == null) {
                     viewModel.pickImage();
@@ -106,7 +126,7 @@ class ChangeProfilePicture extends HookConsumerWidget {
                     );
                   }
                 },
-              ),
+                ),
             ],
           ),
         ),

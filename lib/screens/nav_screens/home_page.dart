@@ -9,6 +9,7 @@ import 'package:payvidence/screens/nav_screens/home.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/screens/sales/sales.dart';
 import '../../gen/assets.gen.dart';
+import '../../utilities/theme_mode.dart';
 
 
 @RoutePage(name: 'HomePageRoute')
@@ -17,6 +18,9 @@ class HomePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
     final selectedIndex = useState(0);
 
     void onItemTapped(int index) {
@@ -38,9 +42,9 @@ class HomePage extends HookConsumerWidget {
       body: pages[selectedIndex.value],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.black,
           currentIndex: selectedIndex.value,
           onTap: onItemTapped,
+
           selectedLabelStyle: Theme.of(context)
               .bottomNavigationBarTheme.selectedLabelStyle,
           unselectedLabelStyle:  Theme.of(context)

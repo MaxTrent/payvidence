@@ -14,6 +14,7 @@ import '../../model/plan_model.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 import '../choose_subscription_plan/choose_subscription_plan_vm.dart';
 
 @RoutePage(name: 'SubscriptionPlansRoute')
@@ -27,14 +28,16 @@ class SubscriptionPlans extends HookConsumerWidget {
     final selectedTier = useState<String>('');
     final choosePlanVm = ref.watch(chooseSubscriptionPlanViewModel);
     final subscriptionPlansVm = ref.watch(subscriptionPlansViewModelProvider);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
 
     void setInitialPlan() {
       if (planId.isNotEmpty && choosePlanVm.plans.isNotEmpty) {
         selectedTier.value = choosePlanVm.plans
             .firstWhere(
               (plan) => plan.id == planId,
-              orElse: () => choosePlanVm.plans.first,
-            )
+          orElse: () => choosePlanVm.plans.first,
+        )
             .name;
       }
     }
@@ -61,19 +64,20 @@ class SubscriptionPlans extends HookConsumerWidget {
           onPressed: selectedTier.value.isEmpty || subscriptionPlansVm.isLoading
               ? null
               : () {
-                  final selectedPlan = choosePlanVm.plans.firstWhere(
-                    (plan) => plan.name == selectedTier.value,
-                    orElse: () => choosePlanVm.plans.first,
-                  );
-                  subscriptionPlansVm.createSubscription(
-                    planId: selectedPlan.id,
-                    navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
-                      locator<PayvidenceAppRouter>()
-                          .push(PaymentWebViewRoute(paymentLink: paymentLink,
-                      callbackUrl: callbackUrl, cancelAction: cancelAction));
-                    },
-                  );
-                },
+            final selectedPlan = choosePlanVm.plans.firstWhere(
+                  (plan) => plan.name == selectedTier.value,
+              orElse: () => choosePlanVm.plans.first,
+            );
+            subscriptionPlansVm.createSubscription(
+              planId: selectedPlan.id,
+              navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
+                locator<PayvidenceAppRouter>().push(PaymentWebViewRoute(
+                    paymentLink: paymentLink,
+                    callbackUrl: callbackUrl,
+                    cancelAction: cancelAction));
+              },
+            );
+          },
         ),
       ),
       body: Padding(
@@ -88,43 +92,44 @@ class SubscriptionPlans extends HookConsumerWidget {
             SizedBox(height: 24.h),
             choosePlanVm.isLoading
                 ? Row(
-                    children: [
-                      CustomShimmer(width: 83.w, height: 45.h),
-                      SizedBox(width: 12.w),
-                      CustomShimmer(width: 83.w, height: 45.h),
-                      SizedBox(width: 12.w),
-                      CustomShimmer(width: 83.w, height: 45.h),
-                    ],
-                  )
+              children: [
+                CustomShimmer(width: 83.w, height: 45.h),
+                SizedBox(width: 12.w),
+                CustomShimmer(width: 83.w, height: 45.h),
+                SizedBox(width: 12.w),
+                CustomShimmer(width: 83.w, height: 45.h),
+              ],
+            )
                 : SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: choosePlanVm.plans.map((plan) {
-                        return Padding(
-                          padding: EdgeInsets.only(right: 12.w),
-                          child: _buildTierButton(
-                            context: context,
-                            tier: plan.name,
-                            isSelected: selectedTier.value == plan.name,
-                            onTap: () => selectedTier.value = plan.name,
-                          ),
-                        );
-                      }).toList(),
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: choosePlanVm.plans.map((plan) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 12.w),
+                    child: _buildTierButton(
+                      context: context,
+                      tier: plan.name,
+                      isSelected: selectedTier.value == plan.name,
+                      onTap: () => selectedTier.value = plan.name,
+                      isDarkMode: isDarkMode,
                     ),
-                  ),
+                  );
+                }).toList(),
+              ),
+            ),
             SizedBox(height: 24.h),
             Expanded(
               child: choosePlanVm.isLoading
                   ? _buildLoadingShimmer()
                   : choosePlanVm.plans.isEmpty
-                      ? const Center(child: Text('No plans available'))
-                      : _buildSubscriptionContent(
-                          context,
-                          choosePlanVm.plans.firstWhere(
-                            (plan) => plan.name == selectedTier.value,
-                            orElse: () => choosePlanVm.plans.first,
-                          ),
-                        ),
+                  ? const Center(child: Text('No plans available'))
+                  : _buildSubscriptionContent(
+                context,
+                choosePlanVm.plans.firstWhere(
+                      (plan) => plan.name == selectedTier.value,
+                  orElse: () => choosePlanVm.plans.first,
+                ),
+              ),
             ),
           ],
         ),
@@ -137,6 +142,7 @@ class SubscriptionPlans extends HookConsumerWidget {
     required String tier,
     required bool isSelected,
     required VoidCallback onTap,
+    required bool isDarkMode,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -147,15 +153,15 @@ class SubscriptionPlans extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(43.r),
           color: isSelected ? primaryColor2 : Colors.transparent,
           border: Border.all(
-            color: isSelected ? primaryColor2 : Colors.white,
+            color: isSelected ? primaryColor2 : isDarkMode ? Colors.white : Colors.black,
           ),
         ),
         child: Center(
           child: Text(
             tier,
             style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  color: isSelected ? Colors.white : Colors.black,
-                ),
+              color: isSelected ? Colors.white : isDarkMode ? Colors.white : Colors.black,
+            ),
           ),
         ),
       ),
@@ -190,9 +196,9 @@ class SubscriptionPlans extends HookConsumerWidget {
         Text(
           'What’s embedded in ${plan.name.toLowerCase()}?',
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                fontWeight: FontWeight.w400,
-                fontSize: 20.sp,
-              ),
+            fontWeight: FontWeight.w400,
+            fontSize: 20.sp,
+          ),
         ),
         SizedBox(height: 20.h),
         Expanded(

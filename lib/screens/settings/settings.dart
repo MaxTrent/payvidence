@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/components/app_switch.dart';
-import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile.dart';
-import 'package:payvidence/shared_dependency/shared_dependency.dart';
-import 'package:payvidence/utilities/theme_mode.dart';
-
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
+import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'SettingsRoute')
 class Settings extends HookWidget {
@@ -19,61 +17,55 @@ class Settings extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final theme = useThemeMode();
-
+    final isDarkMode = theme.mode == ThemeMode.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 8.h,
-            ),
+            SizedBox(height: 8.h),
             Text(
               'Settings',
               style: Theme.of(context).textTheme.displayLarge,
             ),
-            SizedBox(
-              height: 28.h,
-            ),
+            SizedBox(height: 28.h),
             ProfileOptionTile(
-              icon: Assets.svg.passwordCheck,
-              title: 'Change password',
+              isDarkMode: isDarkMode,
               onTap: () {
                 locator<PayvidenceAppRouter>().push(ChangePasswordRoute());
               },
-              // navigateTo: AppRoutes.changePassword
+              title: 'Change password',
+              icon: Assets.svg.passwordCheck,
             ),
             ProfileOptionTile(
-              icon: Assets.svg.check,
-              title: 'Reset password',
+              isDarkMode: isDarkMode,
               onTap: () {
                 locator<PayvidenceAppRouter>().push(ResetPasswordRoute());
               },
-              // navigateTo: AppRoutes.resetPassword
+              title: 'Reset password',
+              icon: Assets.svg.check,
             ),
             ProfileOptionTile(
-              icon: Assets.svg.lockCircle,
-              title: 'Privacy and security',
-              // navigateTo: AppRoutes.privacyAndSecurity,
+              isDarkMode: isDarkMode,
               onTap: () {
                 locator<PayvidenceAppRouter>()
                     .navigateNamed(PayvidenceRoutes.privacyAndSecurity);
               },
+              title: 'Privacy and security',
+              icon: Assets.svg.lockCircle,
             ),
             ProfileOptionTile(
-                icon: Assets.svg.notificationBing,
-                title: 'Notifications setting',
-                // navigateTo: AppRoutes.notificationSettings
-                onTap: (){
-                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.notificationSettings);
-                },
+              isDarkMode: isDarkMode,
+              onTap: () {
+                locator<PayvidenceAppRouter>()
+                    .navigateNamed(PayvidenceRoutes.notificationSettings);
+              },
+              title: 'Notifications setting',
+              icon: Assets.svg.notificationBing,
             ),
-            SizedBox(
-              height: 28.h,
-            ),
+            SizedBox(height: 28.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -84,14 +76,16 @@ class Settings extends HookWidget {
                       .displaySmall!
                       .copyWith(fontSize: 22.sp),
                 ),
-                AppSwitch( onChanged: (value) {
-                  theme.toggle();
-                }, isSwitchEnabled: theme.mode == ThemeMode.dark,)
+                AppSwitch(
+                  onChanged: (value) {
+                    theme.toggle();
+                  },
+                  isSwitchEnabled: theme.mode == ThemeMode.dark,
+                ),
               ],
             ),
-            SizedBox(
-              height: 11.h,
-            ),
+
+            SizedBox(height: 11.h),
             Text(
               'You can use Payvidence App on dark mode too. Turn on the switch to get started.',
               style: Theme.of(context)

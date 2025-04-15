@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/loading_indicator.dart';
+import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/screens/my_subscription/my_subscription_vm.dart';
+import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'PaymentWebViewRoute')
 class PaymentWebViewPage extends StatefulHookConsumerWidget {
@@ -27,8 +32,10 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
   @override
   Widget build(BuildContext context) {
     final isLoading = useState(true);
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
 
-    print('PaymentWebViewPage: paymentLink=${widget.paymentLink}, callbackUrl=${widget.callbackUrl}, cancelAction=${widget.cancelAction}');
+    print('PaymentWebViewPage: paymentLink=${widget.paymentLink}, callbackUrl=${widget.callbackUrl}, cancelAction=${widget.cancelAction}, isDarkMode=$isDarkMode');
 
     final controller = useMemoized(
           () => WebViewController()
@@ -59,7 +66,11 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
               if (normalizedCallbackUrl.isNotEmpty && normalizedUrl == normalizedCallbackUrl) {
                 print('Intercepted callback: $url');
                 ToastService.showSnackBar('Payment completed!');
-                Navigator.pop(context);
+                // Refresh subscription and navigate to MySubscription
+                ref.read(mySubscriptionViewModel).fetchSubscriptions().then((_) {
+                  Navigator.pop(context);
+                  locator<PayvidenceAppRouter>().replaceNamed(PayvidenceRoutes.mySubscription);
+                });
                 return NavigationDecision.prevent;
               }
 
@@ -75,7 +86,6 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
                 ToastService.showSnackBar('Payment cancelled.');
                 return NavigationDecision.prevent;
               }
-
 
               if (url.contains('checkout.paystack.com')) {
                 print('Allowing payment page: $url');
@@ -97,11 +107,15 @@ class _PaymentWebViewPageState extends ConsumerState<PaymentWebViewPage> {
     );
 
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
             WebViewWidget(controller: controller),
-            if (isLoading.value) const LoadingIndicator(),
+            if (isLoading.value)
+              LoadingIndicator(
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
           ],
         ),
       ),
