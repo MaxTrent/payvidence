@@ -341,9 +341,13 @@ class Clients extends HookConsumerWidget {
                   ),
                 ),
               ),
-              loading: () => ListView.builder(
-                itemCount: 5,
-                itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+              loading: () => Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  separatorBuilder: (ctx,idx)=>12.verticalSpace,
+                  itemCount: 5,
+                  itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+                ),
               ),
             ),
           ],
