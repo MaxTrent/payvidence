@@ -100,10 +100,10 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         .push(ProductRoute(forProductSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
     if (product != null) {
-      if (products.values.contains(product) == true) {
-        ToastService.info(context, 'Product has been selected before');
-        return null;
-      }
+      // if (products.values.contains(product) == true) {
+      //   ToastService.info(context, 'Product has been selected before');
+      //   return null;
+      // }
       // if(products){
       //
       // }
@@ -114,11 +114,11 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   Future<void> selectClient() async {
-    ClientModel? client = await locator<PayvidenceAppRouter>()
+    ClientModel? selectedClient = await locator<PayvidenceAppRouter>()
         .push(ClientsRoute(forSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
-    if (client != null) {
-      client = client;
+    if (selectedClient != null) {
+      client = selectedClient;
       setState(() {});
     }
   }
@@ -372,6 +372,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                               formKey.currentState!.save();
                               if (client == null) {
                                 ToastService.showErrorSnackBar("Select a client please");
+                                return;
                               }
                               isDraft = false;
                               createReceipt();
@@ -387,6 +388,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                               formKey.currentState!.save();
                               if (client == null) {
                                 ToastService.showErrorSnackBar("Select a client please");
+                                return;
                               }
                               isDraft = true;
                               createReceipt();
