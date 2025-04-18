@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 import 'package:payvidence/utilities/validators.dart';
@@ -116,6 +118,11 @@ class UpdateBankDetails extends ConsumerWidget {
                   AppTextField(
                     hintText: 'Account number',
                     controller: accountNumberController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(10),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                     validator: (val) {
                       if (val?.length != 10) {
                         return 'Account number must be of length 10';
@@ -136,7 +143,7 @@ class UpdateBankDetails extends ConsumerWidget {
                   AppTextField(
                     hintText: 'Account name',
                     filled: true,
-                    fillColor: const Color(0xFFD9D9D9),
+                    fillColor: textFieldGrey,
                     controller: accountNameController,
                     validator: (val) => Validator.validateEmpty(val),
                   ),
