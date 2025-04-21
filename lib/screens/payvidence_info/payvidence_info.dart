@@ -74,7 +74,7 @@ class PayvidenceInfo extends HookWidget {
                   context,
                   isDarkMode,
                   'Terms and\nConditions',
-                  'By using our app, you confirm that you are of legal age in your jurisdiction or have the consent of a guardian. You are responsible for keeping your account details secure and for all activities under your account.\nYou agree to use Payvidence for lawful purposes only and in a way that does not harm, disable, or overburden the app or its users. Unauthorized access to any part of the app, other accounts, or our systems is prohibited. The app and its content, including text, graphics, logos, and software, are the exclusive property of Payvidence or its licensors. You may use the app for personal, non-commercial purposes, but you may not reproduce, distribute, or modify any content without our permission. Any transactions you conduct through Payvidence must be accurate and complete. We are not responsible for any losses resulting from incorrect transaction information provided by you. We reserve the right to suspend or terminate your access to the app at any time if we believe you have violated these terms or engaged in harmful behavior.',
+                  'By using our app, you confirm that you are of legal age in your jurisdiction or have the consent of a guardian. You are responsible for keeping your account details secure and for all activities under your account.\n\nYou agree to use Payvidence for lawful purposes only and in a way that does not harm, disable, or overburden the app or its users. Unauthorized access to any part of the app, other accounts, or our systems is prohibited. The app and its content, including text, graphics, logos, and software, are the exclusive property of Payvidence or its licensors. You may use the app for personal, non-commercial purposes, but you may not reproduce, distribute, or modify any content without our permission. Any transactions you conduct through Payvidence must be accurate and complete. We are not responsible for any losses resulting from incorrect transaction information provided by you. We reserve the right to suspend or terminate your access to the app at any time if we believe you have violated these terms or engaged in harmful behavior.',
                 );
               },
             ),
@@ -420,8 +420,8 @@ class PayvidenceInfo extends HookWidget {
                       child: AppButton(
                         height: 56.h,
                         buttonText: 'Continue',
-                        textColor: isDarkMode ? Colors.black : Colors.white,
-                        backgroundColor: isDarkMode ? Colors.white : Colors.black,
+                        textColor: Colors.white,
+                        backgroundColor: primaryColor2,
                         onPressed: () => locator<PayvidenceAppRouter>().back(),
                       ),
                     ),

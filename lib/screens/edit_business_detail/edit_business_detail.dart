@@ -194,8 +194,9 @@ class EditBusinessDetail extends HookConsumerWidget {
                 AppTextField(
                   hintText: 'Issuer name',
                   controller: issuerController,
-                  fillColor: borderColor,
-                  filled: true,
+                  enabled: false,
+                  // fillColor: borderColor,
+                  // filled: true,
                   validator: (val) {
                     return Validator.validateName(val);
                   },

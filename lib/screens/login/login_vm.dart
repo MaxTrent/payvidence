@@ -34,7 +34,33 @@ class LoginViewModel extends BaseChangeNotifier {
 
   void init() async {
     _canUseBiometrics = await BiometricService.canCheckBiometrics();
+    await syncUserProfile();
     notifyListeners();
+  }
+
+  Future<void> syncUserProfile() async {
+    try {
+      developer.log('Syncing user profile');
+      final response = await apiServices.getAccount();
+      if (response.success) {
+        var user = User.fromJson(response.data!["data"]);
+        await saveUserCredentials(
+          userId: user.account.id ?? '',
+          firstName: user.account.firstName,
+          lastName: user.account.lastName ?? '',
+          email: user.account.email ?? '',
+          phoneNumber: user.account.phoneNumber ?? '',
+          profilePictureUrl: user.account.profilePictureUrl ?? "",
+          token: user.token ?? "",
+          refreshToken: user.refreshToken ?? "",
+        );
+        developer.log('User profile synced: ${user.account.firstName} ${user.account.lastName}');
+      } else {
+        developer.log('Profile sync failed: ${response.error?.message}');
+      }
+    } catch (e) {
+      developer.log('Profile sync exception: $e');
+    }
   }
 
   Future<void> login({
@@ -67,7 +93,7 @@ class LoginViewModel extends BaseChangeNotifier {
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
         await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: user.token);
         await locator<SessionManager>().save(key: SessionConstants.isOnboarded, value: true);
-        
+
         navigateOnSuccess();
       } else {
         _errorMessage = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";
@@ -140,7 +166,6 @@ class LoginViewModel extends BaseChangeNotifier {
           return;
         }
 
-        // Attempt to refresh token (assumes token is invalid post-logout)
         bool refreshSuccess = await _refreshAccessToken(refreshToken);
         if (refreshSuccess) {
           developer.log('Token refreshed, proceeding with login');
@@ -176,7 +201,7 @@ class LoginViewModel extends BaseChangeNotifier {
     required String token,
     required String refreshToken,
   }) async {
-    developer.log('Saving user credentials: userId=$userId, email=$email, refreshToken=$refreshToken');
+    developer.log('Saving user credentials: userId=$userId, email=$email');
     await locator<SessionManager>().save(key: SessionConstants.userId, value: userId);
     await locator<SessionManager>().save(key: SessionConstants.userFirstName, value: firstName);
     await locator<SessionManager>().save(key: SessionConstants.userLastName, value: lastName);

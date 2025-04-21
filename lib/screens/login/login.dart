@@ -64,6 +64,7 @@ class Login extends HookConsumerWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
       child: Scaffold(
+        appBar: AppBar(),
         body: Form(
           key: formKey,
           child: Padding(

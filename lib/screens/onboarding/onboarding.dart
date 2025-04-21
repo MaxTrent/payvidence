@@ -200,7 +200,7 @@ class CustomCurveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
 
-    // Start at top left
+
     path.moveTo(0, 0); // Start at the top left corner
 
     // Create an inward curved top edge

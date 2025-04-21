@@ -235,6 +235,18 @@ class Profile extends HookConsumerWidget {
                   isDarkMode: isDarkMode,
                   onTap: () {
                     locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.businessData);
+                  },
+                  icon: Assets.svg.chart,
+                  title: 'Access business data',
+                ),
+                SizedBox(
+                  height: 24.h,
+                ),
+                ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>()
                         .navigateNamed(PayvidenceRoutes.payvidenceInfo);
                   },
                   icon: Assets.svg.documentText,

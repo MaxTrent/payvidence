@@ -1,6 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
+import '../../data/local/session_constants.dart';
+import '../../data/local/session_manager.dart';
 import '../../model/user_model.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 final updatePersonalDetailsViewModelProvider =
 ChangeNotifierProvider((ref) => UpdatePersonalDetailsViewModel(ref));
@@ -47,6 +50,23 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
         userInfo = User(
           account: Account.fromJson(userData as Map<String, dynamic>),
           token: null,
+        );
+        // Save to SessionManager to keep local data fresh
+        await locator<SessionManager>().save(
+          key: SessionConstants.userFirstName,
+          value: userInfo?.account.firstName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userLastName,
+          value: userInfo?.account.lastName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userEmail,
+          value: userInfo?.account.email ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userPhone,
+          value: userInfo?.account.phoneNumber ?? '',
         );
         print("ViewModel: User info updated - ${userInfo?.account}");
       } else {
@@ -122,6 +142,23 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
                 token: null,
               );
         }
+        // Save updated info to SessionManager
+        await locator<SessionManager>().save(
+          key: SessionConstants.userFirstName,
+          value: _user?.account.firstName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userLastName,
+          value: _user?.account.lastName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userEmail,
+          value: _user?.account.email ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userPhone,
+          value: _user?.account.phoneNumber ?? '',
+        );
         _isEditing = false;
         if (showToast == true) {
           showSuccess(message: 'User Info updated!');
