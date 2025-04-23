@@ -136,38 +136,49 @@ class Product extends HookConsumerWidget {
                   return Expanded(
                     child: PullToRefresh(
                       onRefresh: onRefresh,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            searchQuery.value.isEmpty
-                                ? 'No product available!'
-                                : 'No products found!',
-                            style: Theme.of(context).textTheme.displayLarge,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: ScreenUtil().screenHeight - 200.h,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(Assets.svg.emptyProduct),
+                              SizedBox(height: 40.h),
+                              Text(
+                                searchQuery.value.isEmpty
+                                    ? 'No product available!'
+                                    : 'No products found!',
+                                style: Theme.of(context).textTheme.displayLarge,
+                              ),
+                              SizedBox(height: 10.h),
+                              Text(
+                                searchQuery.value.isEmpty
+                                    ? 'All added products will appear here.'
+                                    : 'Try a different search term.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall!
+                                    .copyWith(fontSize: 14.sp),
+                              ),
+                              const Spacer(),
+                              if (searchQuery.value.isEmpty) ...[
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 52.h),
+                                  child: AppButton(
+                                    buttonText: 'Add product',
+                                    onPressed: () {
+                                      locator<PayvidenceAppRouter>()
+                                          .navigateNamed(PayvidenceRoutes.addProduct);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
-                          SizedBox(height: 10.h),
-                          Text(
-                            searchQuery.value.isEmpty
-                                ? 'All added products will appear here.'
-                                : 'Try a different search term.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontSize: 14.sp),
-                          ),
-                          if (searchQuery.value.isEmpty) ...[
-                            SizedBox(height: 48.h),
-                            AppButton(
-                              buttonText: 'Add product',
-                              onPressed: () {
-                                locator<PayvidenceAppRouter>()
-                                    .navigateNamed(PayvidenceRoutes.addProduct);
-                              },
-                            ),
-                          ],
-                        ],
+                        ),
                       ),
                     ),
                   );
@@ -211,32 +222,55 @@ class Product extends HookConsumerWidget {
                 return Expanded(
                   child: PullToRefresh(
                     onRefresh: onRefresh,
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(child: Text('An error has occurred')),
-                      ],
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: ScreenUtil().screenHeight - 200.h,
+                        child: const Center(child: Text('An error has occurred')),
+                      ),
                     ),
                   ),
                 );
               },
               loading: () {
-                return const CustomShimmer();
+                return Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    separatorBuilder: (ctx, idx) => 12.verticalSpace,
+                    itemCount: 5,
+                    itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+                  ),
+                );
               },
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          locator<PayvidenceAppRouter>()
-              .navigateNamed(PayvidenceRoutes.addProduct);
+      floatingActionButton: allProducts.when(
+        data: (data) {
+          final filteredProducts = searchQuery.value.isEmpty
+              ? data
+              : data
+              .where((product) => product.name
+              ?.toLowerCase()
+              .contains(searchQuery.value.toLowerCase()) ?? false)
+              .toList();
+          return filteredProducts.isNotEmpty
+              ? FloatingActionButton(
+            onPressed: () {
+              locator<PayvidenceAppRouter>()
+                  .navigateNamed(PayvidenceRoutes.addProduct);
+            },
+            backgroundColor: primaryColor2,
+            child: Icon(
+              Icons.add,
+              size: 40.h,
+            ),
+          )
+              : null; // Hide FAB when there are no products
         },
-        backgroundColor: primaryColor2,
-        child: Icon(
-          Icons.add,
-          size: 40.h,
-        ),
+        error: (error, _) => null, // Hide FAB on error
+        loading: () => null, // Hide FAB while loading
       ),
     );
   }
@@ -318,27 +352,25 @@ class FilterBottomSheet extends HookConsumerWidget {
             allCategory.when(
               data: (data) {
                 if (data.isEmpty) {
-                  return Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'No category added!',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
-                        SizedBox(height: 10.h),
-                        Text(
-                          'All added categories will appear here.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(fontSize: 14.sp),
-                        ),
-                        SizedBox(height: 12.h),
-                      ],
-                    ),
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'No category added!',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(height: 10.h),
+                      Text(
+                        'All added categories will appear here.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(fontSize: 14.sp),
+                      ),
+                      SizedBox(height: 12.h),
+                    ],
                   );
                 }
                 return ListView.separated(
@@ -402,7 +434,9 @@ class FilterBottomSheet extends HookConsumerWidget {
               error: (error, _) {
                 return const Text('An error has occurred');
               },
-              loading: () => ListView.builder(
+              loading: () => ListView.separated(
+                shrinkWrap: true,
+                separatorBuilder: (ctx, idx) => 12.verticalSpace,
                 itemCount: 5,
                 itemBuilder: (_, index) => CustomShimmer(height: 60.h),
               ),

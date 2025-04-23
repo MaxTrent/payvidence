@@ -91,7 +91,7 @@ class TransactionTile extends HookWidget {
                   children: [
                     Row(
                       children: [
-                        const AppNaira(fontSize: 14,),
+                         AppNaira(fontSize: 14, color: isDarkMode ? Colors.white:Colors.black,),
                         Text(amount,
                             style: Theme.of(context)
                                 .textTheme

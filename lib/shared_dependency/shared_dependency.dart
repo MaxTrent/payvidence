@@ -44,6 +44,8 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
     () => NetworkService(dio: locator(), baseUrl: baseUrl),
   );
 
+
+
   locator.registerLazySingleton<ApiServices>(
     () => ApiServices(),
   );
@@ -95,7 +97,7 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   locator
       .registerLazySingleton<NotificationService>(() => NotificationService());
 
-  // locator.registerLazySingleton(() => DialogHandler());
+  await locator<NotificationService>().initialize();
 
   log('Dependencies initialized successfully.');
 }

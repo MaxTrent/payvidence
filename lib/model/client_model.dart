@@ -1,22 +1,22 @@
 import 'dart:convert';
 
 class ClientModel {
-  final String? id;
-  final String? businessId;
-  final String? name;
-  final String? phoneNumber;
-  final String? address;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final String id;
+  final String businessId;
+  final String name;
+  final String phoneNumber;
+  final String address;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   ClientModel({
-    this.id,
-    this.businessId,
-    this.name,
-    this.phoneNumber,
-    this.address,
-    this.createdAt,
-    this.updatedAt,
+    required this.id,
+    required this.businessId,
+    required this.name,
+    required this.phoneNumber,
+    required this.address,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory ClientModel.fromRawJson(String str) =>
@@ -25,28 +25,24 @@ class ClientModel {
   String toRawJson() => json.encode(toJson());
 
   factory ClientModel.fromJson(Map<String, dynamic> json) => ClientModel(
-        id: json["id"],
-        businessId: json["business_id"],
-        name: json["name"],
-        phoneNumber: json["phone_number"],
-        address: json["address"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
-      );
+    id: json["id"] as String,
+    businessId: json["business_id"] as String,
+    name: json["name"] as String,
+    phoneNumber: json["phone_number"] as String,
+    address: json["address"] as String,
+    createdAt: DateTime.parse(json["created_at"] as String),
+    updatedAt: DateTime.parse(json["updated_at"] as String),
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "business_id": businessId,
-        "name": name,
-        "phone_number": phoneNumber,
-        "address": address,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
-      };
+    "id": id,
+    "business_id": businessId,
+    "name": name,
+    "phone_number": phoneNumber,
+    "address": address,
+    "created_at": createdAt.toIso8601String(),
+    "updated_at": updatedAt.toIso8601String(),
+  };
 
   ClientModel copyWith({
     String? id,

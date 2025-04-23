@@ -126,7 +126,7 @@ class ChangeProfilePicture extends HookConsumerWidget {
                     );
                   }
                 },
-                ),
+              ),
             ],
           ),
         ),

@@ -35,8 +35,37 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
     print("ViewModel: Editing mode toggled to $_isEditing");
   }
 
+  Future<void> _loadCachedUserInfo() async {
+    final sessionManager = locator<SessionManager>();
+    final firstName = await sessionManager.get(SessionConstants.userFirstName) as String?;
+    final lastName = await sessionManager.get(SessionConstants.userLastName) as String?;
+    final email = await sessionManager.get(SessionConstants.userEmail) as String?;
+    final phoneNumber = await sessionManager.get(SessionConstants.userPhone) as String?;
+    final profilePictureUrl = await sessionManager.get(SessionConstants.profilePictureUrl) as String?;
+
+    if (firstName != null || lastName != null || email != null || phoneNumber != null || profilePictureUrl != null) {
+      _user = User(
+        account: Account(
+          firstName: firstName ?? '',
+          lastName: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+          profilePictureUrl: profilePictureUrl,
+          transactionalAlerts: false,
+          promotionalUpdates: false,
+          securityAlerts: false,
+        ),
+        token: null,
+      );
+      notifyListeners();
+      print("ViewModel: Loaded cached user info - ${userInfo?.account}");
+    }
+  }
+
   Future<void> fetchUserInformation() async {
     try {
+      await _loadCachedUserInfo();
+
       _isLoading = true;
       notifyListeners();
 
@@ -51,7 +80,6 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
           account: Account.fromJson(userData as Map<String, dynamic>),
           token: null,
         );
-        // Save to SessionManager to keep local data fresh
         await locator<SessionManager>().save(
           key: SessionConstants.userFirstName,
           value: userInfo?.account.firstName ?? '',
@@ -67,6 +95,10 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
         await locator<SessionManager>().save(
           key: SessionConstants.userPhone,
           value: userInfo?.account.phoneNumber ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.profilePictureUrl,
+          value: userInfo?.account.profilePictureUrl ?? '',
         );
         print("ViewModel: User info updated - ${userInfo?.account}");
       } else {
@@ -142,7 +174,6 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
                 token: null,
               );
         }
-        // Save updated info to SessionManager
         await locator<SessionManager>().save(
           key: SessionConstants.userFirstName,
           value: _user?.account.firstName ?? '',
@@ -158,6 +189,10 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
         await locator<SessionManager>().save(
           key: SessionConstants.userPhone,
           value: _user?.account.phoneNumber ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.profilePictureUrl,
+          value: _user?.account.profilePictureUrl ?? '',
         );
         _isEditing = false;
         if (showToast == true) {

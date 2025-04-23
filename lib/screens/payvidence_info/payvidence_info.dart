@@ -116,6 +116,7 @@ class PayvidenceInfo extends HookWidget {
             child: Stack(
               children: [
                 ListView(
+                  padding: EdgeInsets.only(bottom: 70.h), // Add bottom padding to account for the button
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 140.w),
@@ -146,7 +147,7 @@ class PayvidenceInfo extends HookWidget {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => locator<PayvidenceAppRouter>().back(),
+                          onTap: () => Navigator.pop(context),
                           child: Icon(
                             Icons.close,
                             color: isDarkMode ? Colors.white : Colors.black,
@@ -176,7 +177,6 @@ class PayvidenceInfo extends HookWidget {
                           await launchUrl(uri);
                         } else {
                           ToastService.showErrorSnackBar('No email app found');
-
                         }
                       },
                       child: Padding(
@@ -332,7 +332,6 @@ class PayvidenceInfo extends HookWidget {
       },
     );
   }
-
   Future<dynamic> buildBottomSheet(
       BuildContext context, bool isDarkMode, String title, String body) {
     return showModalBottomSheet(
@@ -355,6 +354,7 @@ class PayvidenceInfo extends HookWidget {
             child: Stack(
               children: [
                 ListView(
+                  padding: EdgeInsets.only(bottom: 75.h), // Add bottom padding to account for the button
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 140.w),
@@ -382,7 +382,7 @@ class PayvidenceInfo extends HookWidget {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => locator<PayvidenceAppRouter>().back(),
+                          onTap: () =>Navigator.pop(context),
                           child: Icon(
                             Icons.close,
                             color: isDarkMode ? Colors.white : Colors.black,

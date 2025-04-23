@@ -117,11 +117,13 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
   }
 
   Widget _buildAddressRow(BuildContext context, BusinessDetailViewModel viewModel) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
     return viewModel.isLoading
         ? CustomShimmer(height: 16.h, width: 200.w)
         : Row(
       children: [
-        SvgPicture.asset(Assets.svg.location),
+        SvgPicture.asset(Assets.svg.location, colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
         SizedBox(width: 6.w),
         Text(viewModel.businessInfo?.address ?? '', style: Theme.of(context).textTheme.displaySmall),
       ],

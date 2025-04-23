@@ -54,84 +54,92 @@ class SubscriptionPlans extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: SizedBox(
-        width: 350.w,
-        child: AppButton(
-          isProcessing: subscriptionPlansVm.isLoading,
-          buttonText: selectedTier.value.isEmpty
-              ? 'Choose a plan'
-              : 'Continue with ${selectedTier.value} plan',
-          onPressed: selectedTier.value.isEmpty || subscriptionPlansVm.isLoading
-              ? null
-              : () {
-            final selectedPlan = choosePlanVm.plans.firstWhere(
-                  (plan) => plan.name == selectedTier.value,
-              orElse: () => choosePlanVm.plans.first,
-            );
-            subscriptionPlansVm.createSubscription(
-              planId: selectedPlan.id,
-              navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
-                locator<PayvidenceAppRouter>().push(PaymentWebViewRoute(
-                    paymentLink: paymentLink,
-                    callbackUrl: callbackUrl,
-                    cancelAction: cancelAction));
-              },
-            );
-          },
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: 8.h),
+        child: SizedBox(
+          // width: 350.w,
+          child: AppButton(
+            isProcessing: subscriptionPlansVm.isLoading,
+            buttonText: selectedTier.value.isEmpty
+                ? 'Choose a plan'
+                : 'Continue with ${selectedTier.value} plan',
+            onPressed: selectedTier.value.isEmpty || subscriptionPlansVm.isLoading
+                ? null
+                : () {
+              final selectedPlan = choosePlanVm.plans.firstWhere(
+                    (plan) => plan.name == selectedTier.value,
+                orElse: () => choosePlanVm.plans.first,
+              );
+              subscriptionPlansVm.createSubscription(
+                planId: selectedPlan.id,
+                navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
+                  locator<PayvidenceAppRouter>().push(PaymentWebViewRoute(
+                      paymentLink: paymentLink,
+                      callbackUrl: callbackUrl,
+                      cancelAction: cancelAction));
+                },
+              );
+            },
+          ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Subscription plans',
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            SizedBox(height: 24.h),
-            choosePlanVm.isLoading
-                ? Row(
-              children: [
-                CustomShimmer(width: 83.w, height: 45.h),
-                SizedBox(width: 12.w),
-                CustomShimmer(width: 83.w, height: 45.h),
-                SizedBox(width: 12.w),
-                CustomShimmer(width: 83.w, height: 45.h),
-              ],
-            )
-                : SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: choosePlanVm.plans.map((plan) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: 12.w),
-                    child: _buildTierButton(
-                      context: context,
-                      tier: plan.name,
-                      isSelected: selectedTier.value == plan.name,
-                      onTap: () => selectedTier.value = plan.name,
-                      isDarkMode: isDarkMode,
-                    ),
-                  );
-                }).toList(),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Subscription plans',
+                style: Theme.of(context).textTheme.displayLarge,
               ),
-            ),
-            SizedBox(height: 24.h),
-            Expanded(
-              child: choosePlanVm.isLoading
-                  ? _buildLoadingShimmer()
-                  : choosePlanVm.plans.isEmpty
-                  ? const Center(child: Text('No plans available'))
-                  : _buildSubscriptionContent(
-                context,
-                choosePlanVm.plans.firstWhere(
-                      (plan) => plan.name == selectedTier.value,
-                  orElse: () => choosePlanVm.plans.first,
+              SizedBox(height: 24.h),
+              choosePlanVm.isLoading
+                  ? Row(
+                children: [
+                  CustomShimmer(width: 83.w, height: 45.h),
+                  SizedBox(width: 12.w),
+                  CustomShimmer(width: 83.w, height: 45.h),
+                  SizedBox(width: 12.w),
+                  CustomShimmer(width: 83.w, height: 45.h),
+                ],
+              )
+                  : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: choosePlanVm.plans.map((plan) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: _buildTierButton(
+                        context: context,
+                        tier: plan.name,
+                        isSelected: selectedTier.value == plan.name,
+                        onTap: () => selectedTier.value = plan.name,
+                        isDarkMode: isDarkMode,
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 24.h),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 80.h), // Reserve space for the floating action button
+                  child: choosePlanVm.isLoading
+                      ? _buildLoadingShimmer()
+                      : choosePlanVm.plans.isEmpty
+                      ? const Center(child: Text('No plans available'))
+                      : _buildSubscriptionContent(
+                    context,
+                    choosePlanVm.plans.firstWhere(
+                          (plan) => plan.name == selectedTier.value,
+                      orElse: () => choosePlanVm.plans.first,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -148,7 +156,6 @@ class SubscriptionPlans extends HookConsumerWidget {
       onTap: onTap,
       child: Container(
         height: 45.h,
-        // width: 83.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(43.r),
           color: isSelected ? primaryColor2 : Colors.transparent,
@@ -157,7 +164,7 @@ class SubscriptionPlans extends HookConsumerWidget {
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           child: Center(
             child: Text(
               tier,
@@ -185,8 +192,7 @@ class SubscriptionPlans extends HookConsumerWidget {
   }
 
   Widget _buildSubscriptionContent(BuildContext context, Plan plan) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
       children: [
         SubscriptionCard(
           subscriptionTier: plan.name,
@@ -204,53 +210,34 @@ class SubscriptionPlans extends HookConsumerWidget {
           ),
         ),
         SizedBox(height: 20.h),
-        Expanded(
-          child: ListView(
-            children: [
-              PlanList(
-                  description: 'Business accounts allowed',
-                  status: plan.businessAccountsAllowed.toString()),
-              PlanList(
-                  description: 'Receipt generation per month',
-                  status: plan.receiptGenerationPerMonth.toString()),
-              PlanList(
-                  description: 'Invoice generation per month',
-                  status: plan.invoiceGenerationPerMonth.toString()),
-              PlanList(
-                  description: 'Sales report',
-                  status: plan.salesReport ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Receipt sharing',
-                  status: plan.receiptSharing ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Receipts printing',
-                  status: plan.receiptPrinting ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Inventory management',
-                  status: plan.inventoryManagement ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'PDF and CSV export',
-                  status: plan.pdfCsvExport ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Client management',
-                  status: plan.clientManagement ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Brand management',
-                  status: plan.brandManagement ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Letterhead transactions',
-                  status: plan.letterheadTransaction ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Payment instructions',
-                  status: plan.paymentInstructions ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Advanced reporting and analytics',
-                  status: plan.advancedReportingAndAnalytics ? 'Yes' : 'No'),
-              PlanList(
-                  description: 'Templates', status: plan.templates.toString()),
-            ],
-          ),
-        ),
+        PlanList(
+            description: 'Business accounts allowed',
+            status: plan.businessAccountsAllowed.toString()),
+        PlanList(
+            description: 'Receipt generation per month',
+            status: plan.receiptGenerationPerMonth.toString()),
+        PlanList(
+            description: 'Invoice generation per month',
+            status: plan.invoiceGenerationPerMonth.toString()),
+        PlanList(description: 'Sales report', status: plan.salesReport ? 'Yes' : 'No'),
+        PlanList(description: 'Receipt sharing', status: plan.receiptSharing ? 'Yes' : 'No'),
+        PlanList(description: 'Receipts printing', status: plan.receiptPrinting ? 'Yes' : 'No'),
+        PlanList(
+            description: 'Inventory management',
+            status: plan.inventoryManagement ? 'Yes' : 'No'),
+        PlanList(description: 'PDF and CSV export', status: plan.pdfCsvExport ? 'Yes' : 'No'),
+        PlanList(description: 'Client management', status: plan.clientManagement ? 'Yes' : 'No'),
+        PlanList(description: 'Brand management', status: plan.brandManagement ? 'Yes' : 'No'),
+        PlanList(
+            description: 'Letterhead transactions',
+            status: plan.letterheadTransaction ? 'Yes' : 'No'),
+        PlanList(
+            description: 'Payment instructions',
+            status: plan.paymentInstructions ? 'Yes' : 'No'),
+        PlanList(
+            description: 'Advanced reporting and analytics',
+            status: plan.advancedReportingAndAnalytics ? 'Yes' : 'No'),
+        PlanList(description: 'Templates', status: plan.templates.toString()),
       ],
     );
   }

@@ -152,6 +152,8 @@ class Clients extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          SvgPicture.asset(Assets.svg.emptyClient),
+                          SizedBox(height: 40.h),
                           Text(
                             searchQuery.value.isEmpty
                                 ? 'No clients available!'
@@ -169,17 +171,20 @@ class Clients extends HookConsumerWidget {
                                 .displaySmall!
                                 .copyWith(fontSize: 14.sp),
                           ),
+                          const Spacer(),
                           if (searchQuery.value.isEmpty) ...[
-                            SizedBox(height: 48.h),
-                            AppButton(
-                              buttonText: 'Add client',
-                              onPressed: () async {
-                                await locator<PayvidenceAppRouter>().navigate(
-                                    AddClientRoute(businessId: businessId));
-                                ref
-                                    .read(getAllClientsProvider.notifier)
-                                    .fetchClients();
-                              },
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 52.h),
+                              child: AppButton(
+                                buttonText: 'Add client',
+                                onPressed: () async {
+                                  await locator<PayvidenceAppRouter>().navigate(
+                                      AddClientRoute(businessId: businessId));
+                                  ref
+                                      .read(getAllClientsProvider.notifier)
+                                      .fetchClients();
+                                },
+                              ),
                             ),
                           ],
                         ],

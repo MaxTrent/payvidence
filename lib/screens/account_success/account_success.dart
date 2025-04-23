@@ -37,6 +37,7 @@ class AccountSuccessScreen extends HookWidget {
             child: Stack(
               children: [
                 ListView(
+                  padding: EdgeInsets.only(bottom: 70.h), // Add bottom padding to account for the button
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 140.w),
@@ -62,7 +63,7 @@ class AccountSuccessScreen extends HookWidget {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => locator<PayvidenceAppRouter>().back(),
+                          onTap: () => Navigator.pop(context),
                           child: Icon(
                             color: isDarkMode ? Colors.white : Colors.black,
                             Icons.close,
@@ -99,7 +100,7 @@ class AccountSuccessScreen extends HookWidget {
                         textColor: Colors.white,
                         backgroundColor: primaryColor2,
                         onPressed: () {
-                         Navigator.of(context).pop();
+                          Navigator.of(context).pop();
                           if (onContinue != null) {
                             onContinue();
                           }

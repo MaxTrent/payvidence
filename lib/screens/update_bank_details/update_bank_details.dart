@@ -22,6 +22,101 @@ class UpdateBankDetails extends ConsumerWidget {
   final accountNameController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  Future<dynamic> _buildConfirmBankDetailsBottomSheet(
+      BuildContext context, void Function() onConfirm) {
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      clipBehavior: Clip.none,
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 360.h,
+          decoration: BoxDecoration(
+            color: Colors.white, // Adjust for dark mode if needed
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(40.r),
+              topLeft: Radius.circular(40.r),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+            child: Stack(
+              children: [
+                ListView(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 140.w),
+                      child: Container(
+                        height: 5.h,
+                        width: 67.w,
+                        decoration: BoxDecoration(
+                          color: const Color(0xffd9d9d9), // Handle color
+                          borderRadius: BorderRadius.circular(100.r),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 38.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox.shrink(),
+                        Center(
+                          child: Text(
+                            'Confirm Bank Details',
+                            style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                              fontSize: 22.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    Center(
+                      child: Text(
+                        'Make sure your details are correct before continuing.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 47.h),
+                    AppButton(
+                      buttonText: 'Confirm',
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the bottom sheet
+                        onConfirm(); // Call the updateBank function
+                      },
+                      backgroundColor: primaryColor2,
+                      textColor: Colors.white,
+                    ),
+                    SizedBox(height: 8.h),
+                    AppButton(
+                      buttonText: 'Cancel',
+                      onPressed: () => Navigator.of(context).pop(),
+                      backgroundColor: Colors.transparent,
+                      textColor: Colors.black,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Future<void> updateBank() async {
@@ -49,7 +144,6 @@ class UpdateBankDetails extends ConsumerWidget {
         Future.delayed(const Duration(seconds: 2), () {
           if (!context.mounted) return;
           Navigator.of(context).pop();
-          //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
       } on DioException catch (e) {
         print("here");
@@ -58,7 +152,6 @@ class UpdateBankDetails extends ConsumerWidget {
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print("let go");
-
         print(e);
         Navigator.of(context).pop(); // pop loading dialog on error
         ToastService.showErrorSnackBar('An unknown error has occurred!');
@@ -76,45 +169,33 @@ class UpdateBankDetails extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 16.h,
-                  ),
+                  SizedBox(height: 16.h),
                   Text(
                     'Fill in bank details',
                     style: Theme.of(context).textTheme.displayLarge,
                   ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
+                  SizedBox(height: 8.h),
                   Text(
                     'As this is your first invoice to generate, add business bank details to be put on invoice.',
                     style: Theme.of(context).textTheme.displaySmall!,
                   ),
-                  SizedBox(
-                    height: 32.h,
-                  ),
+                  SizedBox(height: 32.h),
                   Text(
                     'Bank name',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
+                  SizedBox(height: 8.h),
                   AppTextField(
                     hintText: 'Bank Name',
                     controller: bankNameController,
                     validator: (val) => Validator.validateEmpty(val),
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
+                  SizedBox(height: 20.h),
                   Text(
                     'Account number',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
+                  SizedBox(height: 8.h),
                   AppTextField(
                     hintText: 'Account number',
                     controller: accountNumberController,
@@ -130,16 +211,12 @@ class UpdateBankDetails extends ConsumerWidget {
                       return null;
                     },
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
+                  SizedBox(height: 20.h),
                   Text(
                     'Account name',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
+                  SizedBox(height: 8.h),
                   AppTextField(
                     hintText: 'Account name',
                     filled: true,
@@ -147,25 +224,14 @@ class UpdateBankDetails extends ConsumerWidget {
                     controller: accountNameController,
                     validator: (val) => Validator.validateEmpty(val),
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
+                  SizedBox(height: 20.h),
                   AppButton(
                     buttonText: 'Save bank details',
                     onPressed: () async {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
-                        // Usage:
-                        final shouldProceed = await showConfirmationDialog(
-                          context: context,
-                          title: 'Update Bank Details',
-                          content: 'Proceed to update bank details?',
-                        );
-                        if (shouldProceed) {
-                          updateBank();
-                        }
-                        //createReceipt();
-                      } // context.push(AppRoutes.receipt);
+                        _buildConfirmBankDetailsBottomSheet(context, updateBank);
+                      }
                     },
                   ),
                 ],
@@ -176,31 +242,4 @@ class UpdateBankDetails extends ConsumerWidget {
       ),
     );
   }
-}
-
-Future<bool> showConfirmationDialog({
-  required BuildContext context,
-  required String title,
-  required String content,
-}) async {
-  return await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Confirm'),
-              ),
-            ],
-          );
-        },
-      ) ??
-      false; // Returns false if dialog is dismissed
 }

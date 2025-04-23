@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/product_model.dart';
 
 import '../constants/app_colors.dart';
+import '../utilities/theme_mode.dart';
 import 'app_naira.dart';
 
-class ProductTile extends StatelessWidget {
+class ProductTile extends HookWidget {
   final Product product;
   final WidgetRef ref;
   final void Function() onPressed;
@@ -19,6 +21,9 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -81,7 +86,7 @@ class ProductTile extends StatelessWidget {
                   // mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const AppNaira(fontSize: 14,),
+                     AppNaira(fontSize: 14, color: isDarkMode ? Colors.white:Colors.black),
                     Text(product.price ?? '',
                         style: Theme.of(context)
                             .textTheme

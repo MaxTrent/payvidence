@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/pull_to_refresh.dart';
@@ -29,7 +30,6 @@ class AllInvoices extends HookConsumerWidget {
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
     final productNumber = ValueNotifier<int?>(null);
-
 
     useEffect(() {
       Timer? timer;
@@ -126,28 +126,47 @@ class AllInvoices extends HookConsumerWidget {
                     productNumber.value = 0;
                     return PullToRefresh(
                       onRefresh: onRefresh,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(Assets.svg.emptyInvoice),
-                          SizedBox(height: 40.h),
-                          Text(
-                            searchQuery.value.isEmpty ? 'No invoice yet!' : 'No invoices found!',
-                            style: Theme.of(context).textTheme.displayLarge,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: ScreenUtil().screenHeight - 200.h,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(Assets.svg.emptyInvoice),
+                              SizedBox(height: 40.h),
+                              Text(
+                                searchQuery.value.isEmpty ? 'No invoice yet!' : 'No invoices found!',
+                                style: Theme.of(context).textTheme.displayLarge,
+                              ),
+                              SizedBox(height: 10.h),
+                              Text(
+                                searchQuery.value.isEmpty
+                                    ? 'Generate invoice for your business pending sales. All invoices generated will show here.'
+                                    : 'Try a different search term.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall!
+                                    .copyWith(fontSize: 14.sp),
+                              ),
+                              const Spacer(),
+                              if (searchQuery.value.isEmpty) ...[
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 52.h),
+                                  child: AppButton(
+                                    buttonText: 'Generate invoice',
+                                    onPressed: () {
+                                      locator<PayvidenceAppRouter>()
+                                          .navigate(GenerateReceiptRoute(isInvoice: true));
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
-                          SizedBox(height: 10.h),
-                          Text(
-                            searchQuery.value.isEmpty
-                                ? 'Generate invoice for your business pending sales. All invoices generated will show here.'
-                                : 'Try a different search term.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontSize: 14.sp),
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   }
@@ -180,9 +199,17 @@ class AllInvoices extends HookConsumerWidget {
                 },
                 error: (error, _) => PullToRefresh(
                   onRefresh: onRefresh,
-                  child: const Center(child: Text('An error has occurred')),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: ScreenUtil().screenHeight - 200.h,
+                      child: const Center(child: Text('An error has occurred')),
+                    ),
+                  ),
                 ),
-                loading: () => ListView.builder(
+                loading: () => ListView.separated(
+                  shrinkWrap: true,
+                  separatorBuilder: (ctx, idx) => 12.verticalSpace,
                   itemCount: 5,
                   itemBuilder: (_, index) => CustomShimmer(height: 60.h),
                 ),
@@ -191,12 +218,30 @@ class AllInvoices extends HookConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: true));
+      floatingActionButton: allInvoices.when(
+        data: (data) {
+          final actualData = data.where((data) => data.publishedAt != null).toList();
+          final filteredData = searchQuery.value.isEmpty
+              ? actualData
+              : actualData
+              .where((receipt) =>
+          receipt.recordProductDetails?[0].product?.name
+              ?.toLowerCase()
+              .contains(searchQuery.value.toLowerCase()) ??
+              false)
+              .toList();
+          return filteredData.isNotEmpty
+              ? FloatingActionButton(
+            onPressed: () {
+              locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: true));
+            },
+            backgroundColor: primaryColor2,
+            child: Icon(Icons.add, size: 40.h),
+          )
+              : null; // Hide FAB when there are no invoices
         },
-        backgroundColor: primaryColor2,
-        child: Icon(Icons.add, size: 40.h),
+        error: (error, _) => null, // Hide FAB on error
+        loading: () => null, // Hide FAB while loading
       ),
     );
   }

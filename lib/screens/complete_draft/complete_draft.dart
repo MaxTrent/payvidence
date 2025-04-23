@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
+import '../../components/app_drop_down.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
 import '../../constants/app_colors.dart';
@@ -29,9 +30,9 @@ class CompleteDraft extends ConsumerStatefulWidget {
 
   const CompleteDraft(
       {super.key,
-      required this.draft,
-      this.isInvoice = false,
-      this.inVoiceToReceipt = false});
+        required this.draft,
+        this.isInvoice = false,
+        this.inVoiceToReceipt = false});
 
   @override
   ConsumerState<CompleteDraft> createState() => _CompleteDraftState();
@@ -91,9 +92,6 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
         ToastService.info(context, 'Product has been selected before');
         return null;
       }
-      // if(products){
-      //
-      // }
       products[index] = product;
     }
 
@@ -111,12 +109,6 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
   }
 
   Future<void> createReceipt() async {
-    // String error = findMissingProducts();
-    // if (error == '') {
-    // } else {
-    //   ToastService.showErrorSnackBar(context, error);
-    //   return;
-    // }
     List<Map<String, dynamic>> productList = [];
 
     for (var index = 0; index < products.length; index++) {
@@ -135,8 +127,8 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
       "record_type": widget.inVoiceToReceipt == true
           ? "receipt"
           : (widget.isInvoice == true && widget.inVoiceToReceipt == false)
-              ? "invoice"
-              : "receipt",
+          ? "invoice"
+          : "receipt",
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
       "client_id": client?.id,
       "mode_of_payment": selectedPayment?.toLowerCase()
@@ -146,7 +138,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
     try {
       if (widget.inVoiceToReceipt == true) {
         final Receipt response =
-            await ref.read(getAllReceiptProvider.notifier).reIssueReceipt(
+        await ref.read(getAllReceiptProvider.notifier).reIssueReceipt(
           widget.draft.id!,
           {"mode_of_payment": selectedPayment?.toLowerCase()},
         );
@@ -173,8 +165,6 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
         } else {
           Navigator.of(context).pop();
         }
-
-        //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
       });
     } on DioException catch (e) {
       Navigator.of(context).pop(); // pop loading dialog on error
@@ -190,7 +180,6 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
   @override
   void initState() {
     super.initState();
-    //client = widget.draft.clientId
     for (var product in widget.draft.recordProductDetails!) {
       products[productIndex] = product.product!;
       productIndex += 1;
@@ -229,8 +218,8 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                       widget.inVoiceToReceipt == true
                           ? "Re-issue to receipt"
                           : widget.isInvoice == true
-                              ? "Complete invoice"
-                              : "Complete receipt",
+                          ? "Complete invoice"
+                          : "Complete receipt",
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
                     SizedBox(
@@ -290,7 +279,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                     ),
                     Visibility(
                       visible: (widget.isInvoice == false &&
-                              widget.inVoiceToReceipt == false) ||
+                          widget.inVoiceToReceipt == false) ||
                           widget.inVoiceToReceipt == true,
                       replacement: const SizedBox(),
                       child: Column(
@@ -306,37 +295,17 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                           SizedBox(
                             height: 8.h,
                           ),
-                          DropdownButtonFormField<String>(
-                            hint: const Text("Mode of payment"),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 12.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.r),
-                                  borderSide:
-                                      const BorderSide(color: Colors.grey)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.r),
-                                  borderSide:
-                                      const BorderSide(color: Colors.grey)),
-                            ),
+                          AppDropdown<String>(
+                            hintText: "Mode of payment",
+                            items: paymentOptions,
                             value: selectedPayment,
-                            items: paymentOptions.map((String option) {
-                              return DropdownMenuItem<String>(
-                                value: option,
-                                child: Text(option
-                                    .replaceAll(RegExp('_'), " ")
-                                    .capitalize()),
-                              );
-                            }).toList(),
+                            displayText: (option) => option.replaceAll(RegExp('_'), " ").capitalize(),
                             onChanged: (String? value) {
                               setState(() {
                                 selectedPayment = value;
                               });
                             },
-                            validator: (value) => value == null
-                                ? 'Please select a payment method'
-                                : null,
+                            validator: (value) => value == null ? 'Please select a payment method' : null,
                           ),
                         ],
                       ),
@@ -344,37 +313,12 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                     SizedBox(
                       height: 28.h,
                     ),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     //_addTextField();
-                    //   },
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.end,
-                    //     children: [
-                    //       const Icon(
-                    //         Icons.add,
-                    //         color: primaryColor2,
-                    //       ),
-                    //       Text(
-                    //         'Add another product',
-                    //         style: Theme.of(context)
-                    //             .textTheme
-                    //             .displayMedium!
-                    //             .copyWith(
-                    //                 color: primaryColor2, fontSize: 14.sp),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 32.h,
-                    // ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         AppButton(
                           buttonText:
-                              'Generate ${widget.isInvoice == true && widget.inVoiceToReceipt == false ? "invoice" : "receipt"}',
+                          'Generate ${widget.isInvoice == true && widget.inVoiceToReceipt == false ? "invoice" : "receipt"}',
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
@@ -383,7 +327,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                               }
                               isDraft = false;
                               createReceipt();
-                            } // context.push(AppRoutes.receipt);
+                            }
                           },
                         ),
                         SizedBox(

@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,11 +8,14 @@ import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/utilities/toast_service.dart';
-
 import '../../components/app_button.dart';
+import '../../components/app_drop_down.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
 import '../../constants/app_colors.dart';
+import '../../data/local/session_constants.dart';
+import '../../data/local/session_manager.dart';
+import '../../data/network/api_response.dart';
 import '../../model/product_model.dart';
 import '../../providers/business_providers/current_business_provider.dart';
 import '../../routes/payvidence_app_router.gr.dart';
@@ -43,16 +45,15 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     'Cheque',
     'POS',
   ];
-  String? selectedPayment; // Holds the selected payment method
+  String? selectedPayment;
 
   bool? isDraft;
 
-  // List to store TextField widgets
+
   final List<Widget> _textFields = [];
 
   @override
   void dispose() {
-    // Dispose all controllers to avoid memory leaks
     for (var controller in qtyControllers) {
       controller.dispose();
     }
@@ -67,7 +68,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     super.initState();
     qtyControllers.add(qtyController);
     discountControllers.add(discountController);
-    // Dispose all controllers to avoid memory leaks
+    // Initialize the first form field
     _textFields.add(FormFields(
       qtyController: qtyController,
       discountController: discountController,
@@ -77,14 +78,14 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   void _addTextField() {
-    // Create a new TextEditingController
+    // Create new TextEditingControllers
     TextEditingController qtyController = TextEditingController();
     TextEditingController discountController = TextEditingController();
 
-    // Add the controller to the list
+    // Add the controllers to the lists
     qtyControllers.add(qtyController);
     discountControllers.add(discountController);
-    // Add a new TextField widget to the list
+    // Add a new FormFields widget to the list
     setState(() {
       _textFields.add(FormFields(
         discountController: discountControllers.last,
@@ -100,13 +101,6 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         .push(ProductRoute(forProductSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
     if (product != null) {
-      // if (products.values.contains(product) == true) {
-      //   ToastService.info(context, 'Product has been selected before');
-      //   return null;
-      // }
-      // if(products){
-      //
-      // }
       products[index] = product;
     }
 
@@ -114,8 +108,13 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   Future<void> selectClient() async {
+    final businessId = ref.watch(getCurrentBusinessProvider)?.id;
+    if (businessId != null) {
+      locator<SessionManager>()
+          .save(key: SessionConstants.businessId, value: businessId);
+    }
     ClientModel? selectedClient = await locator<PayvidenceAppRouter>()
-        .push(ClientsRoute(forSelection: true));
+        .push(ClientsRoute(businessId: businessId!, forSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
     if (selectedClient != null) {
       client = selectedClient;
@@ -125,6 +124,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     String findMissingProducts() {
       List<int> productIndexes = products.keys.toList();
       List<int> missingIndexes = [];
@@ -144,8 +144,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 
     Future<void> createReceipt() async {
       String error = findMissingProducts();
-      if (error == '') {
-      } else {
+      if (error != '') {
         ToastService.showErrorSnackBar(error);
         return;
       }
@@ -159,11 +158,10 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           return; // Stops the entire function execution
         } else {
           productList.add({
-            "id": product.id,
-            "quantity_purchased":
-                int.tryParse(qtyControllers[index - 1].text) ?? 0,
+            "id": product.id.toString(),
+            "quantity_purchased": int.parse(qtyControllers[index - 1].text),
             "discount": discountControllers[index - 1].text.isNotEmpty
-                ? double.tryParse(discountControllers[index - 1].text)
+                ? double.parse(discountControllers[index - 1].text)
                 : null,
           });
         }
@@ -175,7 +173,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         "client_id": client?.id,
         "is_draft": isDraft,
         "mode_of_payment":
-            widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
+        widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
       };
       if (!context.mounted) return;
       LoadingDialog.show(context);
@@ -184,7 +182,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
             .read(getAllReceiptProvider.notifier)
             .addReceipt(requestData);
         if (!context.mounted) return;
-        Navigator.of(context).pop(); //pop loading dialog on success
+        Navigator.of(context).pop(); // pop loading dialog on success
         ToastService.showSnackBar("Receipt generated successfully");
         ref.invalidate(widget.isInvoice == true
             ? getAllInvoiceProvider
@@ -198,16 +196,13 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           } else {
             Navigator.of(context).pop();
           }
-
-          //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
-      } on DioException catch (e) {
-        Navigator.of(context).pop(); // pop loading dialog on error
-        ToastService.showErrorSnackBar(
-            e.response?.data['message'] ?? 'An unknown error has occurred!!!');
-      } catch (e) {
-        print(e);
-        Navigator.of(context).pop(); // pop loading dialog on error
+      } on ApiErrorResponseV2 catch (e) {
+        Navigator.of(context).pop();
+        String errorMessage = e.message ?? 'An unknown error has occurred!';
+        ToastService.showErrorSnackBar(errorMessage);
+      } catch (e, stackTrace) {
+        Navigator.of(context).pop();
         ToastService.showErrorSnackBar('An unknown error has occurred!');
       }
     }
@@ -300,36 +295,17 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                           SizedBox(
                             height: 8.h,
                           ),
-                          DropdownButtonFormField<String>(
-                            hint: const Text("Mode of payment"),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 12.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.r),
-                                  borderSide:
-                                      const BorderSide(color: Colors.grey)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6.r),
-                                  borderSide:
-                                      const BorderSide(color: Colors.grey)),
-                            ),
+                          AppDropdown<String>(
+                            hintText: "Mode of payment",
+                            items: paymentOptions,
                             value: selectedPayment,
-                            items: paymentOptions.map((String option) {
-                              return DropdownMenuItem<String>(
-                                value: option,
-                                child:
-                                    Text(option.replaceAll(RegExp('_'), " ")),
-                              );
-                            }).toList(),
+                            displayText: (option) => option.replaceAll(RegExp('_'), " "),
                             onChanged: (String? value) {
                               setState(() {
                                 selectedPayment = value;
                               });
                             },
-                            validator: (value) => value == null
-                                ? 'Please select a payment method'
-                                : null,
+                            validator: (value) => value == null ? 'Please select a payment method' : null,
                           ),
                         ],
                       ),
@@ -354,7 +330,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                                 .textTheme
                                 .displayMedium!
                                 .copyWith(
-                                    color: primaryColor2, fontSize: 14.sp),
+                                color: primaryColor2, fontSize: 14.sp),
                           ),
                         ],
                       ),
@@ -376,7 +352,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                               }
                               isDraft = false;
                               createReceipt();
-                            } // context.push(AppRoutes.receipt);
+                            }
                           },
                         ),
                         SizedBox(
@@ -425,12 +401,12 @@ class FormFields extends StatefulWidget {
 
   FormFields(
       {super.key,
-      required this.qtyController,
-      required this.discountController,
-      required this.onPressed,
-      required this.index,
-      this.product,
-      this.invoiceToReceipt = false});
+        required this.qtyController,
+        required this.discountController,
+        required this.onPressed,
+        required this.index,
+        this.product,
+        this.invoiceToReceipt = false});
 
   @override
   State<FormFields> createState() => _FormFieldsState();
