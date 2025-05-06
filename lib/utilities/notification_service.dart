@@ -1,6 +1,6 @@
 import 'dart:io';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -15,11 +15,11 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
   FlutterLocalNotificationsPlugin();
-  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initialize() async {
     // Initialize Firebase (already called in main.dart, but safe to ensure)
-    // await Firebase.initializeApp();
+    await Firebase.initializeApp();
 
     // Initialize local notifications
     const AndroidInitializationSettings androidSettings =
@@ -50,7 +50,7 @@ class NotificationService {
     await _requestPermissions();
 
     // Initialize Firebase Messaging
-    // await _initializeFirebaseMessaging();
+    await _initializeFirebaseMessaging();
   }
 
   Future<void> _requestPermissions() async {
@@ -59,69 +59,69 @@ class NotificationService {
           .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
           ?.requestNotificationsPermission();
-      // await _firebaseMessaging.requestPermission(
-      //   alert: true,
-      //   badge: true,
-      //   sound: true,
-      // );
+      await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
     } else if (Platform.isIOS) {
       await _notificationsPlugin
           .resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(alert: true, badge: true, sound: true);
-      // await _firebaseMessaging.requestPermission(
-      //   alert: true,
-      //   badge: true,
-      //   sound: true,
-      // );
+      await _firebaseMessaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
     }
   }
 
-  // Future<void> _initializeFirebaseMessaging() async {
-  //   String? token = await _firebaseMessaging.getToken();
-  //   print('FCM Token: $token');
-  //
-  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //     if (message.notification != null) {
-  //       _displayPushNotification(message);
-  //     }
-  //   });
-  //
-  //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-  //     print('Notification tapped from background: ${message.notification?.title}');
-  //     locator<PayvidenceAppRouter>().navigateNamed('/messages');
-  //   });
-  //
-  //   _firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
-  //     if (message != null) {
-  //       print('Notification tapped from terminated state: ${message.notification?.title}');
-  //       locator<PayvidenceAppRouter>().navigateNamed('/messages');
-  //     }
-  //   });
-  // }
+  Future<void> _initializeFirebaseMessaging() async {
+    String? token = await _firebaseMessaging.getToken();
+    print('FCM Token: $token');
 
-  // Future<void> _displayPushNotification(RemoteMessage message) async {
-  //   const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-  //     'push_channel',
-  //     'Push Notifications',
-  //     channelDescription: 'Channel for FCM push notifications',
-  //     importance: Importance.max,
-  //     priority: Priority.high,
-  //   );
-  //   const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
-  //   const NotificationDetails platformDetails = NotificationDetails(
-  //     android: androidDetails,
-  //     iOS: iosDetails,
-  //   );
-  //
-  //   await _notificationsPlugin.show(
-  //     message.hashCode,
-  //     message.notification?.title ?? 'No Title',
-  //     message.notification?.body ?? 'No Body',
-  //     platformDetails,
-  //     payload: message.data['payload']?.toString(),
-  //   );
-  // }
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        _displayPushNotification(message);
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Notification tapped from background: ${message.notification?.title}');
+      locator<PayvidenceAppRouter>().navigateNamed('/messages');
+    });
+
+    _firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null) {
+        print('Notification tapped from terminated state: ${message.notification?.title}');
+        locator<PayvidenceAppRouter>().navigateNamed('/messages');
+      }
+    });
+  }
+
+  Future<void> _displayPushNotification(RemoteMessage message) async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'push_channel',
+      'Push Notifications',
+      channelDescription: 'Channel for FCM push notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _notificationsPlugin.show(
+      message.hashCode,
+      message.notification?.title ?? 'No Title',
+      message.notification?.body ?? 'No Body',
+      platformDetails,
+      payload: message.data['payload']?.toString(),
+    );
+  }
 
   Future<void> showNotification({
     required int id,

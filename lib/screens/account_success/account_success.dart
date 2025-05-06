@@ -122,7 +122,7 @@ class AccountSuccessScreen extends HookWidget {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
 
-    final privacyPolicyContent = '''
+    const privacyPolicyContent = '''
 At Payvidence, we prioritize your privacy and the security of your personal information. This Privacy Policy outlines how we collect, use, and share the information you provide when using our mobile application and related services. By using Payvidence, you consent to the practices described in this policy.\n\n'
 '1. Information We Collect\n'
 '- Account Data: Business name, owner details\n'
@@ -153,7 +153,7 @@ At Payvidence, we prioritize your privacy and the security of your personal info
 'Users will be notified 30 days prior to material changes.'
 ''';
 
-    final termsAndConditionsContent = '''
+    const termsAndConditionsContent = '''
 These Terms and Conditions govern your use of PAYVIDENCE (the "Service"). By accessing or using the Service, you agree to be bound by these Terms. If you disagree, discontinue use immediately.\n\n'
 '1. Acceptance of Terms\n'
 'By accessing or using PAYVIDENCE, you agree to be bound by these Terms. If you disagree, discontinue use immediately.\n\n'
