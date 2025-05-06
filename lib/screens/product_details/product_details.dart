@@ -59,7 +59,7 @@ class ProductDetails extends HookConsumerWidget {
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
-        Navigator.of(context).pop(); // pop loading dialog on error
+        Navigator.of(context).pop();
         ToastService.showErrorSnackBar('An unknown error has occurred!');
       }
     }

@@ -22,10 +22,12 @@ class BaseChangeNotifier extends ChangeNotifier {
     String? message,
     bool shouldDisplayError = true,
   }) {
-    showErrorToastMessage(
-      message: message != "null" ? message.toString() : "An error occurred",
-      type: ToastMessageType.failure,
-    );
+    if (shouldDisplayError) {
+      showErrorToastMessage(
+        message: message ?? "An error occurred",
+        type: ToastMessageType.failure,
+      );
+    }
   }
 
   void showErrorToastMessage({

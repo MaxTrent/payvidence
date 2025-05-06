@@ -96,8 +96,19 @@ class LoginViewModel extends BaseChangeNotifier {
 
         navigateOnSuccess();
       } else {
-        _errorMessage = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";
-        developer.log('Login failed: $_errorMessage');
+        final detailedError = response.error?.errors?.first.message ?? response.error?.message ?? "An error occurred!";
+        developer.log('Login failed: $detailedError');
+
+        if (detailedError.toLowerCase().contains('password') &&
+            detailedError.toLowerCase().contains('uppercase') &&
+            detailedError.toLowerCase().contains('lowercase') &&
+            detailedError.toLowerCase().contains('number') &&
+            detailedError.toLowerCase().contains('special character')) {
+          _errorMessage = "Incorrect credentials";
+        } else {
+          _errorMessage = detailedError;
+        }
+
         handleError(message: _errorMessage);
       }
     } catch (e) {

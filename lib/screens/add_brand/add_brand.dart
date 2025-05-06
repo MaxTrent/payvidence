@@ -9,6 +9,7 @@ import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
+import '../../data/network/api_response.dart';
 import '../../utilities/toast_service.dart';
 
 @RoutePage(name: 'AddBrandRoute')
@@ -24,13 +25,14 @@ class AddBrand extends ConsumerWidget {
     Future<void> createBrand() async {
       Map<String, dynamic> requestData = {
         "name": nameController.text,
-        "description": descController.text,
+        "description": descController.text.trim().isNotEmpty ? descController.text : null, // Send null if empty
       };
+
       if (!context.mounted) return;
       LoadingDialog.show(context);
       try {
         final BrandModel response =
-            await ref.read(getAllBrandProvider.notifier).addBrand(requestData);
+        await ref.read(getAllBrandProvider.notifier).addBrand(requestData);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
         ToastService.showSnackBar("Brand created successfully");
@@ -40,6 +42,10 @@ class AddBrand extends ConsumerWidget {
           Navigator.of(context).pop();
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
+      } on ApiErrorResponseV2 catch (e) {
+        Navigator.of(context).pop();
+        String errorMessage = e.message ?? 'An unknown error has occurred!';
+        ToastService.showErrorSnackBar(errorMessage);
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
         ToastService.showErrorSnackBar(
@@ -49,7 +55,6 @@ class AddBrand extends ConsumerWidget {
         ToastService.showErrorSnackBar('An error has occurred!');
       }
     }
-
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -102,7 +107,7 @@ class AddBrand extends ConsumerWidget {
                 height: 128,
                 hintText: 'Brand description',
                 controller: descController,
-                validator: (val) => Validator.validateName(val),
+                validator: (val) => val?.trim().isEmpty == true ? null : Validator.validateName(val),
               ),
               SizedBox(
                 height: 32.h,

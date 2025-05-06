@@ -57,7 +57,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
       vatRateController.text = widget.product?.vat ?? '';
       Future.delayed(const Duration(milliseconds: 200), () {
         ref.read(getCurrentCategoryProvider.notifier).setCurrentCategory(widget.product!.category!);
-        ref.read(getCurrentBrandProvider.notifier).setCurrentBrand(widget.product!.brand!);
+        ref.read(getCurrentBrandProvider.notifier).setCurrentBrand(widget.product?.brand);
       });
     }
   }
@@ -74,9 +74,11 @@ class _AddProductState extends ConsumerState<AddProduct> {
         "description": productDescController.text,
         "price": productPriceController.text,
         "quantity": productQtyController.text,
-        "brand_id": currentBrand?.id,
         "category_id": currentCategory?.id,
       };
+      if (currentBrand != null) {
+        data.addAll({"brand_id": currentBrand.id});
+      }
       if (widget.product == null) {
         data.addAll({
           "logo_image": await MultipartFile.fromFile(productImage.value!.path,
@@ -108,7 +110,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
         }
 
         if (!context.mounted) return;
-        Navigator.of(context).pop(); // Pop loading dialog
+        Navigator.of(context).pop();
         ToastService.showSnackBar(widget.product == null
             ? "Product created successfully"
             : "Product updated successfully");
@@ -120,11 +122,11 @@ class _AddProductState extends ConsumerState<AddProduct> {
           if (!context.mounted) return;
           Navigator.of(context).pop();
         });
-      }on ApiErrorResponseV2 catch (e) {
+      } on ApiErrorResponseV2 catch (e) {
         Navigator.of(context).pop();
         String errorMessage = e.message ?? 'An unknown error has occurred!';
         ToastService.showErrorSnackBar(errorMessage);
-      }  on DioException catch (e) {
+      } on DioException catch (e) {
         Navigator.of(context).pop();
         ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
@@ -355,9 +357,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       formKey.currentState!.save();
-                      if (currentBrand == null) {
-                        ToastService.showErrorSnackBar("Select a brand!");
-                      } else if (currentCategory == null) {
+                      if (currentCategory == null) {
                         ToastService.showErrorSnackBar("Select a category!");
                       } else if (productImage.value == null && widget.product == null) {
                         ToastService.showErrorSnackBar("Select a product image");

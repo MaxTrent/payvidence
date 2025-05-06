@@ -9,6 +9,7 @@ import 'package:payvidence/providers/category_providers/get_all_category_provide
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
+import '../../data/network/api_response.dart';
 import '../../utilities/toast_service.dart';
 
 @RoutePage(name: 'AddCategoryRoute')
@@ -41,6 +42,10 @@ class AddCategory extends ConsumerWidget {
           Navigator.of(context).pop();
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
+      } on ApiErrorResponseV2 catch (e) {
+        Navigator.of(context).pop();
+        String errorMessage = e.message ?? 'An unknown error has occurred!';
+        ToastService.showErrorSnackBar(errorMessage);
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
         ToastService.showErrorSnackBar(
