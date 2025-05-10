@@ -323,7 +323,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                     .displaySmall!
                     .copyWith(color: Colors.black, fontWeight: FontWeight.w400),
               ),
-              8.verticalSpace,
+              // 8.verticalSpace,
               Text(
                 record.business?.address ?? '',
                 style: Theme.of(context)
@@ -332,7 +332,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                     .copyWith(fontSize: 14.sp, color: Colors.black),
                 textAlign: TextAlign.center,
               ),
-              6.verticalSpace,
+              // 6.verticalSpace,
               Text(
                 record.business?.phoneNumber ?? '',
                 style: Theme.of(context)
@@ -356,7 +356,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: 22.sp, color: Colors.black),
+                                .copyWith(fontSize: 18.sp, color: Colors.black),
                           ),
                           8.verticalSpace,
                           Text(
@@ -395,7 +395,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: 22.sp, color: Colors.black),
+                                .copyWith(fontSize: 18.sp, color: Colors.black),
                           ),
                           8.verticalSpace,
                           Text(
