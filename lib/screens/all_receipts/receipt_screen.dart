@@ -253,16 +253,16 @@ class ContainerWithClippedCircles extends StatelessWidget {
           width: ScreenUtil().screenWidth,
           decoration: const BoxDecoration(
             color: Colors.white,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white
-                // Color(0xCCE3DDFF),
-                // Color(0xE5888599),
-                // Color(0x99888599),
-              ],
-            ),
+            // gradient: LinearGradient(
+            //   begin: Alignment.topLeft,
+            //   end: Alignment.bottomRight,
+            //   colors: [
+            //     // Colors.white
+            //     Color(0xCCE3DDFF),
+            //     Color(0xE5888599),
+            //     Color(0x99888599),
+            //   ],
+            // ),
             shape: BoxShape.rectangle,
           ),
           child: Column(
