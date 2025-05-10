@@ -252,13 +252,15 @@ class ContainerWithClippedCircles extends StatelessWidget {
           padding: EdgeInsets.only(top: 40.h, bottom: 24.h),
           width: ScreenUtil().screenWidth,
           decoration: const BoxDecoration(
+            color: Colors.white,
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xCCE3DDFF),
-                Color(0xE5888599),
-                Color(0x99888599),
+                Colors.white
+                // Color(0xCCE3DDFF),
+                // Color(0xE5888599),
+                // Color(0x99888599),
               ],
             ),
             shape: BoxShape.rectangle,
@@ -449,9 +451,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 14.w, top: 8.h, bottom: 8.h),
+                            left: 5.w, top: 8.h, bottom: 8.h),
                         child: Text(
-                          'DESCRIPTION',
+                          'DESC.',
                           textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
@@ -468,9 +470,12 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .textTheme
                                 .displaySmall!
                                 .copyWith(color: Colors.white),
-                            children: const [
-                              TextSpan(text: 'RATE ('),
-                              WidgetSpan(
+                            children:  [
+                              TextSpan(text: 'RATE (', style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(color: Colors.white),),
+                              const WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child:
                                 AppNaira(fontSize: 16, color: Colors.white),
@@ -502,7 +507,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .displaySmall!
                                 .copyWith(color: Colors.white),
                             children: const [
-                              TextSpan(text: 'AMOUNT ('),
+                              TextSpan(text: 'AMT. ('),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child:
