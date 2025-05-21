@@ -1,6 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
+import '../../data/local/session_constants.dart';
+import '../../data/local/session_manager.dart';
 import '../../model/user_model.dart';
+import '../../shared_dependency/shared_dependency.dart';
 
 final updatePersonalDetailsViewModelProvider =
 ChangeNotifierProvider((ref) => UpdatePersonalDetailsViewModel(ref));
@@ -32,8 +35,37 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
     print("ViewModel: Editing mode toggled to $_isEditing");
   }
 
+  Future<void> _loadCachedUserInfo() async {
+    final sessionManager = locator<SessionManager>();
+    final firstName = await sessionManager.get(SessionConstants.userFirstName) as String?;
+    final lastName = await sessionManager.get(SessionConstants.userLastName) as String?;
+    final email = await sessionManager.get(SessionConstants.userEmail) as String?;
+    final phoneNumber = await sessionManager.get(SessionConstants.userPhone) as String?;
+    final profilePictureUrl = await sessionManager.get(SessionConstants.profilePictureUrl) as String?;
+
+    if (firstName != null || lastName != null || email != null || phoneNumber != null || profilePictureUrl != null) {
+      _user = User(
+        account: Account(
+          firstName: firstName ?? '',
+          lastName: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+          profilePictureUrl: profilePictureUrl,
+          transactionalAlerts: false,
+          promotionalUpdates: false,
+          securityAlerts: false,
+        ),
+        token: null,
+      );
+      notifyListeners();
+      print("ViewModel: Loaded cached user info - ${userInfo?.account}");
+    }
+  }
+
   Future<void> fetchUserInformation() async {
     try {
+      await _loadCachedUserInfo();
+
       _isLoading = true;
       notifyListeners();
 
@@ -47,6 +79,26 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
         userInfo = User(
           account: Account.fromJson(userData as Map<String, dynamic>),
           token: null,
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userFirstName,
+          value: userInfo?.account.firstName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userLastName,
+          value: userInfo?.account.lastName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userEmail,
+          value: userInfo?.account.email ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userPhone,
+          value: userInfo?.account.phoneNumber ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.profilePictureUrl,
+          value: userInfo?.account.profilePictureUrl ?? '',
         );
         print("ViewModel: User info updated - ${userInfo?.account}");
       } else {
@@ -122,6 +174,26 @@ class UpdatePersonalDetailsViewModel extends BaseChangeNotifier {
                 token: null,
               );
         }
+        await locator<SessionManager>().save(
+          key: SessionConstants.userFirstName,
+          value: _user?.account.firstName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userLastName,
+          value: _user?.account.lastName ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userEmail,
+          value: _user?.account.email ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.userPhone,
+          value: _user?.account.phoneNumber ?? '',
+        );
+        await locator<SessionManager>().save(
+          key: SessionConstants.profilePictureUrl,
+          value: _user?.account.profilePictureUrl ?? '',
+        );
         _isEditing = false;
         if (showToast == true) {
           showSuccess(message: 'User Info updated!');

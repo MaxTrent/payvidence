@@ -31,7 +31,6 @@ class HomeScreen extends HookConsumerWidget {
     final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen(getAllBusinessProvider, (prev, next) {
       if (next.hasValue && next.value!.isNotEmpty) {
@@ -250,19 +249,41 @@ class HomeScreen extends HookConsumerWidget {
                       transaction.recordProductDetails.isNotEmpty
                           ? transaction.recordProductDetails.first
                           : null;
+
+                      // Handle null cases for firstProductDetail and its product
+                      if (firstProductDetail == null) {
+                        return TransactionTile(
+                          amount: '0',
+                          dateTime: '',
+                          productName: 'Unknown Product',
+                          receiptOrInvoice: transaction.status == 'pending'
+                              ? 'Invoice'
+                              : 'Receipt',
+                          unitSold: '0',
+                        );
+                      }
+
+                      final product = firstProductDetail.product;
+                      final productName = product?.name ?? 'Unknown Product';
+                      final amount = product != null
+                          ? (double.tryParse(product.price ?? '0') ?? 0)
+                          .toString()
+                          .toCommaSeparated()
+                          : '0';
+                      final dateTime = product?.createdAt
+                          ?.toString()
+                          .toFormattedIsoDate() ??
+                          '';
+                      final unitSold = product?.quantitySold?.toString() ?? '0';
+
                       return TransactionTile(
-                        amount: firstProductDetail!.product.price
-                            .toString()
-                            .toCommaSeparated(),
-                        dateTime: firstProductDetail.product.createdAt
-                            .toString()
-                            .toFormattedIsoDate(),
-                        productName: firstProductDetail.product.name,
+                        amount: amount,
+                        dateTime: dateTime,
+                        productName: productName,
                         receiptOrInvoice: transaction.status == 'pending'
                             ? 'Invoice'
                             : 'Receipt',
-                        unitSold:
-                        firstProductDetail.product.quantitySold.toString(),
+                        unitSold: unitSold,
                       );
                     },
                   ),

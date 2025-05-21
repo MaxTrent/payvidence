@@ -64,6 +64,7 @@ class Login extends HookConsumerWidget {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
       child: Scaffold(
+        appBar: AppBar(),
         body: Form(
           key: formKey,
           child: Padding(
@@ -166,7 +167,6 @@ class Login extends HookConsumerWidget {
 
                     useBiometricLogin ? Center(child: Image.asset(Assets.png.faceId.path, color: isDarkMode ? Colors.white : Colors.black, height: 200.h,)) : const SizedBox.shrink(),
                     SizedBox(height: 32.h),
-                    // Show link if biometric login failed
                     if (useBiometricLogin && viewModel.errorMessage.isNotEmpty) ...[
                       GestureDetector(
                         onTap: () {

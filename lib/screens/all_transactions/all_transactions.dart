@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/data/local/session_constants.dart';
 import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/extensions.dart';
@@ -15,6 +16,10 @@ import '../../components/custom_shimmer.dart';
 import '../../components/transaction_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
+import '../../model/business_model.dart';
+import '../../model/client_model.dart';
+import '../../routes/payvidence_app_router.dart';
+import '../../routes/payvidence_app_router.gr.dart';
 import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'AllTransactionsRoute')
@@ -26,12 +31,11 @@ class AllTransactions extends HookConsumerWidget {
     final viewModel = ref.watch(allTransactionsViewModelProvider);
     final searchController = useTextEditingController();
     final businessId =
-        locator<SessionManager>().get<String>(SessionConstants.businessId);
+    locator<SessionManager>().get<String>(SessionConstants.businessId);
     final filterType = useState('All');
     final searchQuery = useState('');
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
-
 
     useEffect(() {
       Future.microtask(() {
@@ -59,7 +63,7 @@ class AllTransactions extends HookConsumerWidget {
       final firstProductDetail = transaction.recordProductDetails.isNotEmpty
           ? transaction.recordProductDetails.first
           : null;
-      final productName = firstProductDetail?.product.name ?? '';
+      final productName = firstProductDetail?.product?.name ?? '';
       final matchesSearch = searchQuery.value.isEmpty ||
           productName.toLowerCase().contains(searchQuery.value.toLowerCase());
 
@@ -68,7 +72,7 @@ class AllTransactions extends HookConsumerWidget {
 
     Future<void> onRefresh() async {
       if (businessId != null) {
-        await viewModel.fetchTransactions(businessId!);
+        await viewModel.fetchTransactions(businessId);
       }
     }
 
@@ -85,7 +89,6 @@ class AllTransactions extends HookConsumerWidget {
         child: PullToRefresh(
           onRefresh: onRefresh,
           child: ListView(
-
             children: [
               SizedBox(height: 32.h),
               Row(
@@ -109,7 +112,6 @@ class AllTransactions extends HookConsumerWidget {
                     },
                     child: Container(
                       height: 48.h,
-                      // width: 56.w,
                       decoration: BoxDecoration(
                         color: borderColor,
                         borderRadius: BorderRadius.circular(56.r),
@@ -155,49 +157,72 @@ class AllTransactions extends HookConsumerWidget {
                 ),
               ] else ...[
                 ...filteredTransactions.map(
-                  (transaction) {
+                      (transaction) {
                     final firstProductDetail =
                         transaction.recordProductDetails.first;
+                    final isInvoice = transaction.status == 'pending';
+
+                    // Handle null product case
+                    final product = firstProductDetail.product;
+                    final productName = product?.name ?? 'Unknown Product';
+                    final amount = product != null
+                        ? (double.tryParse(product.price ?? '0') ?? 0)
+                        .toString()
+                        .toCommaSeparated()
+                        : '0';
+                    final dateTime = product?.createdAt
+                        ?.toString()
+                        .toFormattedIsoDate() ??
+                        '';
+                    final unitSold = product?.quantitySold?.toString() ?? '0';
+
                     return GestureDetector(
                       onTap: () {
-                        // final receipt = Receipt(
-                        //   id: transaction.id,
-                        //   business: Business(
-                        //     name: transaction.business.name,
-                        //     address: transaction.business.address,
-                        //     phoneNumber: transaction.business.phoneNumber,
-                        //     accountNumber: transaction.business.accountNumber,
-                        //     bankName: transaction.business.bankName,
-                        //     accountName: transaction.business.accountName,
-                        //   ),
-                        //   client: ClientModel(
-                        //     name: transaction.client.name,
-                        //     phoneNumber: transaction.client.phoneNumber,
-                        //     address: transaction.client.address,
-                        //   ),
-                        //   recordProductDetails: transaction.recordProductDetails,
-                        //   total: transaction.total.toString(),
-                        //   createdAt: transaction.createdAt,
-                        //   modeOfPayment: transaction.modeOfPayment,
-                        // );
-                        // final isInvoice = transaction.status == 'pending';
-                        // locator<PayvidenceAppRouter>().push(
-                        //   ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
-                        // );
+                        final receipt = Receipt(
+                          id: transaction.id,
+                          business: Business(
+                            id: transaction.business.id,
+                            accountId: transaction.business.accountId,
+                            name: transaction.business.name,
+                            address: transaction.business.address,
+                            phoneNumber: transaction.business.phoneNumber,
+                            logoUrl: transaction.business.logoUrl,
+                            issuer: transaction.business.issuer,
+                            issuerRole: transaction.business.issuerRole,
+                            issuerSignatureUrl:
+                            transaction.business.issuerSignatureUrl,
+                            bankName: transaction.business.bankName,
+                            accountNumber: transaction.business.accountNumber,
+                            accountName: transaction.business.accountName,
+                            createdAt: transaction.business.createdAt,
+                            updatedAt: transaction.business.updatedAt,
+                          ),
+                          client: ClientModel(
+                            id: transaction.client.id,
+                            businessId: transaction.client.businessId,
+                            name: transaction.client.name,
+                            phoneNumber: transaction.client.phoneNumber,
+                            address: transaction.client.address,
+                            createdAt: transaction.client.createdAt,
+                            updatedAt: transaction.client.updatedAt,
+                          ),
+                          recordProductDetails: transaction.recordProductDetails,
+                          total: transaction.total.toString(),
+                          createdAt: transaction.createdAt,
+                          modeOfPayment: transaction.modeOfPayment,
+                        );
+                        locator<PayvidenceAppRouter>().push(
+                          ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
+                        );
                       },
                       child: TransactionTile(
-                        amount: firstProductDetail.product.price
-                            .toString()
-                            .toCommaSeparated(),
-                        dateTime: firstProductDetail.product.createdAt
-                            .toString()
-                            .toFormattedIsoDate(),
-                        productName: firstProductDetail.product.name,
+                        amount: amount,
+                        dateTime: dateTime,
+                        productName: productName,
                         receiptOrInvoice: transaction.status == 'pending'
                             ? 'Invoice'
                             : 'Receipt',
-                        unitSold:
-                            firstProductDetail.product.quantitySold.toString(),
+                        unitSold: unitSold,
                       ),
                     );
                   },
@@ -221,7 +246,7 @@ class AllTransactions extends HookConsumerWidget {
         return Container(
           height: 326.h,
           decoration: BoxDecoration(
-            color: isDarkMode ? Colors.black :Colors.white,
+            color: isDarkMode ? Colors.black : Colors.white,
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(40.r),
               topLeft: Radius.circular(40.r),
@@ -256,14 +281,17 @@ class AllTransactions extends HookConsumerWidget {
                                 .textTheme
                                 .displayLarge!
                                 .copyWith(
-                                  fontSize: 22.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              fontSize: 22.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
-                          child:  Icon(Icons.close, color: isDarkMode? Colors.white: Colors.black,),
+                          child: Icon(
+                            Icons.close,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
                         ),
                       ],
                     ),
@@ -285,7 +313,12 @@ class AllTransactions extends HookConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SvgPicture.asset(Assets.svg.receipt, colorFilter: ColorFilter.mode(isDarkMode? Colors.white: Colors.black, BlendMode.srcIn),),
+                            SvgPicture.asset(
+                              Assets.svg.receipt,
+                              colorFilter: ColorFilter.mode(
+                                  isDarkMode ? Colors.white : Colors.black,
+                                  BlendMode.srcIn),
+                            ),
                             SizedBox(width: 16.w),
                             Text(
                               'Receipt',
@@ -309,7 +342,11 @@ class AllTransactions extends HookConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            SvgPicture.asset(Assets.svg.invoice, colorFilter: ColorFilter.mode(isDarkMode? Colors.white: Colors.black, BlendMode.srcIn)),
+                            SvgPicture.asset(
+                                Assets.svg.invoice,
+                                colorFilter: ColorFilter.mode(
+                                    isDarkMode ? Colors.white : Colors.black,
+                                    BlendMode.srcIn)),
                             SizedBox(width: 16.w),
                             Text(
                               'Invoice',
@@ -323,30 +360,6 @@ class AllTransactions extends HookConsumerWidget {
                       ),
                     ),
                     Divider(height: 1.h),
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     filterType.value = 'All';
-                    //     Navigator.of(context).pop();
-                    //   },
-                    //   child: Padding(
-                    //     padding: EdgeInsets.symmetric(vertical: 24.h),
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.start,
-                    //       children: [
-                    //         SvgPicture.asset(Assets.svg.shapes),
-                    //         SizedBox(width: 16.w),
-                    //         Text(
-                    //           'All',
-                    //           style: Theme.of(context)
-                    //               .textTheme
-                    //               .displaySmall!
-                    //               .copyWith(fontSize: 14.sp),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    // Divider(height: 1.h),
                   ],
                 ),
               ],

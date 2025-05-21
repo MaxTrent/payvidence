@@ -23,6 +23,7 @@
     <application
         android:label="Payvidence"
         android:name="${applicationName}"
+        android:allowBackup="false"
         android:enableOnBackInvokedCallback="true"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/launcher_icon">

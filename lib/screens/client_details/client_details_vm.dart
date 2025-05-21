@@ -3,7 +3,7 @@ import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
 
 final clientDetailsViewModelViewModelProvider =
-    ChangeNotifierProvider((ref) => ClientDetailsViewModel(ref));
+ChangeNotifierProvider((ref) => ClientDetailsViewModel(ref));
 
 class ClientDetailsViewModel extends BaseChangeNotifier {
   final Ref ref;
@@ -97,38 +97,6 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
     }
   }
 
-  // Future<void> updateClient(String businessId, String clientId, ClientModel updatedClient) async {
-  //   try {
-  //     _isLoading = true;
-  //     notifyListeners();
-  //
-  //     print("ViewModel: Updating client with businessId: $businessId, clientId: $clientId");
-  //     final response = await apiServices.updateClient(businessId, clientId);
-  //     print("ViewModel: Update response - success: ${response.success}, data: ${response.data}");
-  //
-  //     if (response.success) {
-  //       if (response.data != null && response.data!.containsKey("data")) {
-  //         _client = ClientModel.fromJson(response.data!["data"] as Map<String, dynamic>);
-  //       } else {
-  //         _client = updatedClient;}
-  //       _isEditing = false;
-  //       print("ViewModel: Client updated successfully - $_client");
-  //     } else {
-  //       var errorMessage = response.error?.errors?.first.message ??
-  //           response.error?.message ??
-  //           "Failed to update client!";
-  //       print("ViewModel: Update failed - $errorMessage");
-  //       handleError(message: errorMessage);
-  //     }
-  //   } catch (e) {
-  //     print("ViewModel: Exception during update - $e");
-  //     handleError(message: "An unexpected error occurred while updating the client.");
-  //   } finally {
-  //     _isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
-
   Future<void> updateClient({
     required String businessId,
     required String clientId,
@@ -139,10 +107,18 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
+      // Check if _client is null
+      if (_client == null) {
+        print("ViewModel: Error - Client data not loaded before update");
+        handleError(
+            message: "Client data not loaded. Please try again later.");
+        return;
+      }
+
       print(
           "ViewModel: Updating client with businessId: $businessId, clientId: $clientId, newName: $newName");
       final response =
-          await apiServices.updateClient(businessId, clientId, newName);
+      await apiServices.updateClient(businessId, clientId, newName);
       print(
           "ViewModel: Update response - success: ${response.success}, data: ${response.data}");
 
@@ -152,9 +128,8 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
           _client = ClientModel.fromJson(
               response.data!["data"] as Map<String, dynamic>);
         } else {
-          // If API doesn't return updated data, update manually
-          _client = _client?.copyWith(name: newName) ??
-              ClientModel(id: clientId, name: newName);
+          // Since _client is guaranteed to be non-null, update manually
+          _client = _client!.copyWith(name: newName);
         }
         _isEditing = false;
         showSuccess(message: 'Client details updated!');

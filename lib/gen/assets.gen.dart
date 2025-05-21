@@ -75,6 +75,9 @@ class $AssetsPngGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/EmptyClient.svg
+  String get emptyClient => 'assets/svg/EmptyClient.svg';
+
   /// File path: assets/svg/Payvidence (1) 2.13.51 AM.zip
   String get payvidence121351AM => 'assets/svg/Payvidence (1) 2.13.51 AM.zip';
 
@@ -321,6 +324,7 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<dynamic> get values => [
+        emptyClient,
         payvidence121351AM,
         payvidence221351AM,
         analytics,

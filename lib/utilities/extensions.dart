@@ -19,9 +19,36 @@ import 'package:intl/intl.dart';
 //   }
 // }
 
+
+String getDayWithSuffix(int day) {
+  if (day >= 11 && day <= 13) return '${day}th';
+  switch (day % 10) {
+    case 1:
+      return '${day}st';
+    case 2:
+      return '${day}nd';
+    case 3:
+      return '${day}rd';
+    default:
+      return '${day}th';
+  }
+}
+
 extension StringFormatting on String {
   String capitalize() {
     return isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
+  }
+}
+
+extension CapAllWords on String {
+  String capitalizeEachWord() =>
+      split(' ').map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}').join(' ');
+}
+
+extension DoubleFormatting on double {
+  String commaSeparated({String locale = 'en_US'}) {
+    final format = NumberFormat("#,##0.##", locale);
+    return format.format(this);
   }
 }
 

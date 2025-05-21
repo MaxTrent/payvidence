@@ -1,33 +1,39 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_dot.dart';
+import '../../components/app_naira.dart';
 import '../../components/loading_dialog.dart';
 import '../../constants/app_colors.dart';
+import '../../data/network/api_response.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/theme_mode.dart';
 import '../../utilities/toast_service.dart';
 
 @RoutePage(name: 'ProductDetailsRoute')
-class ProductDetails extends ConsumerWidget {
+class ProductDetails extends HookConsumerWidget {
   final Product product;
 
   const ProductDetails({super.key, required this.product});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = useThemeMode();
+    final isDarkMode = theme.mode == ThemeMode.dark;
     final Product? currentProduct = ref.watch(getCurrentProductProvider);
     Future<void> deleteProduct() async {
+      Navigator.of(context).pop();
       if (!context.mounted) return;
       LoadingDialog.show(context);
       try {
@@ -35,7 +41,7 @@ class ProductDetails extends ConsumerWidget {
             .read(getAllProductProvider.notifier)
             .deleteProduct(currentProduct?.id ?? '');
         if (!context.mounted) return;
-        Navigator.of(context).pop(); //pop loading dialog on success
+        Navigator.of(context).pop();
         ToastService.showSnackBar("Product deleted successfully");
         ref.invalidate(getAllProductProvider);
         Future.delayed(const Duration(seconds: 2), () {
@@ -43,13 +49,17 @@ class ProductDetails extends ConsumerWidget {
           context.router.back();
           //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
         });
+      } on ApiErrorResponseV2 catch (e) {
+        Navigator.of(context).pop();
+        String errorMessage = e.message ?? 'An unknown error has occurred!';
+        ToastService.showErrorSnackBar(errorMessage);
       } on DioException catch (e) {
-        Navigator.of(context).pop(); // pop loading dialog on error
+        Navigator.of(context).pop();
         ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
-        Navigator.of(context).pop(); // pop loading dialog on error
+        Navigator.of(context).pop();
         ToastService.showErrorSnackBar('An unknown error has occurred!');
       }
     }
@@ -64,11 +74,13 @@ class ProductDetails extends ConsumerWidget {
                 height: 320.h,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(
-                          Assets.png.productpic.path,
-                        ),
-                        fit: BoxFit.cover)),
+                  image: DecorationImage(
+                    image: currentProduct?.logoUrl != null
+                        ? NetworkImage(currentProduct!.logoUrl!)
+                        : AssetImage(Assets.png.payvidenceLogo.path) as ImageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -181,7 +193,7 @@ class ProductDetails extends ConsumerWidget {
                             '${currentProduct?.category?.name?.capitalize() ?? ''}   ',
                             style: Theme.of(context).textTheme.displaySmall),
                         AppDot(
-                          color: Colors.black,
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                         Text(
                             '   ${currentProduct?.brand?.name?.capitalize() ?? ''}',
@@ -191,9 +203,14 @@ class ProductDetails extends ConsumerWidget {
                     SizedBox(
                       height: 20.h,
                     ),
-                    Text(
-                      '₦${currentProduct?.price}',
-                      style: Theme.of(context).textTheme.displayLarge,
+                    Row(
+                      children: [
+                        AppNaira(fontSize: 28, color: isDarkMode ? Colors.white:Colors.black,),
+                        Text(
+                          '${currentProduct?.price}',
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: 12.h,
@@ -269,6 +286,8 @@ class ProductDetails extends ConsumerWidget {
 
   Future<dynamic> _buildConfirmDeleteBottomSheet(
       BuildContext context, void Function() onDelete) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
@@ -278,7 +297,7 @@ class ProductDetails extends ConsumerWidget {
           return Container(
             height: 398.h,
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDarkMode ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(40.r),
                     topLeft: Radius.circular(40.r))),
@@ -354,7 +373,7 @@ class ProductDetails extends ConsumerWidget {
                           Navigator.of(context).pop();
                         },
                         backgroundColor: Colors.transparent,
-                        textColor: Colors.black,
+                        textColor: isDarkMode ? Colors.white : Colors.black,
                       ),
                     ],
                   ),

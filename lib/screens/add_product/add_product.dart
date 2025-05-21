@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:payvidence/components/app_naira.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/category_providers/current_category_provider.dart';
@@ -16,6 +17,7 @@ import 'package:payvidence/repositories/repository/product_repository.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
+import '../../data/network/api_response.dart';
 import '../../gen/assets.gen.dart';
 import '../../providers/business_providers/current_business_provider.dart';
 import '../../routes/payvidence_app_router.dart';
@@ -55,7 +57,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
       vatRateController.text = widget.product?.vat ?? '';
       Future.delayed(const Duration(milliseconds: 200), () {
         ref.read(getCurrentCategoryProvider.notifier).setCurrentCategory(widget.product!.category!);
-        ref.read(getCurrentBrandProvider.notifier).setCurrentBrand(widget.product!.brand!);
+        ref.read(getCurrentBrandProvider.notifier).setCurrentBrand(widget.product?.brand);
       });
     }
   }
@@ -64,6 +66,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
   Widget build(BuildContext context) {
     final currentCategory = ref.watch(getCurrentCategoryProvider);
     final currentBrand = ref.watch(getCurrentBrandProvider);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     Future<void> createProduct() async {
       Map<String, dynamic> data = {
@@ -71,9 +74,11 @@ class _AddProductState extends ConsumerState<AddProduct> {
         "description": productDescController.text,
         "price": productPriceController.text,
         "quantity": productQtyController.text,
-        "brand_id": currentBrand?.id,
         "category_id": currentCategory?.id,
       };
+      if (currentBrand != null) {
+        data.addAll({"brand_id": currentBrand.id});
+      }
       if (widget.product == null) {
         data.addAll({
           "logo_image": await MultipartFile.fromFile(productImage.value!.path,
@@ -105,7 +110,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
         }
 
         if (!context.mounted) return;
-        Navigator.of(context).pop(); // Pop loading dialog
+        Navigator.of(context).pop();
         ToastService.showSnackBar(widget.product == null
             ? "Product created successfully"
             : "Product updated successfully");
@@ -117,13 +122,17 @@ class _AddProductState extends ConsumerState<AddProduct> {
           if (!context.mounted) return;
           Navigator.of(context).pop();
         });
+      } on ApiErrorResponseV2 catch (e) {
+        Navigator.of(context).pop();
+        String errorMessage = e.message ?? 'An unknown error has occurred!';
+        ToastService.showErrorSnackBar(errorMessage);
       } on DioException catch (e) {
-        Navigator.of(context).pop(); // Pop loading dialog
+        Navigator.of(context).pop();
         ToastService.showErrorSnackBar(
             e.response?.data['message'] ?? 'An unknown error has occurred!!!');
       } catch (e) {
         print(e);
-        Navigator.of(context).pop(); // Pop loading dialog
+        Navigator.of(context).pop();
         ToastService.showErrorSnackBar('An error has occurred!');
       }
     }
@@ -244,10 +253,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   },
                   prefixIcon: Padding(
                     padding: EdgeInsets.fromLTRB(16.w, 16.h, 6.w, 16.h),
-                    child: Text(
-                      '₦',
-                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp),
-                    ),
+                    child: AppNaira(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black,),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -351,9 +357,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       formKey.currentState!.save();
-                      if (currentBrand == null) {
-                        ToastService.showErrorSnackBar("Select a brand!");
-                      } else if (currentCategory == null) {
+                      if (currentCategory == null) {
                         ToastService.showErrorSnackBar("Select a category!");
                       } else if (productImage.value == null && widget.product == null) {
                         ToastService.showErrorSnackBar("Select a product image");

@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,12 +14,16 @@ import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await loadEnvFile();
   final baseUrl = dotenv.env['BASE_URL'] ?? '';
   if (baseUrl.isEmpty) {
@@ -46,6 +52,18 @@ class MyApp extends HookWidget {
   Widget build(BuildContext context) {
     final theme = useThemeMode();
     final appRouter = locator<PayvidenceAppRouter>();
+    final firebaseMessaging = FirebaseMessaging.instance;
+
+    firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+
+    firebaseMessaging.getToken().then((token) {
+      print('FCM Token: $token');
+    });
 
     return ScreenUtilInit(
       designSize: const Size(390, 844),

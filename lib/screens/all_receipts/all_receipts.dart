@@ -34,7 +34,6 @@ class AllReceipts extends HookConsumerWidget {
     final searchQuery = useState<String>('');
     final productNumber = ValueNotifier<int?>(null);
 
-
     useEffect(() {
       Timer? timer;
       void listener() {
@@ -133,11 +132,13 @@ class AllReceipts extends HookConsumerWidget {
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: SizedBox(
-                          height: ScreenUtil().screenHeight - 200.h, // Adjust for app bar and padding
+                          height: ScreenUtil().screenHeight - 200.h,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              SvgPicture.asset(Assets.svg.emptyReceipt),
+                              SizedBox(height: 40.h),
                               Text(
                                 searchQuery.value.isEmpty
                                     ? 'No receipts available!'
@@ -155,14 +156,17 @@ class AllReceipts extends HookConsumerWidget {
                                     .displaySmall!
                                     .copyWith(fontSize: 14.sp),
                               ),
+                              const Spacer(),
                               if (searchQuery.value.isEmpty) ...[
-                                SizedBox(height: 48.h),
-                                AppButton(
-                                  buttonText: 'Generate receipt',
-                                  onPressed: () {
-                                    locator<PayvidenceAppRouter>()
-                                        .navigate(GenerateReceiptRoute(isInvoice: false));
-                                  },
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 52.h),
+                                  child: AppButton(
+                                    buttonText: 'Generate receipt',
+                                    onPressed: () {
+                                      locator<PayvidenceAppRouter>()
+                                          .navigate(GenerateReceiptRoute(isInvoice: false));
+                                    },
+                                  ),
                                 ),
                               ],
                             ],
@@ -208,7 +212,9 @@ class AllReceipts extends HookConsumerWidget {
                     ),
                   ),
                 ),
-                loading: () => ListView.builder(
+                loading: () => ListView.separated(
+                  shrinkWrap: true,
+                  separatorBuilder: (ctx, idx) => 12.verticalSpace,
                   itemCount: 5,
                   itemBuilder: (_, index) => CustomShimmer(height: 60.h),
                 ),
@@ -217,12 +223,30 @@ class AllReceipts extends HookConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: false));
+      floatingActionButton: allReceipts.when(
+        data: (data) {
+          final actualData = data.where((data) => data.publishedAt != null).toList();
+          final filteredData = searchQuery.value.isEmpty
+              ? actualData
+              : actualData
+              .where((receipt) =>
+          receipt.recordProductDetails?[0].product?.name
+              ?.toLowerCase()
+              .contains(searchQuery.value.toLowerCase()) ??
+              false)
+              .toList();
+          return filteredData.isNotEmpty
+              ? FloatingActionButton(
+            onPressed: () {
+              locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: false));
+            },
+            backgroundColor: primaryColor2,
+            child: Icon(Icons.add, size: 40.h),
+          )
+              : null;
         },
-        backgroundColor: primaryColor2,
-        child: Icon(Icons.add, size: 40.h),
+        error: (error, _) => null,
+        loading: () => null,
       ),
     );
   }

@@ -95,8 +95,8 @@ class UpdateQuantity extends ConsumerWidget {
                     enabled: false,
                     hintText: '${product.quantityAvailable} ',
                     controller: TextEditingController(),
-                    filled: true,
-                    fillColor: appGrey,
+                    // filled: true,
+                    // fillColor: appGrey,
                     appBorderColor: borderColor,
                   ),
                   SizedBox(
@@ -113,8 +113,8 @@ class UpdateQuantity extends ConsumerWidget {
                     enabled: false,
                     hintText: '${product.quantitySold} ',
                     controller: TextEditingController(),
-                    filled: true,
-                    fillColor: appGrey,
+                    // filled: true,
+                    // fillColor: appGrey,
                     appBorderColor: borderColor,
                   ),
                   SizedBox(

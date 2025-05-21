@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "739957288780",
+    "project_id": "payvidence-de5b9",
+    "storage_bucket": "payvidence-de5b9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739957288780:android:840ac3f33db564f85ee9e9",
+        "android_client_info": {
+          "package_name": "com.example.payvidence"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMK84XJKS4uR8-2m_CoaKG4jtaDIZuCIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

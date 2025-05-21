@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
-import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
 import 'package:payvidence/screens/splash.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
@@ -16,7 +15,6 @@ import '../../components/loading_dialog.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../my_subscription/my_subscription_vm.dart';
-import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'ProfileRoute')
 class Profile extends HookConsumerWidget {
@@ -47,7 +45,6 @@ class Profile extends HookConsumerWidget {
       return null;
     }, []);
 
-    // Debug theme state
     print('Profile: Theme mode = ${theme.mode}, Brightness = ${Theme.of(context).brightness}');
 
     return Scaffold(
@@ -227,6 +224,18 @@ class Profile extends HookConsumerWidget {
                   },
                   icon: Assets.svg.medalStar,
                   title: 'Manage subscription plan',
+                ),
+                SizedBox(
+                  height: 24.h,
+                ),
+                ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.businessData);
+                  },
+                  icon: Assets.svg.chart,
+                  title: 'Access business data',
                 ),
                 SizedBox(
                   height: 24.h,

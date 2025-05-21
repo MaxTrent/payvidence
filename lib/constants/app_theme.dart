@@ -5,6 +5,7 @@ import '../gen/assets.gen.dart';
 
 class AppTheme {
   ThemeData get light => ThemeData(
+    brightness: Brightness.light,
     actionIconTheme: ActionIconThemeData(
       backButtonIconBuilder: (BuildContext context) =>
           SvgPicture.asset(Assets.svg.backbutton),
@@ -20,7 +21,8 @@ class AppTheme {
     applyElevationOverlayColor: true,
     scaffoldBackgroundColor: Colors.white,
     primaryColor: Colors.black,
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.white,
+      brightness: Brightness.light,),
     textTheme: TextTheme(
       displayLarge: TextStyle(
         fontFamily: 'Polysans',
@@ -71,6 +73,7 @@ class AppTheme {
   );
 
   ThemeData get dark => ThemeData(
+    brightness: Brightness.dark,
     actionIconTheme: ActionIconThemeData(
       backButtonIconBuilder: (BuildContext context) => SvgPicture.asset(
         Assets.svg.backbutton,
@@ -88,7 +91,8 @@ class AppTheme {
     applyElevationOverlayColor: true,
     scaffoldBackgroundColor: const Color(0xff121212),
     primaryColor: Colors.black,
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.black,
+      brightness: Brightness.dark,),
     textTheme: TextTheme(
       displayLarge: TextStyle(
         fontFamily: 'Polysans',

@@ -388,13 +388,10 @@ class AllBusinessesRoute extends _i66.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i10.AllInvoices]
-class AllInvoicesRoute extends _i66.PageRouteInfo<AllInvoicesRouteArgs> {
-  AllInvoicesRoute({
-    _i67.Key? key,
-    List<_i66.PageRouteInfo>? children,
-  }) : super(
+class AllInvoicesRoute extends _i66.PageRouteInfo<void> {
+  const AllInvoicesRoute({List<_i66.PageRouteInfo>? children})
+      : super(
           AllInvoicesRoute.name,
-          args: AllInvoicesRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -403,33 +400,17 @@ class AllInvoicesRoute extends _i66.PageRouteInfo<AllInvoicesRouteArgs> {
   static _i66.PageInfo page = _i66.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AllInvoicesRouteArgs>(
-          orElse: () => const AllInvoicesRouteArgs());
-      return _i10.AllInvoices(key: args.key);
+      return const _i10.AllInvoices();
     },
   );
 }
 
-class AllInvoicesRouteArgs {
-  const AllInvoicesRouteArgs({this.key});
-
-  final _i67.Key? key;
-
-  @override
-  String toString() {
-    return 'AllInvoicesRouteArgs{key: $key}';
-  }
-}
-
 /// generated route for
 /// [_i11.AllReceipts]
-class AllReceiptsRoute extends _i66.PageRouteInfo<AllReceiptsRouteArgs> {
-  AllReceiptsRoute({
-    _i67.Key? key,
-    List<_i66.PageRouteInfo>? children,
-  }) : super(
+class AllReceiptsRoute extends _i66.PageRouteInfo<void> {
+  const AllReceiptsRoute({List<_i66.PageRouteInfo>? children})
+      : super(
           AllReceiptsRoute.name,
-          args: AllReceiptsRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -438,22 +419,9 @@ class AllReceiptsRoute extends _i66.PageRouteInfo<AllReceiptsRouteArgs> {
   static _i66.PageInfo page = _i66.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AllReceiptsRouteArgs>(
-          orElse: () => const AllReceiptsRouteArgs());
-      return _i11.AllReceipts(key: args.key);
+      return const _i11.AllReceipts();
     },
   );
-}
-
-class AllReceiptsRouteArgs {
-  const AllReceiptsRouteArgs({this.key});
-
-  final _i67.Key? key;
-
-  @override
-  String toString() {
-    return 'AllReceiptsRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for

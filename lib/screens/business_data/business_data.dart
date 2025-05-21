@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 
 import '../../gen/assets.gen.dart';
+import '../../routes/payvidence_app_router.dart';
+import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'BusinessDataRoute')
@@ -36,30 +38,50 @@ class BusinessData extends HookWidget {
               height: 60.h,
             ),
             ProfileOptionTile(
+                onTap: () {
+                  locator<PayvidenceAppRouter>()
+                      .navigateNamed(PayvidenceRoutes.allBusiness);
+                },
               isDarkMode: isDarkMode,
                 icon: Assets.svg.shop, title: 'Businesses'),
             SizedBox(
               height: 28.h,
             ),
             ProfileOptionTile(
+                onTap: () {
+                  locator<PayvidenceAppRouter>()
+                      .navigateNamed(PayvidenceRoutes.allReceipts);
+                },
               isDarkMode: isDarkMode,
                 icon: Assets.svg.receipt, title: 'Receipts'),
             SizedBox(
               height: 28.h,
             ),
             ProfileOptionTile(
+                onTap: () {
+                  locator<PayvidenceAppRouter>()
+                      .navigateNamed(PayvidenceRoutes.allInvoices);
+                },
               isDarkMode: isDarkMode,
                 icon: Assets.svg.invoice, title: 'Invoices'),
             SizedBox(
               height: 28.h,
             ),
             ProfileOptionTile(
+                onTap: () {
+                  locator<PayvidenceAppRouter>()
+                      .navigateNamed(PayvidenceRoutes.clients);
+                },
               isDarkMode: isDarkMode,
                icon: Assets.svg.client, title: 'Clients'),
             SizedBox(
               height: 28.h,
             ),
             ProfileOptionTile(
+                onTap: () {
+                  locator<PayvidenceAppRouter>()
+                      .navigateNamed(PayvidenceRoutes.product);
+                },
               isDarkMode: isDarkMode,
                 icon: Assets.svg.product, title: 'Products'),
           ],

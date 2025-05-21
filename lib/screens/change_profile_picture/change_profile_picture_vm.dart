@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
+import '../../model/user_model.dart';
 import '../update_personal_details/update_personal_details_vm.dart';
 
 final changeProfilePictureViewModelProvider =
@@ -23,38 +27,11 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
     _currentProfilePictureUrl = updateVM.userInfo?.account.profilePictureUrl;
     print(
         "Initial profile picture URL from UpdatePersonalDetailsVM: $_currentProfilePictureUrl");
-
-    fetchCurrentProfilePicture();
   }
 
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
-  }
-
-  Future<void> fetchCurrentProfilePicture() async {
-    try {
-      _setLoading(true);
-      final response = await apiServices.getAccount();
-      if (response.success && response.data != null) {
-        _currentProfilePictureUrl =
-        response.data!['data']['profile_picture_url'] as String?;
-        print("Fetched profile picture URL: $_currentProfilePictureUrl");
-        if (_currentProfilePictureUrl == null ||
-            _currentProfilePictureUrl!.isEmpty) {
-          print("Profile picture URL is null or empty, using default");
-        }
-      } else {
-        _currentProfilePictureUrl = null;
-        print(
-            "Failed to fetch profile picture: ${response.error?.message ?? 'Unknown error'}");
-      }
-    } catch (e) {
-      _currentProfilePictureUrl = null;
-      print("Error fetching current profile picture: $e");
-    } finally {
-      _setLoading(false);
-    }
   }
 
   Future<void> pickImage() async {
@@ -88,6 +65,38 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
         _currentProfilePictureUrl =
         response.data!['profile_picture_url'] as String?;
         _selectedImage = null;
+
+        // Update UpdatePersonalDetailsViewModel
+        final updateVM = ref.read(updatePersonalDetailsViewModelProvider);
+        if (updateVM.userInfo != null) {
+          updateVM.userInfo = updateVM.userInfo!.copyWith(
+            account: updateVM.userInfo!.account.copyWith(
+              profilePictureUrl: _currentProfilePictureUrl,
+            ),
+          );
+        } else {
+          // If userInfo is null, create a minimal User object
+          updateVM.userInfo = User(
+            account: Account(
+              profilePictureUrl: _currentProfilePictureUrl,
+              firstName: '',
+              lastName: '',
+              email: '',
+              phoneNumber: '',
+              transactionalAlerts: false,
+              promotionalUpdates: false,
+              securityAlerts: false,
+            ),
+            token: null,
+          );
+        }
+
+        // Update SessionManager
+        await locator<SessionManager>().save(
+          key: SessionConstants.profilePictureUrl,
+          value: _currentProfilePictureUrl ?? '',
+        );
+
         showSuccess(message: "Profile picture updated");
         notifyListeners();
         navigateOnSuccess();
