@@ -4,9 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:payvidence/model/receipt_model.dart';
@@ -17,12 +15,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'dart:ui' as ui;
 import '../../components/app_button.dart';
 import '../../components/app_naira.dart';
 import '../../constants/app_colors.dart';
-import 'dart:ui' as ui;
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/responsive.dart';
+import '../../utilities/responsive_wrapper.dart';
+
 
 @RoutePage(name: 'ReceiptScreenRoute')
 class ReceiptScreen extends ConsumerWidget {
@@ -35,12 +36,13 @@ class ReceiptScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     Future<XFile> capturePng() async {
       RenderRepaintBoundary boundary =
       globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 2);
-      ByteData? byteData =
-      await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List? pngBytes = byteData?.buffer.asUint8List();
       return XFile.fromData(
         pngBytes!,
@@ -113,7 +115,6 @@ class ReceiptScreen extends ConsumerWidget {
       pd.show(max: 100, msg: 'Preparing Receipt...');
 
       try {
-        // Get temporary directory
         final tempDir = await getTemporaryDirectory();
         final filePath = '${tempDir.path}/receipt_${DateTime.now().toIso8601String()}.png';
         final file = File(filePath);
@@ -121,7 +122,6 @@ class ReceiptScreen extends ConsumerWidget {
 
         pd.close();
 
-        // Share the file, allowing the user to save it
         await Share.shareXFiles([XFile(filePath)], text: 'Save or share your receipt');
       } catch (e) {
         pd.close();
@@ -143,75 +143,79 @@ class ReceiptScreen extends ConsumerWidget {
 
     Future<void> shareReceipt() async {
       XFile image = await capturePng();
-      final result =
-      await Share.shareXFiles([image], text: 'Transaction Receipt');
+      final result = await Share.shareXFiles([image], text: 'Transaction Receipt');
       if (result.status == ShareResultStatus.success) {
         print('Thank you for sharing the receipt!');
       }
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          if (isInvoice == true)
-            Center(
+    return ResponsiveWrapper(
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            if (isInvoice == true)
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.only(right: 20.w),
+                  padding: EdgeInsets.only(right: responsiveData.scaleWidth(20)),
                   child: GestureDetector(
-                      onTap: () {
-                        locator<PayvidenceAppRouter>().navigate(CompleteDraftRoute(
-                            draft: record, isInvoice: true, inVoiceToReceipt: true));
-                      },
-                      child: Text('Re-issue to receipt',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium!
-                              .copyWith(fontSize: 14.sp, color: primaryColor2))),
-                ))
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 32.h),
-              RepaintBoundary(
-                key: globalKey,
-                child: ContainerWithClippedCircles(
-                  record: record,
-                  isInvoice: isInvoice ?? false,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  AppButton(
-                    buttonText:
-                    'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
-                    onPressed: () {
-                      shareReceipt();
+                    onTap: () {
+                      locator<PayvidenceAppRouter>().navigate(CompleteDraftRoute(
+                          draft: record, isInvoice: true, inVoiceToReceipt: true));
                     },
+                    child: Text(
+                      'Re-issue to receipt',
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayMedium!
+                          .copyWith(fontSize: Responsive.fontSize(context, 14), color: primaryColor2),
+                    ),
                   ),
-                  SizedBox(height: 26.h),
-                  // GestureDetector(
-                  //   onTap: () async {
-                  //     saveImage(await capturePng());
-                  //   },
-                  //   child: Text(
-                  //     'Download ${isInvoice == true ? 'invoice' : 'receipt'}',
-                  //     style: Theme.of(context)
-                  //         .textTheme
-                  //         .displayMedium!
-                  //         .copyWith(color: primaryColor2),
-                  //   ),
-                  // ),
-                  24.verticalSpace
-                ],
+                ),
               )
-            ],
+          ],
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: responsiveData.scaleHeight(32)),
+                RepaintBoundary(
+                  key: globalKey,
+                  child: ContainerWithClippedCircles(
+                    record: record,
+                    isInvoice: isInvoice ?? false,
+                  ),
+                ),
+                SizedBox(height: responsiveData.scaleHeight(20)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AppButton(
+                      buttonText: 'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
+                      onPressed: () {
+                        shareReceipt();
+                      },
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(26)),
+                    // GestureDetector(
+                    //   onTap: () async {
+                    //     saveImage(await capturePng());
+                    //   },
+                    //   child: Text(
+                    //     'Download ${isInvoice == true ? 'invoice' : 'receipt'}',
+                    //     style: Theme.of(context)
+                    //         .textTheme
+                    //         .displayMedium!
+                    //         .copyWith(color: primaryColor2),
+                    //   ),
+                    // ),
+                    SizedBox(height: responsiveData.scaleHeight(24)),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -228,14 +232,14 @@ class ContainerWithClippedCircles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     double subtotal = record.recordProductDetails.fold(
         0,
             (sum, item) =>
-        sum +
-            (double.tryParse(item.price ?? '0') ?? 0) * (item.quantity ?? 0));
+        sum + (double.tryParse(item.price ?? '0') ?? 0) * (item.quantity ?? 0));
     double discountRate =
-        (double.tryParse(record.recordProductDetails.first.discount ?? '0') ??
-            0) /
+        (double.tryParse(record.recordProductDetails.first.discount ?? '0') ?? 0) /
             100;
     double vatRate =
         (double.tryParse(record.recordProductDetails.first.product?.vat ?? '0') ?? 0) / 100;
@@ -249,20 +253,11 @@ class ContainerWithClippedCircles extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          padding: EdgeInsets.only(top: 40.h, bottom: 24.h),
-          width: ScreenUtil().screenWidth,
+          padding: EdgeInsets.only(
+              top: responsiveData.scaleHeight(40), bottom: responsiveData.scaleHeight(24)),
+          width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             color: Colors.white,
-            // gradient: LinearGradient(
-            //   begin: Alignment.topLeft,
-            //   end: Alignment.bottomRight,
-            //   colors: [
-            //     // Colors.white
-            //     Color(0xCCE3DDFF),
-            //     Color(0xE5888599),
-            //     Color(0x99888599),
-            //   ],
-            // ),
             shape: BoxShape.rectangle,
           ),
           child: Column(
@@ -271,21 +266,19 @@ class ContainerWithClippedCircles extends StatelessWidget {
               Text(
                 "TRANSACTION ${isInvoice == true ? 'INVOICE' : 'RECEIPT'}"
                     .toUpperCase(),
-                style: Theme.of(context)
-                    .textTheme
-                    .displayMedium!
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    color: Colors.black, fontWeight: FontWeight.w600),
               ),
-              24.verticalSpace,
+              SizedBox(height: responsiveData.scaleHeight(24)),
               record.business?.logoUrl != null
                   ? CircleAvatar(
-                radius: 32.r,
+                radius: responsiveData.scaleHeight(32),
                 backgroundColor: Colors.black,
                 child: ClipOval(
                   child: Image.network(
                     record.business!.logoUrl!,
-                    width: 64.r,
-                    height: 64.r,
+                    width: responsiveData.scaleHeight(64),
+                    height: responsiveData.scaleHeight(64),
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       print('Failed to load logo: $error');
@@ -293,7 +286,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                         child: Text(
                           "K",
                           style: TextStyle(
-                            fontSize: 20.sp,
+                            fontSize: Responsive.fontSize(context, 20),
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -304,18 +297,18 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 ),
               )
                   : CircleAvatar(
-                radius: 24.r,
+                radius: responsiveData.scaleHeight(24),
                 backgroundColor: Colors.black,
                 child: Text(
                   "K",
                   style: TextStyle(
-                    fontSize: 20.sp,
+                    fontSize: Responsive.fontSize(context, 20),
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              14.verticalSpace,
+              SizedBox(height: responsiveData.scaleHeight(14)),
               Text(
                 record.business?.name ?? '',
                 style: Theme.of(context)
@@ -323,26 +316,24 @@ class ContainerWithClippedCircles extends StatelessWidget {
                     .displaySmall!
                     .copyWith(color: Colors.black, fontWeight: FontWeight.w400),
               ),
-              // 8.verticalSpace,
               Text(
                 record.business?.address ?? '',
                 style: Theme.of(context)
                     .textTheme
                     .displaySmall!
-                    .copyWith(fontSize: 14.sp, color: Colors.black),
+                    .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                 textAlign: TextAlign.center,
               ),
-              // 6.verticalSpace,
               Text(
                 record.business?.phoneNumber ?? '',
                 style: Theme.of(context)
                     .textTheme
                     .displaySmall!
-                    .copyWith(fontSize: 14.sp, color: Colors.black),
+                    .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
               ),
-              24.verticalSpace,
+              SizedBox(height: responsiveData.scaleHeight(24)),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18.w),
+                padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(18)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,9 +347,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: 18.sp, color: Colors.black),
+                                .copyWith(fontSize: Responsive.fontSize(context, 18), color: Colors.black),
                           ),
-                          8.verticalSpace,
+                          SizedBox(height: responsiveData.scaleHeight(8)),
                           Text(
                             record.client?.name ?? '',
                             style: Theme.of(context)
@@ -366,7 +357,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .displaySmall!
                                 .copyWith(color: Colors.black),
                           ),
-                          4.verticalSpace,
+                          SizedBox(height: responsiveData.scaleHeight(4)),
                           Text(
                             record.client?.phoneNumber ?? '',
                             style: Theme.of(context)
@@ -374,18 +365,18 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .displaySmall!
                                 .copyWith(color: Colors.black),
                           ),
-                          4.verticalSpace,
+                          SizedBox(height: responsiveData.scaleHeight(4)),
                           Text(
                             record.client?.address ?? '',
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: 16.sp, color: Colors.black),
+                                .copyWith(fontSize: Responsive.fontSize(context, 16), color: Colors.black),
                           ),
                         ],
                       ),
                     ),
-                    12.horizontalSpace,
+                    SizedBox(width: responsiveData.scaleWidth(12)),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -395,9 +386,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: 18.sp, color: Colors.black),
+                                .copyWith(fontSize: Responsive.fontSize(context, 18), color: Colors.black),
                           ),
-                          8.verticalSpace,
+                          SizedBox(height: responsiveData.scaleHeight(8)),
                           Text(
                             record.id?.substring(0, 13) ?? '',
                             style: Theme.of(context)
@@ -405,7 +396,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .displaySmall!
                                 .copyWith(color: Colors.black),
                           ),
-                          4.verticalSpace,
+                          SizedBox(height: responsiveData.scaleHeight(4)),
                           Text(
                             formattedDate,
                             style: Theme.of(context)
@@ -413,12 +404,12 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .displaySmall!
                                 .copyWith(color: Colors.black),
                           ),
-                          8.verticalSpace,
+                          SizedBox(height: responsiveData.scaleHeight(8)),
                           BarcodeWidget(
                             barcode: Barcode.code128(),
                             data: record.id ?? 'N/A',
-                            width: 100.w,
-                            height: 50.h,
+                            width: responsiveData.scaleWidth(100),
+                            height: responsiveData.scaleHeight(50),
                             drawText: false,
                             color: primaryColor2,
                             backgroundColor: Colors.transparent,
@@ -429,91 +420,92 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   ],
                 ),
               ),
-              32.verticalSpace,
+              SizedBox(height: responsiveData.scaleHeight(32)),
               Table(
                 border: TableBorder.all(width: 0, color: Colors.transparent),
-                defaultVerticalAlignment: TableCellVerticalAlignment.top,
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 columnWidths: const {
-                  0: FlexColumnWidth(3), // DESCRIPTION
-                  1: FlexColumnWidth(2), // RATE
+                  0: FlexColumnWidth(1), // DESCRIPTION
+                  1: FlexColumnWidth(1), // RATE
                   2: FlexColumnWidth(1), // QTY
-                  3: FlexColumnWidth(3), // AMOUNT
+                  3: FlexColumnWidth(1), // AMOUNT
                 },
                 children: [
                   TableRow(
                     decoration: BoxDecoration(
                       color: primaryColor4,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.r),
-                        topRight: Radius.circular(16.r),
+                        topLeft: Radius.circular(responsiveData.smallRadius),
+                        topRight: Radius.circular(responsiveData.smallRadius),
                       ),
                     ),
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 5.w, top: 8.h, bottom: 8.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(8),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           'DESC.',
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.left,
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(color: Colors.white),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 8.h, bottom: 8.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(8),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(color: Colors.white),
-                            children:  [
-                              TextSpan(text: 'RATE (', style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(color: Colors.white),),
-                              const WidgetSpan(
+                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                            children: [
+                              const TextSpan(text: 'RATE ('),
+                              WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child:
-                                AppNaira(fontSize: 16, color: Colors.white),
+                                child: AppNaira(fontSize: 14, color: Colors.white),
                               ),
-                              TextSpan(text: ')'),
+                              const TextSpan(text: ')'),
                             ],
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 8.h, bottom: 8.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(8),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           'QTY',
                           textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(color: Colors.white),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            right: 14.w, top: 8.h, bottom: 8.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(8),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(color: Colors.white),
-                            children: const [
-                              TextSpan(text: 'AMT. ('),
+                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                            children: [
+                              const TextSpan(text: 'AMT. ('),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child:
-                                AppNaira(fontSize: 16, color: Colors.white),
+                                child: AppNaira(fontSize: 14, color: Colors.white),
                               ),
-                              TextSpan(text: ')'),
+                              const TextSpan(text: ')'),
                             ],
                           ),
                         ),
@@ -522,58 +514,67 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   ),
                   ...record.recordProductDetails.map(
                         (row) => TableRow(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: Colors.grey, width: 0.5),
+                        ),
+                      ),
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 4.h, bottom: 4.h, left: 18.w),
+                          padding: EdgeInsets.symmetric(
+                              vertical: responsiveData.scaleHeight(6),
+                              horizontal: responsiveData.scaleWidth(8)),
                           child: Text(
                             row.product?.name ?? '',
-                            textAlign: TextAlign.start,
+                            textAlign: TextAlign.left,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: 14.sp, color: Colors.black),
+                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 4.h, bottom: 4.h, left: 5.w),
+                          padding: EdgeInsets.symmetric(
+                              vertical: responsiveData.scaleHeight(6),
+                              horizontal: responsiveData.scaleWidth(8)),
                           child: Text(
-                            (double.tryParse(row.price ?? '0') ?? 0)
-                                .toString()
-                                .commaSeparated(),
-                            textAlign: TextAlign.start,
+                            (double.tryParse(row.price ?? '0') ?? 0).toString().commaSeparated(),
+                            textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: 14.sp, color: Colors.black),
+                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 4.h, bottom: 4.h, left: 5.w),
+                          padding: EdgeInsets.symmetric(
+                              vertical: responsiveData.scaleHeight(6),
+                              horizontal: responsiveData.scaleWidth(8)),
                           child: Text(
                             (row.quantity ?? 0).toString(),
-                            textAlign: TextAlign.start,
+                            textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: 14.sp, color: Colors.black),
+                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 4.h, bottom: 4.h, left: 5.w, right: 18.w),
+                          padding: EdgeInsets.symmetric(
+                              vertical: responsiveData.scaleHeight(6),
+                              horizontal: responsiveData.scaleWidth(8)),
                           child: Text(
-                            ((double.tryParse(row.price ?? '0') ?? 0) *
-                                (row.quantity ?? 0))
+                            ((double.tryParse(row.price ?? '0') ?? 0) * (row.quantity ?? 0))
                                 .toString()
                                 .commaSeparated(),
-                            textAlign: TextAlign.start,
+                            textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: 14.sp, color: Colors.black),
+                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                           ),
                         ),
                       ],
@@ -582,41 +583,47 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   TableRow(
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: 24.h, bottom: 12.h, left: 18.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           "SUBTOTAL",
-                          textAlign: TextAlign.start,
+                          textAlign: TextAlign.left,
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: const Text(
                           "",
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 24.h, bottom: 12.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: const Text(
                           "",
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: 24.h, bottom: 12.h, left: 5.w, right: 18.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           subtotal.toString().commaSeparated(),
-                          textAlign: TextAlign.start,
+                          textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                         ),
                       ),
                     ],
@@ -624,49 +631,47 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   TableRow(
                     children: [
                       Padding(
-                        padding:
-                        EdgeInsets.symmetric(vertical: 12.h, horizontal: 18.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           "DISCOUNT",
-                          textAlign: TextAlign.start,
+                          textAlign: TextAlign.left,
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                        child: Text(
-                          " ",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                        child: Text(
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
+                        child: const Text(
                           "",
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: 12.h, bottom: 12.h, right: 18.w, left: 5.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
+                        child: const Text(
+                          "",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           discount.toString().commaSeparated(),
-                          textAlign: TextAlign.start,
+                          textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                         ),
                       ),
                     ],
@@ -674,46 +679,47 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   TableRow(
                     children: [
                       Padding(
-                        padding:
-                        EdgeInsets.symmetric(vertical: 12.h, horizontal: 18.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           "VAT",
-                          textAlign: TextAlign.start,
+                          textAlign: TextAlign.left,
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
+                        child: const Text(
+                          "",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
+                        child: const Text(
+                          "",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(12),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
-                          " ",
+                          vat.toString().commaSeparated(),
                           textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
-                        ),
-                      ),
-                      Text(
-                        "",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 12.h, bottom: 12.h, left: 5.w, right: 18.w),
-                        child: Text(
-                          vat.toString().commaSeparated(),
-                          textAlign: TextAlign.start,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(fontSize: 14.sp, color: Colors.black),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                         ),
                       ),
                     ],
@@ -724,49 +730,53 @@ class ContainerWithClippedCircles extends StatelessWidget {
                     ),
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: 6.h, bottom: 6.h, left: 18.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(6),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: Text(
                           "GRAND TOTAL",
-                          textAlign: TextAlign.start,
+                          textAlign: TextAlign.left,
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: 14.sp, color: Colors.white),
+                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 6.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(6),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: const Text(
                           "",
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 6.h),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(6),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: const Text(
                           "",
                           textAlign: TextAlign.center,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            top: 6.h, bottom: 6.h, left: 5.w, right: 18.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: responsiveData.scaleHeight(6),
+                            horizontal: responsiveData.scaleWidth(8)),
                         child: RichText(
-                          textAlign: TextAlign.start,
+                          textAlign: TextAlign.center,
                           text: TextSpan(
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: 14.sp, color: Colors.white),
+                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
                             children: [
                               const WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child:
-                                AppNaira(fontSize: 14, color: Colors.white),
+                                child: AppNaira(fontSize: 14, color: Colors.white),
                               ),
-                              TextSpan(
-                                  text: grandTotal.toString().commaSeparated()),
+                              TextSpan(text: grandTotal.toString().commaSeparated()),
                             ],
                           ),
                         ),
@@ -775,9 +785,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   ),
                 ],
               ),
-              38.verticalSpace,
+              SizedBox(height: responsiveData.scaleHeight(38)),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18.w),
+                padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(18)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -795,38 +805,35 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                   .textTheme
                                   .displayMedium!
                                   .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
+                                  color: Colors.black, fontWeight: FontWeight.w600),
                             ),
-                            12.verticalSpace,
+                            SizedBox(height: responsiveData.scaleHeight(12)),
                             if (record.business != null) ...[
                               Text(
-                                record.business!.accountNumber?.toString() ??
-                                    'N/A',
+                                record.business!.accountNumber?.toString() ?? 'N/A',
                                 style: Theme.of(context)
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: 16.sp, color: Colors.black),
+                                    fontSize: Responsive.fontSize(context, 16), color: Colors.black),
                               ),
-                              4.verticalSpace,
+                              SizedBox(height: responsiveData.scaleHeight(4)),
                               Text(
                                 record.business!.bankName?.toString() ?? 'N/A',
                                 style: Theme.of(context)
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: 16.sp, color: Colors.black),
+                                    fontSize: Responsive.fontSize(context, 16), color: Colors.black),
                               ),
-                              4.verticalSpace,
+                              SizedBox(height: responsiveData.scaleHeight(4)),
                               Text(
-                                record.business!.accountName?.toString() ??
-                                    'N/A',
+                                record.business!.accountName?.toString() ?? 'N/A',
                                 style: Theme.of(context)
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: 16.sp, color: Colors.black),
+                                    fontSize: Responsive.fontSize(context, 16), color: Colors.black),
                               ),
                             ] else ...[
                               Text(
@@ -835,7 +842,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: 15.sp, color: Colors.black),
+                                    fontSize: Responsive.fontSize(context, 15), color: Colors.black),
                               ),
                             ],
                           ],
@@ -850,19 +857,18 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                   .textTheme
                                   .displaySmall!
                                   .copyWith(
-                                  fontSize: 44.sp,
+                                  fontSize: Responsive.fontSize(context, 44),
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
                             Text(
-                              "Via ${record.modeOfPayment ?? ''}"
-                                  .capitalizeEachWord(),
+                              "Via ${record.modeOfPayment ?? ''}".capitalizeEachWord(),
                               textAlign: TextAlign.center,
                               style: Theme.of(context)
                                   .textTheme
                                   .displaySmall!
                                   .copyWith(
-                                  fontSize: 14.sp, color: Colors.black),
+                                  fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                             ),
                           ],
                         ),
@@ -876,22 +882,22 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           record.business?.issuerSignatureUrl != null
                               ? Image.network(
                             record.business!.issuerSignatureUrl!,
-                            width: 100.w,
-                            height: 50.h,
+                            width: responsiveData.scaleWidth(100),
+                            height: responsiveData.scaleHeight(50),
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) =>
                                 Container(
-                                  width: 100.w,
-                                  height: 50.h,
+                                  width: responsiveData.scaleWidth(100),
+                                  height: responsiveData.scaleHeight(50),
                                   color: Colors.grey[200],
                                 ),
                           )
                               : Container(
-                            width: 40.w,
-                            height: 24.h,
+                            width: responsiveData.scaleWidth(40),
+                            height: responsiveData.scaleHeight(24),
                             color: Colors.grey[200],
                           ),
-                          18.verticalSpace,
+                          SizedBox(height: responsiveData.scaleHeight(18)),
                           Text(
                             record.business?.issuer ?? '',
                             style: Theme.of(context)
@@ -906,7 +912,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .textTheme
                                 .displaySmall!
                                 .copyWith(
-                                fontSize: 14.sp, color: Colors.black),
+                                fontSize: Responsive.fontSize(context, 14), color: Colors.black),
                           ),
                         ],
                       ),
@@ -914,39 +920,39 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   ],
                 ),
               ),
-              24.verticalSpace,
+              SizedBox(height: responsiveData.scaleHeight(24)),
               Text(
                 "Generated with Payvidence",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.marckScript(
-                  fontSize: 16.sp,
+                  fontSize: Responsive.fontSize(context, 16),
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w400,
                   color: Colors.black,
                 ),
               ),
-              12.verticalSpace,
+              SizedBox(height: responsiveData.scaleHeight(12)),
             ],
           ),
         ),
         Positioned(
-          top: -50,
-          right: -50,
+          top: -responsiveData.scaleHeight(50),
+          right: -responsiveData.scaleWidth(50),
           child: ClipOval(
             child: Container(
-              width: 100,
-              height: 100,
+              width: responsiveData.scaleWidth(100),
+              height: responsiveData.scaleHeight(100),
               color: primaryColor4,
             ),
           ),
         ),
         Positioned(
-          top: -50,
-          left: -50,
+          top: -responsiveData.scaleHeight(50),
+          left: -responsiveData.scaleWidth(50),
           child: ClipOval(
             child: Container(
-              width: 100,
-              height: 100,
+              width: responsiveData.scaleWidth(100),
+              height: responsiveData.scaleHeight(100),
               color: primaryColor4,
             ),
           ),

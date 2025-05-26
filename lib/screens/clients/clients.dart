@@ -3,7 +3,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
@@ -17,6 +16,8 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/responsive.dart';
+import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'ClientsRoute')
@@ -53,6 +54,7 @@ class Clients extends HookConsumerWidget {
     final isDarkMode = theme.mode == ThemeMode.dark;
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
+    final responsiveData = ResponsiveInherited.of(context);
 
     // Debounced search listener
     useEffect(() {
@@ -77,285 +79,301 @@ class Clients extends HookConsumerWidget {
       await ref.refresh(getAllClientsProvider.future);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: Text(
-          'Clients',
-          style: Theme.of(context).textTheme.displayLarge!.copyWith(),
-        ),
-        actions: [
-          allClients.when(
-            data: (data) {
-              if (data.isEmpty) {
-                return const SizedBox.shrink();
-              }
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.only(right: 20.w),
-                  child: GestureDetector(
-                    onTap: () async {
-                      await locator<PayvidenceAppRouter>()
-                          .navigate(AddClientRoute(businessId: businessId));
-                      ref.read(getAllClientsProvider.notifier).fetchClients();
-                    },
-                    child: Text(
-                      '+ Add New',
-                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                        fontSize: 14.sp,
-                        color: primaryColor2,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-            error: (error, _) => const SizedBox.shrink(),
-            loading: () => const SizedBox.shrink(),
+    return ResponsiveWrapper(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(
+            'Clients',
+            style: Theme.of(context).textTheme.displayLarge!.copyWith(),
           ),
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 32.h),
-            AppTextField(
-              prefixIcon: Padding(
-                padding: EdgeInsets.all(16.h),
-                child: SvgPicture.asset(Assets.svg.search,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
-              ),
-              hintText: 'Search for client',
-              controller: searchController,
-              radius: 80,
-              filled: true,
-              fillColor: isDarkMode ? Colors.black : appGrey5 ,
-            ),
-            SizedBox(height: 20.h),
+          actions: [
             allClients.when(
               data: (data) {
-                // Filter clients
-                final filteredClients = searchQuery.value.isEmpty
-                    ? data
-                    : data
-                    .where((client) => client.name
-                    ?.toLowerCase()
-                    .contains(searchQuery.value.toLowerCase()) ?? false)
-                    .toList();
-
-                if (filteredClients.isEmpty) {
-                  return Expanded(
-                    child: PullToRefresh(
-                      onRefresh: onRefresh,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(Assets.svg.emptyClient),
-                          SizedBox(height: 40.h),
-                          Text(
-                            searchQuery.value.isEmpty
-                                ? 'No clients available!'
-                                : 'No clients found!',
-                            style: Theme.of(context).textTheme.displayLarge,
-                          ),
-                          SizedBox(height: 10.h),
-                          Text(
-                            searchQuery.value.isEmpty
-                                ? 'All added clients will appear here.'
-                                : 'Try a different search term.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontSize: 14.sp),
-                          ),
-                          const Spacer(),
-                          if (searchQuery.value.isEmpty) ...[
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 52.h),
-                              child: AppButton(
-                                buttonText: 'Add client',
-                                onPressed: () async {
-                                  await locator<PayvidenceAppRouter>().navigate(
-                                      AddClientRoute(businessId: businessId));
-                                  ref
-                                      .read(getAllClientsProvider.notifier)
-                                      .fetchClients();
-                                },
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  );
+                if (data.isEmpty) {
+                  return const SizedBox.shrink();
                 }
-
-                return Expanded(
-                  child: PullToRefresh(
-                    onRefresh: onRefresh,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () async {
-                            if (forSelection == true) {
-                              Navigator.of(context).pop(filteredClients[index]);
-                            } else {
-                              if (filteredClients[index].id != null) {
-                                await locator<PayvidenceAppRouter>().push(
-                                  ClientDetailsRoute(
-                                    businessId: businessId,
-                                    clientId: filteredClients[index].id!,
-                                  ),
-                                );
-                                ref
-                                    .read(getAllClientsProvider.notifier)
-                                    .fetchClients();
-                              }
-                            }
-                          },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 56.h,
-                                width: 56.h,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: getClientColor(filteredClients[index]),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    filteredClients[index].name?.substring(0, 2) ??
-                                        'NA',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall!
-                                        .copyWith(
-                                      fontSize: 20.sp,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      filteredClients[index].name ?? '',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium,
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        SvgPicture.asset(
-                                          Assets.svg.location,
-                                          colorFilter: ColorFilter.mode(
-                                            isDarkMode ? Colors.white : Colors.black,
-                                            BlendMode.srcIn,
-                                          ),
-                                        ),
-                                        SizedBox(width: 6.w),
-                                        Expanded(
-                                          child: Text(
-                                            filteredClients[index].address ?? '',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .displaySmall!
-                                                .copyWith(fontSize: 14.sp),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 12.h),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          filteredClients[index].phoneNumber ?? '',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall!
-                                              .copyWith(fontSize: 14.sp),
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Clipboard.setData(ClipboardData(
-                                              text: filteredClients[index]
-                                                  .phoneNumber ??
-                                                  '',
-                                            ));
-                                            ToastService.showSnackBar(
-                                                'Copied to clipboard');
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Copied to clipboard',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .displaySmall!
-                                                      .copyWith(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                    FontWeight.w400,
-                                                  ),
-                                                ),
-                                                backgroundColor: primaryColor2,
-                                              ),
-                                            );
-                                          },
-                                          child:
-                                          SvgPicture.asset(Assets.svg.copy),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: responsiveData.paddingHorizontal),
+                    child: GestureDetector(
+                      onTap: () async {
+                        await locator<PayvidenceAppRouter>()
+                            .navigate(AddClientRoute(businessId: businessId));
+                        ref.read(getAllClientsProvider.notifier).fetchClients();
                       },
-                      separatorBuilder: (ctx, idx) => SizedBox(height: 24.h),
-                      itemCount: filteredClients.length,
+                      child: Semantics(
+                        label: 'Add new client',
+                        child: Text(
+                          '+ Add New',
+                          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                            fontSize: Responsive.fontSize(context, 14),
+                            color: primaryColor2,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 );
               },
-              error: (error, _) => Expanded(
-                child: PullToRefresh(
-                  onRefresh: onRefresh,
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('An error has occurred'),
-                    ],
+              error: (error, _) => const SizedBox.shrink(),
+              loading: () => const SizedBox.shrink(),
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: responsiveData.scaleHeight(32)),
+              AppTextField(
+                prefixIcon: Padding(
+                  padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                  child: SvgPicture.asset(
+                    Assets.svg.search,
+                    colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+                    width: responsiveData.scaleWidth(24),
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                ),
+                hintText: 'Search for client',
+                controller: searchController,
+                radius: responsiveData.largeRadius,
+                filled: true,
+                fillColor: isDarkMode ? Colors.black : appGrey5,
+              ),
+              SizedBox(height: responsiveData.scaleHeight(20)),
+              allClients.when(
+                data: (data) {
+                  // Filter clients
+                  final filteredClients = searchQuery.value.isEmpty
+                      ? data
+                      : data
+                      .where((client) => client.name
+                      ?.toLowerCase()
+                      .contains(searchQuery.value.toLowerCase()) ??
+                      false)
+                      .toList();
+
+                  if (filteredClients.isEmpty) {
+                    return Expanded(
+                      child: PullToRefresh(
+                        onRefresh: onRefresh,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(Assets.svg.emptyClient),
+                            SizedBox(height: responsiveData.scaleHeight(40)),
+                            Text(
+                              searchQuery.value.isEmpty
+                                  ? 'No clients available!'
+                                  : 'No clients found!',
+                              style: Theme.of(context).textTheme.displayLarge,
+                            ),
+                            SizedBox(height: responsiveData.scaleHeight(10)),
+                            Text(
+                              searchQuery.value.isEmpty
+                                  ? 'All added clients will appear here.'
+                                  : 'Try a different search term.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                            ),
+                            const Spacer(),
+                            if (searchQuery.value.isEmpty) ...[
+                              Padding(
+                                padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(52)),
+                                child: AppButton(
+                                  buttonText: 'Add client',
+                                  onPressed: () async {
+                                    await locator<PayvidenceAppRouter>().navigate(
+                                        AddClientRoute(businessId: businessId));
+                                    ref
+                                        .read(getAllClientsProvider.notifier)
+                                        .fetchClients();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Expanded(
+                    child: PullToRefresh(
+                      onRefresh: onRefresh,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () async {
+                              if (forSelection == true) {
+                                Navigator.of(context).pop(filteredClients[index]);
+                              } else {
+                                if (filteredClients[index].id != null) {
+                                  await locator<PayvidenceAppRouter>().push(
+                                    ClientDetailsRoute(
+                                      businessId: businessId,
+                                      clientId: filteredClients[index].id!,
+                                    ),
+                                  );
+                                  ref
+                                      .read(getAllClientsProvider.notifier)
+                                      .fetchClients();
+                                }
+                              }
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: responsiveData.scaleHeight(56),
+                                  width: responsiveData.scaleHeight(56),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: getClientColor(filteredClients[index]),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      filteredClients[index].name?.substring(0, 2) ??
+                                          'NA',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(
+                                        fontSize: Responsive.fontSize(context, 20),
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: responsiveData.scaleWidth(12)),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        filteredClients[index].name ?? '',
+                                        style: Theme.of(context).textTheme.displayMedium,
+                                      ),
+                                      SizedBox(height: responsiveData.scaleHeight(8)),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                            Assets.svg.location,
+                                            colorFilter: ColorFilter.mode(
+                                              isDarkMode ? Colors.white : Colors.black,
+                                              BlendMode.srcIn,
+                                            ),
+                                            width: responsiveData.scaleWidth(16),
+                                            height: responsiveData.scaleHeight(16),
+                                          ),
+                                          SizedBox(width: responsiveData.scaleWidth(6)),
+                                          Expanded(
+                                            child: Text(
+                                              filteredClients[index].address ?? '',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall!
+                                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: responsiveData.scaleHeight(12)),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            filteredClients[index].phoneNumber ?? '',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .displaySmall!
+                                                .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                          ),
+                                          SizedBox(width: responsiveData.scaleWidth(8)),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Clipboard.setData(ClipboardData(
+                                                text: filteredClients[index].phoneNumber ?? '',
+                                              ));
+                                              ToastService.showSnackBar('Copied to clipboard');
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Copied to clipboard',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .displaySmall!
+                                                        .copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                  backgroundColor: primaryColor2,
+                                                ),
+                                              );
+                                            },
+                                            child: SvgPicture.asset(
+                                              Assets.svg.copy,
+                                              width: responsiveData.scaleWidth(16),
+                                              height: responsiveData.scaleHeight(16),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(24)),
+                        itemCount: filteredClients.length,
+                      ),
+                    ),
+                  );
+                },
+                error: (error, _) => Expanded(
+                  child: PullToRefresh(
+                    onRefresh: onRefresh,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('An error occurred: $error'),
+                        SizedBox(height: responsiveData.scaleHeight(16)),
+                        AppButton(
+                          buttonText: 'Retry',
+                          onPressed: () async {
+                            await onRefresh();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                loading: () => Expanded(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(12)),
+                    itemCount: 5,
+                    itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(56)),
                   ),
                 ),
               ),
-              loading: () => Expanded(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  separatorBuilder: (ctx,idx)=>12.verticalSpace,
-                  itemCount: 5,
-                  itemBuilder: (_, index) => CustomShimmer(height: 60.h),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

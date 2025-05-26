@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/utilities/responsive.dart';
 import 'package:toastification/toastification.dart';
+
 
 class ToastService {
   static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
+  GlobalKey<ScaffoldMessengerState>();
 
   ToastService._();
 
   static void showSnackBar(String message) {
+    final context = scaffoldMessengerKey.currentContext;
+    if (context == null) return; // Ensure context is not null
+
     scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(
         content: Text(
@@ -17,7 +21,7 @@ class ToastService {
           style: TextStyle(
             fontFamily: 'Polysans',
             color: Colors.white,
-            fontSize: 16.sp,
+            fontSize: Responsive.fontSize(context, 16),
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -27,6 +31,9 @@ class ToastService {
   }
 
   static void showErrorSnackBar(String message) {
+    final context = scaffoldMessengerKey.currentContext;
+    if (context == null) return;
+
     scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(
         content: Text(
@@ -34,7 +41,7 @@ class ToastService {
           style: TextStyle(
             fontFamily: 'Polysans',
             color: Colors.white,
-            fontSize: 16.sp,
+            fontSize: Responsive.fontSize(context, 16),
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -45,6 +52,8 @@ class ToastService {
 
   static void success(String msg, {int? seconds}) {
     final context = scaffoldMessengerKey.currentContext;
+    if (context == null) return;
+
     toastification.show(
       backgroundColor: Colors.green,
       icon: const Icon(
@@ -53,9 +62,9 @@ class ToastService {
       ),
       title: Text(
         msg,
-        style: Theme.of(context!).textTheme.displaySmall?.copyWith(
-              color: Colors.white,
-            ),
+        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+          color: Colors.white,
+        ),
         overflow: TextOverflow.clip,
       ),
       showProgressBar: false,
@@ -65,6 +74,8 @@ class ToastService {
 
   static void error(String msg, {int? seconds}) {
     final context = scaffoldMessengerKey.currentContext;
+    if (context == null) return;
+
     toastification.show(
       backgroundColor: appRed,
       icon: const Icon(
@@ -73,9 +84,9 @@ class ToastService {
       ),
       title: Text(
         msg,
-        style: Theme.of(context!).textTheme.displaySmall?.copyWith(
-              color: Colors.white,
-            ),
+        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+          color: Colors.white,
+        ),
         overflow: TextOverflow.clip,
       ),
       showProgressBar: false,
@@ -83,7 +94,7 @@ class ToastService {
     );
   }
 
-  static void info(context, String msg, {int? seconds}) {
+  static void info(BuildContext context, String msg, {int? seconds}) {
     toastification.show(
       context: context,
       backgroundColor: Colors.blue,
@@ -93,8 +104,11 @@ class ToastService {
       ),
       title: Text(
         msg,
-        style: const TextStyle(
+        style: TextStyle(
           color: Colors.white,
+          fontSize: Responsive.fontSize(context, 16),
+          fontFamily: 'Polysans',
+          fontWeight: FontWeight.w400,
         ),
         overflow: TextOverflow.clip,
       ),

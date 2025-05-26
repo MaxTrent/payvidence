@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../utilities/responsive_wrapper.dart';
 
 class PlanList extends StatelessWidget {
   PlanList({
@@ -13,6 +13,8 @@ class PlanList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     return Column(
       children: [
         Row(
@@ -29,7 +31,7 @@ class PlanList extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 18.h,
+          height: responsiveData.scaleHeight(18),
         ),
       ],
     );

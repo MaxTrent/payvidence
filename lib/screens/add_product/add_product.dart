@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/components/app_naira.dart';
@@ -23,6 +22,8 @@ import '../../providers/business_providers/current_business_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/app_functions.dart';
+import '../../utilities/responsive.dart';
+import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/toast_service.dart';
 import '../../utilities/validators.dart';
 
@@ -67,6 +68,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
     final currentCategory = ref.watch(getCurrentCategoryProvider);
     final currentBrand = ref.watch(getCurrentBrandProvider);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final responsiveData = ResponsiveInherited.of(context);
 
     Future<void> createProduct() async {
       Map<String, dynamic> data = {
@@ -137,238 +139,254 @@ class _AddProductState extends ConsumerState<AddProduct> {
       }
     }
 
-    return GestureDetector(
-      onTap: FocusManager.instance.primaryFocus?.unfocus,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Form(
-          key: formKey,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: ListView(
-              children: [
-                Text(
-                  'Enter product details',
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Fill in all details carefully and correctly.',
-                  style: Theme.of(context).textTheme.displaySmall!,
-                ),
-                SizedBox(height: 32.h),
-                Text(
-                  'Product category',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                GestureDetector(
-                  onTap: () {
-                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyCategory);
-                  },
-                  child: AppTextField(
-                    hintText: currentCategory == null ? 'Select category' : currentCategory.name!,
-                    controller: _controller,
-                    suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
-                    enabled: false,
+    return ResponsiveWrapper(
+      child: GestureDetector(
+        onTap: FocusManager.instance.primaryFocus?.unfocus,
+        child: Scaffold(
+          appBar: AppBar(),
+          body: Form(
+            key: formKey,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+              child: ListView(
+                children: [
+                  Text(
+                    'Enter product details',
+                    style: Theme.of(context).textTheme.displayLarge,
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  'Product name',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                AppTextField(
-                  hintText: 'Product name',
-                  controller: productNameController,
-                  validator: (val) {
-                    return Validator.validateName(val);
-                  },
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  'Product brand',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                GestureDetector(
-                  onTap: () {
-                    locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.brands);
-                  },
-                  child: AppTextField(
-                    hintText: currentBrand == null ? 'Select brand' : currentBrand.name!,
-                    controller: _controller,
-                    suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
-                    enabled: false,
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  Text(
+                    'Fill in all details carefully and correctly.',
+                    style: Theme.of(context).textTheme.displaySmall!,
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  'Product description',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                AppTextField(
-                  hintText: '',
-                  validator: (val) {
-                    return Validator.validateName(val);
-                  },
-                  controller: productDescController,
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  'Product quantity',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                AppTextField(
-                  hintText: 'Product quantity',
-                  controller: productQtyController,
-                  validator: (val) {
-                    return Validator.validateEmpty(val);
-                  },
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(11),
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  'Product price',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                AppTextField(
-                  hintText: 'Product price',
-                  controller: productPriceController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(11),
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  validator: (val) {
-                    return Validator.validateName(val);
-                  },
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.fromLTRB(16.w, 16.h, 6.w, 16.h),
-                    child: AppNaira(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black,),
+                  SizedBox(height: responsiveData.scaleHeight(32)),
+                  Text(
+                    'Product category',
+                    style: Theme.of(context).textTheme.displaySmall,
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  'Product image',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                GestureDetector(
-                  onTap: () async {
-                    productImage.value = await AppFunctions.pickImage();
-                  },
-                  child: ValueListenableBuilder(
-                    valueListenable: productImage,
-                    builder: (context, val, _) {
-                      if (val == null) {
-                        if (widget.product != null && widget.product?.logoUrl != null) {
-                          return Stack(
-                            children: [
-                              SizedBox(
-                                width: double.infinity,
-                                child: Image.network(
-                                  widget.product!.logoUrl!,
-                                  height: 200,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      SvgPicture.asset(Assets.svg.uploadImage),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 8,
-                                right: 8,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.grey,
-                                  ),
-                                  child: const Text(
-                                    "Tap to Change",
-                                    style: TextStyle(color: Colors.white, fontSize: 10),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                        return SvgPicture.asset(Assets.svg.uploadImage);
-                      }
-                      return Stack(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: Image.file(
-                              File(val.path),
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.grey,
-                              ),
-                              child: const Text(
-                                "Tap to Change",
-                                style: TextStyle(color: Colors.white, fontSize: 10),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  GestureDetector(
+                    onTap: () {
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.emptyCategory);
+                    },
+                    child: AppTextField(
+                      hintText: currentCategory == null ? 'Select category' : currentCategory.name!,
+                      controller: _controller,
+                      suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
+                      enabled: false,
+                    ),
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(20)),
+                  Text(
+                    'Product name',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  AppTextField(
+                    hintText: 'Product name',
+                    controller: productNameController,
+                    validator: (val) {
+                      return Validator.validateName(val);
                     },
                   ),
-                ),
-                SizedBox(height: 20.h),
-                Text(
-                  'VAT rate',
-                  style: Theme.of(context).textTheme.displaySmall,
-                ),
-                SizedBox(height: 8.h),
-                AppTextField(
-                  hintText: 'VAT rate',
-                  controller: vatRateController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(11),
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  validator: (val) {
-                    return Validator.validateEmpty(val);
-                  },
-                ),
-                SizedBox(height: 32.h),
-                AppButton(
-                  buttonText: widget.product == null ? 'Add product' : 'Update details',
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      formKey.currentState!.save();
-                      if (currentCategory == null) {
-                        ToastService.showErrorSnackBar("Select a category!");
-                      } else if (productImage.value == null && widget.product == null) {
-                        ToastService.showErrorSnackBar("Select a product image");
-                      } else {
-                        createProduct();
+                  SizedBox(height: responsiveData.scaleHeight(20)),
+                  Text(
+                    'Product brand',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  GestureDetector(
+                    onTap: () {
+                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.brands);
+                    },
+                    child: AppTextField(
+                      hintText: currentBrand == null ? 'Select brand' : currentBrand.name!,
+                      controller: _controller,
+                      suffixIcon: const Icon(Icons.keyboard_arrow_down_sharp),
+                      enabled: false,
+                    ),
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(20)),
+                  Text(
+                    'Product description',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  AppTextField(
+                    hintText: '',
+                    validator: (val) {
+                      return Validator.validateName(val);
+                    },
+                    controller: productDescController,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(20)),
+                  Text(
+                    'Product quantity',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  AppTextField(
+                    hintText: 'Product quantity',
+                    controller: productQtyController,
+                    validator: (val) {
+                      return Validator.validateEmpty(val);
+                    },
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(20)),
+                  Text(
+                    'Product price',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  AppTextField(
+                    hintText: 'Product price',
+                    controller: productPriceController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    validator: (val) {
+                      return Validator.validateName(val);
+                    },
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          responsiveData.scaleWidth(16),
+                          responsiveData.scaleHeight(16),
+                          responsiveData.scaleWidth(6),
+                          responsiveData.scaleHeight(16)),
+                      child: AppNaira(
+                        fontSize: 14,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(20)),
+                  Text(
+                    'Product image',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  GestureDetector(
+                    onTap: () async {
+                      productImage.value = await AppFunctions.pickImage();
+                    },
+                    child: ValueListenableBuilder(
+                      valueListenable: productImage,
+                      builder: (context, val, _) {
+                        if (val == null) {
+                          if (widget.product != null && widget.product?.logoUrl != null) {
+                            return Stack(
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Image.network(
+                                    widget.product!.logoUrl!,
+                                    height: responsiveData.scaleHeight(200),
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        SvgPicture.asset(Assets.svg.uploadImage),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: responsiveData.scaleHeight(8),
+                                  right: responsiveData.scaleWidth(8),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: responsiveData.scaleWidth(8),
+                                        vertical: responsiveData.scaleHeight(8)),
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(responsiveData.smallRadius),
+                                      color: Colors.grey,
+                                    ),
+                                    child: const Text(
+                                      "Tap to Change",
+                                      style: TextStyle(color: Colors.white, fontSize: 10),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                          return SvgPicture.asset(Assets.svg.uploadImage);
+                        }
+                        return Stack(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: Image.file(
+                                File(val.path),
+                                height: responsiveData.scaleHeight(200),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: responsiveData.scaleHeight(8),
+                              right: responsiveData.scaleWidth(8),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: responsiveData.scaleWidth(8),
+                                    vertical: responsiveData.scaleHeight(8)),
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.circular(responsiveData.smallRadius),
+                                  color: Colors.grey,
+                                ),
+                                child: const Text(
+                                  "Tap to Change",
+                                  style: TextStyle(color: Colors.white, fontSize: 10),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(20)),
+                  Text(
+                    'VAT rate',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  AppTextField(
+                    hintText: 'VAT rate',
+                    controller: vatRateController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    validator: (val) {
+                      return Validator.validateEmpty(val);
+                    },
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(32)),
+                  AppButton(
+                    buttonText: widget.product == null ? 'Add product' : 'Update details',
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        if (currentCategory == null) {
+                          ToastService.showErrorSnackBar("Select a category!");
+                        } else if (productImage.value == null && widget.product == null) {
+                          ToastService.showErrorSnackBar("Select a product image");
+                        } else {
+                          createProduct();
+                        }
                       }
-                    }
-                  },
-                ),
-                SizedBox(height: 12.h),
-              ],
+                    },
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(12)),
+                ],
+              ),
             ),
           ),
         ),

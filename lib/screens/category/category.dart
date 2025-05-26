@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
@@ -14,6 +13,8 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import '../../components/custom_shimmer.dart';
 import '../../gen/assets.gen.dart';
+import '../../utilities/responsive.dart';
+import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'EmptyCategoryRoute')
@@ -26,128 +27,121 @@ class EmptyCategory extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
-
+    final responsiveData = ResponsiveInherited.of(context);
 
     final allCategory = ref.watch(getAllCategoryProvider);
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: AppTextField(
-          prefixIcon: GestureDetector(
-            onTap: (){
-              Navigator.pop(context);
-            },
-            child: Padding(
-              padding: EdgeInsets.all(16.h),
-              child: SvgPicture.asset(Assets.svg.backbutton,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
-            ),
-          ),
-          hintText: 'Search for category',
-          controller: _searchController,
-          radius: 80,
-          filled: true,
-          fillColor: isDarkMode ? Colors.black : appGrey5,
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          locator<PayvidenceAppRouter>()
-              .navigateNamed(PayvidenceRoutes.addCategory);
-        },
-        backgroundColor: primaryColor2,
-        child: Icon(
-          Icons.add,
-          size: 40.h,
-        ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child:
-              // Column(
-              //   children: [
-              //     CategoryTile(
-              //       title: 'Bag',
-              //       subtitle: 'This is one of the common categories in fashion industry as most people cherish their footwears.',
-              //     ),
-              //     CategoryTile(
-              //       title: 'Footwear',
-              //       subtitle: 'This is one of the common categories in fashion industry as most people cherish their footwears.',
-              //     ),
-              //     CategoryTile(
-              //       title: 'Gown',
-              //       subtitle: 'This is one of the common categories in fashion industry as most people cherish their footwears.',
-              //     ),
-              //   ],
-              // )
 
-              Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              allCategory.when(data: (data) {
-                if (data.isEmpty) {
-                  return Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'No category added!',
-                          style: Theme.of(context).textTheme.displayLarge,
+    return ResponsiveWrapper(
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: AppTextField(
+            prefixIcon: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Padding(
+                padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                child: SvgPicture.asset(
+                  Assets.svg.backbutton,
+                  colorFilter: ColorFilter.mode(
+                      isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+                ),
+              ),
+            ),
+            hintText: 'Search for category',
+            controller: _searchController,
+            radius: responsiveData.largeRadius,
+            filled: true,
+            fillColor: isDarkMode ? Colors.black : appGrey5,
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addCategory);
+          },
+          backgroundColor: primaryColor2,
+          child: Icon(
+            Icons.add,
+            size: responsiveData.scaleHeight(40),
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                allCategory.when(
+                  data: (data) {
+                    if (data.isEmpty) {
+                      return Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'No category added!',
+                              style: Theme.of(context).textTheme.displayLarge,
+                            ),
+                            SizedBox(
+                              height: responsiveData.scaleHeight(10),
+                            ),
+                            Text(
+                              'All added categories will appear here.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                            ),
+                            SizedBox(
+                              height: responsiveData.scaleHeight(48),
+                            ),
+                            AppButton(
+                              buttonText: 'Add category',
+                              onPressed: () {
+                                locator<PayvidenceAppRouter>()
+                                    .navigateNamed(PayvidenceRoutes.addCategory);
+                              },
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Text('All added categories will appear here.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(
-                                  fontSize: 14.sp,
-                                )),
-                        SizedBox(
-                          height: 48.h,
-                        ),
-                        AppButton(
-                            buttonText: 'Add category',
+                      );
+                    }
+                    return Expanded(
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return CategoryTile(
+                            title: data[index].name ?? '',
+                            subtitle: data[index].description ?? '',
                             onPressed: () {
-                              locator<PayvidenceAppRouter>()
-                                  .navigateNamed(PayvidenceRoutes.addCategory);
-                            })
-                      ],
-                    ),
-                  );
-                }
-                return Expanded(
-                  child: ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return CategoryTile(
-                          title: data[index].name ?? '',
-                          subtitle: data[index].description ?? '',
-                          onPressed: () {
-                            ref
-                                .read(getCurrentCategoryProvider.notifier)
-                                .setCurrentCategory(data[index]);
-                            Navigator.of(context).pop();
-                          },
-                        );
-                      },
-                      separatorBuilder: (ctx, idx) {
-                        return SizedBox(
-                          height: 24.h,
-                        );
-                      },
-                      itemCount: data.length),
-                );
-              }, error: (error, _) {
-                return const Text('An error has occurred');
-              }, loading: () {
-                return const CustomShimmer();
-              }),
-            ],
+                              ref
+                                  .read(getCurrentCategoryProvider.notifier)
+                                  .setCurrentCategory(data[index]);
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        },
+                        separatorBuilder: (ctx, idx) {
+                          return SizedBox(
+                            height: responsiveData.scaleHeight(24),
+                          );
+                        },
+                        itemCount: data.length,
+                      ),
+                    );
+                  },
+                  error: (error, _) {
+                    return const Text('An error has occurred');
+                  },
+                  loading: () {
+                    return const CustomShimmer();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
