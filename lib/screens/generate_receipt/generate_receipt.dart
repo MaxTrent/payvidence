@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/app_button.dart';
 import '../../components/app_drop_down.dart';
@@ -48,7 +49,6 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   String? selectedPayment;
 
   bool? isDraft;
-
 
   final List<Widget> _textFields = [];
 
@@ -125,6 +125,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final responsiveData = ResponsiveInherited.of(context);
+
     String findMissingProducts() {
       List<int> productIndexes = products.keys.toList();
       List<int> missingIndexes = [];
@@ -207,44 +209,45 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       }
     }
 
-    return GestureDetector(
-      onTap: FocusManager.instance.primaryFocus?.unfocus,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Form(
-          key: formKey,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 16.h,
-                    ),
-                    Text(
-                      'Generate ${widget.isInvoice == true ? "invoice" : "receipt"}',
-                      style: Theme.of(context).textTheme.displayLarge,
-                    ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    Text(
-                      'Fill in the details below to record new sales.',
-                      style: Theme.of(context).textTheme.displaySmall!,
-                    ),
-                    SizedBox(
-                      height: 32.h,
-                    ),
-                    Text(
-                      'Client name',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    GestureDetector(
+    return ResponsiveWrapper(
+      child: GestureDetector(
+        onTap: FocusManager.instance.primaryFocus?.unfocus,
+        child: Scaffold(
+          appBar: AppBar(),
+          body: Form(
+            key: formKey,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: responsiveData.scaleHeight(16),
+                      ),
+                      Text(
+                        'Generate ${widget.isInvoice == true ? "invoice" : "receipt"}',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      Text(
+                        'Fill in the details below to record new sales.',
+                        style: Theme.of(context).textTheme.displaySmall!,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(32),
+                      ),
+                      Text(
+                        'Client name',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      GestureDetector(
                         onTap: () {
                           selectClient();
                         },
@@ -253,134 +256,140 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                           hintText: client?.name ?? 'Select client',
                           controller: TextEditingController(),
                           suffixIcon: const Icon(Icons.keyboard_arrow_down),
-                        )),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      separatorBuilder: (ctx, idx) {
-                        return Column(
+                        ),
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(20),
+                      ),
+                      ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        separatorBuilder: (ctx, idx) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: responsiveData.scaleHeight(12)),
+                              Text(
+                                'PRODUCT ${idx + 2} DETAILS',
+                                style: TextStyle(
+                                  fontSize: Responsive.fontSize(context, 15),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: responsiveData.scaleHeight(12)),
+                            ],
+                          );
+                        },
+                        itemBuilder: (context, index) {
+                          return _textFields[index];
+                        },
+                        shrinkWrap: true,
+                        itemCount: _textFields.length,
+                      ),
+                      Visibility(
+                        visible: widget.isInvoice == false,
+                        replacement: const SizedBox(),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            12.verticalSpace,
-                            Text(
-                              'PRODUCT ${idx + 2} DETAILS',
-                              style: TextStyle(
-                                  fontSize: 15.sp, fontWeight: FontWeight.w500),
+                            SizedBox(
+                              height: responsiveData.scaleHeight(20),
                             ),
-                            12.verticalSpace
+                            Text(
+                              'Mode of payment',
+                              style: Theme.of(context).textTheme.displaySmall,
+                            ),
+                            SizedBox(
+                              height: responsiveData.scaleHeight(8),
+                            ),
+                            AppDropdown<String>(
+                              hintText: "Mode of payment",
+                              items: paymentOptions,
+                              value: selectedPayment,
+                              displayText: (option) => option.replaceAll(RegExp('_'), " "),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  selectedPayment = value;
+                                });
+                              },
+                              validator: (value) => value == null ? 'Please select a payment method' : null,
+                            ),
                           ],
-                        );
-                      },
-                      itemBuilder: (context, index) {
-                        return _textFields[index];
-                      },
-                      shrinkWrap: true,
-                      itemCount: _textFields.length,
-                    ),
-                    Visibility(
-                      visible: widget.isInvoice == false,
-                      replacement: const SizedBox(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(28),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          _addTextField();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Icon(
+                              Icons.add,
+                              color: primaryColor2,
+                            ),
+                            Text(
+                              'Add another product',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(
+                                color: primaryColor2,
+                                fontSize: Responsive.fontSize(context, 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(32),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: 20.h,
-                          ),
-                          Text(
-                            'Mode of payment',
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          AppDropdown<String>(
-                            hintText: "Mode of payment",
-                            items: paymentOptions,
-                            value: selectedPayment,
-                            displayText: (option) => option.replaceAll(RegExp('_'), " "),
-                            onChanged: (String? value) {
-                              setState(() {
-                                selectedPayment = value;
-                              });
+                          AppButton(
+                            buttonText: 'Generate',
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                if (client == null) {
+                                  ToastService.showErrorSnackBar("Select a client please");
+                                  return;
+                                }
+                                isDraft = false;
+                                createReceipt();
+                              }
                             },
-                            validator: (value) => value == null ? 'Please select a payment method' : null,
+                          ),
+                          SizedBox(
+                            height: responsiveData.scaleHeight(26),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                if (client == null) {
+                                  ToastService.showErrorSnackBar("Select a client please");
+                                  return;
+                                }
+                                isDraft = true;
+                                createReceipt();
+                              }
+                            },
+                            child: Text(
+                              'Save as draft',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(color: primaryColor2),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 28.h,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        _addTextField();
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          const Icon(
-                            Icons.add,
-                            color: primaryColor2,
-                          ),
-                          Text(
-                            'Add another product',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displayMedium!
-                                .copyWith(
-                                color: primaryColor2, fontSize: 14.sp),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 32.h,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        AppButton(
-                          buttonText: 'Generate',
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                              if (client == null) {
-                                ToastService.showErrorSnackBar("Select a client please");
-                                return;
-                              }
-                              isDraft = false;
-                              createReceipt();
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: 26.h,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                              if (client == null) {
-                                ToastService.showErrorSnackBar("Select a client please");
-                                return;
-                              }
-                              isDraft = true;
-                              createReceipt();
-                            }
-                          },
-                          child: Text(
-                            'Save as draft',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displayMedium!
-                                .copyWith(color: primaryColor2),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -399,14 +408,15 @@ class FormFields extends StatefulWidget {
   Product? product;
   final bool? invoiceToReceipt;
 
-  FormFields(
-      {super.key,
-        required this.qtyController,
-        required this.discountController,
-        required this.onPressed,
-        required this.index,
-        this.product,
-        this.invoiceToReceipt = false});
+  FormFields({
+    super.key,
+    required this.qtyController,
+    required this.discountController,
+    required this.onPressed,
+    required this.index,
+    this.product,
+    this.invoiceToReceipt = false,
+  });
 
   @override
   State<FormFields> createState() => _FormFieldsState();
@@ -415,6 +425,8 @@ class FormFields extends StatefulWidget {
 class _FormFieldsState extends State<FormFields> {
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -423,7 +435,7 @@ class _FormFieldsState extends State<FormFields> {
           style: Theme.of(context).textTheme.displaySmall,
         ),
         SizedBox(
-          height: 8.h,
+          height: responsiveData.scaleHeight(8),
         ),
         GestureDetector(
           onTap: () async {
@@ -447,14 +459,14 @@ class _FormFieldsState extends State<FormFields> {
           ),
         ),
         SizedBox(
-          height: 20.h,
+          height: responsiveData.scaleHeight(20),
         ),
         Text(
           'Quantity purchased',
           style: Theme.of(context).textTheme.displaySmall,
         ),
         SizedBox(
-          height: 8.h,
+          height: responsiveData.scaleHeight(8),
         ),
         AppTextField(
           hintText: 'Quantity purchased',
@@ -472,25 +484,32 @@ class _FormFieldsState extends State<FormFields> {
           enabled: !widget.invoiceToReceipt!,
         ),
         SizedBox(
-          height: 20.h,
+          height: responsiveData.scaleHeight(20),
         ),
         Text(
           'Discount percentage (if any)',
           style: Theme.of(context).textTheme.displaySmall,
         ),
         SizedBox(
-          height: 8.h,
+          height: responsiveData.scaleHeight(8),
         ),
         AppTextField(
           hintText: 'Discount percentage',
           controller: widget.discountController,
           suffixIcon: Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 16.h, 6.w, 16.h),
-            child: Text('%',
-                style: Theme.of(context)
-                    .textTheme
-                    .displaySmall!
-                    .copyWith(fontSize: 14.sp)),
+            padding: EdgeInsets.fromLTRB(
+              responsiveData.scaleWidth(16),
+              responsiveData.scaleHeight(16),
+              responsiveData.scaleWidth(6),
+              responsiveData.scaleHeight(16),
+            ),
+            child: Text(
+              '%',
+              style: Theme.of(context)
+                  .textTheme
+                  .displaySmall!
+                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
+            ),
           ),
           enabled: !widget.invoiceToReceipt!,
         ),

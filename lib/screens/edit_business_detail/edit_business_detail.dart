@@ -2,11 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../gen/assets.gen.dart';
@@ -30,6 +31,7 @@ class EditBusinessDetail extends HookConsumerWidget {
     final phoneController = useTextEditingController();
     final issuerController = useTextEditingController();
     final issuerRoleController = useTextEditingController();
+    final responsiveData = ResponsiveInherited.of(context);
 
     final originalName = useState<String?>(null);
     final originalAddress = useState<String?>(null);
@@ -73,231 +75,255 @@ class EditBusinessDetail extends HookConsumerWidget {
           viewModel.selectedSignatureImage != null;
     }
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Form(
-          key: formKey,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Text(
-                  'Edit business details',
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  'You can update business details here.',
-                  style: Theme.of(context).textTheme.displaySmall!,
-                ),
-                SizedBox(height: 12.h),
-                _buildSectionTitle(context, 'Business name'),
-                AppTextField(
-                  hintText: 'Business name',
-                  controller: nameController,
-                  keyboardType: TextInputType.name,
-                  textCapitalization: TextCapitalization.words,
-                  validator: (val) {
-                    return Validator.validateName(val);
-                  },
-                ),
-                _buildSectionTitle(context, 'Business address'),
-                AppTextField(
-                  hintText: 'Business address',
-                  controller: addressController,
-                  textCapitalization: TextCapitalization.words,
-                  validator: (val) {
-                    return Validator.validateName(val);
-                  },
-                ),
-                _buildSectionTitle(context, 'Business phone number'),
-                AppTextField(
-                  hintText: 'Business phone number',
-                  controller: phoneController,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(11),
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  validator: (val) {
-                    return Validator.validatePhoneNumber(val);
-                  },
-                ),
-                _buildSectionTitle(context, 'Business logo'),
-                GestureDetector(
-                  onTap: () {
-                    viewModel.pickLogoImage();
-                  },
-                  child: viewModel.selectedLogoImage != null
-                      ? Stack(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: Image.file(
-                          viewModel.selectedLogoImage!,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey,
-                          ),
-                          child: const Text(
-                            "Tap to Change",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
-                          ),
-                        ),
-                      ),
+    return ResponsiveWrapper(
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          appBar: AppBar(),
+          body: Form(
+            key: formKey,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  Text(
+                    'Edit business details',
+                    style: Theme.of(context).textTheme.displayLarge,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  Text(
+                    'You can update business details here.',
+                    style: Theme.of(context).textTheme.displaySmall!,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(12)),
+                  _buildSectionTitle(context, 'Business name'),
+                  AppTextField(
+                    hintText: 'Business name',
+                    controller: nameController,
+                    keyboardType: TextInputType.name,
+                    textCapitalization: TextCapitalization.words,
+                    validator: (val) {
+                      return Validator.validateName(val);
+                    },
+                  ),
+                  _buildSectionTitle(context, 'Business address'),
+                  AppTextField(
+                    hintText: 'Business address',
+                    controller: addressController,
+                    textCapitalization: TextCapitalization.words,
+                    validator: (val) {
+                      return Validator.validateName(val);
+                    },
+                  ),
+                  _buildSectionTitle(context, 'Business phone number'),
+                  AppTextField(
+                    hintText: 'Business phone number',
+                    controller: phoneController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(11),
+                      FilteringTextInputFormatter.digitsOnly,
                     ],
-                  )
-                      : viewModel.currentLogo != null
-                      ? Stack(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: Image.network(
-                          viewModel.currentLogo!,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              SvgPicture.asset(Assets.svg.uploadImage),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey,
-                          ),
-                          child: const Text(
-                            "Tap to Change",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
+                    validator: (val) {
+                      return Validator.validatePhoneNumber(val);
+                    },
+                  ),
+                  _buildSectionTitle(context, 'Business logo'),
+                  GestureDetector(
+                    onTap: () {
+                      viewModel.pickLogoImage();
+                    },
+                    child: viewModel.selectedLogoImage != null
+                        ? Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: Image.file(
+                            viewModel.selectedLogoImage!,
+                            height: responsiveData.scaleHeight(200),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                      : SvgPicture.asset(Assets.svg.uploadImage),
-                ),
-                _buildSectionTitle(context, 'Who issues receipts and invoices?'),
-                AppTextField(
-                  hintText: 'Issuer name',
-                  controller: issuerController,
-                  enabled: false,
-                  // fillColor: borderColor,
-                  // filled: true,
-                  validator: (val) {
-                    return Validator.validateName(val);
-                  },
-                ),
-                _buildSectionTitle(context, 'What is the role of this issuer?'),
-                AppTextField(
-                  hintText: 'Role of issuer',
-                  controller: issuerRoleController,
-                  validator: (val) {
-                    return Validator.validateName(val);
-                  },
-                ),
-                _buildSectionTitle(context, 'Issuer signature'),
-                GestureDetector(
-                  onTap: () {
-                    viewModel.pickSignatureImage();
-                  },
-                  child: viewModel.selectedSignatureImage != null
-                      ? Stack(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: Image.file(
-                          viewModel.selectedSignatureImage!,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey,
-                          ),
-                          child: const Text(
-                            "Tap to Change",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
+                        Positioned(
+                          bottom: responsiveData.scaleHeight(8),
+                          right: responsiveData.scaleWidth(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: responsiveData.scaleWidth(8),
+                              vertical: responsiveData.scaleHeight(8),
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                              color: Colors.grey,
+                            ),
+                            child: Text(
+                              "Tap to Change",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Responsive.fontSize(context, 10),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                      : viewModel.currentSignature != null
-                      ? Stack(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: Image.network(
-                          viewModel.currentSignature!,
-                          height: 200,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              SvgPicture.asset(Assets.svg.uploadImage),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey,
-                          ),
-                          child: const Text(
-                            "Tap to Change",
-                            style: TextStyle(color: Colors.white, fontSize: 10),
+                      ],
+                    )
+                        : viewModel.currentLogo != null
+                        ? Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: Image.network(
+                            viewModel.currentLogo!,
+                            height: responsiveData.scaleHeight(200),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                SvgPicture.asset(Assets.svg.uploadImage),
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                      : SvgPicture.asset(Assets.svg.uploadImage),
-                ),
-                SizedBox(height: 32.h),
-                AppButton(
-                  buttonText: 'Update business details',
-                  isProcessing: viewModel.isLoading,
-                  onPressed: () {
-                    if (formKey.currentState!.validate() && hasChanges()) {
-                      viewModel.updateBusinessInfo(
-                        businessId,
-                        name: nameController.text.trim(),
-                        address: addressController.text.trim(),
-                        phone: phoneController.text.trim(),
-                        issuer: issuerController.text.trim(),
-                        issuerRole: issuerRoleController.text.trim(),
-                        logo: viewModel.selectedLogoImage,
-                        signature: viewModel.selectedSignatureImage,
-                        navigateOnSuccess: () {
-                          Navigator.of(context).pop();
-                        },
-                      );
-                    }
-                  },
-                ),
-                8.verticalSpace,
-              ],
+                        Positioned(
+                          bottom: responsiveData.scaleHeight(8),
+                          right: responsiveData.scaleWidth(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: responsiveData.scaleWidth(8),
+                              vertical: responsiveData.scaleHeight(8),
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                              color: Colors.grey,
+                            ),
+                            child: Text(
+                              "Tap to Change",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Responsive.fontSize(context, 10),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                        : SvgPicture.asset(Assets.svg.uploadImage),
+                  ),
+                  _buildSectionTitle(context, 'Who issues receipts and invoices?'),
+                  AppTextField(
+                    hintText: 'Issuer name',
+                    controller: issuerController,
+                    enabled: false,
+                    validator: (val) {
+                      return Validator.validateName(val);
+                    },
+                  ),
+                  _buildSectionTitle(context, 'What is the role of this issuer?'),
+                  AppTextField(
+                    hintText: 'Role of issuer',
+                    controller: issuerRoleController,
+                    validator: (val) {
+                      return Validator.validateName(val);
+                    },
+                  ),
+                  _buildSectionTitle(context, 'Issuer signature'),
+                  GestureDetector(
+                    onTap: () {
+                      viewModel.pickSignatureImage();
+                    },
+                    child: viewModel.selectedSignatureImage != null
+                        ? Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: Image.file(
+                            viewModel.selectedSignatureImage!,
+                            height: responsiveData.scaleHeight(200),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: responsiveData.scaleHeight(8),
+                          right: responsiveData.scaleWidth(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: responsiveData.scaleWidth(8),
+                              vertical: responsiveData.scaleHeight(8),
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                              color: Colors.grey,
+                            ),
+                            child: Text(
+                              "Tap to Change",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Responsive.fontSize(context, 10),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                        : viewModel.currentSignature != null
+                        ? Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: Image.network(
+                            viewModel.currentSignature!,
+                            height: responsiveData.scaleHeight(200),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                SvgPicture.asset(Assets.svg.uploadImage),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: responsiveData.scaleHeight(8),
+                          right: responsiveData.scaleWidth(8),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: responsiveData.scaleWidth(8),
+                              vertical: responsiveData.scaleHeight(8),
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                              color: Colors.grey,
+                            ),
+                            child: Text(
+                              "Tap to Change",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Responsive.fontSize(context, 10),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                        : SvgPicture.asset(Assets.svg.uploadImage),
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(32)),
+                  AppButton(
+                    buttonText: 'Update business details',
+                    isProcessing: viewModel.isLoading,
+                    onPressed: () {
+                      if (formKey.currentState!.validate() && hasChanges()) {
+                        viewModel.updateBusinessInfo(
+                          businessId,
+                          name: nameController.text.trim(),
+                          address: addressController.text.trim(),
+                          phone: phoneController.text.trim(),
+                          issuer: issuerController.text.trim(),
+                          issuerRole: issuerRoleController.text.trim(),
+                          logo: viewModel.selectedLogoImage,
+                          signature: viewModel.selectedSignatureImage,
+                          navigateOnSuccess: () {
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      }
+                    },
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                ],
+              ),
             ),
           ),
         ),
@@ -306,8 +332,12 @@ class EditBusinessDetail extends HookConsumerWidget {
   }
 
   Widget _buildSectionTitle(BuildContext context, String title) {
+    final responsiveData = ResponsiveInherited.of(context);
     return Padding(
-      padding: EdgeInsets.only(top: 20.h, bottom: 8.w),
+      padding: EdgeInsets.only(
+        top: responsiveData.scaleHeight(20),
+        bottom: responsiveData.scaleWidth(8),
+      ),
       child: Text(title, style: Theme.of(context).textTheme.displaySmall),
     );
   }

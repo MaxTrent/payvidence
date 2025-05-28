@@ -41,7 +41,18 @@ class ResponsiveInherited extends InheritedWidget {
 
   static ResponsiveData of(BuildContext context) {
     final widget = context.dependOnInheritedWidgetOfExactType<ResponsiveInherited>();
-    return widget!.data;
+    if (widget == null) {
+      throw FlutterError(
+        'ResponsiveInherited.of() called with a context that does not contain a ResponsiveInherited widget.\n'
+            'This usually happens because you used a `BuildContext` that is an ancestor of the ResponsiveWrapper widget.\n'
+            'To fix, ensure that ResponsiveWrapper is an ancestor of the widget that calls ResponsiveInherited.of().\n'
+            'For example, wrap your MaterialApp or root widget with ResponsiveWrapper:\n'
+            '```dart\n'
+            'ResponsiveWrapper(child: MaterialApp(...))\n'
+            '```',
+      );
+    }
+    return widget.data;
   }
 
   @override

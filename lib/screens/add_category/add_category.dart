@@ -27,7 +27,7 @@ class AddCategory extends ConsumerWidget {
     Future<void> createCategory() async {
       Map<String, dynamic> requestData = {
         "name": nameController.text,
-        "description": descController.text,
+        "description": descController.text.isEmpty ? "No description" : descController.text,
       };
       if (!context.mounted) return;
       LoadingDialog.show(context);
@@ -110,11 +110,9 @@ class AddCategory extends ConsumerWidget {
                   height: 128,
                   hintText: 'Category description',
                   controller: descController,
-                  validator: (val) => Validator.validateName(val),
+                  validator: (val) => val != null && val.trim().isNotEmpty ? Validator.validateName(val) : null,
                 ),
-                SizedBox(
-                  height: responsiveData.scaleHeight(32),
-                ),
+                Spacer(),
                 AppButton(
                   buttonText: 'Save category',
                   onPressed: () {
@@ -123,6 +121,9 @@ class AddCategory extends ConsumerWidget {
                       createCategory();
                     }
                   },
+                ),
+                SizedBox(
+                  height: responsiveData.scaleHeight(8),
                 ),
               ],
             ),

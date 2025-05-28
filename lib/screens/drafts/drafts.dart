@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/loading_dialog.dart';
@@ -32,6 +33,7 @@ class Drafts extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
+    final responsiveData = ResponsiveInherited.of(context);
 
     final allReceipts = isInvoice == true
         ? ref.watch(getAllInvoiceProvider)
@@ -42,17 +44,13 @@ class Drafts extends HookConsumerWidget {
       LoadingDialog.show(context);
       try {
         final response =
-            await ref.read(getAllReceiptProvider.notifier).deleteDraft(id);
+        await ref.read(getAllReceiptProvider.notifier).deleteDraft(id);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
         ToastService.showSnackBar("Draft deleted successfully");
         ref.invalidate(
             isInvoice == true ? getAllInvoiceProvider : getAllReceiptProvider);
-        Future.delayed(const Duration(seconds: 2), () {
-          // if (!context.mounted) return;
-          // context.router.back();
-          //  context.router.pushAndPopUntil(const HomePageRoute(), predicate: (route)=>route.settings.name == '/');
-        });
+        Future.delayed(const Duration(seconds: 2), () {});
       } on DioException catch (e) {
         Navigator.of(context).pop(); // pop loading dialog on error
         ToastService.showErrorSnackBar(
@@ -65,109 +63,100 @@ class Drafts extends HookConsumerWidget {
     }
 
     ValueNotifier<int?> productNumber = ValueNotifier(null);
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: ValueListenableBuilder(
-          builder: (context, value, _) {
-            return Text(
-              'All drafts (${value ?? '0'})',
-              style: Theme.of(context).textTheme.displayLarge!.copyWith(),
-            );
-          },
-          valueListenable: productNumber,
+    return ResponsiveWrapper(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          title: ValueListenableBuilder(
+            builder: (context, value, _) {
+              return Text(
+                'All drafts (${value ?? '0'})',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(),
+              );
+            },
+            valueListenable: productNumber,
+          ),
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 32.h,
-              ),
-              AppTextField(
-                // width: 282.w,
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(16.h),
-                  child: SvgPicture.asset(Assets.svg.search,  colorFilter: ColorFilter.mode(isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: responsiveData.scaleHeight(32),
                 ),
-                hintText: 'Search for product',
-                controller: _searchController,
-                radius: 80,
-                filled: true,
-                fillColor: isDarkMode ? Colors.black : appGrey5,
-              ),
-              SizedBox(
-                height: 20.h,
-              ),
+                AppTextField(
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                    child: SvgPicture.asset(
+                      Assets.svg.search,
+                      colorFilter: ColorFilter.mode(
+                          isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+                      width: responsiveData.scaleWidth(24),
+                      height: responsiveData.scaleHeight(24),
+                    ),
+                  ),
+                  hintText: 'Search for product',
+                  controller: _searchController,
+                  radius: responsiveData.largeRadius,
+                  filled: true,
+                  fillColor: isDarkMode ? Colors.black : appGrey5,
+                ),
+                SizedBox(
+                  height: responsiveData.scaleHeight(20),
+                ),
+                allReceipts.when(data: (data) {
+                  final actualData =
+                  data.where((data) => data.publishedAt == null).toList();
 
-              // SvgPicture.asset(Assets.svg.emptyReceipt),
-              // SizedBox(height: 40.h,),
-              // Text('No receipt yet!', style: Theme.of(context).textTheme.displayLarge,),
-              // SizedBox(height: 10.h,),
-              // Text('Generate receipts for your business sales. All receipts generated will show here.',textAlign: TextAlign.center, style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: 14.sp, )),
+                  if (actualData.isEmpty) {
+                    productNumber.value = 0;
 
-              allReceipts.when(data: (data) {
-                final actualData =
-                    data.where((data) => data.publishedAt == null).toList();
-
-                if (actualData.isEmpty) {
-                  productNumber.value = 0;
-
-                  return SizedBox(
-                    width: ScreenUtil().screenWidth,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: ScreenUtil().screenHeight / 4,
-                        ),
-
-                        Text(
-                          'No receipts in drafts!',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Text('All receipts in drafts will appear here.',
+                    return SizedBox(
+                      width: responsiveData.screenWidth,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: responsiveData.screenHeight / 4,
+                          ),
+                          Text(
+                            'No receipts in drafts!',
+                            style: Theme.of(context).textTheme.displayLarge,
+                          ),
+                          SizedBox(
+                            height: responsiveData.scaleHeight(10),
+                          ),
+                          Text(
+                            'All receipts in drafts will appear here.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
                                 .copyWith(
-                                  fontSize: 14.sp,
-                                )),
-                        // SizedBox(
-                        //   height: 48.h,
-                        // ),
-                        // AppButton(
-                        //     buttonText: 'Generate receipt',
-                        //     onPressed: () {
-                        //       locator<PayvidenceAppRouter>().navigateNamed(
-                        //           PayvidenceRoutes.generateReceipt);
-                        //     })
-                      ],
-                    ),
-                  );
-                }
+                              fontSize: Responsive.fontSize(context, 14),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
-                productNumber.value = actualData.length;
+                  productNumber.value = actualData.length;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'You can click on specific draft to edit.',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    ListView.separated(
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'You can click on specific draft to edit.',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
@@ -183,37 +172,28 @@ class Drafts extends HookConsumerWidget {
                           return Column(
                             children: [
                               SizedBox(
-                                height: 24.h,
+                                height: responsiveData.scaleHeight(24),
                               ),
                             ],
                           );
                         },
-                        itemCount: actualData.length),
-                    SizedBox(
-                      height: 40.h,
-                    )
-                  ],
-                );
-              }, error: (error, _) {
-                return const Text('An error has occurred');
-              }, loading: () {
-                return const CustomShimmer();
-              })
-            ],
+                        itemCount: actualData.length,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(40),
+                      ),
+                    ],
+                  );
+                }, error: (error, _) {
+                  return const Text('An error has occurred');
+                }, loading: () {
+                  return const CustomShimmer();
+                }),
+              ],
+            ),
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   backgroundColor: primaryColor2,
-      //   child: Icon(
-      //     Icons.add,
-      //     size: 40.h,
-      //   ),
-      // ),
-      // AppButton(buttonText: 'Generate receipt', onPressed: (){
-      //   // context.push('/addBusiness');
-      // }),
     );
   }
 }
@@ -223,33 +203,36 @@ class DraftTile extends StatelessWidget {
   final Receipt draft;
   final bool isInvoice;
 
-  const DraftTile(
-      {super.key,
-      required this.draft,
-      required this.onPressed,
-      required this.isInvoice});
+  const DraftTile({
+    super.key,
+    required this.draft,
+    required this.onPressed,
+    required this.isInvoice,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     return GestureDetector(
       onTap: () {
         locator<PayvidenceAppRouter>()
             .navigate(CompleteDraftRoute(draft: draft, isInvoice: isInvoice));
       },
       child: Container(
-        height: 101.h,
-        width: ScreenUtil().screenWidth,
+        height: responsiveData.scaleHeight(101),
+        width: responsiveData.screenWidth,
         decoration: const BoxDecoration(color: Colors.transparent),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              height: 72.h,
-              width: 72.h,
+              height: responsiveData.scaleHeight(72),
+              width: responsiveData.scaleHeight(72),
               decoration: const BoxDecoration(color: Colors.black),
             ),
             SizedBox(
-              width: 14.w,
+              width: responsiveData.scaleWidth(14),
             ),
             Expanded(
               child: Column(
@@ -261,61 +244,78 @@ class DraftTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   SizedBox(
-                    height: 6.h,
+                    height: responsiveData.scaleHeight(6),
                   ),
                   Row(
                     children: [
                       Text(
-                          '${draft.recordProductDetails?[0].quantity ?? ''} units sold',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(fontSize: 14.sp, color: appGrey4)),
+                        '${draft.recordProductDetails?[0].quantity ?? ''} units sold',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(
+                          fontSize: Responsive.fontSize(context, 14),
+                          color: appGrey4,
+                        ),
+                      ),
                       SizedBox(
-                        width: 10.w,
+                        width: responsiveData.scaleWidth(10),
                       ),
                       Container(
-                        height: 6.h,
-                        width: 6.h,
+                        height: responsiveData.scaleHeight(6),
+                        width: responsiveData.scaleHeight(6),
                         decoration: BoxDecoration(
-                            color: appGrey4,
-                            borderRadius: BorderRadius.circular(24.r)),
+                          color: appGrey4,
+                          borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                        ),
                       ),
                       SizedBox(
-                        width: 10.w,
+                        width: responsiveData.scaleWidth(10),
                       ),
                       Expanded(
                         child: Text(
-                            DateFormat.yMd().add_jm().format(draft.createdAt!),
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
-                                .copyWith(fontSize: 14.sp, color: appGrey4)),
+                          DateFormat.yMd().add_jm().format(draft.createdAt!),
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(
+                            fontSize: Responsive.fontSize(context, 14),
+                            color: appGrey4,
+                          ),
+                        ),
                       ),
                       SizedBox(
-                        width: 10.w,
+                        width: responsiveData.scaleWidth(10),
                       ),
                       GestureDetector(
-                          onTap: () {
-                            onPressed.call(draft.id ?? '');
-                          },
-                          child: SvgPicture.asset(Assets.svg.delete)),
+                        onTap: () {
+                          onPressed.call(draft.id ?? '');
+                        },
+                        child: SvgPicture.asset(
+                          Assets.svg.delete,
+                          width: responsiveData.scaleWidth(24),
+                          height: responsiveData.scaleHeight(24),
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(
-                    height: 8.h,
+                    height: responsiveData.scaleHeight(8),
                   ),
                   Row(
-                    // mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('₦${draft.recordProductDetails?[0].total ?? ''} ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium!
-                              .copyWith(fontSize: 14.sp)),
+                      Text(
+                        '₦${draft.recordProductDetails?[0].total ?? ''} ',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(
+                          fontSize: Responsive.fontSize(context, 14),
+                        ),
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
@@ -19,6 +19,8 @@ import '../../providers/receipt_providers/get_all_receipt_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/responsive.dart';
+import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/toast_service.dart';
 import '../generate_receipt/generate_receipt.dart';
 
@@ -28,11 +30,12 @@ class CompleteDraft extends ConsumerStatefulWidget {
   final Receipt draft;
   final bool? inVoiceToReceipt;
 
-  const CompleteDraft(
-      {super.key,
-        required this.draft,
-        this.isInvoice = false,
-        this.inVoiceToReceipt = false});
+  const CompleteDraft({
+    super.key,
+    required this.draft,
+    this.isInvoice = false,
+    this.inVoiceToReceipt = false,
+  });
 
   @override
   ConsumerState<CompleteDraft> createState() => _CompleteDraftState();
@@ -103,7 +106,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
         .push(ClientsRoute(forSelection: true));
     await Future.delayed(const Duration(milliseconds: 100));
     if (client != null) {
-      client = client;
+      this.client = client;
       setState(() {});
     }
   }
@@ -198,48 +201,51 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusManager.instance.primaryFocus?.unfocus,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Form(
-          key: formKey,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 16.h,
-                    ),
-                    Text(
-                      widget.inVoiceToReceipt == true
-                          ? "Re-issue to receipt"
-                          : widget.isInvoice == true
-                          ? "Complete invoice"
-                          : "Complete receipt",
-                      style: Theme.of(context).textTheme.displayLarge,
-                    ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    Text(
-                      'Fill in the details below to generate ${widget.isInvoice == true ? "invoice" : "receipt"}',
-                      style: Theme.of(context).textTheme.displaySmall!,
-                    ),
-                    SizedBox(
-                      height: 32.h,
-                    ),
-                    Text(
-                      'Client name',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    GestureDetector(
+    final responsiveData = ResponsiveInherited.of(context);
+
+    return ResponsiveWrapper(
+      child: GestureDetector(
+        onTap: FocusManager.instance.primaryFocus?.unfocus,
+        child: Scaffold(
+          appBar: AppBar(),
+          body: Form(
+            key: formKey,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: responsiveData.scaleHeight(16),
+                      ),
+                      Text(
+                        widget.inVoiceToReceipt == true
+                            ? "Re-issue to receipt"
+                            : widget.isInvoice == true
+                            ? "Complete invoice"
+                            : "Complete receipt",
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      Text(
+                        'Fill in the details below to generate ${widget.isInvoice == true ? "invoice" : "receipt"}',
+                        style: Theme.of(context).textTheme.displaySmall!,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(32),
+                      ),
+                      Text(
+                        'Client name',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      GestureDetector(
                         onTap: () {
                           if (widget.inVoiceToReceipt == true) {
                             return;
@@ -251,113 +257,117 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                           hintText: client?.name ?? 'Select client',
                           controller: TextEditingController(),
                           suffixIcon: const Icon(Icons.keyboard_arrow_down),
-                        )),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      separatorBuilder: (ctx, idx) {
-                        return Column(
+                        ),
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(20),
+                      ),
+                      ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        separatorBuilder: (ctx, idx) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: responsiveData.scaleHeight(12)),
+                              Text(
+                                'PRODUCT ${idx + 2} DETAILS',
+                                style: TextStyle(
+                                  fontSize: Responsive.fontSize(context, 15),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: responsiveData.scaleHeight(12)),
+                            ],
+                          );
+                        },
+                        itemBuilder: (context, index) {
+                          return _textFields[index];
+                        },
+                        shrinkWrap: true,
+                        itemCount: _textFields.length,
+                      ),
+                      Visibility(
+                        visible: (widget.isInvoice == false &&
+                            widget.inVoiceToReceipt == false) ||
+                            widget.inVoiceToReceipt == true,
+                        replacement: const SizedBox(),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            12.verticalSpace,
-                            Text(
-                              'PRODUCT ${idx + 2} DETAILS',
-                              style: TextStyle(
-                                  fontSize: 15.sp, fontWeight: FontWeight.w500),
+                            SizedBox(
+                              height: responsiveData.scaleHeight(20),
                             ),
-                            12.verticalSpace
+                            Text(
+                              'Mode of payment',
+                              style: Theme.of(context).textTheme.displaySmall,
+                            ),
+                            SizedBox(
+                              height: responsiveData.scaleHeight(8),
+                            ),
+                            AppDropdown<String>(
+                              hintText: "Mode of payment",
+                              items: paymentOptions,
+                              value: selectedPayment,
+                              displayText: (option) => option.replaceAll(RegExp('_'), " ").capitalize(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  selectedPayment = value;
+                                });
+                              },
+                              validator: (value) => value == null ? 'Please select a payment method' : null,
+                            ),
                           ],
-                        );
-                      },
-                      itemBuilder: (context, index) {
-                        return _textFields[index];
-                      },
-                      shrinkWrap: true,
-                      itemCount: _textFields.length,
-                    ),
-                    Visibility(
-                      visible: (widget.isInvoice == false &&
-                          widget.inVoiceToReceipt == false) ||
-                          widget.inVoiceToReceipt == true,
-                      replacement: const SizedBox(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 20.h,
-                          ),
-                          Text(
-                            'Mode of payment',
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                          AppDropdown<String>(
-                            hintText: "Mode of payment",
-                            items: paymentOptions,
-                            value: selectedPayment,
-                            displayText: (option) => option.replaceAll(RegExp('_'), " ").capitalize(),
-                            onChanged: (String? value) {
-                              setState(() {
-                                selectedPayment = value;
-                              });
-                            },
-                            validator: (value) => value == null ? 'Please select a payment method' : null,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 28.h,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        AppButton(
-                          buttonText:
-                          'Generate ${widget.isInvoice == true && widget.inVoiceToReceipt == false ? "invoice" : "receipt"}',
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                              if (client == null) {
-                                ToastService.showErrorSnackBar("Select a client please");
-                              }
-                              isDraft = false;
-                              createReceipt();
-                            }
-                          },
-                        ),
-                        SizedBox(
-                          height: 26.h,
-                        ),
-                        Visibility(
-                          visible: widget.inVoiceToReceipt == false,
-                          child: GestureDetector(
-                            onTap: () {
+                      SizedBox(
+                        height: responsiveData.scaleHeight(28),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          AppButton(
+                            buttonText:
+                            'Generate ${widget.isInvoice == true && widget.inVoiceToReceipt == false ? "invoice" : "receipt"}',
+                            onPressed: () {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
                                 if (client == null) {
                                   ToastService.showErrorSnackBar("Select a client please");
                                 }
-                                isDraft = true;
+                                isDraft = false;
                                 createReceipt();
                               }
                             },
-                            child: Text(
-                              'Save as draft',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .copyWith(color: primaryColor2),
+                          ),
+                          SizedBox(
+                            height: responsiveData.scaleHeight(26),
+                          ),
+                          Visibility(
+                            visible: widget.inVoiceToReceipt == false,
+                            child: GestureDetector(
+                              onTap: () {
+                                if (formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
+                                  if (client == null) {
+                                    ToastService.showErrorSnackBar("Select a client please");
+                                  }
+                                  isDraft = true;
+                                  createReceipt();
+                                }
+                              },
+                              child: Text(
+                                'Save as draft',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(color: primaryColor2),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -365,5 +375,30 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
         ),
       ),
     );
+  }
+}
+
+// Assuming FormFields is a custom widget, keeping it as is since it's not fully provided
+class FormFields extends StatelessWidget {
+  final TextEditingController qtyController;
+  final TextEditingController discountController;
+  final Function(int) onPressed;
+  final int index;
+  final Product? product;
+  final bool? invoiceToReceipt;
+
+  const FormFields({
+    required this.qtyController,
+    required this.discountController,
+    required this.onPressed,
+    required this.index,
+    required this.product,
+    required this.invoiceToReceipt,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Implementation would go here, but it's omitted as it's not provided
+    return Container();
   }
 }

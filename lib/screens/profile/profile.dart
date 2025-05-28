@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/constants/app_colors.dart';
@@ -10,6 +9,8 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
 import 'package:payvidence/screens/splash.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 import '../../components/loading_dialog.dart';
 import '../../gen/assets.gen.dart';
@@ -25,9 +26,10 @@ class Profile extends HookConsumerWidget {
     final viewModel = ref.watch(profileViewModelProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
     final useUpdatePersonalDetailsViewModel =
-        ref.watch(updatePersonalDetailsViewModelProvider);
+    ref.watch(updatePersonalDetailsViewModelProvider);
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
+    final responsiveData = ResponsiveInherited.of(context);
     // final rateMyApp = RateMyApp(
     //   minDays: 7, // Show after 7 days
     //   minLaunches: 10, // Show after 10 launches
@@ -47,244 +49,246 @@ class Profile extends HookConsumerWidget {
 
     print('Profile: Theme mode = ${theme.mode}, Brightness = ${Theme.of(context).brightness}');
 
-    return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            height: 252.h,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: primaryColor4,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12.r),
-                bottomRight: Radius.circular(12.r),
+    return ResponsiveWrapper(
+      child: Scaffold(
+        body: Column(
+          children: [
+            Container(
+              height: responsiveData.scaleHeight(252),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: primaryColor4,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(responsiveData.smallRadius * 0.6), // Approx 12.r equivalent
+                  bottomRight: Radius.circular(responsiveData.smallRadius * 0.6), // Approx 12.r equivalent
+                ),
               ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    8.verticalSpace,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              width: 73.h,
-                              height: 73.h,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 1.w,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Stack(
+                            children: [
+                              Container(
+                                width: responsiveData.scaleHeight(73),
+                                height: responsiveData.scaleHeight(73),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: responsiveData.scaleWidth(1),
+                                  ),
+                                ),
+                                child: (useUpdatePersonalDetailsViewModel.userInfo?.account.profilePictureUrl != null)
+                                    ? CachedNetworkImage(
+                                  imageUrl: useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!,
+                                  imageBuilder: (context, imageProvider) => Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  placeholder: (context, url) => SvgPicture.asset(
+                                    Assets.svg.defaultProfilepic,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  errorWidget: (context, url, error) => SvgPicture.asset(
+                                    Assets.svg.defaultProfilepic,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                                    : SvgPicture.asset(
+                                  Assets.svg.defaultProfilepic,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                              child: (useUpdatePersonalDetailsViewModel.userInfo?.account.profilePictureUrl != null)
-                                  ? CachedNetworkImage(
-                                imageUrl: useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!,
-                                imageBuilder: (context, imageProvider) => Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    locator<PayvidenceAppRouter>().navigateNamed(
+                                        PayvidenceRoutes.changeProfilePicture);
+                                  },
+                                  child: CircleAvatar(
+                                    radius: responsiveData.smallRadius * 0.7,
+                                    backgroundColor: Colors.white,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(responsiveData.scaleHeight(5)),
+                                      child: SvgPicture.asset(Assets.svg.editImage),
                                     ),
                                   ),
                                 ),
-                                placeholder: (context, url) => SvgPicture.asset(
-                                  Assets.svg.defaultProfilepic,
-                                  fit: BoxFit.cover,
-                                ),
-                                errorWidget: (context, url, error) => SvgPicture.asset(
-                                  Assets.svg.defaultProfilepic,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                                  : SvgPicture.asset(
-                                Assets.svg.defaultProfilepic,
-                                fit: BoxFit.cover,
                               ),
-                            ),
-                            Positioned(
-                              bottom: 0.h,
-                              right: 0.w,
-                              child: GestureDetector(
-                                onTap: () {
-                                  locator<PayvidenceAppRouter>().navigateNamed(
-                                      PayvidenceRoutes.changeProfilePicture);
-                                },
-                                child: CircleAvatar(
-                                  radius: 14.r,
-                                  backgroundColor: Colors.white,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(7.h),
-                                    child:
-                                        SvgPicture.asset(Assets.svg.editImage),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    locator<PayvidenceAppRouter>().navigateNamed(
+                                        PayvidenceRoutes.notifications);
+                                  },
+                                  child: SvgPicture.asset(Assets.svg.notification)),
+                              SizedBox(
+                                width: responsiveData.scaleWidth(12),
+                              ),
+                              GestureDetector(
+                                  onTap: () {
+                                    locator<PayvidenceAppRouter>()
+                                        .navigateNamed(PayvidenceRoutes.settings);
+                                  },
+                                  child: SvgPicture.asset(Assets.svg.setting2)),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(24),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(responsiveData.smallRadius * 0.6), // Approx 12.r equivalent
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: responsiveData.scaleWidth(16),
+                              vertical: responsiveData.scaleHeight(12)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SvgPicture.asset(Assets.svg.ribbon),
+                                  SizedBox(
+                                    width: responsiveData.scaleWidth(2),
                                   ),
-                                ),
+                                  Text(
+                                    'Current subscription plan',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall!
+                                        .copyWith(
+                                        fontSize: Responsive.fontSize(context, 14),
+                                        color: Colors.black),
+                                  )
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(
+                                height: responsiveData.scaleHeight(2),
+                              ),
+                              Text(
+                                useMySubscriptionViewModel.subInfo?.plan.name ??
+                                    'Starter plan',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayLarge!
+                                    .copyWith(color: Colors.black),
+                              )
+                            ],
+                          ),
                         ),
-                        Row(
-                          children: [
-                            GestureDetector(
-                                onTap: () {
-                                  locator<PayvidenceAppRouter>().navigateNamed(
-                                      PayvidenceRoutes.notifications);
-                                },
-                                child:
-                                    SvgPicture.asset(Assets.svg.notification)),
-                            SizedBox(
-                              width: 12.w,
-                            ),
-                            GestureDetector(
-                                onTap: () {
-                                  locator<PayvidenceAppRouter>()
-                                      .navigateNamed(PayvidenceRoutes.settings);
-                                },
-                                child: SvgPicture.asset(Assets.svg.setting2)),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 24.h,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 12.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SvgPicture.asset(Assets.svg.ribbon),
-                                SizedBox(
-                                  width: 2.w,
-                                ),
-                                Text(
-                                  'Current subscription plan',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(
-                                          fontSize: 14.sp, color: Colors.black),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Text(
-                              useMySubscriptionViewModel.subInfo?.plan.name ??
-                                  'Starter plan',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayLarge!
-                                  .copyWith(color: Colors.black),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                ProfileOptionTile(
-                  isDarkMode: isDarkMode,
-                  onTap: () {
-                    locator<PayvidenceAppRouter>()
-                        .navigateNamed(PayvidenceRoutes.updatePersonalDetails);
-                  },
-                  title: 'Update personal details',
-                  icon: Assets.svg.userSquare,
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                ProfileOptionTile(
-                  isDarkMode: isDarkMode,
-                  onTap: () {
-                    locator<PayvidenceAppRouter>()
-                        .navigateNamed(PayvidenceRoutes.mySubscription);
-                  },
-                  icon: Assets.svg.medalStar,
-                  title: 'Manage subscription plan',
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                ProfileOptionTile(
-                  isDarkMode: isDarkMode,
-                  onTap: () {
-                    locator<PayvidenceAppRouter>()
-                        .navigateNamed(PayvidenceRoutes.businessData);
-                  },
-                  icon: Assets.svg.chart,
-                  title: 'Access business data',
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                ProfileOptionTile(
-                  isDarkMode: isDarkMode,
-                  onTap: () {
-                    locator<PayvidenceAppRouter>()
-                        .navigateNamed(PayvidenceRoutes.payvidenceInfo);
-                  },
-                  icon: Assets.svg.documentText,
-                  title: 'View Payvidence information',
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                ProfileOptionTile(
-                  isDarkMode: isDarkMode,
-                  onTap: () {
-                    // Handle rate app logic if needed
-                  },
-                  icon: Assets.svg.like,
-                  title: 'Rate app',
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                ProfileOptionTile(
-                  onTap: () {
-                    if (!context.mounted) return;
-                    LoadingDialog.show(context);
-                    viewModel.logout(navigateOnSuccess: () async {
+            Expanded(
+              child: ListView(
+                children: [
+                  ProfileOptionTile(
+                    isDarkMode: isDarkMode,
+                    onTap: () {
                       locator<PayvidenceAppRouter>()
-                          .popUntil((route) => route is SplashScreen);
+                          .navigateNamed(PayvidenceRoutes.updatePersonalDetails);
+                    },
+                    title: 'Update personal details',
+                    icon: Assets.svg.userSquare,
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  ProfileOptionTile(
+                    isDarkMode: isDarkMode,
+                    onTap: () {
                       locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.onboarding);
-                    });
-                  },
-                  icon: Assets.svg.logout,
-                  title: 'Log out',
-                  showTrailing: false,
-                  color: appRed,
-                  isLogout: true,
-                  isDarkMode: isDarkMode,
-                ),
-              ],
+                          .navigateNamed(PayvidenceRoutes.mySubscription);
+                    },
+                    icon: Assets.svg.medalStar,
+                    title: 'Manage subscription plan',
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  ProfileOptionTile(
+                    isDarkMode: isDarkMode,
+                    onTap: () {
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.businessData);
+                    },
+                    icon: Assets.svg.chart,
+                    title: 'Access business data',
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  ProfileOptionTile(
+                    isDarkMode: isDarkMode,
+                    onTap: () {
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.payvidenceInfo);
+                    },
+                    icon: Assets.svg.documentText,
+                    title: 'View Payvidence information',
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  ProfileOptionTile(
+                    isDarkMode: isDarkMode,
+                    onTap: () {
+                      // Handle rate app logic if needed
+                    },
+                    icon: Assets.svg.like,
+                    title: 'Rate app',
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  ProfileOptionTile(
+                    onTap: () {
+                      if (!context.mounted) return;
+                      LoadingDialog.show(context);
+                      viewModel.logout(navigateOnSuccess: () async {
+                        locator<PayvidenceAppRouter>()
+                            .popUntil((route) => route is SplashScreen);
+                        locator<PayvidenceAppRouter>()
+                            .navigateNamed(PayvidenceRoutes.onboarding);
+                      });
+                    },
+                    icon: Assets.svg.logout,
+                    title: 'Log out',
+                    showTrailing: false,
+                    color: appRed,
+                    isLogout: true,
+                    isDarkMode: isDarkMode,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -313,7 +317,9 @@ class ProfileOptionTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final viewModel = ref.watch(profileViewModelProvider);
-   return Column(
+    final responsiveData = ResponsiveInherited.of(context);
+
+    return Column(
       children: [
         GestureDetector(
           onTap: viewModel.isLoading ? null : onTap,
@@ -323,18 +329,18 @@ class ProfileOptionTile extends ConsumerWidget {
               style: Theme.of(context)
                   .textTheme
                   .displaySmall!
-                  .copyWith(fontSize: 18.sp, color: color),
+                  .copyWith(fontSize: Responsive.fontSize(context, 18), color: color),
             ),
             leading: SvgPicture.asset(
               icon,
-              height: 32.h,
-              width: 32.w,
+              height: responsiveData.scaleHeight(32),
+              width: responsiveData.scaleWidth(32),
               colorFilter: ColorFilter.mode(
                 isLogout
                     ? appRed
                     : isDarkMode
-                        ? Colors.white
-                        : Colors.black,
+                    ? Colors.white
+                    : Colors.black,
                 BlendMode.srcIn,
               ),
             ),
@@ -344,7 +350,7 @@ class ProfileOptionTile extends ConsumerWidget {
           ),
         ),
         Divider(
-          thickness: 1.h,
+          thickness: responsiveData.scaleHeight(1),
         ),
       ],
     );

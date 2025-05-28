@@ -1,10 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_switch.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 
 @RoutePage(name: 'NotificationSettingsRoute')
@@ -16,6 +17,7 @@ class NotificationSettings extends HookConsumerWidget {
     final viewModel = ref.watch(updatePersonalDetailsViewModelProvider);
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
+    final responsiveData = ResponsiveInherited.of(context);
 
     // State for switches
     final isTransactionAlertEnabled = useState(false);
@@ -63,121 +65,123 @@ class NotificationSettings extends HookConsumerWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: isDarkMode ? Colors.black : Colors.white,
-      appBar: AppBar(
+    return ResponsiveWrapper(
+      child: Scaffold(
         backgroundColor: isDarkMode ? Colors.black : Colors.white,
-        iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 16.h),
-            Text(
-              'Notifications setting',
-              style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                color: isDarkMode ? Colors.white : Colors.black,
+        appBar: AppBar(
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: responsiveData.scaleHeight(16)),
+              Text(
+                'Notifications setting',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
               ),
-            ),
-            SizedBox(height: 32.h),
-            Divider(
-              thickness: 1.h,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Transactional alerts',
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                    fontSize: 22.sp,
-                    color: isDarkMode ? Colors.white : Colors.black,
+              SizedBox(height: responsiveData.scaleHeight(32)),
+              Divider(
+                thickness: responsiveData.scaleHeight(1),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Transactional alerts',
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                      fontSize: Responsive.fontSize(context, 22),
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                   ),
-                ),
-                AppSwitch(
-                  onChanged: (value) {
-                    isTransactionAlertEnabled.value = value;
-                    updateNotificationSettings(transactionalAlerts: value);
-                  },
-                  isSwitchEnabled: isTransactionAlertEnabled.value,
-                ),
-              ],
-            ),
-            SizedBox(height: 11.h),
-            Text(
-              'You will receive notifications about new receipts, invoices, products, and clients.',
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                fontSize: 16.sp,
-              ),
-            ),
-            SizedBox(height: 28.h),
-            Divider(
-              thickness: 1.h,
-              ),
-            SizedBox(height: 28.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Promotional updates',
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                    fontSize: 22.sp,
-                    color: isDarkMode ? Colors.white : Colors.black,
+                  AppSwitch(
+                    onChanged: (value) {
+                      isTransactionAlertEnabled.value = value;
+                      updateNotificationSettings(transactionalAlerts: value);
+                    },
+                    isSwitchEnabled: isTransactionAlertEnabled.value,
                   ),
-                ),
-                AppSwitch(
-                  onChanged: (value) {
-                    isPromotionalUpdateEnabled.value = value;
-                    updateNotificationSettings(promotionalUpdates: value);
-                  },
-                  isSwitchEnabled: isPromotionalUpdateEnabled.value,
-                ),
-              ],
-            ),
-            SizedBox(height: 11.h),
-            Text(
-              'You will get notifications about new features, updates, or promotions within the app.',
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                fontSize: 16.sp,
+                ],
               ),
-            ),
-            SizedBox(height: 28.h),
-            Divider(
-              thickness: 1.h,
+              SizedBox(height: responsiveData.scaleHeight(11)),
+              Text(
+                'You will receive notifications about new receipts, invoices, products, and clients.',
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                  fontSize: Responsive.fontSize(context, 16),
+                ),
               ),
-            SizedBox(height: 28.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Security alerts',
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                    fontSize: 22.sp,
-                    color: isDarkMode ? Colors.white : Colors.black,
+              SizedBox(height: responsiveData.scaleHeight(28)),
+              Divider(
+                thickness: responsiveData.scaleHeight(1),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(28)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Promotional updates',
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                      fontSize: Responsive.fontSize(context, 22),
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                   ),
-                ),
-                AppSwitch(
-                  onChanged: (value) {
-                    isSecurityAlertEnabled.value = value;
-                    updateNotificationSettings(securityAlerts: value);
-                  },
-                  isSwitchEnabled: isSecurityAlertEnabled.value,
+                  AppSwitch(
+                    onChanged: (value) {
+                      isPromotionalUpdateEnabled.value = value;
+                      updateNotificationSettings(promotionalUpdates: value);
+                    },
+                    isSwitchEnabled: isPromotionalUpdateEnabled.value,
                   ),
-              ],
-            ),
-            SizedBox(height: 11.h),
-            Text(
-              'You will be notified of new or unrecognized devices and any suspicious account activity.',
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                fontSize: 16.sp,
+                ],
               ),
-            ),
-            SizedBox(height: 28.h),
-            Divider(
-              thickness: 1.h,
-            ),
-          ],
+              SizedBox(height: responsiveData.scaleHeight(11)),
+              Text(
+                'You will get notifications about new features, updates, or promotions within the app.',
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                  fontSize: Responsive.fontSize(context, 16),
+                ),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(28)),
+              Divider(
+                thickness: responsiveData.scaleHeight(1),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(28)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Security alerts',
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                      fontSize: Responsive.fontSize(context, 22),
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  AppSwitch(
+                    onChanged: (value) {
+                      isSecurityAlertEnabled.value = value;
+                      updateNotificationSettings(securityAlerts: value);
+                    },
+                    isSwitchEnabled: isSecurityAlertEnabled.value,
+                  ),
+                ],
+              ),
+              SizedBox(height: responsiveData.scaleHeight(11)),
+              Text(
+                'You will be notified of new or unrecognized devices and any suspicious account activity.',
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                  fontSize: Responsive.fontSize(context, 16),
+                ),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(28)),
+              Divider(
+                thickness: responsiveData.scaleHeight(1),
+              ),
+            ],
+          ),
         ),
       ),
     );

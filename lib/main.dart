@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/app_provider_observer.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/scroll_behaviour.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/toast_service.dart';
@@ -65,25 +66,27 @@ class MyApp extends HookWidget {
     });
 
     return Builder(
-      builder: (context) => MaterialApp.router(
-        scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
-        scrollBehavior: AppScrollBehaviour(),
-        title: 'Payvidence',
-        debugShowCheckedModeBanner: false,
-        theme: appTheme.lightTheme(context),
-        darkTheme: appTheme.darkTheme(context),
-        themeMode: theme.mode,
-        routerConfig: appRouter.config(),
-        builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(
-                MediaQuery.textScalerOf(context).scale(1.0).clamp(0.8, 1.2),
+      builder: (context) => ResponsiveWrapper(
+        child: MaterialApp.router(
+          scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
+          scrollBehavior: AppScrollBehaviour(),
+          title: 'Payvidence',
+          debugShowCheckedModeBanner: false,
+          theme: appTheme.lightTheme(context),
+          darkTheme: appTheme.darkTheme(context),
+          themeMode: theme.mode,
+          routerConfig: appRouter.config(),
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(
+                  MediaQuery.textScalerOf(context).scale(1.0).clamp(0.8, 1.2),
+                ),
               ),
-            ),
-            child: child!,
-          );
-        },
+              child: child!,
+            );
+          },
+        ),
       ),
     );
   }
