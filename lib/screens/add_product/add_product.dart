@@ -71,15 +71,19 @@ class _AddProductState extends ConsumerState<AddProduct> {
     final responsiveData = ResponsiveInherited.of(context);
 
     Future<void> createProduct() async {
+      // Use "Uncategorized" category if no category is selected
+      String categoryId = currentCategory?.id ?? "0";
       Map<String, dynamic> data = {
         "name": productNameController.text,
-        "description": productDescController.text,
+        "description": productDescController.text.isEmpty ? "No description" : productDescController.text, // Default to "No description"
         "price": productPriceController.text,
         "quantity": productQtyController.text,
-        "category_id": currentCategory?.id,
+        "category_id": categoryId,
       };
       if (currentBrand != null) {
         data.addAll({"brand_id": currentBrand.id});
+      } else {
+        data.addAll({"brand_id": "0"}); // Default to "0" for "New brand"
       }
       if (widget.product == null) {
         data.addAll({
@@ -214,10 +218,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   ),
                   SizedBox(height: responsiveData.scaleHeight(8)),
                   AppTextField(
-                    hintText: '',
-                    validator: (val) {
-                      return Validator.validateName(val);
-                    },
+                    hintText: 'Product description',
+                    validator: (val) => val != null && val.trim().isNotEmpty ? Validator.validateName(val) : null, // Allow empty
                     controller: productDescController,
                   ),
                   SizedBox(height: responsiveData.scaleHeight(20)),
@@ -374,9 +376,10 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
-                        if (currentCategory == null) {
-                          ToastService.showErrorSnackBar("Select a category!");
-                        } else if (productImage.value == null && widget.product == null) {
+                        // if (currentCategory == null) {
+                        //   ToastService.showErrorSnackBar("Select a category!");
+                        // }
+                         if (productImage.value == null && widget.product == null) {
                           ToastService.showErrorSnackBar("Select a product image");
                         } else {
                           createProduct();

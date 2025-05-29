@@ -10,7 +10,6 @@ import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/app_button.dart';
-import '../../components/app_drop_down.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
 import '../../constants/app_colors.dart';
@@ -122,92 +121,199 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     }
   }
 
+  Future<dynamic> buildPaymentBottomSheet(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      clipBehavior: Clip.none,
+      context: context,
+      builder: (context) {
+        return Container(
+          height: responsiveData.scaleHeight(326),
+          decoration: BoxDecoration(
+            color: isDarkMode ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(responsiveData.largeRadius),
+              topLeft: Radius.circular(responsiveData.largeRadius),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: responsiveData.paddingHorizontal,
+                vertical: responsiveData.scaleHeight(10)),
+            child: Stack(
+              children: [
+                ListView(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(140)),
+                      child: Container(
+                        height: responsiveData.scaleHeight(5),
+                        width: responsiveData.scaleWidth(67),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffd9d9d9),
+                          borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(38)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox.shrink(),
+                        Center(
+                          child: Text(
+                            'Select Payment Method',
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayLarge!
+                                .copyWith(
+                              fontSize: Responsive.fontSize(context, 22),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Icon(
+                            Icons.close,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(12)),
+                    Center(
+                      child: Text(
+                        'Choose the mode of payment for the receipt.',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(40)),
+                    ...paymentOptions.map((option) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedPayment = option;
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                option.replaceAll(RegExp('_'), ' '),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall!
+                                    .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> createReceipt() async {
+    String error = findMissingProducts();
+    if (error != '') {
+      ToastService.showErrorSnackBar(error);
+      return;
+    }
+    List<Map<String, dynamic>> productList = [];
+
+    for (int index in products.keys) {
+      final product = products[index]!;
+
+      if (qtyControllers[index - 1].text.isEmpty) {
+        ToastService.showErrorSnackBar('Enter the qty purchased for product $index');
+        return; // Stops the entire function execution
+      } else {
+        productList.add({
+          "id": product.id.toString(),
+          "quantity_purchased": int.parse(qtyControllers[index - 1].text),
+          "discount": discountControllers[index - 1].text.isNotEmpty
+              ? double.parse(discountControllers[index - 1].text)
+              : null,
+        });
+      }
+    }
+    Map<String, dynamic> requestData = {
+      "products": productList,
+      "record_type": widget.isInvoice == true ? "invoice" : "receipt",
+      "business_id": ref.read(getCurrentBusinessProvider)!.id!,
+      "client_id": client?.id,
+      "is_draft": isDraft,
+      "mode_of_payment":
+      widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
+    };
+    if (!context.mounted) return;
+    LoadingDialog.show(context);
+    try {
+      final Receipt response = await ref
+          .read(getAllReceiptProvider.notifier)
+          .addReceipt(requestData);
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); // pop loading dialog on success
+      ToastService.showSnackBar("Receipt generated successfully");
+      ref.invalidate(widget.isInvoice == true
+          ? getAllInvoiceProvider
+          : getAllReceiptProvider);
+      Future.delayed(const Duration(seconds: 2), () {
+        if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
+          if (!context.mounted) return;
+
+          Navigator.of(context).pop();
+          locator<PayvidenceAppRouter>().navigate(UpdateBankDetailsRoute());
+        } else {
+          Navigator.of(context).pop();
+        }
+      });
+    } on ApiErrorResponseV2 catch (e) {
+      Navigator.of(context).pop();
+      String errorMessage = e.message ?? 'An unknown error has occurred!';
+      ToastService.showErrorSnackBar(errorMessage);
+    } catch (e, stackTrace) {
+      Navigator.of(context).pop();
+      ToastService.showErrorSnackBar('An unknown error has occurred!');
+    }
+  }
+
+  String findMissingProducts() {
+    List<int> productIndexes = products.keys.toList();
+    List<int> missingIndexes = [];
+
+    for (int i = 0; i < qtyControllers.length; i++) {
+      if (!productIndexes.contains(i + 1)) {
+        missingIndexes.add(i + 1);
+      }
+    }
+
+    if (missingIndexes.isNotEmpty) {
+      return "Missing product ${missingIndexes[0]} name";
+    } else {
+      return "";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final responsiveData = ResponsiveInherited.of(context);
-
-    String findMissingProducts() {
-      List<int> productIndexes = products.keys.toList();
-      List<int> missingIndexes = [];
-
-      for (int i = 0; i < qtyControllers.length; i++) {
-        if (!productIndexes.contains(i + 1)) {
-          missingIndexes.add(i + 1);
-        }
-      }
-
-      if (missingIndexes.isNotEmpty) {
-        return "Missing product ${missingIndexes[0]} name";
-      } else {
-        return "";
-      }
-    }
-
-    Future<void> createReceipt() async {
-      String error = findMissingProducts();
-      if (error != '') {
-        ToastService.showErrorSnackBar(error);
-        return;
-      }
-      List<Map<String, dynamic>> productList = [];
-
-      for (int index in products.keys) {
-        final product = products[index]!;
-
-        if (qtyControllers[index - 1].text.isEmpty) {
-          ToastService.showErrorSnackBar('Enter the qty purchased for product $index');
-          return; // Stops the entire function execution
-        } else {
-          productList.add({
-            "id": product.id.toString(),
-            "quantity_purchased": int.parse(qtyControllers[index - 1].text),
-            "discount": discountControllers[index - 1].text.isNotEmpty
-                ? double.parse(discountControllers[index - 1].text)
-                : null,
-          });
-        }
-      }
-      Map<String, dynamic> requestData = {
-        "products": productList,
-        "record_type": widget.isInvoice == true ? "invoice" : "receipt",
-        "business_id": ref.read(getCurrentBusinessProvider)!.id!,
-        "client_id": client?.id,
-        "is_draft": isDraft,
-        "mode_of_payment":
-        widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
-      };
-      if (!context.mounted) return;
-      LoadingDialog.show(context);
-      try {
-        final Receipt response = await ref
-            .read(getAllReceiptProvider.notifier)
-            .addReceipt(requestData);
-        if (!context.mounted) return;
-        Navigator.of(context).pop(); // pop loading dialog on success
-        ToastService.showSnackBar("Receipt generated successfully");
-        ref.invalidate(widget.isInvoice == true
-            ? getAllInvoiceProvider
-            : getAllReceiptProvider);
-        Future.delayed(const Duration(seconds: 2), () {
-          if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
-            if (!context.mounted) return;
-
-            Navigator.of(context).pop();
-            locator<PayvidenceAppRouter>().navigate(UpdateBankDetailsRoute());
-          } else {
-            Navigator.of(context).pop();
-          }
-        });
-      } on ApiErrorResponseV2 catch (e) {
-        Navigator.of(context).pop();
-        String errorMessage = e.message ?? 'An unknown error has occurred!';
-        ToastService.showErrorSnackBar(errorMessage);
-      } catch (e, stackTrace) {
-        Navigator.of(context).pop();
-        ToastService.showErrorSnackBar('An unknown error has occurred!');
-      }
-    }
 
     return ResponsiveWrapper(
       child: GestureDetector(
@@ -301,17 +407,16 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             SizedBox(
                               height: responsiveData.scaleHeight(8),
                             ),
-                            AppDropdown<String>(
-                              hintText: "Mode of payment",
-                              items: paymentOptions,
-                              value: selectedPayment,
-                              displayText: (option) => option.replaceAll(RegExp('_'), " "),
-                              onChanged: (String? value) {
-                                setState(() {
-                                  selectedPayment = value;
-                                });
+                            GestureDetector(
+                              onTap: () {
+                                buildPaymentBottomSheet(context);
                               },
-                              validator: (value) => value == null ? 'Please select a payment method' : null,
+                              child: AppTextField(
+                                enabled: false,
+                                hintText: selectedPayment?.replaceAll(RegExp('_'), ' ') ?? 'Select payment method',
+                                controller: TextEditingController(),
+                                suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                              ),
                             ),
                           ],
                         ),

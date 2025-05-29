@@ -38,10 +38,13 @@ class Brands extends HookConsumerWidget {
           title: AppTextField(
             prefixIcon: Padding(
               padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-              child: SvgPicture.asset(
-                Assets.svg.backbutton,
-                colorFilter: ColorFilter.mode(
-                    isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+              child: GestureDetector(
+                onTap: ()=>Navigator.of(context).pop(),
+                child: SvgPicture.asset(
+                  Assets.svg.backbutton,
+                  colorFilter: ColorFilter.mode(
+                      isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+                ),
               ),
             ),
             hintText: 'Search for brand',
