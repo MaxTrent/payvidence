@@ -2,10 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
@@ -30,7 +31,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
     final firstNameFocusNode = useFocusNode();
     final lastNameFocusNode = useFocusNode();
     final phoneFocusNode = useFocusNode();
-
+    final responsiveData = ResponsiveInherited.of(context);
 
     useEffect(() {
       viewModel.fetchUserInformation();
@@ -46,10 +47,9 @@ class UpdatePersonalDetails extends HookConsumerWidget {
         originalFirstName.value = viewModel.userInfo?.account.firstName ?? "";
         originalLastName.value = viewModel.userInfo?.account.lastName ?? ""; // Set original last name
         originalPhoneNumber.value = viewModel.userInfo?.account.phoneNumber ?? ""; // Set original phone number
-        }
+      }
       return null;
     }, [viewModel.userInfo, viewModel.isLoading]);
-
 
     bool hasChanges() {
       return firstNameController.text != originalFirstName.value ||
@@ -57,143 +57,145 @@ class UpdatePersonalDetails extends HookConsumerWidget {
           phoneController.text != originalPhoneNumber.value;
     }
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SafeArea(
-            child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 16.h),
-                  Text(
-                    'Update personal details',
-                    style: Theme.of(context).textTheme.displayLarge,
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    'You can update your profile here.',
-                    style: Theme.of(context).textTheme.displaySmall!,
-                  ),
-                  SizedBox(height: 32.h),
-                  if (viewModel.isLoading) ...[
-                    Text('First name',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    CustomShimmer(height: 50.h),
-                    SizedBox(height: 20.h),
-                    Text('Last name',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    CustomShimmer(height: 50.h),
-                    SizedBox(height: 20.h),
-                    Text('Email address',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    CustomShimmer(height: 50.h),
-                    SizedBox(height: 20.h),
-                    Text('Phone number',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    CustomShimmer(height: 50.h),
-                  ] else ...[
-                    Text('First name',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    AppTextField(
-                      hintText: 'First name',
-                      enabled: viewModel.isEditing,
-                      controller: firstNameController,
-                      keyboardType: TextInputType.name,
-                      focusNode: firstNameFocusNode,
-                      textCapitalization: TextCapitalization.words,
-                      validator: (val) {
-                        if (!val!.trim().isValidName || val.isEmpty) {
-                          return 'Enter a valid name';
-                        }
-                        return null;
-                      },
+    return ResponsiveWrapper(
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          appBar: AppBar(),
+          body: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+            child: SafeArea(
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: responsiveData.scaleHeight(16)),
+                    Text(
+                      'Update personal details',
+                      style: Theme.of(context).textTheme.displayLarge,
                     ),
-                    SizedBox(height: 20.h),
-                    Text('Last name',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    AppTextField(
-                      hintText: 'Last name',
-                      enabled: viewModel.isEditing,
-                      controller: lastNameController,
-                      keyboardType: TextInputType.name,
-                      focusNode: lastNameFocusNode,
-                      textCapitalization: TextCapitalization.words,
-                      validator: (val) {
-                        if (!val!.trim().isValidName || val.isEmpty) {
-                          return 'Enter a valid name';
-                        }
-                        return null;
-                      },
+                    SizedBox(height: responsiveData.scaleHeight(8)),
+                    Text(
+                      'You can update your profile here.',
+                      style: Theme.of(context).textTheme.displaySmall!,
                     ),
-                    SizedBox(height: 20.h),
-                    Text('Email address',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    AppTextField(
-                      hintText: 'Email address',
-                      enabled: false, // Email remains disabled
-                      controller: emailController,
-                    ),
-                    SizedBox(height: 20.h),
-                    Text('Phone number',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(height: 8.h),
-                    AppTextField(
-                      hintText: 'Phone number',
-                      enabled: viewModel.isEditing,
-                      controller: phoneController,
-                      keyboardType: TextInputType.phone,
-                      focusNode: phoneFocusNode,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(11),
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      validator: (val) {
-                        if (val!.trim().isEmpty || !val.isValidPhone) {
-                          return 'Enter a valid phone number';
+                    SizedBox(height: responsiveData.scaleHeight(32)),
+                    if (viewModel.isLoading) ...[
+                      Text('First name',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      CustomShimmer(height: responsiveData.scaleHeight(50)),
+                      SizedBox(height: responsiveData.scaleHeight(20)),
+                      Text('Last name',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      CustomShimmer(height: responsiveData.scaleHeight(50)),
+                      SizedBox(height: responsiveData.scaleHeight(20)),
+                      Text('Email address',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      CustomShimmer(height: responsiveData.scaleHeight(50)),
+                      SizedBox(height: responsiveData.scaleHeight(20)),
+                      Text('Phone number',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      CustomShimmer(height: responsiveData.scaleHeight(50)),
+                    ] else ...[
+                      Text('First name',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      AppTextField(
+                        hintText: 'First name',
+                        enabled: viewModel.isEditing,
+                        controller: firstNameController,
+                        keyboardType: TextInputType.name,
+                        focusNode: firstNameFocusNode,
+                        textCapitalization: TextCapitalization.words,
+                        validator: (val) {
+                          if (!val!.trim().isValidName || val.isEmpty) {
+                            return 'Enter a valid name';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: responsiveData.scaleHeight(20)),
+                      Text('Last name',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      AppTextField(
+                        hintText: 'Last name',
+                        enabled: viewModel.isEditing,
+                        controller: lastNameController,
+                        keyboardType: TextInputType.name,
+                        focusNode: lastNameFocusNode,
+                        textCapitalization: TextCapitalization.words,
+                        validator: (val) {
+                          if (!val!.trim().isValidName || val.isEmpty) {
+                            return 'Enter a valid name';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: responsiveData.scaleHeight(20)),
+                      Text('Email address',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      AppTextField(
+                        hintText: 'Email address',
+                        enabled: false, // Email remains disabled
+                        controller: emailController,
+                      ),
+                      SizedBox(height: responsiveData.scaleHeight(20)),
+                      Text('Phone number',
+                          style: Theme.of(context).textTheme.displaySmall),
+                      SizedBox(height: responsiveData.scaleHeight(8)),
+                      AppTextField(
+                        hintText: 'Phone number',
+                        enabled: viewModel.isEditing,
+                        controller: phoneController,
+                        keyboardType: TextInputType.phone,
+                        focusNode: phoneFocusNode,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(11),
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        validator: (val) {
+                          if (val!.trim().isEmpty || !val.isValidPhone) {
+                            return 'Enter a valid phone number';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                    SizedBox(height: responsiveData.scaleHeight(32)),
+                    AppButton(
+                      isProcessing: viewModel.isLoading,
+                      buttonText: viewModel.isEditing ? 'Save' : 'Update details',
+                      // isDisabled: viewModel.isEditing && !hasChanges(),
+                      onPressed: () {
+                        if (!viewModel.isEditing) {
+                          viewModel.toggleEditing();
+                          firstNameFocusNode.requestFocus();
+                        } else if (hasChanges()) {
+                          if (formKey.currentState!.validate()) {
+                            viewModel.updateUserInfo(
+                              newFirstName: firstNameController.text.trim(),
+                              newLastName: lastNameController.text.trim(),
+                              newPhoneNumber: phoneController.text.trim(),
+                              navigateOnSuccess: () {
+                                locator<PayvidenceAppRouter>().back();
+                              },
+                            );
+                          }
+                        } else {
+                          print("No changes detected, exiting edit mode");
+                          viewModel.toggleEditing();
                         }
-                        return null;
                       },
                     ),
                   ],
-                  SizedBox(height: 32.h),
-                  AppButton(
-                    isProcessing: viewModel.isLoading,
-                    buttonText: viewModel.isEditing ? 'Save' : 'Update details',
-                    // isDisabled: viewModel.isEditing && !hasChanges(),
-                    onPressed: () {
-                      if (!viewModel.isEditing) {
-                        viewModel.toggleEditing();
-                        firstNameFocusNode.requestFocus();
-                      } else if (hasChanges()) {
-                        if (formKey.currentState!.validate()) {
-                          viewModel.updateUserInfo(
-                            newFirstName: firstNameController.text.trim(),
-                            newLastName: lastNameController.text.trim(),
-                            newPhoneNumber: phoneController.text.trim(),
-                            navigateOnSuccess: () {
-                              locator<PayvidenceAppRouter>().back();
-                            },
-                          );
-                        }
-                      } else {
-                        print("No changes detected, exiting edit mode");
-                        viewModel.toggleEditing();
-                      }
-                    },
-                  ),
-                ],
+                ),
               ),
             ),
           ),

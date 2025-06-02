@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
@@ -9,6 +8,8 @@ import 'package:payvidence/utilities/theme_mode.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/responsive.dart';
+import '../../utilities/responsive_wrapper.dart';
 import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'AccountSuccessRoute')
@@ -17,6 +18,8 @@ class AccountSuccessScreen extends HookWidget {
 
   Future<dynamic> buildBottomSheet(
       BuildContext context, bool isDarkMode, String title, String body, VoidCallback? onContinue) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -24,40 +27,42 @@ class AccountSuccessScreen extends HookWidget {
       context: context,
       builder: (context) {
         return Container(
-          height: 800.h,
+          height: responsiveData.scaleHeight(800),
           decoration: BoxDecoration(
             color: isDarkMode ? Colors.black : Colors.white,
             borderRadius: BorderRadius.only(
-              topRight: Radius.circular(40.r),
-              topLeft: Radius.circular(40.r),
+              topRight: Radius.circular(responsiveData.radius),
+              topLeft: Radius.circular(responsiveData.radius),
             ),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+                horizontal: responsiveData.paddingHorizontal,
+                vertical: responsiveData.scaleHeight(10)),
             child: Stack(
               children: [
                 ListView(
-                  padding: EdgeInsets.only(bottom: 70.h), // Add bottom padding to account for the button
+                  padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(70)),
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 140.w),
+                      padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(140)),
                       child: Container(
-                        height: 5.h,
-                        width: 67.w,
+                        height: responsiveData.scaleHeight(5),
+                        width: responsiveData.scaleWidth(67),
                         decoration: BoxDecoration(
                           color: isDarkMode ? Colors.white54 : const Color(0xffd9d9d9),
-                          borderRadius: BorderRadius.circular(100.r),
+                          borderRadius: BorderRadius.circular(responsiveData.radius),
                         ),
                       ),
                     ),
-                    SizedBox(height: 38.h),
+                    SizedBox(height: responsiveData.spacingVertical),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'PAYVIDENCE',
                           style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                            fontSize: 24.sp,
+                            fontSize: Responsive.fontSize(context, 24),
                             fontWeight: FontWeight.w700,
                             color: primaryColor2,
                           ),
@@ -71,15 +76,15 @@ class AccountSuccessScreen extends HookWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: responsiveData.scaleHeight(32)),
                     Text(
                       title,
                       style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                        fontSize: 40.h,
+                        fontSize: responsiveData.scaleHeight(40),
                         color: isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: responsiveData.scaleHeight(24)),
                     Text(
                       body,
                       style: Theme.of(context).textTheme.displaySmall!.copyWith(
@@ -91,11 +96,11 @@ class AccountSuccessScreen extends HookWidget {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14.h),
+                    padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(14)),
                     child: SizedBox(
-                      height: 56.h,
+                      height: responsiveData.minButtonHeight,
                       child: AppButton(
-                        height: 56.h,
+                        height: responsiveData.minButtonHeight,
                         buttonText: 'Continue',
                         textColor: Colors.white,
                         backgroundColor: primaryColor2,
@@ -121,6 +126,7 @@ class AccountSuccessScreen extends HookWidget {
   Widget build(BuildContext context) {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
+    final responsiveData = ResponsiveInherited.of(context);
 
     const privacyPolicyContent = '''
 At Payvidence, we prioritize your privacy and the security of your personal information. This Privacy Policy outlines how we collect, use, and share the information you provide when using our mobile application and related services. By using Payvidence, you consent to the practices described in this policy.\n\n'
@@ -186,55 +192,59 @@ These Terms and Conditions govern your use of PAYVIDENCE (the "Service"). By acc
 'These Terms are governed by Nigerian law. Disputes shall be resolved in Abuja courts.'
 ''';
 
-    return Scaffold(
-      floatingActionButton: AppButton(
-        buttonText: 'Go to Home',
-        onPressed: () {
-          // Show Privacy Policy bottom sheet
-          buildBottomSheet(
-            context,
-            isDarkMode,
-            'Our Privacy\nPolicy',
-            privacyPolicyContent,
-                () {
-              // Show Terms and Conditions bottom sheet
-              buildBottomSheet(
-                context,
-                isDarkMode,
-                'Terms and\nConditions',
-                termsAndConditionsContent,
-                    () {
-                  // Navigate to Login
-                  locator<PayvidenceAppRouter>()
-                      .popUntil((route) => route is OnboardingScreen);
-                  locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
-                },
-              );
-            },
-          );
-        },
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SvgPicture.asset(Assets.svg.profileConfetti),
-              SizedBox(height: 40.h),
-              Text(
-                'Account created!',
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-              SizedBox(height: 10.h),
-              Text(
-                'Your account has been successfully created. You can log in now to proceed to Home.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.displaySmall!,
-              ),
-              SizedBox(height: 32.h),
-            ],
+    return ResponsiveWrapper(
+      child: Scaffold(
+        floatingActionButton: AppButton(
+          buttonText: 'Go to Home',
+          onPressed: () {
+            buildBottomSheet(
+              context,
+              isDarkMode,
+              'Our Privacy\nPolicy',
+              privacyPolicyContent,
+                  () {
+                buildBottomSheet(
+                  context,
+                  isDarkMode,
+                  'Terms and\nConditions',
+                  termsAndConditionsContent,
+                      () {
+                    locator<PayvidenceAppRouter>()
+                        .popUntil((route) => route is OnboardingScreen);
+                    locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.login);
+                  },
+                );
+              },
+            );
+          },
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  Assets.svg.profileConfetti,
+                  height: responsiveData.scaleHeight(200),
+                  width: responsiveData.scaleWidth(200),
+                ),
+                SizedBox(height: responsiveData.scaleHeight(40)),
+                Text(
+                  'Account created 그렇습니다!',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                SizedBox(height: responsiveData.scaleHeight(10)),
+                Text(
+                  'Your account has been successfully created. You can log in now to proceed to Home.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.displaySmall!,
+                ),
+                SizedBox(height: responsiveData.scaleHeight(32)),
+              ],
+            ),
           ),
         ),
       ),

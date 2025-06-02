@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../gen/assets.gen.dart';
+import '../utilities/responsive.dart';
 
 class AppTheme {
-  ThemeData get light => ThemeData(
+  ThemeData lightTheme(BuildContext context) => ThemeData(
     brightness: Brightness.light,
     actionIconTheme: ActionIconThemeData(
       backButtonIconBuilder: (BuildContext context) =>
@@ -21,25 +21,24 @@ class AppTheme {
     applyElevationOverlayColor: true,
     scaffoldBackgroundColor: Colors.white,
     primaryColor: Colors.black,
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.white,
-      brightness: Brightness.light,),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.white, brightness: Brightness.light),
     textTheme: TextTheme(
       displayLarge: TextStyle(
         fontFamily: 'Polysans',
         color: Colors.black,
-        fontSize: 28.sp,
+        fontSize: Responsive.fontSize(context, 28),
         fontWeight: FontWeight.w600,
       ),
       displayMedium: TextStyle(
         fontFamily: 'Polysans',
         color: Colors.black,
-        fontSize: 18.sp,
+        fontSize: Responsive.fontSize(context, 18),
         fontWeight: FontWeight.w600,
       ),
       displaySmall: TextStyle(
         fontFamily: 'Polysans',
         color: Colors.black,
-        fontSize: 16.sp,
+        fontSize: Responsive.fontSize(context, 16),
         fontWeight: FontWeight.w400,
       ),
     ),
@@ -49,15 +48,15 @@ class AppTheme {
       unselectedItemColor: Colors.black.withOpacity(0.5),
       selectedLabelStyle: TextStyle(
         fontFamily: 'Polysans',
-        fontSize: 12.sp,
+        fontSize: Responsive.fontSize(context, 12),
         fontWeight: FontWeight.w600,
-          color: Colors.black
+        color: Colors.black,
       ),
       unselectedLabelStyle: TextStyle(
         fontFamily: 'Polysans',
-        fontSize: 12.sp,
+        fontSize: Responsive.fontSize(context, 12),
         fontWeight: FontWeight.w400,
-        color: Colors.black
+        color: Colors.black,
       ),
       showSelectedLabels: true,
       showUnselectedLabels: true,
@@ -67,12 +66,12 @@ class AppTheme {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(Responsive.radius(context))), // Replaces 20.r
       ),
     ),
   );
 
-  ThemeData get dark => ThemeData(
+  ThemeData darkTheme(BuildContext context) => ThemeData(
     brightness: Brightness.dark,
     actionIconTheme: ActionIconThemeData(
       backButtonIconBuilder: (BuildContext context) => SvgPicture.asset(
@@ -91,25 +90,24 @@ class AppTheme {
     applyElevationOverlayColor: true,
     scaffoldBackgroundColor: const Color(0xff121212),
     primaryColor: Colors.black,
-    colorScheme: ColorScheme.fromSeed(seedColor: Colors.black,
-      brightness: Brightness.dark,),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.black, brightness: Brightness.dark),
     textTheme: TextTheme(
       displayLarge: TextStyle(
         fontFamily: 'Polysans',
         color: Colors.white,
-        fontSize: 28.sp,
+        fontSize: Responsive.fontSize(context, 28),
         fontWeight: FontWeight.w600,
       ),
       displayMedium: TextStyle(
         fontFamily: 'Polysans',
         color: Colors.white,
-        fontSize: 18.sp,
+        fontSize: Responsive.fontSize(context, 18),
         fontWeight: FontWeight.w600,
       ),
       displaySmall: TextStyle(
         fontFamily: 'Polysans',
         color: Colors.white,
-        fontSize: 16.sp,
+        fontSize: Responsive.fontSize(context, 16),
         fontWeight: FontWeight.w400,
       ),
     ),
@@ -119,15 +117,15 @@ class AppTheme {
       unselectedItemColor: Colors.white.withOpacity(0.5),
       selectedLabelStyle: TextStyle(
         fontFamily: 'Polysans',
-        fontSize: 12.sp,
+        fontSize: Responsive.fontSize(context, 12),
         fontWeight: FontWeight.w600,
-          color: Colors.white
+        color: Colors.white,
       ),
       unselectedLabelStyle: TextStyle(
         fontFamily: 'Polysans',
-        fontSize: 12.sp,
+        fontSize: Responsive.fontSize(context, 12),
         fontWeight: FontWeight.w400,
-        color: Colors.white
+        color: Colors.white,
       ),
       showSelectedLabels: true,
       showUnselectedLabels: true,
@@ -137,7 +135,7 @@ class AppTheme {
       backgroundColor: const Color(0xff1E1E1E),
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(Responsive.radius(context))), // Replaces 20.r
       ),
     ),
   );

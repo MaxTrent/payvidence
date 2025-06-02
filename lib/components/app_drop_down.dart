@@ -1,8 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../constants/app_colors.dart';
+import '../utilities/responsive_wrapper.dart';
 
 class AppDropdown<T> extends StatelessWidget {
   final String hintText;
@@ -33,42 +32,49 @@ class AppDropdown<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final responsiveData = ResponsiveInherited.of(context);
+    final effectiveBorderRadius = borderRadius != null
+        ? responsiveData.scaleHeight(borderRadius!)
+        : responsiveData.smallRadius;
 
     return DropdownButtonFormField2<T>(
       hint: Text(
         hintText,
         textAlign: TextAlign.start,
         style: Theme.of(context).textTheme.displaySmall!.copyWith(
-              color: isDarkMode ? Colors.white54 : hintTextColor,
-            ),
+          color: isDarkMode ? Colors.white54 : hintTextColor,
+        ),
       ),
       decoration: InputDecoration(
         contentPadding: contentPadding ??
-            EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
+            EdgeInsets.symmetric(
+              horizontal: responsiveData.scaleWidth(12),
+              vertical: responsiveData.scaleHeight(16),
+            ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 6.r),
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
           borderSide: BorderSide(
             color: isDarkMode ? Colors.white54 : Colors.grey,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 6.r),
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
           borderSide: BorderSide(
             color: isDarkMode ? Colors.white54 : Colors.grey,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 6.r),
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
           borderSide: BorderSide(
             color: isDarkMode ? Colors.white54 : Colors.grey,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 6.r),
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
           borderSide: const BorderSide(color: Colors.red),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 6.r),
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
           borderSide: const BorderSide(color: Colors.red),
         ),
       ),
@@ -79,17 +85,19 @@ class AppDropdown<T> extends StatelessWidget {
           child: Text(
             displayText(item),
             style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  color: isDarkMode ? Colors.white : Colors.black,
-                ),
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
           ),
         );
       }).toList(),
       onChanged: onChanged,
       validator: validator,
       dropdownStyleData: DropdownStyleData(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
+        padding: EdgeInsets.symmetric(
+          vertical: responsiveData.scaleHeight(8), // Replaces 8.h
+        ),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius ?? 6.r),
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
           color: isDarkMode
               ? (darkModeBackgroundColor ?? Colors.black)
               : (lightModeBackgroundColor ?? Colors.grey.shade100),

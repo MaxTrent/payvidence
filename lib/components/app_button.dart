@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/components/loading_indicator.dart';
-
 import '../constants/app_colors.dart';
+import '../utilities/responsive_wrapper.dart';
 
 class AppButton extends StatelessWidget {
   AppButton({
@@ -28,36 +27,47 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+    final dynamicHeight = height != null ? responsiveData.scaleHeight(height!) : responsiveData.scaleHeight(56);
+    final dynamicWidth = width != null ? responsiveData.scaleWidth(width!) : null;
+
     return SizedBox(
-      height: height ?? 56.h,
-      width: width?.w,
+      height: dynamicHeight,
+      width: dynamicWidth,
       child: ElevatedButton(
         onPressed: isProcessing || isDisabled ? null : onPressed,
         style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(
-                isDisabled ? const Color.fromRGBO(78, 56, 178, 0.4) : backgroundColor),
-            foregroundColor: WidgetStateProperty.all(textColor),
-            elevation: WidgetStateProperty.all(0),
-            minimumSize: WidgetStateProperty.all(Size(350.w, 60.h)),
-            shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(
-                side: const BorderSide(
-                  color: Colors.transparent,
-                ),
-                borderRadius: BorderRadius.circular(40.r),
+          backgroundColor: WidgetStateProperty.all(
+            isDisabled ? const Color.fromRGBO(78, 56, 178, 0.4) : backgroundColor,
+          ),
+          foregroundColor: WidgetStateProperty.all(textColor),
+          elevation: WidgetStateProperty.all(0),
+          minimumSize: WidgetStateProperty.all(
+            Size(
+              responsiveData.minButtonWidth,
+              responsiveData.minButtonHeight,
+            ),
+          ),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              side: const BorderSide(
+                color: Colors.transparent,
               ),
-            )),
+              borderRadius: BorderRadius.circular(responsiveData.radius),
+            ),
+          ),
+        ),
         child: isProcessing
             ? const LoadingIndicator(
-                color: Colors.white,
-              )
+          color: Colors.white,
+        )
             : Text(
-                buttonText,
-                style: Theme.of(context)
-                    .textTheme
-                    .displayMedium!
-                    .copyWith(fontWeight: FontWeight.w600, color: textColor),
-              ),
+          buttonText,
+          style: Theme.of(context)
+              .textTheme
+              .displayMedium!
+              .copyWith(fontWeight: FontWeight.w600, color: textColor),
+        ),
       ),
     );
   }

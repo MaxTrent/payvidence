@@ -3,7 +3,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +18,8 @@ import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/responsive.dart';
+import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/theme_mode.dart';
 
 @RoutePage(name: 'AllReceiptsRoute')
@@ -33,6 +34,7 @@ class AllReceipts extends HookConsumerWidget {
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
     final productNumber = ValueNotifier<int?>(null);
+    final responsiveData = ResponsiveInherited.of(context);
 
     useEffect(() {
       Timer? timer;
@@ -55,198 +57,200 @@ class AllReceipts extends HookConsumerWidget {
       await ref.refresh(getAllReceiptProvider.future);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: ValueListenableBuilder(
-          builder: (context, value, _) {
-            return Text(
-              'All receipts (${value ?? '0'})',
-              style: Theme.of(context).textTheme.displayLarge!.copyWith(),
-            );
-          },
-          valueListenable: productNumber,
-        ),
-        actions: [
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(right: 20.w),
-              child: GestureDetector(
-                onTap: () {
-                  locator<PayvidenceAppRouter>().navigate(DraftsRoute(isInvoice: false));
-                },
-                child: Text(
-                  'View drafts',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displayMedium!
-                      .copyWith(fontSize: 14.sp, color: primaryColor2),
-                ),
-              ),
-            ),
+    return ResponsiveWrapper(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          title: ValueListenableBuilder(
+            builder: (context, value, _) {
+              return Text(
+                'All receipts (${value ?? '0'})',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(),
+              );
+            },
+            valueListenable: productNumber,
           ),
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 32.h),
-            AppTextField(
-              prefixIcon: Padding(
-                padding: EdgeInsets.all(16.h),
-                child: SvgPicture.asset(
-                  Assets.svg.search,
-                  colorFilter: ColorFilter.mode(
-                    isDarkMode ? Colors.white : Colors.black,
-                    BlendMode.srcIn,
+          actions: [
+            Center(
+              child: Padding(
+                padding: EdgeInsets.only(right: responsiveData.scaleWidth(20)),
+                child: GestureDetector(
+                  onTap: () {
+                    locator<PayvidenceAppRouter>().navigate(DraftsRoute(isInvoice: false));
+                  },
+                  child: Text(
+                    'View drafts',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium!
+                        .copyWith(fontSize: Responsive.fontSize(context, 14), color: primaryColor2),
                   ),
-                ),
-              ),
-              hintText: 'Search for receipt',
-              controller: searchController,
-              radius: 80,
-              filled: true,
-              fillColor: isDarkMode ? Colors.black : appGrey5,
-            ),
-            SizedBox(height: 20.h),
-            Expanded(
-              child: allReceipts.when(
-                data: (data) {
-                  final actualData = data.where((data) => data.publishedAt != null).toList();
-                  final filteredData = searchQuery.value.isEmpty
-                      ? actualData
-                      : actualData
-                      .where((receipt) =>
-                  receipt.recordProductDetails?[0].product?.name
-                      ?.toLowerCase()
-                      .contains(searchQuery.value.toLowerCase()) ??
-                      false)
-                      .toList();
-
-                  if (filteredData.isEmpty) {
-                    productNumber.value = 0;
-                    return PullToRefresh(
-                      onRefresh: onRefresh,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: SizedBox(
-                          height: ScreenUtil().screenHeight - 200.h,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(Assets.svg.emptyReceipt),
-                              SizedBox(height: 40.h),
-                              Text(
-                                searchQuery.value.isEmpty
-                                    ? 'No receipts available!'
-                                    : 'No receipts found!',
-                                style: Theme.of(context).textTheme.displayLarge,
-                              ),
-                              SizedBox(height: 10.h),
-                              Text(
-                                searchQuery.value.isEmpty
-                                    ? 'All added receipts will appear here.'
-                                    : 'Try a different search term.',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              const Spacer(),
-                              if (searchQuery.value.isEmpty) ...[
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 52.h),
-                                  child: AppButton(
-                                    buttonText: 'Generate receipt',
-                                    onPressed: () {
-                                      locator<PayvidenceAppRouter>()
-                                          .navigate(GenerateReceiptRoute(isInvoice: false));
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                  productNumber.value = filteredData.length;
-                  return PullToRefresh(
-                    onRefresh: onRefresh,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            locator<PayvidenceAppRouter>().navigate(
-                              ReceiptScreenRoute(
-                                record: filteredData[index],
-                                isInvoice: false,
-                              ),
-                            );
-                          },
-                          child: ReceiptTile(receipt: filteredData[index]),
-                        );
-                      },
-                      physics: const NeverScrollableScrollPhysics(),
-                      separatorBuilder: (ctx, idx) => Column(
-                        children: [SizedBox(height: 24.h)],
-                      ),
-                      itemCount: filteredData.length,
-                    ),
-                  );
-                },
-                error: (error, _) => PullToRefresh(
-                  onRefresh: onRefresh,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: ScreenUtil().screenHeight - 200.h,
-                      child: const Center(child: Text('An error has occurred')),
-                    ),
-                  ),
-                ),
-                loading: () => ListView.separated(
-                  shrinkWrap: true,
-                  separatorBuilder: (ctx, idx) => 12.verticalSpace,
-                  itemCount: 5,
-                  itemBuilder: (_, index) => CustomShimmer(height: 60.h),
                 ),
               ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: allReceipts.when(
-        data: (data) {
-          final actualData = data.where((data) => data.publishedAt != null).toList();
-          final filteredData = searchQuery.value.isEmpty
-              ? actualData
-              : actualData
-              .where((receipt) =>
-          receipt.recordProductDetails?[0].product?.name
-              ?.toLowerCase()
-              .contains(searchQuery.value.toLowerCase()) ??
-              false)
-              .toList();
-          return filteredData.isNotEmpty
-              ? FloatingActionButton(
-            onPressed: () {
-              locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: false));
-            },
-            backgroundColor: primaryColor2,
-            child: Icon(Icons.add, size: 40.h),
-          )
-              : null;
-        },
-        error: (error, _) => null,
-        loading: () => null,
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: responsiveData.scaleHeight(32)),
+              AppTextField(
+                prefixIcon: Padding(
+                  padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                  child: SvgPicture.asset(
+                    Assets.svg.search,
+                    colorFilter: ColorFilter.mode(
+                      isDarkMode ? Colors.white : Colors.black,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                hintText: 'Search for receipt',
+                controller: searchController,
+                radius: responsiveData.largeRadius,
+                filled: true,
+                fillColor: isDarkMode ? Colors.black : appGrey5,
+              ),
+              SizedBox(height: responsiveData.scaleHeight(20)),
+              Expanded(
+                child: allReceipts.when(
+                  data: (data) {
+                    final actualData = data.where((data) => data.publishedAt != null).toList();
+                    final filteredData = searchQuery.value.isEmpty
+                        ? actualData
+                        : actualData
+                        .where((receipt) =>
+                    receipt.recordProductDetails?[0].product?.name
+                        ?.toLowerCase()
+                        .contains(searchQuery.value.toLowerCase()) ??
+                        false)
+                        .toList();
+
+                    if (filteredData.isEmpty) {
+                      productNumber.value = 0;
+                      return PullToRefresh(
+                        onRefresh: onRefresh,
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(Assets.svg.emptyReceipt),
+                                SizedBox(height: responsiveData.scaleHeight(40)),
+                                Text(
+                                  searchQuery.value.isEmpty
+                                      ? 'No receipts available!'
+                                      : 'No receipts found!',
+                                  style: Theme.of(context).textTheme.displayLarge,
+                                ),
+                                SizedBox(height: responsiveData.scaleHeight(10)),
+                                Text(
+                                  searchQuery.value.isEmpty
+                                      ? 'All added receipts will appear here.'
+                                      : 'Try a different search term.',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall!
+                                      .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                ),
+                                const Spacer(),
+                                if (searchQuery.value.isEmpty) ...[
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(52)),
+                                    child: AppButton(
+                                      buttonText: 'Generate receipt',
+                                      onPressed: () {
+                                        locator<PayvidenceAppRouter>()
+                                            .navigate(GenerateReceiptRoute(isInvoice: false));
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    productNumber.value = filteredData.length;
+                    return PullToRefresh(
+                      onRefresh: onRefresh,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              locator<PayvidenceAppRouter>().navigate(
+                                ReceiptScreenRoute(
+                                  record: filteredData[index],
+                                  isInvoice: false,
+                                ),
+                              );
+                            },
+                            child: ReceiptTile(receipt: filteredData[index]),
+                          );
+                        },
+                        physics: const NeverScrollableScrollPhysics(),
+                        separatorBuilder: (ctx, idx) => Column(
+                          children: [SizedBox(height: responsiveData.scaleHeight(24))],
+                        ),
+                        itemCount: filteredData.length,
+                      ),
+                    );
+                  },
+                  error: (error, _) => PullToRefresh(
+                    onRefresh: onRefresh,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
+                        child: const Center(child: Text('An error has occurred')),
+                      ),
+                    ),
+                  ),
+                  loading: () => ListView.separated(
+                    shrinkWrap: true,
+                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
+                    itemCount: 5,
+                    itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(60)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: allReceipts.when(
+          data: (data) {
+            final actualData = data.where((data) => data.publishedAt != null).toList();
+            final filteredData = searchQuery.value.isEmpty
+                ? actualData
+                : actualData
+                .where((receipt) =>
+            receipt.recordProductDetails?[0].product?.name
+                ?.toLowerCase()
+                .contains(searchQuery.value.toLowerCase()) ??
+                false)
+                .toList();
+            return filteredData.isNotEmpty
+                ? FloatingActionButton(
+              onPressed: () {
+                locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: false));
+              },
+              backgroundColor: primaryColor2,
+              child: Icon(Icons.add, size: responsiveData.scaleHeight(40)),
+            )
+                : null;
+          },
+          error: (error, _) => null,
+          loading: () => null,
+        ),
       ),
     );
   }
@@ -259,15 +263,17 @@ class ReceiptTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          height: 72.h,
-          width: 72.h,
+          height: responsiveData.scaleHeight(72),
+          width: responsiveData.scaleHeight(72),
           decoration: const BoxDecoration(color: Colors.black),
         ),
-        SizedBox(width: 14.w),
+        SizedBox(width: responsiveData.scaleWidth(14)),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -277,7 +283,7 @@ class ReceiptTile extends StatelessWidget {
                 receipt.recordProductDetails?[0].product?.name ?? '',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
-              SizedBox(height: 6.h),
+              SizedBox(height: responsiveData.scaleHeight(6)),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -286,30 +292,30 @@ class ReceiptTile extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall!
-                        .copyWith(fontSize: 14.sp, color: appGrey4),
+                        .copyWith(fontSize: Responsive.fontSize(context, 14), color: appGrey4),
                   ),
-                  SizedBox(width: 10.w),
+                  SizedBox(width: responsiveData.scaleWidth(10)),
                   Container(
-                    height: 6.h,
-                    width: 6.h,
+                    height: responsiveData.scaleHeight(6),
+                    width: responsiveData.scaleHeight(6),
                     decoration: BoxDecoration(
                       color: appGrey4,
-                      borderRadius: BorderRadius.circular(24.r),
+                      borderRadius: BorderRadius.circular(responsiveData.smallRadius),
                     ),
                   ),
-                  SizedBox(width: 10.w),
+                  SizedBox(width: responsiveData.scaleWidth(10)),
                   Expanded(
                     child: Text(
                       DateFormat.yMd().add_jm().format(receipt.createdAt!),
                       style: Theme.of(context)
                           .textTheme
                           .displaySmall!
-                          .copyWith(fontSize: 14.sp, color: appGrey4),
+                          .copyWith(fontSize: Responsive.fontSize(context, 14), color: appGrey4),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: responsiveData.scaleHeight(8)),
               Row(
                 children: [
                   const AppNaira(fontSize: 14),
@@ -318,7 +324,7 @@ class ReceiptTile extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .displayMedium!
-                        .copyWith(fontSize: 14.sp),
+                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
                   ),
                 ],
               ),

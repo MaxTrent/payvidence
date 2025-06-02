@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +8,8 @@ import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/providers/sales_providers/sales_data_provider.dart';
 import 'package:payvidence/providers/sales_providers/sales_fillter_provider.dart';
 import 'package:payvidence/utilities/extensions.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
@@ -25,257 +26,257 @@ class Sales extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final salesData = ref.watch(salesDataProvider);
     final interval = ref.watch(salesFilterProvider)["interval"];
-
     DateTime date = ref.watch(salesDateFilterProvider);
-
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
-
+    final responsiveData = ResponsiveInherited.of(context);
 
     Future<void> onRefresh() async {
       await ref.refresh(salesDataProvider.future);
     }
 
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: PullToRefresh(
-            onRefresh: onRefresh,
-            child: ListView(
-              children: [
-                12.verticalSpace,
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (interval == "weekly") {
-                          return;
-                        }
-                        ref
-                            .read(salesFilterProvider.notifier)
-                            .setKey("interval", "weekly");
-                        ref.read(salesDataProvider.notifier).setFilter();
-                      },
-                      child: Container(
-                        height: 45.h,
-                        width: 83.w,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(43.r),
-                            color: interval == "weekly"
-                                ? primaryColor2
-                                : Colors.transparent),
-                        child: Center(
-                            child: Text(
-                          'Weekly',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(
-                                  color: (interval == "weekly" || isDarkMode)
-                                      ? Colors.white
-                                      : Colors.black),
-                        )),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    GestureDetector(
-                      onTap: () {
-                        if (interval == "monthly") {
-                          return;
-                        }
-                        ref
-                            .read(salesFilterProvider.notifier)
-                            .setKey("interval", "monthly");
-                        ref.read(salesDataProvider.notifier).setFilter();
-                      },
-                      child: Container(
-                        height: 45.h,
-                        width: 83.w,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(43.r),
-                            color: interval == "monthly"
-                                ? primaryColor2
-                                : Colors.transparent),
-                        child: Center(
-                            child: Text(
-                          'Monthly',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(
-                                  color: (interval == "monthly" || isDarkMode)
-                                      ? Colors.white
-                                      : Colors.black),
-                        )),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    GestureDetector(
-                      onTap: () {
-                        if (interval == "yearly") {
-                          return;
-                        }
-                        ref
-                            .read(salesFilterProvider.notifier)
-                            .setKey("interval", "yearly");
-                        ref.read(salesDataProvider.notifier).setFilter();
-                      },
-                      child: Container(
-                        height: 45.h,
-                        width: 83.w,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(43.r),
-                            color: interval == "yearly"
-                                ? primaryColor2
-                                : Colors.transparent),
-                        child: Center(
-                            child: Text(
-                          'Yearly',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .copyWith(
-                                  color: (interval == "yearly" || isDarkMode)
-                                      ? Colors.white
-                                      : Colors.black),
-                        )),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 24.h,
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    if (interval == "weekly") {
-                      ref.read(salesDateFilterProvider.notifier).state =
-                          (await selectDay(context)) ?? DateTime.now();
-
-                      ref.read(salesFilterProvider.notifier).setKey(
-                          "endDate",
-                          DateFormat("y-M-d")
-                              .format(ref.read(salesDateFilterProvider)));
-                      ref.read(salesFilterProvider.notifier).setKey(
-                          "startDate",
-                          DateFormat("y-M-d").format(ref
-                              .read(salesDateFilterProvider)
-                              .subtract(const Duration(days: 7))));
-                      ref.read(salesDataProvider.notifier).setFilter();
-                    } else if (interval == "monthly") {
-                      ref.read(salesDateFilterProvider.notifier).state =
-                          (await showMonthPicker(
-                                  context: context,
-                                  initialDate: DateTime.now())) ??
-                              DateTime.now();
-                      ref.read(salesFilterProvider.notifier).setKey(
-                          "endDate",
-                          DateFormat("y-M-d").format(DateTime(
-                              ref.read(salesDateFilterProvider).year,
-                              ref.read(salesDateFilterProvider).month,
-                              31)));
-                      ref.read(salesFilterProvider.notifier).setKey(
-                          "startDate",
-                          DateFormat("y-M-d").format(DateTime(
-                              ref.read(salesDateFilterProvider).year,
-                              ref.read(salesDateFilterProvider).month,
-                              1)));
-                      ref.read(salesDataProvider.notifier).setFilter();
-                    } else {
-                      ref.read(salesDateFilterProvider.notifier).state =
-                          (await showYearPicker(
-                                  context: context,
-                                  initialDate: DateTime.now())) ??
-                              DateTime.now();
-                      ref.read(salesFilterProvider.notifier).setKey(
-                          "endDate",
-                          DateFormat("y-M-d").format(DateTime(
-                              ref.read(salesDateFilterProvider).year, 12, 31)));
-                      ref.read(salesFilterProvider.notifier).setKey(
-                          "startDate",
-                          DateFormat("y-M-d").format(DateTime(
-                              ref.read(salesDateFilterProvider).year, 1, 1)));
-                      ref.read(salesDataProvider.notifier).setFilter();
-                    }
-                  },
-                  child: AppTextField(
-                    hintText: interval == "weekly"
-                        ? DateFormat('d/M/y').format(date)
-                        : interval == "monthly"
-                            ? DateFormat('MMMM').format(date)
-                            : DateFormat('y').format(date),
-                    controller: TextEditingController(),
-                    enabled: false,
-                    suffixIcon: const Icon(Icons.keyboard_arrow_down),
-                  ),
-                ),
-                SizedBox(
-                  height: 36.h,
-                ),
-                salesData.when(data: (data) {
-                  return Column(
+    return ResponsiveWrapper(
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+            child: PullToRefresh(
+              onRefresh: onRefresh,
+              child: ListView(
+                children: [
+                  SizedBox(height: responsiveData.scaleHeight(12)),
+                  Row(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SalesInfoTile(
-                            icon: Assets.svg.statusUp,
-                            amount: data.totalRevenue.toString().toKMB(),
-                            description: 'Total revenue',
-                            showCurrency: true,
-                          ),
-                          SalesInfoTile(
-                            icon: Assets.svg.boxTick,
-                            amount: data.totalSales.toString().commaSeparated(),
-                            description: 'Total sales',
-                            showCurrency: false,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 18.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SalesInfoTile(
-                            icon: Assets.svg.noteText,
-                            amount:
-                                data.totalReceipts.toString().commaSeparated(),
-                            description: 'Total receipts',
-                            showCurrency: false,
-                          ),
-                          SalesInfoTile(
-                            icon: Assets.svg.archiveBook,
-                            amount:
-                                data.totalInvoices.toString().commaSeparated(),
-                            description: 'Total invoices',
-                            showCurrency: false,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 36.h,
-                      ),
-                      Visibility(
-                        visible: data.graphData!.isNotEmpty,
-                        replacement: const Text("No graph data available"),
-                        child: SalesOverviewChart(
-                          graphData: data.graphData!,
+                      GestureDetector(
+                        onTap: () {
+                          if (interval == "weekly") {
+                            return;
+                          }
+                          ref
+                              .read(salesFilterProvider.notifier)
+                              .setKey("interval", "weekly");
+                          ref.read(salesDataProvider.notifier).setFilter();
+                        },
+                        child: Container(
+                          height: responsiveData.scaleHeight(45),
+                          width: responsiveData.scaleWidth(83),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.15), // Approx 43.r
+                              color: interval == "weekly"
+                                  ? primaryColor2
+                                  : Colors.transparent),
+                          child: Center(
+                              child: Text(
+                                'Weekly',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall!
+                                    .copyWith(
+                                    color: (interval == "weekly" || isDarkMode)
+                                        ? Colors.white
+                                        : Colors.black),
+                              )),
                         ),
-                      )
+                      ),
+                      SizedBox(width: responsiveData.scaleWidth(12)),
+                      GestureDetector(
+                        onTap: () {
+                          if (interval == "monthly") {
+                            return;
+                          }
+                          ref
+                              .read(salesFilterProvider.notifier)
+                              .setKey("interval", "monthly");
+                          ref.read(salesDataProvider.notifier).setFilter();
+                        },
+                        child: Container(
+                          height: responsiveData.scaleHeight(45),
+                          width: responsiveData.scaleWidth(83),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.15), // Approx 43.r
+                              color: interval == "monthly"
+                                  ? primaryColor2
+                                  : Colors.transparent),
+                          child: Center(
+                              child: Text(
+                                'Monthly',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall!
+                                    .copyWith(
+                                    color: (interval == "monthly" || isDarkMode)
+                                        ? Colors.white
+                                        : Colors.black),
+                              )),
+                        ),
+                      ),
+                      SizedBox(width: responsiveData.scaleWidth(12)),
+                      GestureDetector(
+                        onTap: () {
+                          if (interval == "yearly") {
+                            return;
+                          }
+                          ref
+                              .read(salesFilterProvider.notifier)
+                              .setKey("interval", "yearly");
+                          ref.read(salesDataProvider.notifier).setFilter();
+                        },
+                        child: Container(
+                          height: responsiveData.scaleHeight(45),
+                          width: responsiveData.scaleWidth(83),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.15), // Approx 43.r
+                              color: interval == "yearly"
+                                  ? primaryColor2
+                                  : Colors.transparent),
+                          child: Center(
+                              child: Text(
+                                'Yearly',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall!
+                                    .copyWith(
+                                    color: (interval == "yearly" || isDarkMode)
+                                        ? Colors.white
+                                        : Colors.black),
+                              )),
+                        ),
+                      ),
                     ],
-                  );
-                }, error: (error, _) {
-                  return const Text('An error has occurred');
-                }, loading: () {
-                  return const CustomShimmer();
-                }),
-                SizedBox(
-                  height: 36.h,
-                ),
-              ],
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      if (interval == "weekly") {
+                        ref.read(salesDateFilterProvider.notifier).state =
+                            (await selectDay(context)) ?? DateTime.now();
+
+                        ref.read(salesFilterProvider.notifier).setKey(
+                            "endDate",
+                            DateFormat("y-M-d")
+                                .format(ref.read(salesDateFilterProvider)));
+                        ref.read(salesFilterProvider.notifier).setKey(
+                            "startDate",
+                            DateFormat("y-M-d").format(ref
+                                .read(salesDateFilterProvider)
+                                .subtract(const Duration(days: 7))));
+                        ref.read(salesDataProvider.notifier).setFilter();
+                      } else if (interval == "monthly") {
+                        ref.read(salesDateFilterProvider.notifier).state =
+                            (await showMonthPicker(
+                                context: context,
+                                initialDate: DateTime.now())) ??
+                                DateTime.now();
+                        ref.read(salesFilterProvider.notifier).setKey(
+                            "endDate",
+                            DateFormat("y-M-d").format(DateTime(
+                                ref.read(salesDateFilterProvider).year,
+                                ref.read(salesDateFilterProvider).month,
+                                31)));
+                        ref.read(salesFilterProvider.notifier).setKey(
+                            "startDate",
+                            DateFormat("y-M-d").format(DateTime(
+                                ref.read(salesDateFilterProvider).year,
+                                ref.read(salesDateFilterProvider).month,
+                                1)));
+                        ref.read(salesDataProvider.notifier).setFilter();
+                      } else {
+                        ref.read(salesDateFilterProvider.notifier).state =
+                            (await showYearPicker(
+                                context: context,
+                                initialDate: DateTime.now())) ??
+                                DateTime.now();
+                        ref.read(salesFilterProvider.notifier).setKey(
+                            "endDate",
+                            DateFormat("y-M-d").format(DateTime(
+                                ref.read(salesDateFilterProvider).year, 12, 31)));
+                        ref.read(salesFilterProvider.notifier).setKey(
+                            "startDate",
+                            DateFormat("y-M-d").format(DateTime(
+                                ref.read(salesDateFilterProvider).year, 1, 1)));
+                        ref.read(salesDataProvider.notifier).setFilter();
+                      }
+                    },
+                    child: AppTextField(
+                      hintText: interval == "weekly"
+                          ? DateFormat('d/M/y').format(date)
+                          : interval == "monthly"
+                          ? DateFormat('MMMM').format(date)
+                          : DateFormat('y').format(date),
+                      controller: TextEditingController(),
+                      enabled: false,
+                      suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                    ),
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(36),
+                  ),
+                  salesData.when(data: (data) {
+                    return Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SalesInfoTile(
+                              icon: Assets.svg.statusUp,
+                              amount: data.totalRevenue.toString().toKMB(),
+                              description: 'Total revenue',
+                              showCurrency: true,
+                            ),
+                            SalesInfoTile(
+                              icon: Assets.svg.boxTick,
+                              amount: data.totalSales.toString().commaSeparated(),
+                              description: 'Total sales',
+                              showCurrency: false,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: responsiveData.scaleHeight(18),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SalesInfoTile(
+                              icon: Assets.svg.noteText,
+                              amount:
+                              data.totalReceipts.toString().commaSeparated(),
+                              description: 'Total receipts',
+                              showCurrency: false,
+                            ),
+                            SalesInfoTile(
+                              icon: Assets.svg.archiveBook,
+                              amount:
+                              data.totalInvoices.toString().commaSeparated(),
+                              description: 'Total invoices',
+                              showCurrency: false,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: responsiveData.scaleHeight(36),
+                        ),
+                        Visibility(
+                          visible: data.graphData!.isNotEmpty,
+                          replacement: const Text("No graph data available"),
+                          child: SalesOverviewChart(
+                            graphData: data.graphData!,
+                          ),
+                        )
+                      ],
+                    );
+                  }, error: (error, _) {
+                    return const Text('An error has occurred');
+                  }, loading: () {
+                    return const CustomShimmer();
+                  }),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(36),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -300,18 +301,21 @@ class SalesInfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    final responsiveData = ResponsiveInherited.of(context);
 
     return Container(
-      height: 98.h,
-      width: 167.w,
+      height: responsiveData.scaleHeight(98),
+      width: responsiveData.scaleWidth(167),
       decoration: BoxDecoration(
         color: const Color(0xffE3DDFF),
-        borderRadius: BorderRadius.circular(6.r),
+        borderRadius: BorderRadius.circular(responsiveData.smallRadius * 0.3), // Approx 6.r
       ),
       child: Padding(
-        padding:
-            EdgeInsets.only(left: 12.w, right: 12.w, top: 16.h, bottom: 14.h),
+        padding: EdgeInsets.only(
+            left: responsiveData.scaleWidth(12),
+            right: responsiveData.scaleWidth(12),
+            top: responsiveData.scaleHeight(16),
+            bottom: responsiveData.scaleHeight(14)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -319,34 +323,40 @@ class SalesInfoTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  height: 40.h,
-                  width: 40.w,
+                  height: responsiveData.scaleHeight(40),
+                  width: responsiveData.scaleWidth(40),
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(48.r)),
+                      borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.4)), // Approx 48.r
                   child: Padding(
-                    padding: EdgeInsets.all(8.h),
-                    child: SvgPicture.asset(icon),
+                    padding: EdgeInsets.all(responsiveData.scaleHeight(8)),
+                    child: SvgPicture.asset(
+                      icon,
+                      width: responsiveData.scaleWidth(24), // Adjusted for consistency
+                      height: responsiveData.scaleHeight(24),
+                    ),
                   ),
                 ),
                 SizedBox(
-                  width: 8.w,
+                  width: responsiveData.scaleWidth(8),
                 ),
                 Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       showCurrency
-                          ? const AppNaira(
-                              fontSize: 22,
-                            )
+                          ? AppNaira(
+                        fontSize: Responsive.fontSize(context, 22).toInt(),
+                      )
                           : const SizedBox.shrink(),
                       Text(
                         amount,
                         style: Theme.of(context)
                             .textTheme
                             .displayLarge!
-                            .copyWith(fontSize: 22.sp, color: Colors.black),
+                            .copyWith(
+                            fontSize: Responsive.fontSize(context, 22),
+                            color: Colors.black),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -355,14 +365,16 @@ class SalesInfoTile extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: 6.h,
+              height: responsiveData.scaleHeight(6),
             ),
             Text(
               description,
               style: Theme.of(context)
                   .textTheme
                   .displaySmall!
-                  .copyWith(fontSize: 14.sp, color: Colors.black),
+                  .copyWith(
+                  fontSize: Responsive.fontSize(context, 14),
+                  color: Colors.black),
             )
           ],
         ),
@@ -378,11 +390,14 @@ class SalesOverviewChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(responsiveData.smallRadius * 0.6)), // Approx 12.r
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -393,13 +408,13 @@ class SalesOverviewChart extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: responsiveData.scaleHeight(16)),
             SizedBox(
-              height: 400.h,
+              height: responsiveData.scaleHeight(400),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
-                  width: graphData.length * 100.w,
+                  width: graphData.length * responsiveData.scaleWidth(100),
                   child: BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,
@@ -408,14 +423,14 @@ class SalesOverviewChart extends StatelessWidget {
                         return _buildBarData(
                             index,
                             double.tryParse(
-                                    graphData[index].salesValue.toString()) ??
+                                graphData[index].salesValue.toString()) ??
                                 0);
                       }),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 45.w,
+                            reservedSize: responsiveData.scaleWidth(45),
                             getTitlesWidget: (value, meta) {
                               return Text(
                                 "${value.toString().toKMB()}₦",
@@ -430,16 +445,16 @@ class SalesOverviewChart extends StatelessWidget {
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
                               var days =
-                                  List.generate(graphData.length, (int index) {
+                              List.generate(graphData.length, (int index) {
                                 return graphData[index].salesKey == "date"
                                     ? DateFormat.E().format(DateTime.parse(
-                                        graphData[index].week.toString()))
+                                    graphData[index].week.toString()))
                                     : graphData[index].salesKey == "week"
-                                        ? "Week ${index + 1}"
-                                        : graphData[index]
-                                            .week
-                                            .toString()
-                                            .substring(0, 3);
+                                    ? "Week ${index + 1}"
+                                    : graphData[index]
+                                    .week
+                                    .toString()
+                                    .substring(0, 3);
                               });
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
@@ -459,7 +474,7 @@ class SalesOverviewChart extends StatelessWidget {
                             sideTitles: SideTitles(showTitles: false)),
                       ),
                       gridData:
-                          const FlGridData(show: true, drawVerticalLine: false),
+                      const FlGridData(show: true, drawVerticalLine: false),
                       borderData: FlBorderData(show: false),
                       barTouchData: BarTouchData(enabled: false),
                     ),
@@ -530,14 +545,12 @@ Future<DateTime?> showMonthPicker({
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-
         title: const Text('Select Month'),
         content: SizedBox(
           width: 300,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -581,9 +594,9 @@ Future<DateTime?> showMonthPicker({
                     onTap: isDisabled
                         ? null
                         : () {
-                            selectedMonth = month;
-                            Navigator.of(context).pop();
-                          },
+                      selectedMonth = month;
+                      Navigator.of(context).pop();
+                    },
                     child: Container(
                       margin: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
@@ -599,8 +612,8 @@ Future<DateTime?> showMonthPicker({
                             color: isSelected
                                 ? Colors.white
                                 : isDisabled
-                                    ? Colors.grey
-                                    : Colors.black,
+                                ? Colors.grey
+                                : Colors.black,
                           ),
                         ),
                       ),
@@ -655,18 +668,12 @@ Future<DateTime?> showYearPicker({
   return picked;
 }
 
-// Usage:
-// final selectedYear = await showYearPicker(
-//   context: context,
-//   initialDate: DateTime.now(),
-// );
 Future<DateTime?> selectDay(BuildContext context) async {
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: DateTime.now(),
     firstDate: DateTime(2000),
     lastDate: DateTime(2100),
-    // Customizations:
     builder: (context, child) {
       return Theme(
         data: Theme.of(context).copyWith(
@@ -677,7 +684,7 @@ Future<DateTime?> selectDay(BuildContext context) async {
           ),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
-              foregroundColor:primaryColor2
+              foregroundColor: primaryColor2,
             ),
           ),
         ),

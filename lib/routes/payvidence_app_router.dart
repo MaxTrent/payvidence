@@ -136,9 +136,6 @@ class PayvidenceAppRouter extends RootStackRouter {
             page: GenerateReceiptRoute.page,
             path: PayvidenceRoutes.generateReceipt),
         AutoRoute(
-            page: GenerateInvoicesRoute.page,
-            path: PayvidenceRoutes.generateInvoices),
-        AutoRoute(
             page: UpdateBankDetailsRoute.page,
             path: PayvidenceRoutes.updateBankDetails),
         AutoRoute(

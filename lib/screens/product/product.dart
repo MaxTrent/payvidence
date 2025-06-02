@@ -3,7 +3,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
@@ -11,6 +10,8 @@ import 'package:payvidence/components/product_tile.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/providers/category_providers/get_all_category_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
@@ -36,6 +37,7 @@ class Product extends HookConsumerWidget {
     final isDarkMode = theme.mode == ThemeMode.dark;
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
+    final responsiveData = ResponsiveInherited.of(context);
 
     // Debounced search listener
     useEffect(() {
@@ -60,217 +62,231 @@ class Product extends HookConsumerWidget {
       await ref.refresh(getAllProductProvider.future);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: ValueListenableBuilder(
-          builder: (context, value, _) {
-            return Text(
-              'All products (${value ?? '0'})',
-              style: Theme.of(context).textTheme.displayLarge!.copyWith(),
-            );
-          },
-          valueListenable: productNumber,
+    return ResponsiveWrapper(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          title: ValueListenableBuilder(
+            builder: (context, value, _) {
+              return Text(
+                'All products (${value ?? '0'})',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(),
+              );
+            },
+            valueListenable: productNumber,
+          ),
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          children: [
-            SizedBox(height: 32.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: AppTextField(
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(16.h),
-                      child: SvgPicture.asset(
-                        Assets.svg.search,
-                        colorFilter: ColorFilter.mode(
-                          isDarkMode ? Colors.white : Colors.black,
-                          BlendMode.srcIn,
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+          child: Column(
+            children: [
+              SizedBox(height: responsiveData.scaleHeight(32)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: AppTextField(
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                        child: SvgPicture.asset(
+                          Assets.svg.search,
+                          colorFilter: ColorFilter.mode(
+                            isDarkMode ? Colors.white : Colors.black,
+                            BlendMode.srcIn,
+                          ),
+                          width: responsiveData.scaleWidth(24), // Added for consistency
+                          height: responsiveData.scaleHeight(24),
+                        ),
+                      ),
+                      hintText: 'Search for product',
+                      controller: searchController,
+                      radius: responsiveData.smallRadius * 4, // Approx 80 equivalent
+                      filled: true,
+                      fillColor: isDarkMode ? Colors.black : appGrey5,
+                    ),
+                  ),
+                  SizedBox(width: responsiveData.scaleWidth(12)),
+                  GestureDetector(
+                    onTap: () {
+                      FilterBottomSheet.show(context);
+                    },
+                    child: Container(
+                      height: responsiveData.scaleHeight(48),
+                      width: responsiveData.scaleWidth(56),
+                      decoration: BoxDecoration(
+                        color: borderColor,
+                        borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.8), // Approx 56.r equivalent
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(responsiveData.scaleHeight(14)),
+                        child: SvgPicture.asset(
+                          Assets.svg.filter,
+                          width: responsiveData.scaleWidth(24), // Added for consistency
+                          height: responsiveData.scaleHeight(24),
                         ),
                       ),
                     ),
-                    hintText: 'Search for product',
-                    controller: searchController,
-                    radius: 80,
-                    filled: true,
-                    fillColor: isDarkMode ? Colors.black : appGrey5,
                   ),
-                ),
-                12.horizontalSpace,
-                GestureDetector(
-                  onTap: () {
-                    FilterBottomSheet.show(context);
-                  },
-                  child: Container(
-                    height: 48.h,
-                    width: 56.w,
-                    decoration: BoxDecoration(
-                      color: borderColor,
-                      borderRadius: BorderRadius.circular(56.r),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(14.h),
-                      child: SvgPicture.asset(Assets.svg.filter),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            allProducts.when(
-              data: (data) {
-                // Filter products by name
-                final filteredProducts = searchQuery.value.isEmpty
-                    ? data
-                    : data
-                    .where((product) => product.name
-                    ?.toLowerCase()
-                    .contains(searchQuery.value.toLowerCase()) ?? false)
-                    .toList();
+                ],
+              ),
+              allProducts.when(
+                data: (data) {
+                  // Filter products by name
+                  final filteredProducts = searchQuery.value.isEmpty
+                      ? data
+                      : data
+                      .where((product) => product.name
+                      ?.toLowerCase()
+                      .contains(searchQuery.value.toLowerCase()) ??
+                      false)
+                      .toList();
 
-                if (filteredProducts.isEmpty) {
-                  productNumber.value = 0;
+                  if (filteredProducts.isEmpty) {
+                    productNumber.value = 0;
+                    return Expanded(
+                      child: PullToRefresh(
+                        onRefresh: onRefresh,
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  Assets.svg.emptyProduct,
+                                  width: responsiveData.scaleWidth(120), // Added for consistency
+                                  height: responsiveData.scaleHeight(120),
+                                ),
+                                SizedBox(height: responsiveData.scaleHeight(40)),
+                                Text(
+                                  searchQuery.value.isEmpty
+                                      ? 'No product available!'
+                                      : 'No products found!',
+                                  style: Theme.of(context).textTheme.displayLarge,
+                                ),
+                                SizedBox(height: responsiveData.scaleHeight(10)),
+                                Text(
+                                  searchQuery.value.isEmpty
+                                      ? 'All added products will appear here.'
+                                      : 'Try a different search term.',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall!
+                                      .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                ),
+                                const Spacer(),
+                                if (searchQuery.value.isEmpty) ...[
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(52)),
+                                    child: AppButton(
+                                      buttonText: 'Add product',
+                                      onPressed: () {
+                                        locator<PayvidenceAppRouter>()
+                                            .navigateNamed(PayvidenceRoutes.addProduct);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  productNumber.value = filteredProducts.length;
+
+                  return Expanded(
+                    child: PullToRefresh(
+                      onRefresh: onRefresh,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ProductTile(
+                            product: filteredProducts[index],
+                            ref: ref,
+                            onPressed: () {
+                              if (forProductSelection == true) {
+                                Navigator.of(context).pop(filteredProducts[index]);
+                              } else {
+                                locator<PayvidenceAppRouter>().navigate(
+                                    ProductDetailsRoute(
+                                        product: filteredProducts[index]));
+                                ref
+                                    .read(getCurrentProductProvider.notifier)
+                                    .setCurrentProduct(filteredProducts[index]);
+                              }
+                            },
+                          );
+                        },
+                        separatorBuilder: (ctx, idx) {
+                          return Column(
+                            children: [SizedBox(height: responsiveData.scaleHeight(24))],
+                          );
+                        },
+                        itemCount: filteredProducts.length,
+                      ),
+                    ),
+                  );
+                },
+                error: (error, _) {
                   return Expanded(
                     child: PullToRefresh(
                       onRefresh: onRefresh,
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: SizedBox(
-                          height: ScreenUtil().screenHeight - 200.h,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(Assets.svg.emptyProduct),
-                              SizedBox(height: 40.h),
-                              Text(
-                                searchQuery.value.isEmpty
-                                    ? 'No product available!'
-                                    : 'No products found!',
-                                style: Theme.of(context).textTheme.displayLarge,
-                              ),
-                              SizedBox(height: 10.h),
-                              Text(
-                                searchQuery.value.isEmpty
-                                    ? 'All added products will appear here.'
-                                    : 'Try a different search term.',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: 14.sp),
-                              ),
-                              const Spacer(),
-                              if (searchQuery.value.isEmpty) ...[
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 52.h),
-                                  child: AppButton(
-                                    buttonText: 'Add product',
-                                    onPressed: () {
-                                      locator<PayvidenceAppRouter>()
-                                          .navigateNamed(PayvidenceRoutes.addProduct);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                          height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
+                          child: const Center(child: Text('An error has occurred')),
                         ),
                       ),
                     ),
                   );
-                }
-                productNumber.value = filteredProducts.length;
-
-                return Expanded(
-                  child: PullToRefresh(
-                    onRefresh: onRefresh,
+                },
+                loading: () {
+                  return Expanded(
                     child: ListView.separated(
                       shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return ProductTile(
-                          product: filteredProducts[index],
-                          ref: ref,
-                          onPressed: () {
-                            if (forProductSelection == true) {
-                              Navigator.of(context).pop(filteredProducts[index]);
-                            } else {
-                              locator<PayvidenceAppRouter>().navigate(
-                                  ProductDetailsRoute(
-                                      product: filteredProducts[index]));
-                              ref
-                                  .read(getCurrentProductProvider.notifier)
-                                  .setCurrentProduct(filteredProducts[index]);
-                            }
-                          },
-                        );
-                      },
-                      separatorBuilder: (ctx, idx) {
-                        return Column(
-                          children: [SizedBox(height: 24.h)],
-                        );
-                      },
-                      itemCount: filteredProducts.length,
+                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
+                      itemCount: 5,
+                      itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(60)),
                     ),
-                  ),
-                );
-              },
-              error: (error, _) {
-                return Expanded(
-                  child: PullToRefresh(
-                    onRefresh: onRefresh,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                        height: ScreenUtil().screenHeight - 200.h,
-                        child: const Center(child: Text('An error has occurred')),
-                      ),
-                    ),
-                  ),
-                );
-              },
-              loading: () {
-                return Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    separatorBuilder: (ctx, idx) => 12.verticalSpace,
-                    itemCount: 5,
-                    itemBuilder: (_, index) => CustomShimmer(height: 60.h),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: allProducts.when(
-        data: (data) {
-          final filteredProducts = searchQuery.value.isEmpty
-              ? data
-              : data
-              .where((product) => product.name
-              ?.toLowerCase()
-              .contains(searchQuery.value.toLowerCase()) ?? false)
-              .toList();
-          return filteredProducts.isNotEmpty
-              ? FloatingActionButton(
-            onPressed: () {
-              locator<PayvidenceAppRouter>()
-                  .navigateNamed(PayvidenceRoutes.addProduct);
-            },
-            backgroundColor: primaryColor2,
-            child: Icon(
-              Icons.add,
-              size: 40.h,
-            ),
-          )
-              : null; // Hide FAB when there are no products
-        },
-        error: (error, _) => null, // Hide FAB on error
-        loading: () => null, // Hide FAB while loading
+        floatingActionButton: allProducts.when(
+          data: (data) {
+            final filteredProducts = searchQuery.value.isEmpty
+                ? data
+                : data
+                .where((product) => product.name
+                ?.toLowerCase()
+                .contains(searchQuery.value.toLowerCase()) ??
+                false)
+                .toList();
+            return filteredProducts.isNotEmpty
+                ? FloatingActionButton(
+              onPressed: () {
+                locator<PayvidenceAppRouter>()
+                    .navigateNamed(PayvidenceRoutes.addProduct);
+              },
+              backgroundColor: primaryColor2,
+              child: Icon(
+                Icons.add,
+                size: responsiveData.scaleHeight(40),
+              ),
+            )
+                : null; // Hide FAB when there are no products
+          },
+          error: (error, _) => null, // Hide FAB on error
+          loading: () => null, // Hide FAB while loading
+        ),
       ),
     );
   }
@@ -280,12 +296,13 @@ class FilterBottomSheet extends HookConsumerWidget {
   const FilterBottomSheet._();
 
   static show(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(responsiveData.smallRadius * 1.5)), // Approx 30 equivalent
       ),
       builder: (context) => const FilterBottomSheet._(),
     );
@@ -296,32 +313,34 @@ class FilterBottomSheet extends HookConsumerWidget {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
     final allCategory = ref.watch(getAllCategoryProvider);
+    final responsiveData = ResponsiveInherited.of(context);
 
     return Container(
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(40.r),
-          topLeft: Radius.circular(40.r),
+          topRight: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
+          topLeft: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(
+            horizontal: responsiveData.paddingHorizontal, vertical: responsiveData.scaleHeight(10)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 140.w),
+              padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(140)),
               child: Container(
-                height: 5.h,
-                width: 67.w,
+                height: responsiveData.scaleHeight(5),
+                width: responsiveData.scaleWidth(67),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? Colors.black : Color(0xffd9d9d9),
-                  borderRadius: BorderRadius.circular(100.r),
+                  color: isDarkMode ? Colors.black : const Color(0xffd9d9d9),
+                  borderRadius: BorderRadius.circular(responsiveData.smallRadius * 5), // Approx 100.r equivalent
                 ),
               ),
             ),
-            SizedBox(height: 38.h),
+            SizedBox(height: responsiveData.scaleHeight(38)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -330,7 +349,7 @@ class FilterBottomSheet extends HookConsumerWidget {
                   child: Text(
                     'Filter products',
                     style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                      fontSize: 22.sp,
+                      fontSize: Responsive.fontSize(context, 22),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -341,14 +360,14 @@ class FilterBottomSheet extends HookConsumerWidget {
                 ),
               ],
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: responsiveData.scaleHeight(12)),
             Center(
               child: Text(
                 'Select category you’ll like to see.',
                 style: Theme.of(context).textTheme.displaySmall,
               ),
             ),
-            SizedBox(height: 40.h),
+            SizedBox(height: responsiveData.scaleHeight(40)),
             allCategory.when(
               data: (data) {
                 if (data.isEmpty) {
@@ -360,16 +379,16 @@ class FilterBottomSheet extends HookConsumerWidget {
                         'No category added!',
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
-                      SizedBox(height: 10.h),
+                      SizedBox(height: responsiveData.scaleHeight(10)),
                       Text(
                         'All added categories will appear here.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme
                             .displaySmall!
-                            .copyWith(fontSize: 14.sp),
+                            .copyWith(fontSize: Responsive.fontSize(context, 14)),
                       ),
-                      SizedBox(height: 12.h),
+                      SizedBox(height: responsiveData.scaleHeight(12)),
                     ],
                   );
                 }
@@ -389,7 +408,7 @@ class FilterBottomSheet extends HookConsumerWidget {
                         ref.read(getAllProductProvider.notifier).setFilter();
                       },
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.h),
+                        padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -402,14 +421,16 @@ class FilterBottomSheet extends HookConsumerWidget {
                                     isDarkMode ? Colors.white : Colors.black,
                                     BlendMode.srcIn,
                                   ),
+                                  width: responsiveData.scaleWidth(24), // Added for consistency
+                                  height: responsiveData.scaleHeight(24),
                                 ),
-                                SizedBox(width: 16.w),
+                                SizedBox(width: responsiveData.scaleWidth(16)),
                                 Text(
                                   data[index].name ?? '',
                                   style: Theme.of(context)
                                       .textTheme
                                       .displaySmall!
-                                      .copyWith(fontSize: 14.sp),
+                                      .copyWith(fontSize: Responsive.fontSize(context, 14)),
                                 ),
                               ],
                             ),
@@ -436,9 +457,9 @@ class FilterBottomSheet extends HookConsumerWidget {
               },
               loading: () => ListView.separated(
                 shrinkWrap: true,
-                separatorBuilder: (ctx, idx) => 12.verticalSpace,
+                separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                 itemCount: 5,
-                itemBuilder: (_, index) => CustomShimmer(height: 60.h),
+                itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(60)),
               ),
             ),
           ],

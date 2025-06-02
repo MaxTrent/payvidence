@@ -1,11 +1,12 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/subscription_card.dart';
 import 'package:payvidence/screens/subscription_plans/subscription_plans_vm.dart';
 import 'package:payvidence/utilities/extensions.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_button.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/plan_list.dart';
@@ -30,6 +31,7 @@ class SubscriptionPlans extends HookConsumerWidget {
     final subscriptionPlansVm = ref.watch(subscriptionPlansViewModelProvider);
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
+    final responsiveData = ResponsiveInherited.of(context); // Define here, inside build
 
     void setInitialPlan() {
       if (planId.isNotEmpty && choosePlanVm.plans.isNotEmpty) {
@@ -51,94 +53,104 @@ class SubscriptionPlans extends HookConsumerWidget {
       return null;
     }, [planId]);
 
-    return Scaffold(
-      appBar: AppBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 8.h),
-        child: SizedBox(
-          // width: 350.w,
-          child: AppButton(
-            isProcessing: subscriptionPlansVm.isLoading,
-            buttonText: selectedTier.value.isEmpty
-                ? 'Choose a plan'
-                : 'Continue with ${selectedTier.value} plan',
-            onPressed: selectedTier.value.isEmpty || subscriptionPlansVm.isLoading
-                ? null
-                : () {
-              final selectedPlan = choosePlanVm.plans.firstWhere(
-                    (plan) => plan.name == selectedTier.value,
-                orElse: () => choosePlanVm.plans.first,
-              );
-              subscriptionPlansVm.createSubscription(
-                planId: selectedPlan.id,
-                navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
-                  locator<PayvidenceAppRouter>().push(PaymentWebViewRoute(
-                      paymentLink: paymentLink,
-                      callbackUrl: callbackUrl,
-                      cancelAction: cancelAction));
-                },
-              );
-            },
+    return ResponsiveWrapper(
+      child: Scaffold(
+        appBar: AppBar(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(8)),
+          child: SizedBox(
+            // width: 350.w, // Commented out as it was not active
+            child: AppButton(
+              isProcessing: subscriptionPlansVm.isLoading,
+              buttonText: selectedTier.value.isEmpty
+                  ? 'Choose a plan'
+                  : 'Continue with ${selectedTier.value} plan',
+              onPressed: selectedTier.value.isEmpty || subscriptionPlansVm.isLoading
+                  ? null
+                  : () {
+                final selectedPlan = choosePlanVm.plans.firstWhere(
+                      (plan) => plan.name == selectedTier.value,
+                  orElse: () => choosePlanVm.plans.first,
+                );
+                subscriptionPlansVm.createSubscription(
+                  planId: selectedPlan.id,
+                  navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
+                    locator<PayvidenceAppRouter>().push(PaymentWebViewRoute(
+                        paymentLink: paymentLink,
+                        callbackUrl: callbackUrl,
+                        cancelAction: cancelAction));
+                  },
+                );
+              },
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Subscription plans',
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-              SizedBox(height: 24.h),
-              choosePlanVm.isLoading
-                  ? Row(
-                children: [
-                  CustomShimmer(width: 83.w, height: 45.h),
-                  SizedBox(width: 12.w),
-                  CustomShimmer(width: 83.w, height: 45.h),
-                  SizedBox(width: 12.w),
-                  CustomShimmer(width: 83.w, height: 45.h),
-                ],
-              )
-                  : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: choosePlanVm.plans.map((plan) {
-                    return Padding(
-                      padding: EdgeInsets.only(right: 12.w),
-                      child: _buildTierButton(
-                        context: context,
-                        tier: plan.name,
-                        isSelected: selectedTier.value == plan.name,
-                        onTap: () => selectedTier.value = plan.name,
-                        isDarkMode: isDarkMode,
-                      ),
-                    );
-                  }).toList(),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Subscription plans',
+                  style: Theme.of(context).textTheme.displayLarge,
                 ),
-              ),
-              SizedBox(height: 24.h),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 80.h), // Reserve space for the floating action button
-                  child: choosePlanVm.isLoading
-                      ? _buildLoadingShimmer()
-                      : choosePlanVm.plans.isEmpty
-                      ? const Center(child: Text('No plans available'))
-                      : _buildSubscriptionContent(
-                    context,
-                    choosePlanVm.plans.firstWhere(
-                          (plan) => plan.name == selectedTier.value,
-                      orElse: () => choosePlanVm.plans.first,
+                SizedBox(height: responsiveData.scaleHeight(24)),
+                choosePlanVm.isLoading
+                    ? Row(
+                  children: [
+                    CustomShimmer(
+                        width: responsiveData.scaleWidth(83),
+                        height: responsiveData.scaleHeight(45)),
+                    SizedBox(width: responsiveData.scaleWidth(12)),
+                    CustomShimmer(
+                        width: responsiveData.scaleWidth(83),
+                        height: responsiveData.scaleHeight(45)),
+                    SizedBox(width: responsiveData.scaleWidth(12)),
+                    CustomShimmer(
+                        width: responsiveData.scaleWidth(83),
+                        height: responsiveData.scaleHeight(45)),
+                  ],
+                )
+                    : SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: choosePlanVm.plans.map((plan) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: responsiveData.scaleWidth(12)),
+                        child: _buildTierButton(
+                          context: context,
+                          tier: plan.name,
+                          isSelected: selectedTier.value == plan.name,
+                          onTap: () => selectedTier.value = plan.name,
+                          isDarkMode: isDarkMode,
+                          responsiveData: responsiveData, // Pass responsiveData
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(height: responsiveData.scaleHeight(24)),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(80)),
+                    child: choosePlanVm.isLoading
+                        ? _buildLoadingShimmer(responsiveData) // Pass responsiveData
+                        : choosePlanVm.plans.isEmpty
+                        ? const Center(child: Text('No plans available'))
+                        : _buildSubscriptionContent(
+                      context,
+                      choosePlanVm.plans.firstWhere(
+                            (plan) => plan.name == selectedTier.value,
+                        orElse: () => choosePlanVm.plans.first,
+                      ),
+                      responsiveData, // Pass responsiveData
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -151,20 +163,22 @@ class SubscriptionPlans extends HookConsumerWidget {
     required bool isSelected,
     required VoidCallback onTap,
     required bool isDarkMode,
+    required ResponsiveData responsiveData, // Receive as parameter
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 45.h,
+        height: responsiveData.scaleHeight(45),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(43.r),
+          borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.15), // Approx 43.r
           color: isSelected ? primaryColor2 : Colors.transparent,
           border: Border.all(
             color: isSelected ? primaryColor2 : isDarkMode ? Colors.white : Colors.black,
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(
+              horizontal: responsiveData.scaleWidth(16), vertical: responsiveData.scaleHeight(12)),
           child: Center(
             child: Text(
               tier,
@@ -178,20 +192,21 @@ class SubscriptionPlans extends HookConsumerWidget {
     );
   }
 
-  Widget _buildLoadingShimmer() {
+  Widget _buildLoadingShimmer(ResponsiveData responsiveData) { // Receive as parameter
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomShimmer(height: 150.h),
-        SizedBox(height: 40.h),
-        CustomShimmer(height: 20.h),
-        SizedBox(height: 20.h),
-        CustomShimmer(height: 200.h),
+        CustomShimmer(height: responsiveData.scaleHeight(150)),
+        SizedBox(height: responsiveData.scaleHeight(40)),
+        CustomShimmer(height: responsiveData.scaleHeight(20)),
+        SizedBox(height: responsiveData.scaleHeight(20)),
+        CustomShimmer(height: responsiveData.scaleHeight(200)),
       ],
     );
   }
 
-  Widget _buildSubscriptionContent(BuildContext context, Plan plan) {
+  Widget _buildSubscriptionContent(
+      BuildContext context, Plan plan, ResponsiveData responsiveData) { // Receive as parameter
     return ListView(
       children: [
         SubscriptionCard(
@@ -201,15 +216,15 @@ class SubscriptionPlans extends HookConsumerWidget {
           recommended: plan.isRecommended,
           checkOut: false,
         ),
-        SizedBox(height: 40.h),
+        SizedBox(height: responsiveData.scaleHeight(40)),
         Text(
           'What’s embedded in ${plan.name.toLowerCase()}?',
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
             fontWeight: FontWeight.w400,
-            fontSize: 20.sp,
+            fontSize: Responsive.fontSize(context, 20),
           ),
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: responsiveData.scaleHeight(20)),
         PlanList(
             description: 'Business accounts allowed',
             status: plan.businessAccountsAllowed.toString()),

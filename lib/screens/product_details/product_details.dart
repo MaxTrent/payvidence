@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
@@ -9,6 +8,8 @@ import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/utilities/extensions.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_dot.dart';
 import '../../components/app_naira.dart';
 import '../../components/loading_dialog.dart';
@@ -32,6 +33,8 @@ class ProductDetails extends HookConsumerWidget {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
     final Product? currentProduct = ref.watch(getCurrentProductProvider);
+    final responsiveData = ResponsiveInherited.of(context);
+
     Future<void> deleteProduct() async {
       Navigator.of(context).pop();
       if (!context.mounted) return;
@@ -64,220 +67,239 @@ class ProductDetails extends HookConsumerWidget {
       }
     }
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 320.h,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: currentProduct?.logoUrl != null
-                        ? NetworkImage(currentProduct!.logoUrl!)
-                        : AssetImage(Assets.png.payvidenceLogo.path) as ImageProvider,
-                    fit: BoxFit.cover,
+    return ResponsiveWrapper(
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: responsiveData.scaleHeight(320),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: currentProduct?.logoUrl != null
+                          ? NetworkImage(currentProduct!.logoUrl!)
+                          : AssetImage(Assets.png.payvidenceLogo.path) as ImageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                child: SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        18.verticalSpace,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Container(
-                                height: 48.h,
-                                width: 48.h,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(56.r),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(12.h),
-                                  child: SvgPicture.asset(Assets.svg.backArrow),
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                _buildConfirmDeleteBottomSheet(
-                                    context, deleteProduct);
-                              },
-                              child: Container(
-                                height: 48.h,
-                                width: 48.h,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(56.r),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(12.h),
-                                  child: SvgPicture.asset(Assets.svg.delete),
+                  child: SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(height: responsiveData.scaleHeight(18)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Container(
+                                  height: responsiveData.scaleHeight(48),
+                                  width: responsiveData.scaleHeight(48),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.8), // Approx 56.r equivalent
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(responsiveData.scaleHeight(12)),
+                                    child: SvgPicture.asset(
+                                      Assets.svg.backArrow,
+                                      width: responsiveData.scaleWidth(24), // Added for consistency
+                                      height: responsiveData.scaleHeight(24),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            locator<PayvidenceAppRouter>().navigate(
-                                AddProductRoute(product: currentProduct));
-                          },
-                          child: Container(
-                            height: 40.h,
-                            width: 139.w,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(32.r),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10.h, horizontal: 12.w),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(Assets.svg.edit),
-                                  Text(
-                                    'Edit product',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall,
-                                  )
-                                ],
+                              GestureDetector(
+                                onTap: () {
+                                  _buildConfirmDeleteBottomSheet(context, deleteProduct);
+                                },
+                                child: Container(
+                                  height: responsiveData.scaleHeight(48),
+                                  width: responsiveData.scaleHeight(48),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.8), // Approx 56.r equivalent
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(responsiveData.scaleHeight(12)),
+                                    child: SvgPicture.asset(
+                                      Assets.svg.delete,
+                                      width: responsiveData.scaleWidth(24), // Added for consistency
+                                      height: responsiveData.scaleHeight(24),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              locator<PayvidenceAppRouter>().navigate(
+                                  AddProductRoute(product: currentProduct));
+                            },
+                            child: Container(
+                              height: responsiveData.scaleHeight(40),
+                              width: responsiveData.scaleWidth(139),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.6), // Approx 32.r equivalent
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: responsiveData.scaleHeight(10),
+                                    horizontal: responsiveData.scaleWidth(12)),
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      Assets.svg.edit,
+                                      width: responsiveData.scaleWidth(20), // Added for consistency
+                                      height: responsiveData.scaleHeight(20),
+                                    ),
+                                    SizedBox(width: responsiveData.scaleWidth(8)), // Added spacing for better layout
+                                    Text(
+                                      'Edit product',
+                                      style: Theme.of(context).textTheme.displaySmall,
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        18.verticalSpace,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 24.h,
-                    ),
-                    Text(
-                      currentProduct?.name?.capitalize() ?? '',
-                      style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                            fontSize: 22.sp,
-                          ),
-                    ),
-                    SizedBox(
-                      height: 12.h,
-                    ),
-                    Text(currentProduct?.description?.capitalize() ?? '',
-                        style: Theme.of(context).textTheme.displaySmall),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    Row(
-                      // crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                            '${currentProduct?.category?.name?.capitalize() ?? ''}   ',
-                            style: Theme.of(context).textTheme.displaySmall),
-                        AppDot(
-                          color: isDarkMode ? Colors.white : Colors.black,
-                        ),
-                        Text(
-                            '   ${currentProduct?.brand?.name?.capitalize() ?? ''}',
-                            style: Theme.of(context).textTheme.displaySmall),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    Row(
-                      children: [
-                        AppNaira(fontSize: 28, color: isDarkMode ? Colors.white:Colors.black,),
-                        Text(
-                          '${currentProduct?.price}',
-                          style: Theme.of(context).textTheme.displayLarge,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 12.h,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(Assets.svg.star),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        Text(
-                          '${currentProduct?.quantitySold} units sold',
-                          style: Theme.of(context).textTheme.displaySmall,
-                        ),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        AppDot(
-                          color: Colors.black,
-                        ),
-                        SizedBox(
-                          width: 10.w,
-                        ),
-                        Text(
-                          '${currentProduct?.quantityAvailable} units left',
-                          style: Theme.of(context).textTheme.displaySmall,
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 32.h,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        locator<PayvidenceAppRouter>().navigate(
-                            UpdateQuantityRoute(product: currentProduct!));
-                      },
-                      child: Text(
-                        'Update quantity',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(
-                                color: primaryColor2,
-                                decoration: TextDecoration.underline),
+                          SizedBox(height: responsiveData.scaleHeight(18)),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: 73.h,
-                    ),
-                    AppButton(
-                      buttonText: 'Record sale',
-                      onPressed: () {},
-                    ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    AppButton(
-                      buttonText: 'Generate invoice',
-                      onPressed: () {},
-                      backgroundColor: Colors.transparent,
-                      textColor: primaryColor2,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: responsiveData.scaleHeight(24),
+                      ),
+                      Text(
+                        currentProduct?.name?.capitalize() ?? '',
+                        style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                          fontSize: Responsive.fontSize(context, 22),
+                        ),
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(12),
+                      ),
+                      Text(
+                        currentProduct?.description?.capitalize() ?? '',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(10),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '${currentProduct?.category?.name?.capitalize() ?? ''}   ',
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          AppDot(
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                          Text(
+                            '   ${currentProduct?.brand?.name?.capitalize() ?? ''}',
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(20),
+                      ),
+                      Row(
+                        children: [
+                          AppNaira(
+                            fontSize: Responsive.fontSize(context, 28).toInt(),
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                          Text(
+                            '${currentProduct?.price}',
+                            style: Theme.of(context).textTheme.displayLarge,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(12),
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            Assets.svg.star,
+                            width: responsiveData.scaleWidth(20), // Added for consistency
+                            height: responsiveData.scaleHeight(20),
+                          ),
+                          SizedBox(
+                            width: responsiveData.scaleWidth(10),
+                          ),
+                          Text(
+                            '${currentProduct?.quantitySold} units sold',
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          SizedBox(
+                            width: responsiveData.scaleWidth(10),
+                          ),
+                          AppDot(
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: responsiveData.scaleWidth(10),
+                          ),
+                          Text(
+                            '${currentProduct?.quantityAvailable} units left',
+                            style: Theme.of(context).textTheme.displaySmall,
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(32),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          locator<PayvidenceAppRouter>().navigate(
+                              UpdateQuantityRoute(product: currentProduct!));
+                        },
+                        child: Text(
+                          'Update quantity',
+                          style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                              color: primaryColor2, decoration: TextDecoration.underline),
+                        ),
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(73),
+                      ),
+                      AppButton(
+                        buttonText: 'Record sale',
+                        onPressed: () {},
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      AppButton(
+                        buttonText: 'Generate invoice',
+                        onPressed: () {},
+                        backgroundColor: Colors.transparent,
+                        textColor: primaryColor2,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -287,100 +309,100 @@ class ProductDetails extends HookConsumerWidget {
   Future<dynamic> _buildConfirmDeleteBottomSheet(
       BuildContext context, void Function() onDelete) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final responsiveData = ResponsiveInherited.of(context);
 
     return showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        clipBehavior: Clip.none,
-        context: context,
-        builder: (context) {
-          return Container(
-            height: 398.h,
-            decoration: BoxDecoration(
-                color: isDarkMode ? Colors.black : Colors.white,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(40.r),
-                    topLeft: Radius.circular(40.r))),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-              child: Stack(
-                children: [
-                  ListView(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 140.w),
-                        child: Container(
-                          height: 5.h,
-                          width: 67.w,
-                          decoration: BoxDecoration(
-                            color: const Color(0xffd9d9d9),
-                            borderRadius: BorderRadius.circular(100.r),
-                          ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      clipBehavior: Clip.none,
+      context: context,
+      builder: (context) {
+        return Container(
+          height: responsiveData.scaleHeight(398),
+          decoration: BoxDecoration(
+            color: isDarkMode ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
+              topLeft: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: responsiveData.paddingHorizontal, vertical: responsiveData.scaleHeight(10)),
+            child: Stack(
+              children: [
+                ListView(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(140)),
+                      child: Container(
+                        height: responsiveData.scaleHeight(5),
+                        width: responsiveData.scaleWidth(67),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffd9d9d9),
+                          borderRadius: BorderRadius.circular(responsiveData.smallRadius * 5), // Approx 100.r equivalent
                         ),
                       ),
-                      SizedBox(
-                        height: 38.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox.shrink(),
-                          Center(
-                            child: Text(
-                              'Confirm delete',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayLarge!
-                                  .copyWith(
-                                    fontSize: 22.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                    ),
+                    SizedBox(
+                      height: responsiveData.scaleHeight(38),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox.shrink(),
+                        Center(
+                          child: Text(
+                            'Confirm delete',
+                            style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                              fontSize: Responsive.fontSize(context, 22),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          GestureDetector(
-                              onTap: () => Navigator.of(context).pop(),
-                              child: const Icon(
-                                Icons.close,
-                              ))
-                        ],
-                      ),
-                      SizedBox(
-                        height: 12.h,
-                      ),
-                      Center(
-                        child: Text(
-                          'Are you sure you want to delete this product?\n\nAll details and statistics will be gone.',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.displaySmall,
                         ),
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: const Icon(Icons.close),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: responsiveData.scaleHeight(12),
+                    ),
+                    Center(
+                      child: Text(
+                        'Are you sure you want to delete this product?\n\nAll details and statistics will be gone.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.displaySmall,
                       ),
-                      SizedBox(
-                        height: 47.h,
-                      ),
-                      AppButton(
-                        buttonText: 'Delete product',
-                        onPressed: onDelete,
-                        backgroundColor: appRed,
-                        textColor: Colors.white,
-                      ),
-                      SizedBox(
-                        height: 8.h,
-                      ),
-                      AppButton(
-                        buttonText: 'Cancel',
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        backgroundColor: Colors.transparent,
-                        textColor: isDarkMode ? Colors.white : Colors.black,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    SizedBox(
+                      height: responsiveData.scaleHeight(47),
+                    ),
+                    AppButton(
+                      buttonText: 'Delete product',
+                      onPressed: onDelete,
+                      backgroundColor: appRed,
+                      textColor: Colors.white,
+                    ),
+                    SizedBox(
+                      height: responsiveData.scaleHeight(8),
+                    ),
+                    AppButton(
+                      buttonText: 'Cancel',
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      backgroundColor: Colors.transparent,
+                      textColor: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ],
+                ),
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

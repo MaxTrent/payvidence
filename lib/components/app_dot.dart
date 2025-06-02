@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../constants/app_colors.dart';
+import '../utilities/responsive_wrapper.dart';
 
 class AppDot extends StatelessWidget {
   AppDot({
@@ -13,11 +12,15 @@ class AppDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+
     return Container(
-      height: 6.h,
-      width: 6.h,
+      height: responsiveData.dotSize,
+      width: responsiveData.dotSize,
       decoration: BoxDecoration(
-          color: color, borderRadius: BorderRadius.circular(24.r)),
+        color: color,
+        borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+      ),
     );
   }
 }

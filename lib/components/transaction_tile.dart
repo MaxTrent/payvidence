@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../constants/app_colors.dart';
 import '../gen/assets.gen.dart';
+import '../utilities/responsive.dart';
+import '../utilities/responsive_wrapper.dart';
 import '../utilities/theme_mode.dart';
 import 'app_naira.dart';
-//TODO: Display Naira properly
 
 class TransactionTile extends HookWidget {
   String productName;
@@ -17,32 +17,31 @@ class TransactionTile extends HookWidget {
 
   TransactionTile(
       {super.key,
-      required this.amount,
-      required this.dateTime,
-      required this.productName,
-      required this.receiptOrInvoice,
-      required this.unitSold});
+        required this.amount,
+        required this.dateTime,
+        required this.productName,
+        required this.receiptOrInvoice,
+        required this.unitSold});
 
   @override
   Widget build(BuildContext context) {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
-
+    final responsiveData = ResponsiveInherited.of(context);
 
     return Container(
-      height: 101.h,
-      // width: double.infinity,
+      height: responsiveData.scaleHeight(101),
       decoration: const BoxDecoration(color: Colors.transparent),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            height: 72.h,
-            width: 72.h,
+            height: responsiveData.scaleHeight(72),
+            width: responsiveData.scaleHeight(72),
             decoration: const BoxDecoration(color: Colors.black),
           ),
           SizedBox(
-            width: 14.w,
+            width: responsiveData.scaleWidth(14),
           ),
           Expanded(
             child: Column(
@@ -54,77 +53,78 @@ class TransactionTile extends HookWidget {
                   style: Theme.of(context).textTheme.displayMedium,
                 ),
                 SizedBox(
-                  height: 6.h,
+                  height: responsiveData.scaleHeight(6),
                 ),
                 Row(
                   children: [
                     Text('$unitSold units sold',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(fontSize: 14.sp, color: appGrey4)),
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                            fontSize: Responsive.fontSize(context, 14),
+                            color: appGrey4)),
                     SizedBox(
-                      width: 10.w,
+                      width: responsiveData.scaleWidth(10),
                     ),
                     Container(
-                      height: 6.h,
-                      width: 6.h,
+                      height: responsiveData.dotSize,
+                      width: responsiveData.dotSize,
                       decoration: BoxDecoration(
                           color: appGrey4,
-                          borderRadius: BorderRadius.circular(24.r)),
+                          borderRadius: BorderRadius.circular(responsiveData.largeRadius)),
                     ),
                     SizedBox(
-                      width: 10.w,
+                      width: responsiveData.scaleWidth(10),
                     ),
                     Text(dateTime,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(fontSize: 14.sp, color: appGrey4)),
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                            fontSize: Responsive.fontSize(context, 14),
+                            color: appGrey4)),
                   ],
                 ),
                 SizedBox(
-                  height: 8.h,
+                  height: responsiveData.scaleHeight(8),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                         AppNaira(fontSize: 14, color: isDarkMode ? Colors.white:Colors.black,),
+                        AppNaira(
+                          fontSize: 14,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
                         Text(amount,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displayMedium!
-                                .copyWith(fontSize: 14.sp)),
+                            style: Theme.of(context).textTheme.displayMedium!
+                                .copyWith(fontSize: Responsive.fontSize(context, 14))),
                       ],
                     ),
                     Container(
-                      height: 23.h,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 6.w, vertical: 5.h),
-                      // width: 71.w,
+                      height: responsiveData.scaleHeight(23),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: responsiveData.scaleWidth(6),
+                          vertical: responsiveData.scaleHeight(5)),
                       decoration: BoxDecoration(
-                          color: isDarkMode ?  primaryColor2:primaryColor2.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(6.r)),
+                          color: isDarkMode
+                              ? primaryColor2
+                              : primaryColor2.withOpacity(0.2),
+                          borderRadius:
+                          BorderRadius.circular(responsiveData.smallRadius)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        // crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SvgPicture.asset(
                             receiptOrInvoice.trim().toLowerCase() == 'receipt'
                                 ? Assets.svg.receipt
                                 : Assets.svg.invoice,
-                            colorFilter:  ColorFilter.mode(
-                               isDarkMode?  Colors.white: primaryColor2, BlendMode.srcIn),
+                            colorFilter: ColorFilter.mode(
+                                isDarkMode ? Colors.white : primaryColor2,
+                                BlendMode.srcIn),
                           ),
                           Text(
                             receiptOrInvoice,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall!
+                            style: Theme.of(context).textTheme.displaySmall!
                                 .copyWith(
-                                    fontSize: 12.sp, color: isDarkMode ? Colors.white: primaryColor2),
+                                fontSize: Responsive.fontSize(context, 12),
+                                color: isDarkMode ? Colors.white : primaryColor2),
                           ),
                         ],
                       ),
@@ -139,5 +139,3 @@ class TransactionTile extends HookWidget {
     );
   }
 }
-
-

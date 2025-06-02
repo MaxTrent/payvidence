@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
+import 'package:payvidence/utilities/responsive.dart';
+import '../utilities/responsive_wrapper.dart';
 
 class AppBottomSheet extends StatelessWidget {
   final bool isDarkMode;
@@ -25,41 +26,55 @@ class AppBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveData = ResponsiveInherited.of(context);
+    final sheetHeight = responsiveData.scaleHeight(height);
+    final paddingHorizontal = responsiveData.paddingHorizontal;
+    final paddingVertical = responsiveData.scaleHeight(10);
+    final dragHandleHeight = responsiveData.scaleHeight(5);
+    final dragHandleWidth = responsiveData.scaleWidth(67);
+    final dragHandlePadding = responsiveData.scaleWidth(140);
+    final spacingLarge = responsiveData.scaleHeight(38);
+    final spacingMedium = responsiveData.spacingVertical;
+    final spacingSmall = responsiveData.scaleHeight(24);
+    final listViewPaddingBottom = responsiveData.scaleHeight(70);
+    final buttonPaddingVertical = responsiveData.scaleHeight(14);
+    final buttonHeight = responsiveData.scaleHeight(56);
+
     return Container(
-      height: height.h,
+      height: sheetHeight,
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(40.r),
-          topLeft: Radius.circular(40.r),
+          topRight: Radius.circular(responsiveData.radius),
+          topLeft: Radius.circular(responsiveData.radius),
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical),
         child: Stack(
           children: [
             ListView(
-              padding: EdgeInsets.only(bottom: 70.h), // Prevent overlap with button
+              padding: EdgeInsets.only(bottom: listViewPaddingBottom),
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 140.w),
+                  padding: EdgeInsets.symmetric(horizontal: dragHandlePadding),
                   child: Container(
-                    height: 5.h,
-                    width: 67.w,
+                    height: dragHandleHeight,
+                    width: dragHandleWidth,
                     decoration: BoxDecoration(
                       color: isDarkMode ? Colors.white54 : const Color(0xffd9d9d9),
-                      borderRadius: BorderRadius.circular(100.r),
+                      borderRadius: BorderRadius.circular(responsiveData.smallRadius),
                     ),
                   ),
                 ),
-                SizedBox(height: 38.h),
+                SizedBox(height: spacingLarge),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'PAYVIDENCE',
                       style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                        fontSize: 24.sp,
+                        fontSize: Responsive.fontSize(context, 24),
                         fontWeight: FontWeight.w700,
                         color: primaryColor2,
                       ),
@@ -73,26 +88,26 @@ class AppBottomSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 32.h),
+                SizedBox(height: spacingMedium),
                 Text(
                   title,
                   style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                    fontSize: 40.h,
+                    fontSize: Responsive.fontSize(context, 40),
                     color: isDarkMode ? Colors.white : Colors.black,
                   ),
                 ),
-                SizedBox(height: 24.h),
+                SizedBox(height: spacingSmall),
                 ...children,
               ],
             ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 14.h),
+                padding: EdgeInsets.symmetric(vertical: buttonPaddingVertical),
                 child: SizedBox(
-                  height: 56.h,
+                  height: buttonHeight,
                   child: AppButton(
-                    height: 56.h,
+                    height: buttonHeight,
                     buttonText: buttonText,
                     textColor: Colors.white,
                     backgroundColor: primaryColor2,
