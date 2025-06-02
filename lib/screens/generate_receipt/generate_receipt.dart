@@ -67,6 +67,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     super.initState();
     qtyControllers.add(qtyController);
     discountControllers.add(discountController);
+
     // Initialize the first form field
     _textFields.add(FormFields(
       qtyController: qtyController,

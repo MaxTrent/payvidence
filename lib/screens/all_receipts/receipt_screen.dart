@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +5,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/utilities/extensions.dart';
-import 'package:payvidence/utilities/toast_service.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sn_progress_dialog/progress_dialog.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:ui' as ui;
 import '../../components/app_button.dart';
@@ -23,7 +18,6 @@ import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/responsive.dart';
 import '../../utilities/responsive_wrapper.dart';
-
 
 @RoutePage(name: 'ReceiptScreenRoute')
 class ReceiptScreen extends ConsumerWidget {
@@ -49,96 +43,6 @@ class ReceiptScreen extends ConsumerWidget {
         name: 'receipt_${DateTime.now().toIso8601String()}',
         mimeType: 'image/png',
       );
-    }
-
-    Future<bool> requestStoragePermissions() async {
-      if (Platform.isAndroid) {
-        Permission permission;
-        if (Platform.version.startsWith('13')) {
-          permission = Permission.photos;
-          print('Android 13+: Requesting Permission.photos');
-        } else {
-          permission = Permission.storage;
-          print('Android < 13: Requesting Permission.storage');
-        }
-
-        var status = await permission.status;
-        print('Permission status: $status');
-        if (status.isDenied) {
-          status = await permission.request();
-          print('Permission request result: $status');
-        }
-
-        if (status.isPermanentlyDenied) {
-          print('Permission permanently denied, opening settings');
-          await openAppSettings();
-          ToastService.showErrorSnackBar(
-              "Please enable storage/photos permission in settings to save the receipt.");
-          return false;
-        }
-
-        if (!status.isGranted) {
-          print('Permission not granted');
-          ToastService.showErrorSnackBar(
-              "Storage or photo library access is required to save the receipt.");
-          return false;
-        }
-      } else if (Platform.isIOS) {
-        var status = await Permission.photos.status;
-        print('iOS Permission.photos status: $status');
-        if (status.isDenied) {
-          status = await Permission.photos.request();
-          print('iOS Permission request result: $status');
-        }
-
-        if (status.isPermanentlyDenied) {
-          print('iOS Permission permanently denied, opening settings');
-          await openAppSettings();
-          ToastService.showErrorSnackBar(
-              "Please enable photo library access in settings to save the receipt.");
-          return false;
-        }
-
-        if (!status.isGranted) {
-          print('iOS Permission not granted');
-          ToastService.showErrorSnackBar(
-              "Photo library access is required to save the receipt.");
-          return false;
-        }
-      }
-      print('Permissions granted');
-      return true;
-    }
-
-    Future<void> saveImage(XFile imageFile) async {
-      ProgressDialog pd = ProgressDialog(context: context);
-      pd.show(max: 100, msg: 'Preparing Receipt...');
-
-      try {
-        final tempDir = await getTemporaryDirectory();
-        final filePath = '${tempDir.path}/receipt_${DateTime.now().toIso8601String()}.png';
-        final file = File(filePath);
-        await file.writeAsBytes(await imageFile.readAsBytes());
-
-        pd.close();
-
-        await Share.shareXFiles([XFile(filePath)], text: 'Save or share your receipt');
-      } catch (e) {
-        pd.close();
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Error"),
-            content: Text("Failed to prepare receipt: $e"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-        );
-      }
     }
 
     Future<void> shareReceipt() async {
@@ -167,7 +71,7 @@ class ReceiptScreen extends ConsumerWidget {
                       style: Theme.of(context)
                           .textTheme
                           .displayMedium!
-                          .copyWith(fontSize: Responsive.fontSize(context, 14), color: primaryColor2),
+                          .copyWith(fontSize: Responsive.fontSize(context, 12), color: primaryColor2), // Reduced from 14
                     ),
                   ),
                 ),
@@ -199,18 +103,6 @@ class ReceiptScreen extends ConsumerWidget {
                       },
                     ),
                     SizedBox(height: responsiveData.scaleHeight(26)),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     saveImage(await capturePng());
-                    //   },
-                    //   child: Text(
-                    //     'Download ${isInvoice == true ? 'invoice' : 'receipt'}',
-                    //     style: Theme.of(context)
-                    //         .textTheme
-                    //         .displayMedium!
-                    //         .copyWith(color: primaryColor2),
-                    //   ),
-                    // ),
                     SizedBox(height: responsiveData.scaleHeight(24)),
                   ],
                 )
@@ -250,6 +142,12 @@ class ContainerWithClippedCircles extends StatelessWidget {
     final formattedDate =
         "${getDayWithSuffix(date.day)} ${DateFormat('MMM. yyyy').format(date)}";
 
+    // Local function to cap font size
+    double capFontSize(double baseSize, double maxSize) {
+      double scaledSize = Responsive.fontSize(context, baseSize);
+      return scaledSize > maxSize ? maxSize : scaledSize;
+    }
+
     return Stack(
       children: [
         Container(
@@ -267,7 +165,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 "TRANSACTION ${isInvoice == true ? 'INVOICE' : 'RECEIPT'}"
                     .toUpperCase(),
                 style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                    color: Colors.black, fontWeight: FontWeight.w600),
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: capFontSize(14, 18)), // Reduced from 18, capped at 18
               ),
               SizedBox(height: responsiveData.scaleHeight(24)),
               record.business?.logoUrl != null
@@ -286,7 +186,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                         child: Text(
                           "K",
                           style: TextStyle(
-                            fontSize: Responsive.fontSize(context, 20),
+                            fontSize: capFontSize(16, 20), // Reduced from 20, capped at 20
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
@@ -302,7 +202,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 child: Text(
                   "K",
                   style: TextStyle(
-                    fontSize: Responsive.fontSize(context, 20),
+                    fontSize: capFontSize(16, 20), // Reduced from 20, capped at 20
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -314,14 +214,19 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .displaySmall!
-                    .copyWith(color: Colors.black, fontWeight: FontWeight.w400),
+                    .copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                    fontSize: capFontSize(12, 16)), // Reduced from 14, capped at 16
               ),
               Text(
                 record.business?.address ?? '',
                 style: Theme.of(context)
                     .textTheme
                     .displaySmall!
-                    .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                    .copyWith(
+                    fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                    color: Colors.black),
                 textAlign: TextAlign.center,
               ),
               Text(
@@ -329,7 +234,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .displaySmall!
-                    .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                    .copyWith(
+                    fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                    color: Colors.black),
               ),
               SizedBox(height: responsiveData.scaleHeight(24)),
               Padding(
@@ -347,7 +254,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: Responsive.fontSize(context, 18), color: Colors.black),
+                                .copyWith(
+                                fontSize: capFontSize(14, 18), // Reduced from 18, capped at 18
+                                color: Colors.black),
                           ),
                           SizedBox(height: responsiveData.scaleHeight(8)),
                           Text(
@@ -355,7 +264,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(color: Colors.black),
+                                .copyWith(
+                                color: Colors.black,
+                                fontSize: capFontSize(12, 15)), // Reduced from 14, capped at 15
                           ),
                           SizedBox(height: responsiveData.scaleHeight(4)),
                           Text(
@@ -363,7 +274,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(color: Colors.black),
+                                .copyWith(
+                                color: Colors.black,
+                                fontSize: capFontSize(10, 14)), // Reduced from 14, capped at 14
                           ),
                           SizedBox(height: responsiveData.scaleHeight(4)),
                           Text(
@@ -371,7 +284,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: Responsive.fontSize(context, 16), color: Colors.black),
+                                .copyWith(
+                                fontSize: capFontSize(10, 14), // Reduced from 16, capped at 14
+                                color: Colors.black),
                           ),
                         ],
                       ),
@@ -386,7 +301,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: Responsive.fontSize(context, 18), color: Colors.black),
+                                .copyWith(
+                                fontSize: capFontSize(14, 18), // Reduced from 18, capped at 18
+                                color: Colors.black),
                           ),
                           SizedBox(height: responsiveData.scaleHeight(8)),
                           Text(
@@ -394,7 +311,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(color: Colors.black),
+                                .copyWith(
+                                color: Colors.black,
+                                fontSize: capFontSize(12, 15)), // Reduced from 14, capped at 15
                           ),
                           SizedBox(height: responsiveData.scaleHeight(4)),
                           Text(
@@ -402,7 +321,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(color: Colors.black),
+                                .copyWith(
+                                color: Colors.black,
+                                fontSize: capFontSize(10, 14)), // Reduced from 14, capped at 14
                           ),
                           SizedBox(height: responsiveData.scaleHeight(8)),
                           BarcodeWidget(
@@ -450,7 +371,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                              .copyWith(
+                              fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                              color: Colors.white),
                         ),
                       ),
                       Padding(
@@ -463,12 +386,14 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                                .copyWith(
+                                fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                color: Colors.white),
                             children: [
                               const TextSpan(text: 'RATE ('),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: AppNaira(fontSize: 14, color: Colors.white),
+                                child: AppNaira(fontSize: 10, color: Colors.white), // Reduced from 14
                               ),
                               const TextSpan(text: ')'),
                             ],
@@ -485,7 +410,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                              .copyWith(
+                              fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                              color: Colors.white),
                         ),
                       ),
                       Padding(
@@ -498,12 +425,14 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                                .copyWith(
+                                fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                color: Colors.white),
                             children: [
                               const TextSpan(text: 'AMT. ('),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: AppNaira(fontSize: 14, color: Colors.white),
+                                child: AppNaira(fontSize: 10, color: Colors.white), // Reduced from 14
                               ),
                               const TextSpan(text: ')'),
                             ],
@@ -533,7 +462,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                                .copyWith(
+                                fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                color: Colors.black),
                           ),
                         ),
                         Padding(
@@ -546,7 +477,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                                .copyWith(
+                                fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                color: Colors.black),
                           ),
                         ),
                         Padding(
@@ -559,7 +492,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                                .copyWith(
+                                fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                color: Colors.black),
                           ),
                         ),
                         Padding(
@@ -574,7 +509,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                                .copyWith(
+                                fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                color: Colors.black),
                           ),
                         ),
                       ],
@@ -592,7 +529,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                              .copyWith(
+                              fontSize: capFontSize(11, 15), // Reduced from 14, capped at 15
+                              color: Colors.black),
                         ),
                       ),
                       Padding(
@@ -623,7 +562,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                              .copyWith(
+                              fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                              color: Colors.black),
                         ),
                       ),
                     ],
@@ -640,7 +581,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                              .copyWith(
+                              fontSize: capFontSize(11, 15), // Reduced from 14, capped at 15
+                              color: Colors.black),
                         ),
                       ),
                       Padding(
@@ -671,7 +614,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                              .copyWith(
+                              fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                              color: Colors.black),
                         ),
                       ),
                     ],
@@ -688,7 +633,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                              .copyWith(
+                              fontSize: capFontSize(11, 15), // Reduced from 14, capped at 15
+                              color: Colors.black),
                         ),
                       ),
                       Padding(
@@ -719,7 +666,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displaySmall!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                              .copyWith(
+                              fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                              color: Colors.black),
                         ),
                       ),
                     ],
@@ -739,7 +688,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .displayLarge!
-                              .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                              .copyWith(
+                              fontSize: capFontSize(11, 15), // Reduced from 14, capped at 15
+                              color: Colors.white),
                         ),
                       ),
                       Padding(
@@ -770,11 +721,13 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge!
-                                .copyWith(fontSize: Responsive.fontSize(context, 14), color: Colors.white),
+                                .copyWith(
+                                fontSize: capFontSize(11, 15), // Reduced from 14, capped at 15
+                                color: Colors.white),
                             children: [
                               const WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: AppNaira(fontSize: 14, color: Colors.white),
+                                child: AppNaira(fontSize: 10, color: Colors.white), // Reduced from 14
                               ),
                               TextSpan(text: grandTotal.toString().commaSeparated()),
                             ],
@@ -805,7 +758,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                   .textTheme
                                   .displayMedium!
                                   .copyWith(
-                                  color: Colors.black, fontWeight: FontWeight.w600),
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: capFontSize(12, 16)), // Reduced from 14, capped at 16
                             ),
                             SizedBox(height: responsiveData.scaleHeight(12)),
                             if (record.business != null) ...[
@@ -815,7 +770,8 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: Responsive.fontSize(context, 16), color: Colors.black),
+                                    fontSize: capFontSize(12, 16), // Reduced from 16, capped at 16
+                                    color: Colors.black),
                               ),
                               SizedBox(height: responsiveData.scaleHeight(4)),
                               Text(
@@ -824,7 +780,8 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: Responsive.fontSize(context, 16), color: Colors.black),
+                                    fontSize: capFontSize(12, 16), // Reduced from 16, capped at 16
+                                    color: Colors.black),
                               ),
                               SizedBox(height: responsiveData.scaleHeight(4)),
                               Text(
@@ -833,7 +790,8 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: Responsive.fontSize(context, 16), color: Colors.black),
+                                    fontSize: capFontSize(12, 16), // Reduced from 16, capped at 16
+                                    color: Colors.black),
                               ),
                             ] else ...[
                               Text(
@@ -842,7 +800,8 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                     .textTheme
                                     .displaySmall!
                                     .copyWith(
-                                    fontSize: Responsive.fontSize(context, 15), color: Colors.black),
+                                    fontSize: capFontSize(11, 15), // Reduced from 15, capped at 15
+                                    color: Colors.black),
                               ),
                             ],
                           ],
@@ -857,7 +816,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                   .textTheme
                                   .displaySmall!
                                   .copyWith(
-                                  fontSize: Responsive.fontSize(context, 44),
+                                  fontSize: capFontSize(30, 36), // Reduced from 44, capped at 36
                                   color: Colors.black,
                                   fontWeight: FontWeight.w600),
                             ),
@@ -868,7 +827,8 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                   .textTheme
                                   .displaySmall!
                                   .copyWith(
-                                  fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                                  fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                  color: Colors.black),
                             ),
                           ],
                         ),
@@ -903,7 +863,9 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
-                                .copyWith(color: Colors.black),
+                                .copyWith(
+                                color: Colors.black,
+                                fontSize: capFontSize(11, 15)), // Reduced from 14, capped at 15
                           ),
                           Text(
                             "Business Manager",
@@ -912,7 +874,8 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 .textTheme
                                 .displaySmall!
                                 .copyWith(
-                                fontSize: Responsive.fontSize(context, 14), color: Colors.black),
+                                fontSize: capFontSize(10, 14), // Reduced from 14, capped at 14
+                                color: Colors.black),
                           ),
                         ],
                       ),
@@ -925,7 +888,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 "Generated with Payvidence",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.marckScript(
-                  fontSize: Responsive.fontSize(context, 16),
+                  fontSize: capFontSize(12, 16), // Reduced from 16, capped at 16
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w400,
                   color: Colors.black,
