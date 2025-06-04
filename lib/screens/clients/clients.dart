@@ -82,6 +82,7 @@ class Clients extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
           centerTitle: false,
           title: Text(
             'Clients',
@@ -145,38 +146,39 @@ class Clients extends HookConsumerWidget {
                 fillColor: isDarkMode ? Colors.black : appGrey5,
               ),
               SizedBox(height: responsiveData.scaleHeight(20)),
-              allClients.when(
-                data: (data) {
-                  // Filter clients
-                  final filteredClients = searchQuery.value.isEmpty
-                      ? data
-                      : data
-                      .where((client) => client.name
-                      ?.toLowerCase()
-                      .contains(searchQuery.value.toLowerCase()) ??
-                      false)
-                      .toList();
-
-                  if (filteredClients.isEmpty) {
-                    return Expanded(
-                      child: PullToRefresh(
+              Expanded(
+                child: allClients.when(
+                  data: (data) {
+                    // Filter clients
+                    final filteredClients = searchQuery.value.isEmpty
+                        ? data
+                        : data
+                        .where((client) => client.name
+                        ?.toLowerCase()
+                        .contains(searchQuery.value.toLowerCase()) ??
+                        false)
+                        .toList();
+                
+                    if (filteredClients.isEmpty) {
+                      return PullToRefresh(
                         onRefresh: onRefresh,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            SizedBox(height: responsiveData.scaleHeight(80),),
                             SvgPicture.asset(Assets.svg.emptyClient),
                             SizedBox(height: responsiveData.scaleHeight(40)),
                             Text(
                               searchQuery.value.isEmpty
-                                  ? 'No clients available!'
+                                  ? 'No client yet!'
                                   : 'No clients found!',
                               style: Theme.of(context).textTheme.displayLarge,
                             ),
                             SizedBox(height: responsiveData.scaleHeight(10)),
                             Text(
                               searchQuery.value.isEmpty
-                                  ? 'All added clients will appear here.'
+                                  ? 'You can add your clients to your business. All clients will show here.'
                                   : 'Try a different search term.',
                               textAlign: TextAlign.center,
                               style: Theme.of(context)
@@ -187,7 +189,7 @@ class Clients extends HookConsumerWidget {
                             const Spacer(),
                             if (searchQuery.value.isEmpty) ...[
                               Padding(
-                                padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(52)),
+                                padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
                                 child: AppButton(
                                   buttonText: 'Add client',
                                   onPressed: () async {
@@ -202,12 +204,10 @@ class Clients extends HookConsumerWidget {
                             ],
                           ],
                         ),
-                      ),
-                    );
-                  }
-
-                  return Expanded(
-                    child: PullToRefresh(
+                      );
+                    }
+                
+                    return PullToRefresh(
                       onRefresh: onRefresh,
                       child: ListView.separated(
                         shrinkWrap: true,
@@ -342,11 +342,9 @@ class Clients extends HookConsumerWidget {
                         separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(24)),
                         itemCount: filteredClients.length,
                       ),
-                    ),
-                  );
-                },
-                error: (error, _) => Expanded(
-                  child: PullToRefresh(
+                    );
+                  },
+                  error: (error, _) => PullToRefresh(
                     onRefresh: onRefresh,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -362,13 +360,13 @@ class Clients extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                ),
-                loading: () => Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(12)),
-                    itemCount: 5,
-                    itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(56)),
+                  loading: () => Expanded(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(12)),
+                      itemCount: 5,
+                      itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(56)),
+                    ),
                   ),
                 ),
               ),

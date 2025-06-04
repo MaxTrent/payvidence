@@ -26,7 +26,7 @@ class AppTheme {
       displayLarge: TextStyle(
         fontFamily: 'Polysans',
         color: Colors.black,
-        fontSize: Responsive.fontSize(context, 28),
+        fontSize: Responsive.fontSize(context, 24),
         fontWeight: FontWeight.w600,
       ),
       displayMedium: TextStyle(

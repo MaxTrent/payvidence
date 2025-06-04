@@ -60,6 +60,7 @@ class AllReceipts extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
           centerTitle: false,
           title: ValueListenableBuilder(
             builder: (context, value, _) {
@@ -140,18 +141,19 @@ class AllReceipts extends HookConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SvgPicture.asset(Assets.svg.emptyReceipt),
+                                SizedBox(height: responsiveData.scaleHeight(80)),
+                                SvgPicture.asset(Assets.svg.emptyReceipt, height: responsiveData.scaleHeight(200),width: responsiveData.scaleWidth(200),),
                                 SizedBox(height: responsiveData.scaleHeight(40)),
                                 Text(
                                   searchQuery.value.isEmpty
-                                      ? 'No receipts available!'
+                                      ? 'No receipts yet!'
                                       : 'No receipts found!',
                                   style: Theme.of(context).textTheme.displayLarge,
                                 ),
                                 SizedBox(height: responsiveData.scaleHeight(10)),
                                 Text(
                                   searchQuery.value.isEmpty
-                                      ? 'All added receipts will appear here.'
+                                      ? 'Generate receipts for your business sales. All receipts generated will show here.'
                                       : 'Try a different search term.',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
@@ -162,7 +164,7 @@ class AllReceipts extends HookConsumerWidget {
                                 const Spacer(),
                                 if (searchQuery.value.isEmpty) ...[
                                   Padding(
-                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(52)),
+                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
                                     child: AppButton(
                                       buttonText: 'Generate receipt',
                                       onPressed: () {
@@ -197,7 +199,7 @@ class AllReceipts extends HookConsumerWidget {
                             child: ReceiptTile(receipt: filteredData[index]),
                           );
                         },
-                        physics: const NeverScrollableScrollPhysics(),
+                        // physics: const AlwaysScrollableScrollPhysics(),
                         separatorBuilder: (ctx, idx) => Column(
                           children: [SizedBox(height: responsiveData.scaleHeight(24))],
                         ),

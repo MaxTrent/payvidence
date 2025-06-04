@@ -235,7 +235,8 @@ class HomeScreen extends HookConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(Assets.svg.emptyTransaction),
+                        SizedBox(height: responsiveData.scaleHeight(24)),
+                        SvgPicture.asset(Assets.svg.emptyTransaction, height: responsiveData.scaleHeight(160), width: responsiveData.scaleWidth(160),),
                         SizedBox(height: responsiveData.scaleHeight(32)),
                         Text(
                           'No transaction yet!',

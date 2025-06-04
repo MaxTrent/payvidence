@@ -81,6 +81,7 @@ class AllTransactions extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: Scaffold(
         appBar: AppBar(
+
           centerTitle: false,
           title: Text(
             'All transactions (${filteredTransactions.length})',
@@ -97,24 +98,28 @@ class AllTransactions extends HookConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    AppTextField(
-                      width: responsiveData.scaleWidth(282),
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-                        child: SvgPicture.asset(Assets.svg.search),
+                    Expanded(
+                      child: AppTextField(
+                        // width: responsiveData.scaleWidth(282),
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                          child: SvgPicture.asset(Assets.svg.search),
+                        ),
+                        hintText: 'Search for transaction',
+                        controller: searchController,
+                        radius: responsiveData.largeRadius,
+                        filled: true,
+                        fillColor: appGrey5,
                       ),
-                      hintText: 'Search for transaction',
-                      controller: searchController,
-                      radius: responsiveData.largeRadius,
-                      filled: true,
-                      fillColor: appGrey5,
                     ),
+                    SizedBox(width: responsiveData.scaleWidth(12)),
                     GestureDetector(
                       onTap: () {
                         buildFilterBottomSheet(context, filterType, isDarkMode);
                       },
                       child: Container(
                         height: responsiveData.scaleHeight(48),
+                        width: responsiveData.scaleWidth(56),
                         decoration: BoxDecoration(
                           color: borderColor,
                           borderRadius: BorderRadius.circular(responsiveData.largeRadius),
@@ -137,8 +142,8 @@ class AllTransactions extends HookConsumerWidget {
                   SizedBox(height: responsiveData.scaleHeight(24)),
                   CustomShimmer(height: responsiveData.scaleHeight(101)),
                 ] else if (filteredTransactions.isEmpty) ...[
-                  SizedBox(height: responsiveData.scaleHeight(20)),
-                  SvgPicture.asset(Assets.svg.emptyTransaction),
+                  SizedBox(height: responsiveData.scaleHeight(80)),
+                  SvgPicture.asset(Assets.svg.emptyTransaction, height: responsiveData.scaleHeight(200), width: responsiveData.scaleWidth(200),),
                   SizedBox(height: responsiveData.scaleHeight(40)),
                   Text(
                     filterType.value != 'All' && viewModel.transactions.isNotEmpty

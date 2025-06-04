@@ -15,8 +15,8 @@ class AddClientViewModel extends BaseChangeNotifier {
 
   Future<void> addClient({
     required String name,
-    required String address,
-    required String phoneNumber,
+     String? address,
+     String? phoneNumber,
     required String businessId,
     required Function() navigateOnSuccess,
   }) async {
