@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/model/receipt_model.dart';
@@ -34,6 +35,7 @@ class GenerateReceipt extends ConsumerStatefulWidget {
 }
 
 class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
+  final _layerLink = LayerLink();
   final qtyController = TextEditingController();
   final discountController = TextEditingController();
   final clientNameController = TextEditingController();
@@ -128,55 +130,75 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       });
     }
   }
-
+  
   void _showOverlay() {
     _hideOverlay(); // Remove existing overlay first
 
-    final RenderBox renderBox = context.findRenderObject() as RenderBox;
-    final size = renderBox.size;
-    final offset = renderBox.localToGlobal(Offset.zero);
-
     overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        left: ResponsiveInherited.of(context).paddingHorizontal,
-        right: ResponsiveInherited.of(context).paddingHorizontal,
-        top: offset.dy + 200, // Adjust this value based on your layout
-        child: Material(
-          elevation: 4,
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 200),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: borderColor),
+      builder: (context) {
+        return Stack(
+          children: [
+            // Invisible barrier to detect taps outside
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _hideOverlay,
+                child: Container(color: Colors.transparent),
+              ),
             ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: filteredClients.length,
-              itemBuilder: (context, index) {
-                final client = filteredClients[index];
-                return ListTile(
-                  title: Text(
-                    client.name,
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  subtitle: Text(
-                    client.address.isNotEmpty ? client.address : client.phoneNumber,
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      fontSize: Responsive.fontSize(context, 12),
-                      color: Colors.grey,
+            // The actual dropdown
+            Positioned(
+              left: ResponsiveInherited.of(context).paddingHorizontal,
+              right: ResponsiveInherited.of(context).paddingHorizontal,
+              child: CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: const Offset(0, 60), // Positions dropdown below text field
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 4), // Reduced padding
+                      itemCount: filteredClients.length,
+                      itemBuilder: (context, index) {
+                        final client = filteredClients[index];
+                        return ListTile(
+                          dense: true, // Makes ListTile more compact
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2, // Reduced vertical padding
+                          ),
+                          title: Text(
+                            client.name,
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          subtitle: Text(
+                            client.address.isNotEmpty ? client.address : client.phoneNumber,
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              fontSize: Responsive.fontSize(context, 12),
+                              color: Colors.grey,
+                            ),
+                          ),
+                          onTap: () {
+                            _selectExistingClient(client);
+                          },
+                        );
+                      },
                     ),
                   ),
-                  onTap: () {
-                    _selectExistingClient(client);
-                  },
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
+          ],
+        );
+      },
     );
 
     Overlay.of(context).insert(overlayEntry!);
@@ -552,16 +574,24 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                       SizedBox(
                         height: responsiveData.scaleHeight(8),
                       ),
-                      AppTextField(
-                        hintText: 'Type or select client name',
-                        controller: clientNameController,
-                        focusNode: clientNameFocusNode,
-                        validator: (val) {
-                          if (val?.trim().isEmpty ?? true) {
-                            return 'Please enter client name';
-                          }
-                          return null;
-                        },
+                      CompositedTransformTarget(
+                        link: _layerLink,
+                        child: AppTextField(
+                          hintText: 'Type or select client name',
+                          controller: clientNameController,
+                          focusNode: clientNameFocusNode,
+                          keyboardType: TextInputType.name,
+                          // inputFormatters: [
+                          //   LengthLimitingTextInputFormatter(11),
+                          //   FilteringTextInputFormatter.digitsOnly,
+                          // ],
+                          validator: (val) {
+                            if (val?.trim().isEmpty ?? true) {
+                              return 'Please enter client name';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: responsiveData.scaleHeight(20),
