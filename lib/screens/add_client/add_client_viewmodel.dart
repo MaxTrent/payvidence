@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
+import '../../data/network/api_response.dart';
 
 final addClientViewModelProvider =
-    ChangeNotifierProvider((ref) => AddClientViewModel(ref));
+ChangeNotifierProvider((ref) => AddClientViewModel(ref));
 
 class AddClientViewModel extends BaseChangeNotifier {
   final Ref ref;
@@ -10,13 +11,15 @@ class AddClientViewModel extends BaseChangeNotifier {
   AddClientViewModel(this.ref);
 
   bool _isLoading = false;
+  ApiResult? _lastResponse; // Add property to store the last response
 
   bool get isLoading => _isLoading;
+  ApiResult? get lastResponse => _lastResponse; // Add getter
 
   Future<void> addClient({
     required String name,
-     String? address,
-     String? phoneNumber,
+    String? address,
+    String? phoneNumber,
     required String businessId,
     required Function() navigateOnSuccess,
   }) async {
@@ -26,7 +29,8 @@ class AddClientViewModel extends BaseChangeNotifier {
       print(
           "ViewModel: Adding client with name: $name, address: $address, phoneNumber: $phoneNumber, businessId: $businessId");
       final response =
-          await apiServices.addClient(name, address, phoneNumber, businessId);
+      await apiServices.addClient(name, address, phoneNumber, businessId);
+      _lastResponse = response; // Store the response
       print(
           "ViewModel: Add client response - success: ${response.success}, data: ${response.data}");
 
