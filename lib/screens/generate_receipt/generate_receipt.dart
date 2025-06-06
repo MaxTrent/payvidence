@@ -124,7 +124,6 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 
   void _onClientNameFocusChanged() {
     if (!clientNameFocusNode.hasFocus) {
-      // Small delay to allow for client selection
       Future.delayed(const Duration(milliseconds: 150), () {
         _hideOverlay();
       });
@@ -267,33 +266,49 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   Future<ClientModel?> createClient(String name) async {
     try {
       final businessId = ref.read(getCurrentBusinessProvider)?.id;
-      if (businessId == null) return null;
+      if (businessId == null) {
+        print('createClient: No businessId found');
+        return null;
+      }
 
       bool success = false;
       String? newClientId;
 
-      // Use the AddClientViewModel provider to create the client
-      await ref.read(addClientViewModelProvider).addClient(
+      print('createClient: Starting addClient for name: $name, businessId: $businessId');
+      ref.read(addClientViewModelProvider).addClient(
         name: name,
         address: null,
         phoneNumber: null,
         businessId: businessId,
         navigateOnSuccess: () {
+          print('navigateOnSuccess: Executed, success set to true');
           success = true;
-          // Retrieve the last response
-          final response = ref.read(addClientViewModelProvider).lastResponse;
-          newClientId = response?.data?['id'] as String?;
+          final response = ref.read(addClientLastResponseProvider);
+          newClientId = response?.data?['data']?['id'] as String?;
+          print('navigateOnSuccess: newClientId = $newClientId, response = $response');
         },
       );
 
+      print('createClient: Waiting for isLoading to become false');
+      await Future.doWhile(() async {
+        final isLoading = ref.read(addClientLoadingProvider);
+        print('createClient: isLoading = $isLoading');
+        if (isLoading) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          return true;
+        }
+        return false;
+      });
+
+      print('createClient: isLoading is false, success = $success, newClientId = $newClientId');
       if (!success || newClientId == null) {
+        print('createClient: Operation failed, returning null');
         return null;
       }
 
-      // Refresh the clients list
+      print('createClient: Operation successful, creating ClientModel');
       ref.read(getAllClientsProvider.notifier).fetchClients();
 
-      // Create a temporary client model
       return ClientModel(
         id: newClientId!,
         businessId: businessId,
@@ -304,7 +319,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         updatedAt: DateTime.now(),
       );
     } catch (e) {
-      print('Error creating client: $e');
+      print('createClient: Error occurred - $e');
       return null;
     }
   }
@@ -581,10 +596,11 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                           controller: clientNameController,
                           focusNode: clientNameFocusNode,
                           keyboardType: TextInputType.name,
-                          // inputFormatters: [
-                          //   LengthLimitingTextInputFormatter(11),
-                          //   FilteringTextInputFormatter.digitsOnly,
-                          // ],
+                          inputFormatters: [
+                            // LengthLimitingTextInputFormatter(11),
+                            // FilteringTextInputFormatter.digitsOnly,
+                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]'))
+                          ],
                           validator: (val) {
                             if (val?.trim().isEmpty ?? true) {
                               return 'Please enter client name';
