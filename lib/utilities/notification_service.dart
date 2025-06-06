@@ -18,12 +18,12 @@ class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initialize() async {
-    // Initialize Firebase (already called in main.dart, but safe to ensure)
+
     await Firebase.initializeApp();
 
-    // Initialize local notifications
+
     const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/launcher_icon');
     const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -46,10 +46,10 @@ class NotificationService {
 
     tz.initializeTimeZones();
 
-    // Request permissions for both local and push notifications
+
     await _requestPermissions();
 
-    // Initialize Firebase Messaging
+
     await _initializeFirebaseMessaging();
   }
 
@@ -69,60 +69,115 @@ class NotificationService {
           .resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(alert: true, badge: true, sound: true);
-      await _firebaseMessaging.requestPermission(
+
+
+      NotificationSettings settings = await _firebaseMessaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        announcement: false,
       );
+
+      print('Notification permission status: ${settings.authorizationStatus}');
+
+      // Add a small delay to allow the system to process the permission
+      await Future.delayed(Duration(milliseconds: 1000));
     }
   }
 
   Future<void> _initializeFirebaseMessaging() async {
-    String? token = await _firebaseMessaging.getToken();
-    print('FCM Token: $token');
+    try {
+      // Wait for APNs token with retry mechanism
+      String? apnsToken = await _getAPNSTokenWithRetry();
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        _displayPushNotification(message);
+      if (apnsToken != null) {
+        print('APNs Token: $apnsToken');
+
+
+        String? token = await _firebaseMessaging.getToken();
+        print('FCM Token: $token');
+
+
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          if (message.notification != null) {
+            _displayPushNotification(message);
+          }
+        });
+
+        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+          print('Notification tapped from background: ${message.notification?.title}');
+          locator<PayvidenceAppRouter>().navigateNamed('/messages');
+        });
+
+        _firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
+          if (message != null) {
+            print('Notification tapped from terminated state: ${message.notification?.title}');
+            locator<PayvidenceAppRouter>().navigateNamed('/messages');
+          }
+        });
+      } else {
+        print('Failed to obtain APNs token after retries');
+
       }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Notification tapped from background: ${message.notification?.title}');
-      locator<PayvidenceAppRouter>().navigateNamed('/messages');
-    });
-
-    _firebaseMessaging.getInitialMessage().then((RemoteMessage? message) {
-      if (message != null) {
-        print('Notification tapped from terminated state: ${message.notification?.title}');
-        locator<PayvidenceAppRouter>().navigateNamed('/messages');
-      }
-    });
+    } catch (e) {
+      print('Error initializing Firebase Messaging: $e');
+    }
   }
+
+  Future<String?> _getAPNSTokenWithRetry() async {
+    String? apnsToken;
+    int retryCount = 0;
+    const maxRetries = 10;
+    const retryDelay = Duration(milliseconds: 500);
+
+    while (apnsToken == null && retryCount < maxRetries) {
+      try {
+        apnsToken = await _firebaseMessaging.getAPNSToken();
+        if (apnsToken == null) {
+          print('APNs token not available yet, retrying... (${retryCount + 1}/$maxRetries)');
+          await Future.delayed(retryDelay);
+          retryCount++;
+        }
+      } catch (e) {
+        print('Error getting APNs token: $e');
+        await Future.delayed(retryDelay);
+        retryCount++;
+      }
+    }
+
+    return apnsToken;
+  }
+
 
   Future<void> _displayPushNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'push_channel',
-      'Push Notifications',
-      channelDescription: 'Channel for FCM push notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
-    const NotificationDetails platformDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
+    try {
+      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        'push_channel',
+        'Push Notifications',
+        channelDescription: 'Channel for FCM push notifications',
+        importance: Importance.max,
+        priority: Priority.high,
+      );
+      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
+      const NotificationDetails platformDetails = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
 
-    await _notificationsPlugin.show(
-      message.hashCode,
-      message.notification?.title ?? 'No Title',
-      message.notification?.body ?? 'No Body',
-      platformDetails,
-      payload: message.data['payload']?.toString(),
-    );
+      await _notificationsPlugin.show(
+        message.hashCode,
+        message.notification?.title ?? 'No Title',
+        message.notification?.body ?? 'No Body',
+        platformDetails,
+        payload: message.data['payload']?.toString(),
+      );
+    } catch (e) {
+      print('Error displaying push notification: $e');
+    }
   }
-
   Future<void> showNotification({
     required int id,
     required String title,

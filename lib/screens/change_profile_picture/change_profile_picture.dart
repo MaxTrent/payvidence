@@ -65,7 +65,7 @@ class ChangeProfilePicture extends HookConsumerWidget {
                 SizedBox(height: responsiveData.scaleHeight(32)),
                 Center(
                   child: CircleAvatar(
-                    radius: responsiveData.largeRadius,
+                    radius: responsiveData.scaleHeight(90),
                     backgroundColor: Colors.purple,
                     child: ClipOval(
                       child: viewModel.selectedImage != null
