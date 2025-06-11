@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/product_providers/current_product_provider.dart';
@@ -150,7 +151,7 @@ class ProductDetails extends HookConsumerWidget {
                               width: responsiveData.scaleWidth(139),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.6), // Approx 32.r equivalent
+                                borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.6),
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
@@ -160,10 +161,10 @@ class ProductDetails extends HookConsumerWidget {
                                   children: [
                                     SvgPicture.asset(
                                       Assets.svg.edit,
-                                      width: responsiveData.scaleWidth(20), // Added for consistency
+                                      width: responsiveData.scaleWidth(20),
                                       height: responsiveData.scaleHeight(20),
                                     ),
-                                    SizedBox(width: responsiveData.scaleWidth(8)), // Added spacing for better layout
+                                    SizedBox(width: responsiveData.scaleWidth(4)),
                                     Text(
                                       'Edit product',
                                       style: Theme.of(context).textTheme.displaySmall,
@@ -228,7 +229,9 @@ class ProductDetails extends HookConsumerWidget {
                             color: isDarkMode ? Colors.white : Colors.black,
                           ),
                           Text(
-                            '${currentProduct?.price}',
+                            NumberFormat('#,###').format(
+                                double.tryParse(currentProduct?.price?.toString() ?? '0') ?? 0
+                            ),
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                         ],

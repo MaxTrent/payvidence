@@ -281,10 +281,10 @@ class Product extends HookConsumerWidget {
                 size: responsiveData.scaleHeight(40),
               ),
             )
-                : null; // Hide FAB when there are no products
+                : null;
           },
-          error: (error, _) => null, // Hide FAB on error
-          loading: () => null, // Hide FAB while loading
+          error: (error, _) => null,
+          loading: () => null,
         ),
       ),
     );
@@ -318,8 +318,8 @@ class FilterBottomSheet extends HookConsumerWidget {
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
-          topLeft: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
+          topRight: Radius.circular(responsiveData.smallRadius * 2),
+          topLeft: Radius.circular(responsiveData.smallRadius * 2),
         ),
       ),
       child: Padding(
@@ -335,7 +335,7 @@ class FilterBottomSheet extends HookConsumerWidget {
                 width: responsiveData.scaleWidth(67),
                 decoration: BoxDecoration(
                   color: isDarkMode ? Colors.black : const Color(0xffd9d9d9),
-                  borderRadius: BorderRadius.circular(responsiveData.smallRadius * 5), // Approx 100.r equivalent
+                  borderRadius: BorderRadius.circular(responsiveData.smallRadius * 5),
                 ),
               ),
             ),

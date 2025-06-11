@@ -88,7 +88,7 @@ class HomeScreen extends HookConsumerWidget {
                           Row(
                             children: [
                               CircleAvatar(
-                                radius: responsiveData.smallRadius * 0.8, // Approx 20.r equivalent
+                                radius: responsiveData.smallRadius * 1.6,
                                 backgroundColor: Colors.black,
                                 backgroundImage:
                                 NetworkImage(data.last.logoUrl ?? ''),
