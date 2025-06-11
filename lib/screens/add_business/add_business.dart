@@ -9,7 +9,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/components/app_button.dart';
-import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/utilities/app_functions.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
@@ -17,7 +16,6 @@ import '../../components/loading_dialog.dart';
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../gen/assets.gen.dart';
-import '../../model/business_model.dart';
 import '../../providers/business_providers/get_all_business_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -40,9 +38,13 @@ class AddBusiness extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final hasNavigated = useRef(false);
     final responsiveData = ResponsiveInherited.of(context);
     final vm = ref.watch(addBusinessViewModelProvider);
     final sessionManager = locator<SessionManager>();
+
+    final isCreatingBusiness = useState(false);
+
     final firstName = sessionManager.get<String>(SessionConstants.userFirstName);
     final lastName = sessionManager.get<String>(SessionConstants.userLastName);
     final email = sessionManager.get<String>(SessionConstants.userEmail);
@@ -53,7 +55,12 @@ class AddBusiness extends HookConsumerWidget {
 
     final issuerController = useTextEditingController(text: issuerName);
 
-    Future<void> createBusiness(BuildContext context) async {
+
+    final createBusiness = useCallback(() async {
+      if (isCreatingBusiness.value) return;
+
+      isCreatingBusiness.value = true;
+
       final requestData = FormData.fromMap({
         "name": businessNameController.text,
         "address": businessAddressController.text,
@@ -70,195 +77,226 @@ class AddBusiness extends HookConsumerWidget {
           filename: signature.value!.path.split('/').last,
         ),
       });
-      if (!context.mounted) return;
+
+      if (!context.mounted) {
+        isCreatingBusiness.value = false;
+        return;
+      }
+
       LoadingDialog.show(context);
+
       try {
-        final Business response = await vm.businessRepository.addBusiness(requestData);
-        if (!context.mounted) return;
+        final response = await vm.businessRepository.addBusiness(requestData);
+
+        if (!context.mounted) {
+          isCreatingBusiness.value = false;
+          return;
+        }
+
         Navigator.of(context).pop();
         ToastService.showSnackBar("Business created successfully");
         ref.invalidate(getAllBusinessProvider);
-        Future.delayed(const Duration(seconds: 2), () {
+
+
+        if (context.mounted) {
           locator<PayvidenceAppRouter>().popUntil((route) => route is OnboardingScreen);
           locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
           locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allBusiness);
-        });
+        }
+
       } on DioException catch (e) {
-        Navigator.of(context).pop();
-        ToastService.showErrorSnackBar(
-          e.response?.data['message'] ?? 'An unknown error has occurred!!!',
-        );
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          ToastService.showErrorSnackBar(
+            e.response?.data['message'] ?? 'An unknown error has occurred!!!',
+          );
+        }
       } catch (e) {
         print(e);
-        Navigator.of(context).pop();
-        ToastService.showErrorSnackBar('An error has occurred!');
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          ToastService.showErrorSnackBar('An error has occurred!');
+        }
+      } finally {
+        isCreatingBusiness.value = false;
       }
-    }
+    }, [isCreatingBusiness.value]);
+
+
+    useEffect(() {
+      return () {
+        isCreatingBusiness.value = false;
+      };
+    }, []);
 
     return ResponsiveWrapper(
       child: GestureDetector(
         onTap: FocusManager.instance.primaryFocus?.unfocus,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(),
-          body: Form(
-            key: formKey,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
-              child: ListView(
-                children: [
-                  Text(
-                    'Set-up business',
-                    style: Theme.of(context).textTheme.displayLarge,
-                  ),
-                  SizedBox(height: responsiveData.scaleHeight(8)),
-                  Text(
-                    'Fill in all details to add your business.',
-                    style: Theme.of(context).textTheme.displaySmall!,
-                  ),
-                  SizedBox(height: responsiveData.scaleHeight(12)),
-                  _buildSectionTitle(context, 'Business name'),
-                  AppTextField(
-                    hintText: 'Business name',
-                    controller: businessNameController,
-                    keyboardType: TextInputType.name,
-                    textCapitalization: TextCapitalization.words,
-                    validator: (val) => Validator.validateName(val),
-                  ),
-                  _buildSectionTitle(context, 'Business address'),
-                  AppTextField(
-                    hintText: 'Business address',
-                    controller: businessAddressController,
-                    textCapitalization: TextCapitalization.words,
-                    validator: (val) => Validator.validateName(val),
-                  ),
-                  _buildSectionTitle(context, 'Business phone number'),
-                  AppTextField(
-                    hintText: 'Business phone number',
-                    controller: phoneNumberController,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(11),
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    validator: (val) => Validator.validatePhoneNumber(val),
-                  ),
-                  _buildSectionTitle(context, 'Business logo'),
-                  GestureDetector(
-                    onTap: () async {
-                      logo.value = await AppFunctions.pickImage();
-                    },
-                    child: ValueListenableBuilder(
-                      valueListenable: logo,
-                      builder: (context, val, _) {
-                        if (val == null) {
-                          return SvgPicture.asset(Assets.svg.uploadImage);
-                        } else {
-                          return Stack(
-                            children: [
-                              SizedBox(
-                                width: double.infinity,
-                                child: Image.file(
+          body: SafeArea(
+            child: Form(
+              key: formKey,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+                child: ListView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  children: [
+                    Text(
+                      'Set-up business',
+                      style: Theme.of(context).textTheme.displayLarge,
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(8)),
+                    Text(
+                      'Fill in all details to add your business.',
+                      style: Theme.of(context).textTheme.displaySmall!,
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(12)),
+                    _buildSectionTitle(context, 'Business name'),
+                    AppTextField(
+                      hintText: 'Business name',
+                      controller: businessNameController,
+                      keyboardType: TextInputType.name,
+                      textCapitalization: TextCapitalization.words,
+                      validator: (val) => Validator.validateName(val),
+                    ),
+                    _buildSectionTitle(context, 'Business address'),
+                    AppTextField(
+                      hintText: 'Business address',
+                      controller: businessAddressController,
+                      textCapitalization: TextCapitalization.words,
+                      validator: (val) => Validator.validateName(val),
+                    ),
+                    _buildSectionTitle(context, 'Business phone number'),
+                    AppTextField(
+                      hintText: 'Business phone number',
+                      controller: phoneNumberController,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(11),
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      validator: (val) => Validator.validatePhoneNumber(val),
+                    ),
+                    _buildSectionTitle(context, 'Business logo'),
+                    GestureDetector(
+                      onTap: () async {
+                        logo.value = await AppFunctions.pickImage();
+                      },
+                      child: ValueListenableBuilder(
+                        valueListenable: logo,
+                        builder: (context, val, _) {
+                          if (val == null) {
+                            return SvgPicture.asset(Assets.svg.uploadImage);
+                          } else {
+                            return Stack(
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Image.file(
+                                    File(val.path),
+                                    height: responsiveData.scaleHeight(200),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: responsiveData.scaleHeight(8),
+                                  right: responsiveData.scaleWidth(8),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: responsiveData.scaleWidth(8),
+                                        vertical: responsiveData.scaleHeight(8)),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                                      color: Colors.grey,
+                                    ),
+                                    child: const Text(
+                                      "Tap to Change",
+                                      style: TextStyle(color: Colors.white, fontSize: 10),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    _buildSectionTitle(context, 'Who issues receipts and invoices?'),
+                    AppTextField(
+                      hintText: issuerName.isEmpty ? 'Issuer name not available' : 'Issuer name',
+                      controller: issuerController,
+                      enabled: false,
+                      validator: issuerName.isEmpty ? (_) => 'Issuer name is required' : (val) => Validator.validateName(val),
+                    ),
+                    _buildSectionTitle(context, 'What is the role of this issuer?'),
+                    AppTextField(
+                      hintText: 'Role of issuer',
+                      controller: roleController,
+                      validator: (val) => Validator.validateName(val),
+                    ),
+                    _buildSectionTitle(context, 'Issuer signature'),
+                    GestureDetector(
+                      onTap: () async {
+                        signature.value = await AppFunctions.pickImage();
+                      },
+                      child: ValueListenableBuilder(
+                        valueListenable: signature,
+                        builder: (context, val, _) {
+                          if (val == null) {
+                            return SvgPicture.asset(Assets.svg.uploadImage);
+                          } else {
+                            return Stack(
+                              children: [
+                                Image.file(
                                   File(val.path),
                                   height: responsiveData.scaleHeight(200),
                                   fit: BoxFit.cover,
                                 ),
-                              ),
-                              Positioned(
-                                bottom: responsiveData.scaleHeight(8),
-                                right: responsiveData.scaleWidth(8),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: responsiveData.scaleWidth(8),
-                                      vertical: responsiveData.scaleHeight(8)),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-                                    color: Colors.grey,
-                                  ),
-                                  child: const Text(
-                                    "Tap to Change",
-                                    style: TextStyle(color: Colors.white, fontSize: 10),
+                                Positioned(
+                                  bottom: responsiveData.scaleHeight(8),
+                                  right: responsiveData.scaleWidth(8),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: responsiveData.scaleWidth(8),
+                                        vertical: responsiveData.scaleHeight(8)),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                                      color: Colors.grey,
+                                    ),
+                                    child: const Text(
+                                      "Tap to Change",
+                                      style: TextStyle(color: Colors.white, fontSize: 10),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(32)),
+                    AppButton(
+                      buttonText: 'Add business',
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          formKey.currentState!.save();
+                          if (logo.value == null) {
+                            ToastService.showErrorSnackBar("Select a logo image");
+                          } else if (signature.value == null) {
+                            ToastService.showErrorSnackBar("Select a signature image");
+                          } else if (issuerName.isEmpty) {
+                            ToastService.showErrorSnackBar("Issuer name is not available. Please update your profile in Settings.");
+                          } else {
+                            createBusiness();
+                          }
                         }
                       },
                     ),
-                  ),
-                  _buildSectionTitle(context, 'Who issues receipts and invoices?'),
-                  AppTextField(
-                    hintText: issuerName.isEmpty ? 'Issuer name not available' : 'Issuer name',
-                    controller: issuerController,
-                    enabled: false,
-                    validator: issuerName.isEmpty ? (_) => 'Issuer name is required' : (val) => Validator.validateName(val),
-                  ),
-                  _buildSectionTitle(context, 'What is the role of this issuer?'),
-                  AppTextField(
-                    hintText: 'Role of issuer',
-                    controller: roleController,
-                    validator: (val) => Validator.validateName(val),
-                  ),
-                  _buildSectionTitle(context, 'Issuer signature'),
-                  GestureDetector(
-                    onTap: () async {
-                      signature.value = await AppFunctions.pickImage();
-                    },
-                    child: ValueListenableBuilder(
-                      valueListenable: signature,
-                      builder: (context, val, _) {
-                        if (val == null) {
-                          return SvgPicture.asset(Assets.svg.uploadImage);
-                        } else {
-                          return Stack(
-                            children: [
-                              Image.file(
-                                File(val.path),
-                                height: responsiveData.scaleHeight(200),
-                                fit: BoxFit.cover,
-                              ),
-                              Positioned(
-                                bottom: responsiveData.scaleHeight(8),
-                                right: responsiveData.scaleWidth(8),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: responsiveData.scaleWidth(8),
-                                      vertical: responsiveData.scaleHeight(8)),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-                                    color: Colors.grey,
-                                  ),
-                                  child: const Text(
-                                    "Tap to Change",
-                                    style: TextStyle(color: Colors.white, fontSize: 10),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  SizedBox(height: responsiveData.scaleHeight(32)),
-                  AppButton(
-                    buttonText: 'Add business',
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        formKey.currentState!.save();
-                        if (logo.value == null) {
-                          ToastService.showErrorSnackBar("Select a logo image");
-                        } else if (signature.value == null) {
-                          ToastService.showErrorSnackBar("Select a signature image");
-                        } else if (issuerName.isEmpty) {
-                          ToastService.showErrorSnackBar("Issuer name is not available. Please update your profile in Settings.");
-                        } else {
-                          createBusiness(context);
-                        }
-                      }
-                    },
-                  ),
-                  SizedBox(height: responsiveData.scaleHeight(8)),
-                ],
+                    SizedBox(height: responsiveData.scaleHeight(8)),
+                  ],
+                ),
               ),
             ),
           ),

@@ -271,7 +271,7 @@ class ApiServices {
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> addClient(String name, String address, String phoneNumber,
+  Future<ApiResult> addClient(String name, String? address, String? phoneNumber,
       String businessId) async {
     var requestData = {
       "name": name,

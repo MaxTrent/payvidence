@@ -57,6 +57,7 @@ class AllInvoices extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
           centerTitle: false,
           title: ValueListenableBuilder(
             builder: (context, value, _) {
@@ -137,6 +138,7 @@ class AllInvoices extends HookConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                SizedBox(height: responsiveData.scaleHeight(80),),
                                 SvgPicture.asset(Assets.svg.emptyInvoice),
                                 SizedBox(height: responsiveData.scaleHeight(40)),
                                 Text(
@@ -157,7 +159,7 @@ class AllInvoices extends HookConsumerWidget {
                                 const Spacer(),
                                 if (searchQuery.value.isEmpty) ...[
                                   Padding(
-                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(52)),
+                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
                                     child: AppButton(
                                       buttonText: 'Generate invoice',
                                       onPressed: () {

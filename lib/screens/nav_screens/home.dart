@@ -88,7 +88,7 @@ class HomeScreen extends HookConsumerWidget {
                           Row(
                             children: [
                               CircleAvatar(
-                                radius: responsiveData.smallRadius * 0.8, // Approx 20.r equivalent
+                                radius: responsiveData.smallRadius * 1.6,
                                 backgroundColor: Colors.black,
                                 backgroundImage:
                                 NetworkImage(data.last.logoUrl ?? ''),
@@ -235,7 +235,8 @@ class HomeScreen extends HookConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SvgPicture.asset(Assets.svg.emptyTransaction),
+                        SizedBox(height: responsiveData.scaleHeight(24)),
+                        SvgPicture.asset(Assets.svg.emptyTransaction, height: responsiveData.scaleHeight(160), width: responsiveData.scaleWidth(160),),
                         SizedBox(height: responsiveData.scaleHeight(32)),
                         Text(
                           'No transaction yet!',
@@ -270,6 +271,7 @@ class HomeScreen extends HookConsumerWidget {
                                 ? 'Invoice'
                                 : 'Receipt',
                             unitSold: '0',
+                            imageUrl: '',
                           );
                         }
 
@@ -280,6 +282,7 @@ class HomeScreen extends HookConsumerWidget {
                             .toString()
                             .toCommaSeparated()
                             : '0';
+                        final imageUrl = product?.logoUrl ?? "";
                         final dateTime = product?.createdAt
                             ?.toString()
                             .toFormattedIsoDate() ??
@@ -294,6 +297,7 @@ class HomeScreen extends HookConsumerWidget {
                               ? 'Invoice'
                               : 'Receipt',
                           unitSold: unitSold,
+                          imageUrl: imageUrl,
                         );
                       },
                     ),

@@ -36,22 +36,22 @@ class BaseChangeNotifier extends ChangeNotifier {
   }) {
     String errorMsg = message != "null" ? message : "An error occurred";
     ToastService.showErrorSnackBar(errorMsg);
-    _notificationService.showNotification(
-      id: DateTime.now().millisecondsSinceEpoch % 10000,
-      title: 'Error',
-      body: errorMsg,
-    );
+    // _notificationService.showNotification(
+    //   id: DateTime.now().millisecondsSinceEpoch % 10000,
+    //   title: 'Error',
+    //   body: errorMsg,
+    // );
   }
 
   void showSuccess({
     required String message,
   }) {
     ToastService.showSnackBar(message);
-    _notificationService.showNotification(
-      id: DateTime.now().millisecondsSinceEpoch % 10000,
-      title: 'Success',
-      body: message,
-    );
+    // _notificationService.showNotification(
+    //   id: DateTime.now().millisecondsSinceEpoch % 10000,
+    //   title: 'Success',
+    //   body: message,
+    // );
   }
 
   void scheduleNotification({

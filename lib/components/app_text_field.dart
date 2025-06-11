@@ -26,6 +26,7 @@ class AppTextField extends HookWidget {
     this.inputFormatters,
     this.autofillHints,
     this.textCapitalization,
+    this.onFieldSubmitted,
     super.key,
   });
 
@@ -47,6 +48,7 @@ class AppTextField extends HookWidget {
   final List<TextInputFormatter>? inputFormatters;
   final List<String>? autofillHints;
   final TextCapitalization? textCapitalization;
+  final ValueChanged<String>? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +83,7 @@ class AppTextField extends HookWidget {
         focusNode: focusNode,
         autocorrect: false,
         enableSuggestions: false,
-        onFieldSubmitted: (_) {
+        onFieldSubmitted: onFieldSubmitted ?? (value) {
           FocusScopeNode currentFocus = FocusScope.of(context);
           if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild == null) {
             currentFocus.unfocus();
@@ -90,7 +92,7 @@ class AppTextField extends HookWidget {
           }
         },
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.all(responsiveData.scaleHeight(8)), // Replaces 8.h
+          contentPadding: EdgeInsets.all(responsiveData.scaleHeight(8)),
           filled: filled,
           fillColor: fillColor,
           hintText: hintText,

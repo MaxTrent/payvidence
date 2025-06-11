@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
+import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
@@ -20,6 +22,7 @@ import '../../model/product_model.dart';
 import '../../providers/business_providers/current_business_provider.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../add_client/add_client_viewmodel.dart';
 
 @RoutePage(name: 'GenerateReceiptRoute')
 class GenerateReceipt extends ConsumerStatefulWidget {
@@ -32,8 +35,10 @@ class GenerateReceipt extends ConsumerStatefulWidget {
 }
 
 class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
+  final _layerLink = LayerLink();
   final qtyController = TextEditingController();
   final discountController = TextEditingController();
+  final clientNameController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   List<TextEditingController> discountControllers = [];
   List<TextEditingController> qtyControllers = [];
@@ -46,10 +51,14 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     'POS',
   ];
   String? selectedPayment;
-
   bool? isDraft;
-
   final List<Widget> _textFields = [];
+
+  // For client search functionality
+  List<ClientModel> filteredClients = [];
+  bool showClientDropdown = false;
+  final FocusNode clientNameFocusNode = FocusNode();
+  OverlayEntry? overlayEntry;
 
   @override
   void dispose() {
@@ -59,6 +68,9 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     for (var controller in discountControllers) {
       controller.dispose();
     }
+    clientNameController.dispose();
+    clientNameFocusNode.dispose();
+    overlayEntry?.remove();
     super.dispose();
   }
 
@@ -75,6 +87,135 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       onPressed: selectProduct,
       index: 1,
     ));
+
+    // Listen to client name changes for search
+    clientNameController.addListener(_onClientNameChanged);
+    clientNameFocusNode.addListener(_onClientNameFocusChanged);
+  }
+
+  void _onClientNameChanged() {
+    final query = clientNameController.text.trim();
+    if (query.isEmpty) {
+      setState(() {
+        filteredClients.clear();
+        showClientDropdown = false;
+      });
+      _hideOverlay();
+      return;
+    }
+
+    final allClients = ref.read(getAllClientsProvider).value ?? [];
+    final filtered = allClients
+        .where((client) =>
+        client.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    setState(() {
+      filteredClients = filtered;
+      showClientDropdown = filtered.isNotEmpty;
+    });
+
+    if (filtered.isNotEmpty) {
+      _showOverlay();
+    } else {
+      _hideOverlay();
+    }
+  }
+
+  void _onClientNameFocusChanged() {
+    if (!clientNameFocusNode.hasFocus) {
+      Future.delayed(const Duration(milliseconds: 150), () {
+        _hideOverlay();
+      });
+    }
+  }
+  
+  void _showOverlay() {
+    _hideOverlay(); // Remove existing overlay first
+
+    overlayEntry = OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            // Invisible barrier to detect taps outside
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _hideOverlay,
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+            // The actual dropdown
+            Positioned(
+              left: ResponsiveInherited.of(context).paddingHorizontal,
+              right: ResponsiveInherited.of(context).paddingHorizontal,
+              child: CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: const Offset(0, 60), // Positions dropdown below text field
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 4), // Reduced padding
+                      itemCount: filteredClients.length,
+                      itemBuilder: (context, index) {
+                        final client = filteredClients[index];
+                        return ListTile(
+                          dense: true, // Makes ListTile more compact
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2, // Reduced vertical padding
+                          ),
+                          title: Text(
+                            client.name,
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          subtitle: Text(
+                            client.address.isNotEmpty ? client.address : client.phoneNumber,
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              fontSize: Responsive.fontSize(context, 12),
+                              color: Colors.grey,
+                            ),
+                          ),
+                          onTap: () {
+                            _selectExistingClient(client);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    Overlay.of(context).insert(overlayEntry!);
+  }
+
+  void _hideOverlay() {
+    overlayEntry?.remove();
+    overlayEntry = null;
+  }
+
+  void _selectExistingClient(ClientModel selectedClient) {
+    setState(() {
+      client = selectedClient;
+      clientNameController.text = selectedClient.name;
+      showClientDropdown = false;
+    });
+    _hideOverlay();
+    clientNameFocusNode.unfocus();
   }
 
   void _addTextField() {
@@ -122,6 +263,66 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     }
   }
 
+  Future<ClientModel?> createClient(String name) async {
+    try {
+      final businessId = ref.read(getCurrentBusinessProvider)?.id;
+      if (businessId == null) {
+        print('createClient: No businessId found');
+        return null;
+      }
+
+      bool success = false;
+      String? newClientId;
+
+      print('createClient: Starting addClient for name: $name, businessId: $businessId');
+      ref.read(addClientViewModelProvider).addClient(
+        name: name,
+        address: null,
+        phoneNumber: null,
+        businessId: businessId,
+        navigateOnSuccess: () {
+          print('navigateOnSuccess: Executed, success set to true');
+          success = true;
+          final response = ref.read(addClientLastResponseProvider);
+          newClientId = response?.data?['data']?['id'] as String?;
+          print('navigateOnSuccess: newClientId = $newClientId, response = $response');
+        },
+      );
+
+      print('createClient: Waiting for isLoading to become false');
+      await Future.doWhile(() async {
+        final isLoading = ref.read(addClientLoadingProvider);
+        print('createClient: isLoading = $isLoading');
+        if (isLoading) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          return true;
+        }
+        return false;
+      });
+
+      print('createClient: isLoading is false, success = $success, newClientId = $newClientId');
+      if (!success || newClientId == null) {
+        print('createClient: Operation failed, returning null');
+        return null;
+      }
+
+      print('createClient: Operation successful, creating ClientModel');
+      ref.read(getAllClientsProvider.notifier).fetchClients();
+
+      return ClientModel(
+        id: newClientId!,
+        businessId: businessId,
+        name: name,
+        phoneNumber: '',
+        address: '',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+    } catch (e) {
+      print('createClient: Error occurred - $e');
+      return null;
+    }
+  }
   Future<dynamic> buildPaymentBottomSheet(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -235,6 +436,37 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       ToastService.showErrorSnackBar(error);
       return;
     }
+
+    // Handle client creation if needed
+    ClientModel? finalClient = client;
+    if (finalClient == null && clientNameController.text.trim().isNotEmpty) {
+      // Check if the typed name matches any existing client
+      final allClients = ref.read(getAllClientsProvider).value ?? [];
+      final existingClient = allClients.firstWhere(
+            (c) => c.name.toLowerCase() == clientNameController.text.trim().toLowerCase(),
+        orElse: () => ClientModel(
+          id: '',
+          businessId: '',
+          name: '',
+          phoneNumber: '',
+          address: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+      if (existingClient.id.isNotEmpty) {
+        finalClient = existingClient;
+      } else {
+        // Create new client
+        finalClient = await createClient(clientNameController.text.trim());
+        if (finalClient == null) {
+          ToastService.showErrorSnackBar('Failed to create client');
+          return;
+        }
+      }
+    }
+
     List<Map<String, dynamic>> productList = [];
 
     for (int index in products.keys) {
@@ -257,7 +489,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       "products": productList,
       "record_type": widget.isInvoice == true ? "invoice" : "receipt",
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
-      "client_id": client?.id,
+      "client_id": finalClient?.id,
       "is_draft": isDraft,
       "mode_of_payment":
       widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
@@ -318,7 +550,10 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 
     return ResponsiveWrapper(
       child: GestureDetector(
-        onTap: FocusManager.instance.primaryFocus?.unfocus,
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+          _hideOverlay();
+        },
         child: Scaffold(
           appBar: AppBar(),
           body: Form(
@@ -354,15 +589,24 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                       SizedBox(
                         height: responsiveData.scaleHeight(8),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          selectClient();
-                        },
+                      CompositedTransformTarget(
+                        link: _layerLink,
                         child: AppTextField(
-                          enabled: false,
-                          hintText: client?.name ?? 'Select client',
-                          controller: TextEditingController(),
-                          suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                          hintText: 'Type or select client name',
+                          controller: clientNameController,
+                          focusNode: clientNameFocusNode,
+                          keyboardType: TextInputType.name,
+                          inputFormatters: [
+                            // LengthLimitingTextInputFormatter(11),
+                            // FilteringTextInputFormatter.digitsOnly,
+                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]'))
+                          ],
+                          validator: (val) {
+                            if (val?.trim().isEmpty ?? true) {
+                              return 'Please enter client name';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                       SizedBox(
@@ -460,8 +704,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
-                                if (client == null) {
-                                  ToastService.showErrorSnackBar("Select a client please");
+                                if (clientNameController.text.trim().isEmpty) {
+                                  ToastService.showErrorSnackBar("Please enter client name");
                                   return;
                                 }
                                 isDraft = false;
@@ -476,8 +720,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             onTap: () {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
-                                if (client == null) {
-                                  ToastService.showErrorSnackBar("Select a client please");
+                                if (clientNameController.text.trim().isEmpty) {
+                                  ToastService.showErrorSnackBar("Please enter client name");
                                   return;
                                 }
                                 isDraft = true;

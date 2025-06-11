@@ -65,6 +65,7 @@ class Product extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
           centerTitle: false,
           title: ValueListenableBuilder(
             builder: (context, value, _) {
@@ -79,6 +80,8 @@ class Product extends HookConsumerWidget {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
           child: Column(
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: responsiveData.scaleHeight(32)),
               Row(
@@ -129,22 +132,23 @@ class Product extends HookConsumerWidget {
                   ),
                 ],
               ),
-              allProducts.when(
-                data: (data) {
-                  // Filter products by name
-                  final filteredProducts = searchQuery.value.isEmpty
-                      ? data
-                      : data
-                      .where((product) => product.name
-                      ?.toLowerCase()
-                      .contains(searchQuery.value.toLowerCase()) ??
-                      false)
-                      .toList();
-
-                  if (filteredProducts.isEmpty) {
-                    productNumber.value = 0;
-                    return Expanded(
-                      child: PullToRefresh(
+              SizedBox(height: responsiveData.scaleHeight(20)),
+              Expanded(
+                child: allProducts.when(
+                  data: (data) {
+                    // Filter products by name
+                    final filteredProducts = searchQuery.value.isEmpty
+                        ? data
+                        : data
+                        .where((product) => product.name
+                        ?.toLowerCase()
+                        .contains(searchQuery.value.toLowerCase()) ??
+                        false)
+                        .toList();
+                
+                    if (filteredProducts.isEmpty) {
+                      productNumber.value = 0;
+                      return PullToRefresh(
                         onRefresh: onRefresh,
                         child: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
@@ -154,22 +158,23 @@ class Product extends HookConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                SizedBox(height: responsiveData.scaleHeight(80),),
                                 SvgPicture.asset(
                                   Assets.svg.emptyProduct,
-                                  width: responsiveData.scaleWidth(120), // Added for consistency
-                                  height: responsiveData.scaleHeight(120),
+                                  width: responsiveData.scaleWidth(208), // Added for consistency
+                                  height: responsiveData.scaleHeight(218),
                                 ),
                                 SizedBox(height: responsiveData.scaleHeight(40)),
                                 Text(
                                   searchQuery.value.isEmpty
-                                      ? 'No product available!'
+                                      ? 'No product yet!'
                                       : 'No products found!',
                                   style: Theme.of(context).textTheme.displayLarge,
                                 ),
                                 SizedBox(height: responsiveData.scaleHeight(10)),
                                 Text(
                                   searchQuery.value.isEmpty
-                                      ? 'All added products will appear here.'
+                                      ? 'Add products to your business account. All products added will show here.'
                                       : 'Try a different search term.',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
@@ -180,7 +185,7 @@ class Product extends HookConsumerWidget {
                                 const Spacer(),
                                 if (searchQuery.value.isEmpty) ...[
                                   Padding(
-                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(52)),
+                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
                                     child: AppButton(
                                       buttonText: 'Add product',
                                       onPressed: () {
@@ -194,13 +199,11 @@ class Product extends HookConsumerWidget {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }
-                  productNumber.value = filteredProducts.length;
-
-                  return Expanded(
-                    child: PullToRefresh(
+                      );
+                    }
+                    productNumber.value = filteredProducts.length;
+                
+                    return PullToRefresh(
                       onRefresh: onRefresh,
                       child: ListView.separated(
                         shrinkWrap: true,
@@ -229,12 +232,10 @@ class Product extends HookConsumerWidget {
                         },
                         itemCount: filteredProducts.length,
                       ),
-                    ),
-                  );
-                },
-                error: (error, _) {
-                  return Expanded(
-                    child: PullToRefresh(
+                    );
+                  },
+                  error: (error, _) {
+                    return PullToRefresh(
                       onRefresh: onRefresh,
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -243,19 +244,17 @@ class Product extends HookConsumerWidget {
                           child: const Center(child: Text('An error has occurred')),
                         ),
                       ),
-                    ),
-                  );
-                },
-                loading: () {
-                  return Expanded(
-                    child: ListView.separated(
+                    );
+                  },
+                  loading: () {
+                    return ListView.separated(
                       shrinkWrap: true,
                       separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                       itemCount: 5,
                       itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(60)),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -282,10 +281,10 @@ class Product extends HookConsumerWidget {
                 size: responsiveData.scaleHeight(40),
               ),
             )
-                : null; // Hide FAB when there are no products
+                : null;
           },
-          error: (error, _) => null, // Hide FAB on error
-          loading: () => null, // Hide FAB while loading
+          error: (error, _) => null,
+          loading: () => null,
         ),
       ),
     );
@@ -319,8 +318,8 @@ class FilterBottomSheet extends HookConsumerWidget {
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
-          topLeft: Radius.circular(responsiveData.smallRadius * 2), // Approx 40.r equivalent
+          topRight: Radius.circular(responsiveData.smallRadius * 2),
+          topLeft: Radius.circular(responsiveData.smallRadius * 2),
         ),
       ),
       child: Padding(
@@ -336,7 +335,7 @@ class FilterBottomSheet extends HookConsumerWidget {
                 width: responsiveData.scaleWidth(67),
                 decoration: BoxDecoration(
                   color: isDarkMode ? Colors.black : const Color(0xffd9d9d9),
-                  borderRadius: BorderRadius.circular(responsiveData.smallRadius * 5), // Approx 100.r equivalent
+                  borderRadius: BorderRadius.circular(responsiveData.smallRadius * 5),
                 ),
               ),
             ),

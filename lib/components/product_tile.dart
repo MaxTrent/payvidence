@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:payvidence/model/product_model.dart';
 import '../constants/app_colors.dart';
 import '../utilities/responsive.dart';
@@ -97,11 +98,14 @@ class ProductTile extends HookWidget {
                       color: isDarkMode ? Colors.white : Colors.black,
                     ),
                     Text(
-                      product.price ?? '',
+                      NumberFormat('#,###').format(
+                          double.tryParse(product.price.toString()) ?? 0
+                      ),
                       style: Theme.of(context).textTheme.displayMedium!.copyWith(
                         fontSize: Responsive.fontSize(context, 14),
                       ),
                     ),
+
                   ],
                 ),
               ],
