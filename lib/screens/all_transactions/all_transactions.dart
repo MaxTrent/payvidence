@@ -56,7 +56,7 @@ class AllTransactions extends HookConsumerWidget {
 
     final filteredTransactions = viewModel.transactions.where((transaction) {
       final isReceipt =
-          transaction.status != 'pending'; // Assuming 'pending' means Invoice
+          transaction.status != 'pending'; // 'pending' means Invoice
       final isInvoice = transaction.status == 'pending';
       final matchesFilter = filterType.value == 'All' ||
           (filterType.value == 'Receipt' && isReceipt) ||
@@ -173,6 +173,7 @@ class AllTransactions extends HookConsumerWidget {
                       // Handle null product case
                       final product = firstProductDetail.product;
                       final productName = product?.name ?? 'Unknown Product';
+                      final imageUrl = product?.logoUrl ?? "";
                       final amount = product != null
                           ? (double.tryParse(product.price ?? '0') ?? 0)
                           .toString()
@@ -231,6 +232,7 @@ class AllTransactions extends HookConsumerWidget {
                               ? 'Invoice'
                               : 'Receipt',
                           unitSold: unitSold,
+                          imageUrl: imageUrl,
                         ),
                       );
                     },

@@ -16,7 +16,6 @@ import '../../components/loading_dialog.dart';
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../gen/assets.gen.dart';
-import '../../model/business_model.dart';
 import '../../providers/business_providers/get_all_business_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -43,6 +42,9 @@ class AddBusiness extends HookConsumerWidget {
     final responsiveData = ResponsiveInherited.of(context);
     final vm = ref.watch(addBusinessViewModelProvider);
     final sessionManager = locator<SessionManager>();
+
+    final isCreatingBusiness = useState(false);
+
     final firstName = sessionManager.get<String>(SessionConstants.userFirstName);
     final lastName = sessionManager.get<String>(SessionConstants.userLastName);
     final email = sessionManager.get<String>(SessionConstants.userEmail);
@@ -54,8 +56,11 @@ class AddBusiness extends HookConsumerWidget {
     final issuerController = useTextEditingController(text: issuerName);
 
 
-    Future<void> createBusiness(BuildContext context) async {
-      if (hasNavigated.value) return;
+    final createBusiness = useCallback(() async {
+      if (isCreatingBusiness.value) return;
+
+      isCreatingBusiness.value = true;
+
       final requestData = FormData.fromMap({
         "name": businessNameController.text,
         "address": businessAddressController.text,
@@ -72,34 +77,57 @@ class AddBusiness extends HookConsumerWidget {
           filename: signature.value!.path.split('/').last,
         ),
       });
-      if (!context.mounted) return;
+
+      if (!context.mounted) {
+        isCreatingBusiness.value = false;
+        return;
+      }
+
       LoadingDialog.show(context);
+
       try {
         final response = await vm.businessRepository.addBusiness(requestData);
-        if (!context.mounted) return;
+
+        if (!context.mounted) {
+          isCreatingBusiness.value = false;
+          return;
+        }
+
         Navigator.of(context).pop();
         ToastService.showSnackBar("Business created successfully");
         ref.invalidate(getAllBusinessProvider);
 
-        Future.delayed(const Duration(seconds: 2), () {
-          if (context.mounted && hasNavigated.value) {
-            locator<PayvidenceAppRouter>().popUntil((route) => route is OnboardingScreen);
-            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
-            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allBusiness);
-          }
-        });
+
+        if (context.mounted) {
+          locator<PayvidenceAppRouter>().popUntil((route) => route is OnboardingScreen);
+          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
+          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allBusiness);
+        }
+
       } on DioException catch (e) {
-        Navigator.of(context).pop();
-        ToastService.showErrorSnackBar(
-          e.response?.data['message'] ?? 'An unknown error has occurred!!!',
-        );
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          ToastService.showErrorSnackBar(
+            e.response?.data['message'] ?? 'An unknown error has occurred!!!',
+          );
+        }
       } catch (e) {
-        hasNavigated.value = false;
         print(e);
-        Navigator.of(context).pop();
-        ToastService.showErrorSnackBar('An error has occurred!');
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          ToastService.showErrorSnackBar('An error has occurred!');
+        }
+      } finally {
+        isCreatingBusiness.value = false;
       }
-    }
+    }, [isCreatingBusiness.value]);
+
+
+    useEffect(() {
+      return () {
+        isCreatingBusiness.value = false;
+      };
+    }, []);
 
     return ResponsiveWrapper(
       child: GestureDetector(
@@ -261,7 +289,7 @@ class AddBusiness extends HookConsumerWidget {
                           } else if (issuerName.isEmpty) {
                             ToastService.showErrorSnackBar("Issuer name is not available. Please update your profile in Settings.");
                           } else {
-                            createBusiness(context);
+                            createBusiness();
                           }
                         }
                       },

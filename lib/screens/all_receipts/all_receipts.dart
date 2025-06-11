@@ -273,7 +273,13 @@ class ReceiptTile extends StatelessWidget {
         Container(
           height: responsiveData.scaleHeight(72),
           width: responsiveData.scaleHeight(72),
-          decoration: const BoxDecoration(color: Colors.black),
+          decoration: BoxDecoration(
+            color: Colors.black,
+            image: DecorationImage(
+              image: NetworkImage(receipt.recordProductDetails[0].product?.logoUrl ?? ''),
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
         SizedBox(width: responsiveData.scaleWidth(14)),
         Expanded(
@@ -282,7 +288,7 @@ class ReceiptTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                receipt.recordProductDetails?[0].product?.name ?? '',
+                receipt.recordProductDetails[0].product?.name ?? '',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               SizedBox(height: responsiveData.scaleHeight(6)),
@@ -290,7 +296,7 @@ class ReceiptTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    '${receipt.recordProductDetails?[0].quantity ?? ''} units sold',
+                    '${receipt.recordProductDetails[0].quantity ?? ''} units sold',
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall!
@@ -322,7 +328,7 @@ class ReceiptTile extends StatelessWidget {
                 children: [
                   const AppNaira(fontSize: 14),
                   Text(
-                    '${receipt.recordProductDetails?[0].total ?? ''} ',
+                    '${receipt.recordProductDetails[0].total ?? ''} ',
                     style: Theme.of(context)
                         .textTheme
                         .displayMedium!

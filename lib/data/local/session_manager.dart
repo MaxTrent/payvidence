@@ -16,6 +16,15 @@ class SessionManager {
     print("SharedPreferences cleared");
   }
 
+  Future<void> remove(String key) async {
+    try {
+      await sharedPreferences.remove(key);
+      print("Removed: key='$key'");
+    } catch (e) {
+      print("Error removing key='$key': $e");
+    }
+  }
+
   T? get<T>(String key) {
     try {
       switch (T) {
@@ -67,5 +76,11 @@ class SessionManager {
     } catch (e) {
       print("Error saving key='$key': $e");
     }
+  }
+
+  Future<void> clearAll() async {
+    await clear();
+    await remove(SessionConstants.savedLoginEmail);
+    print("All user data cleared including saved email");
   }
 }

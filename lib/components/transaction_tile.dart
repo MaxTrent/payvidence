@@ -14,6 +14,7 @@ class TransactionTile extends HookWidget {
   String dateTime;
   String amount;
   String receiptOrInvoice;
+  String imageUrl;
 
   TransactionTile(
       {super.key,
@@ -21,7 +22,9 @@ class TransactionTile extends HookWidget {
         required this.dateTime,
         required this.productName,
         required this.receiptOrInvoice,
-        required this.unitSold});
+        required this.unitSold,
+        required this.imageUrl
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,13 @@ class TransactionTile extends HookWidget {
           Container(
             height: responsiveData.scaleHeight(72),
             width: responsiveData.scaleHeight(72),
-            decoration: const BoxDecoration(color: Colors.black),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           SizedBox(
             width: responsiveData.scaleWidth(14),

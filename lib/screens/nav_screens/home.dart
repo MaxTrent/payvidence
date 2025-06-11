@@ -271,6 +271,7 @@ class HomeScreen extends HookConsumerWidget {
                                 ? 'Invoice'
                                 : 'Receipt',
                             unitSold: '0',
+                            imageUrl: '',
                           );
                         }
 
@@ -281,6 +282,7 @@ class HomeScreen extends HookConsumerWidget {
                             .toString()
                             .toCommaSeparated()
                             : '0';
+                        final imageUrl = product?.logoUrl ?? "";
                         final dateTime = product?.createdAt
                             ?.toString()
                             .toFormattedIsoDate() ??
@@ -295,6 +297,7 @@ class HomeScreen extends HookConsumerWidget {
                               ? 'Invoice'
                               : 'Receipt',
                           unitSold: unitSold,
+                          imageUrl: imageUrl,
                         );
                       },
                     ),

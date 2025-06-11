@@ -21,10 +21,12 @@ class LoginViewModel extends BaseChangeNotifier {
   bool _isLoading = false;
   bool _canUseBiometrics = false;
   String _errorMessage = '';
+  bool _hasSavedEmail = false;
 
   bool get isLoading => _isLoading;
   bool get canUseBiometrics => _canUseBiometrics;
   String get errorMessage => _errorMessage;
+  bool get hasSavedEmail => _hasSavedEmail;
 
   bool get isBiometricEnabled {
     return locator<SessionManager>().get<bool>(SessionConstants.isBiometricLoginEnabled) ?? false;
@@ -35,6 +37,28 @@ class LoginViewModel extends BaseChangeNotifier {
   void init() async {
     _canUseBiometrics = await BiometricService.canCheckBiometrics();
     await syncUserProfile();
+    await _checkSavedEmail();
+    notifyListeners();
+  }
+
+  Future<void> _checkSavedEmail() async {
+    final savedEmail = await loadSavedEmail();
+    _hasSavedEmail = savedEmail != null && savedEmail.isNotEmpty;
+  }
+
+  Future<String?> loadSavedEmail() async {
+    return locator<SessionManager>().get<String>(SessionConstants.savedLoginEmail);
+  }
+
+  Future<void> saveEmailForNextLogin(String email) async {
+    await locator<SessionManager>().save(key: SessionConstants.savedLoginEmail, value: email);
+    _hasSavedEmail = true;
+    notifyListeners();
+  }
+
+  Future<void> clearSavedEmail() async {
+    await locator<SessionManager>().remove(SessionConstants.savedLoginEmail);
+    _hasSavedEmail = false;
     notifyListeners();
   }
 
@@ -79,6 +103,8 @@ class LoginViewModel extends BaseChangeNotifier {
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
         developer.log('Login successful, user: ${user.account.id}');
+
+        // Save user credentials
         await saveUserCredentials(
           userId: user.account.id ?? '',
           firstName: user.account.firstName,
@@ -89,6 +115,9 @@ class LoginViewModel extends BaseChangeNotifier {
           token: user.token ?? "",
           refreshToken: user.refreshToken ?? "",
         );
+
+        // Save email for next login
+        await saveEmailForNextLogin(email);
 
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
         await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: user.token);

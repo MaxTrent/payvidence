@@ -37,6 +37,9 @@ class Login extends HookConsumerWidget {
     final obscureText = useState(true);
     final showManualLogin = useState(false);
 
+
+
+
     bool checkFieldsEmpty() {
       return emailController.text.trim().isEmpty || passwordController.text.trim().isEmpty;
     }
@@ -44,6 +47,19 @@ class Login extends HookConsumerWidget {
     bool checkEmailValid(String email) {
       return email.trim().isValidEmail;
     }
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        viewModel.loadSavedEmail().then((savedEmail) {
+          if (savedEmail != null && savedEmail.isNotEmpty) {
+            emailController.text = savedEmail;
+            isEmailValid.value = checkEmailValid(savedEmail);
+            areFieldsEmpty.value = checkFieldsEmpty();
+          }
+        });
+      });
+      return null;
+    }, []);
 
     useEffect(() {
       void updateFieldsStatus() {
