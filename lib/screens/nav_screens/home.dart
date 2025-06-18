@@ -1,9 +1,12 @@
+import 'dart:developer' as developer;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
+import 'package:payvidence/components/loading_indicator.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/data/local/session_constants.dart';
@@ -33,30 +36,43 @@ class HomeScreen extends HookConsumerWidget {
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
 
-    ref.listen(getAllBusinessProvider, (prev, next) {
-      if (next.hasValue && next.value!.isNotEmpty) {
-        ref
-            .read(getCurrentBusinessProvider.notifier)
-            .setCurrentBusiness(next.value!.last);
-      }
-    });
-
-    final businessId = ref.watch(getCurrentBusinessProvider)?.id;
-    if (businessId != null) {
-      locator<SessionManager>()
-          .save(key: SessionConstants.businessId, value: businessId);
-    }
-
+    // Handle navigation immediately when state changes
     useEffect(() {
-      if (businessId != null) {
-        Future.microtask(() {
-          transactionsViewModel.fetchTransactions(businessId);
-        });
-      }
+
+      getAllBusiness.when(
+        data: (businesses) {
+          if (businesses.isEmpty) {
+            developer.log('🏠 HomeScreen: No businesses found, navigating to EmptyBusinessRoute');
+            // Use WidgetsBinding to ensure navigation happens after build
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
+            });
+          } else {
+            developer.log('🏠 HomeScreen: Setting current business: ${businesses.last.name}');
+            ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
+
+            final businessId = businesses.last.id;
+            locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+
+            // Fetch transactions for the business
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              transactionsViewModel.fetchTransactions(businessId!);
+            });
+          }
+        },
+        loading: () {
+          developer.log('🏠 HomeScreen: Still loading businesses...');
+        },
+        error: (error, stackTrace) {
+          developer.log('🏠 HomeScreen: Error loading businesses: $error');
+        },
+      );
+
       return null;
-    }, [businessId]);
+    }, [getAllBusiness]);
 
     Future<void> onRefresh() async {
+      final businessId = ref.watch(getCurrentBusinessProvider)?.id;
       if (businessId != null) {
         await transactionsViewModel.fetchTransactions(businessId);
       }
@@ -78,9 +94,9 @@ class HomeScreen extends HookConsumerWidget {
                   getAllBusiness.when(
                     data: (data) {
                       if (data.isEmpty) {
-                        locator<PayvidenceAppRouter>()
-                            .navigateNamed(PayvidenceRoutes.emptyBusiness);
-                        return const SizedBox.shrink();
+                        return const Center(
+                          child: LoadingIndicator(),
+                        );
                       }
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -90,8 +106,7 @@ class HomeScreen extends HookConsumerWidget {
                               CircleAvatar(
                                 radius: responsiveData.smallRadius * 1.6,
                                 backgroundColor: Colors.black,
-                                backgroundImage:
-                                NetworkImage(data.last.logoUrl ?? ''),
+                                backgroundImage: NetworkImage(data.last.logoUrl ?? ''),
                               ),
                               SizedBox(width: responsiveData.scaleWidth(10)),
                               Column(
@@ -127,15 +142,14 @@ class HomeScreen extends HookConsumerWidget {
                           SizedBox(width: responsiveData.scaleWidth(15)),
                           GestureDetector(
                             onTap: () {
-                              locator<PayvidenceAppRouter>()
-                                  .push(const AllBusinessesRoute());
+                              locator<PayvidenceAppRouter>().push(const AllBusinessesRoute());
                             },
                             child: Container(
                               height: responsiveData.scaleHeight(40),
                               width: responsiveData.scaleWidth(157),
                               decoration: BoxDecoration(
                                 color: appGrey2,
-                                borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.2), // Approx 24.r equivalent
+                                borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.2),
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(12)),
@@ -164,35 +178,33 @@ class HomeScreen extends HookConsumerWidget {
                     error: (error, _) => const Text("Error fetching businesses"),
                     loading: () => const CustomShimmer(),
                   ),
+
                   SizedBox(height: responsiveData.scaleHeight(32)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
                         onTap: () {
-                          locator<PayvidenceAppRouter>()
-                              .navigateNamed(PayvidenceRoutes.allReceipts);
+                          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allReceipts);
                         },
                         child: AppCard(text: 'Receipts', icon: Assets.svg.receipt),
                       ),
                       GestureDetector(
                         onTap: () {
-                          locator<PayvidenceAppRouter>()
-                              .navigateNamed(PayvidenceRoutes.allInvoices);
+                          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allInvoices);
                         },
                         child: AppCard(text: 'Invoices', icon: Assets.svg.invoice),
                       ),
                       GestureDetector(
                         onTap: () {
-                          locator<PayvidenceAppRouter>()
-                              .navigate(ClientsRoute(businessId: businessId!));
+                          final businessId = ref.watch(getCurrentBusinessProvider)?.id;
+                          locator<PayvidenceAppRouter>().navigate(ClientsRoute(businessId: businessId!));
                         },
                         child: AppCard(text: 'Clients', icon: Assets.svg.client),
                       ),
                       GestureDetector(
                         onTap: () {
-                          locator<PayvidenceAppRouter>()
-                              .navigateNamed(PayvidenceRoutes.product);
+                          locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.product);
                         },
                         child: AppCard(text: 'Products', icon: Assets.svg.product),
                       ),
@@ -202,8 +214,7 @@ class HomeScreen extends HookConsumerWidget {
                   useMySubscriptionViewModel.subInfo?.plan.name != null
                       ? const SizedBox.shrink()
                       : GestureDetector(
-                    onTap: () => locator<PayvidenceAppRouter>().navigateNamed(
-                        PayvidenceRoutes.chooseSubscriptionPlan),
+                    onTap: () => locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.chooseSubscriptionPlan),
                     child: SvgPicture.asset(Assets.svg.subscribe),
                   ),
                   SizedBox(height: responsiveData.scaleHeight(40)),
@@ -236,7 +247,7 @@ class HomeScreen extends HookConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: responsiveData.scaleHeight(24)),
-                        SvgPicture.asset(Assets.svg.emptyTransaction, height: responsiveData.scaleHeight(160), width: responsiveData.scaleWidth(160),),
+                        SvgPicture.asset(Assets.svg.emptyTransaction, height: responsiveData.scaleHeight(160), width: responsiveData.scaleWidth(160)),
                         SizedBox(height: responsiveData.scaleHeight(32)),
                         Text(
                           'No transaction yet!',
@@ -261,7 +272,6 @@ class HomeScreen extends HookConsumerWidget {
                             ? transaction.recordProductDetails.first
                             : null;
 
-                        // Handle null cases for firstProductDetail and its product
                         if (firstProductDetail == null) {
                           return TransactionTile(
                             amount: '0',

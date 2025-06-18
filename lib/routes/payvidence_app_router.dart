@@ -43,7 +43,7 @@ class PayvidenceAppRouter extends RootStackRouter {
             page: EmptyBusinessRoute.page,
             path: PayvidenceRoutes.emptyBusiness),
         AutoRoute(
-            page: AddBusinessRoute.page, path: PayvidenceRoutes.addBusiness),
+            page: AddBusinessRoute.page, path: PayvidenceRoutes.addBusiness, maintainState: true,),
         AutoRoute(
             page: AddCategoryRoute.page, path: PayvidenceRoutes.addCategory),
         AutoRoute(
@@ -74,6 +74,7 @@ class PayvidenceAppRouter extends RootStackRouter {
             page: CompleteDraftRoute.page,
             path: PayvidenceRoutes.completeDraft),
         AutoRoute(page: ClientsRoute.page, path: PayvidenceRoutes.clients),
+        AutoRoute(page: ProductRoute.page, path: PayvidenceRoutes.product),
         AutoRoute(page: ProductRoute.page, path: PayvidenceRoutes.product),
         AutoRoute(page: DraftsRoute.page, path: PayvidenceRoutes.drafts),
         AutoRoute(

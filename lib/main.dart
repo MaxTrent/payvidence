@@ -1,3 +1,6 @@
+import 'dart:developer' as developer;
+
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +19,32 @@ import 'constants/app_theme.dart';
 import 'env_config.dart';
 import 'firebase_options.dart';
 
+
+class DebugRouteObserver extends AutoRouteObserver {
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    developer.log('🛣️ ROUTE PUSHED: ${route.settings.name} from ${previousRoute?.settings.name}');
+    super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    developer.log('🛣️ ROUTE POPPED: ${route.settings.name} to ${previousRoute?.settings.name}');
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didRemove(Route route, Route? previousRoute) {
+    developer.log('🛣️ ROUTE REMOVED: ${route.settings.name}');
+    super.didRemove(route, previousRoute);
+  }
+
+  @override
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    developer.log('🛣️ ROUTE REPLACED: ${oldRoute?.settings.name} -> ${newRoute?.settings.name}');
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +104,9 @@ class MyApp extends HookWidget {
           theme: appTheme.lightTheme(context),
           darkTheme: appTheme.darkTheme(context),
           themeMode: theme.mode,
-          routerConfig: appRouter.config(),
+          routerConfig: appRouter.config(
+            navigatorObservers: () => [DebugRouteObserver()],
+          ),
           builder: (context, child) {
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(

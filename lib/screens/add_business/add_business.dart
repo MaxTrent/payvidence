@@ -53,7 +53,11 @@ class AddBusiness extends HookConsumerWidget {
 
     developer.log('AddBusiness: firstName=$firstName, lastName=$lastName, fullName=$fullName, issuerName=$issuerName');
 
-    final issuerController = useTextEditingController(text: issuerName);
+    final issuerController = useTextEditingController();
+    useEffect(() {
+      issuerController.text = issuerName;
+      return null;
+    }, []);
 
 
     final createBusiness = useCallback(() async {
