@@ -36,35 +36,34 @@ class HomeScreen extends HookConsumerWidget {
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
 
-    // Handle navigation immediately when state changes
     useEffect(() {
-
       getAllBusiness.when(
         data: (businesses) {
           if (businesses.isEmpty) {
             developer.log('🏠 HomeScreen: No businesses found, navigating to EmptyBusinessRoute');
-            // Use WidgetsBinding to ensure navigation happens after build
-            WidgetsBinding.instance.addPostFrameCallback((_) {
+            Future.microtask(() {
               locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
             });
           } else {
             developer.log('🏠 HomeScreen: Setting current business: ${businesses.last.name}');
-            ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
 
-            final businessId = businesses.last.id;
-            locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+            Future.microtask(() {
+              ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
 
-            // Fetch transactions for the business
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              transactionsViewModel.fetchTransactions(businessId!);
+              final businessId = businesses.last.id;
+              locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+
+              if (businessId != null) {
+                transactionsViewModel.fetchTransactions(businessId);
+              }
             });
           }
         },
         loading: () {
-          developer.log('🏠 HomeScreen: Still loading businesses...');
+          developer.log('Still loading businesses...');
         },
         error: (error, stackTrace) {
-          developer.log('🏠 HomeScreen: Error loading businesses: $error');
+          developer.log('Error loading businesses: $error');
         },
       );
 
