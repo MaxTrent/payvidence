@@ -159,7 +159,7 @@ class AllInvoices extends HookConsumerWidget {
                                 const Spacer(),
                                 if (searchQuery.value.isEmpty) ...[
                                   Padding(
-                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
+                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(44)),
                                     child: AppButton(
                                       buttonText: 'Generate invoice',
                                       onPressed: () {
