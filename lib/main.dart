@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
+import 'package:payvidence/utilities/app_logger.dart';
 import 'package:payvidence/utilities/app_provider_observer.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/scroll_behaviour.dart';
@@ -22,6 +24,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  AppLogger.setLogger(showLogs: kDebugMode);
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -41,7 +45,7 @@ Future<void> main() async {
       ),
     ));
   } catch (e) {
-    print('Initialization error: $e');
+    AppLogger.print('Initialization error: $e');
   }
 }
 
@@ -63,13 +67,12 @@ class MyApp extends HookWidget {
     );
 
     firebaseMessaging.getToken().then((token) {
-      print('FCM Token: $token');
+      AppLogger.print('FCM Token: $token');
     });
 
     return Builder(
       builder: (context) => ResponsiveWrapper(
         child: MaterialApp.router(
-
           scaffoldMessengerKey: ToastService.scaffoldMessengerKey,
           scrollBehavior: AppScrollBehaviour(),
           title: 'Payvidence',

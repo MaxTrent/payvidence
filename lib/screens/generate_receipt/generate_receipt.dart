@@ -7,6 +7,7 @@ import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
+import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
@@ -38,11 +39,17 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   final _layerLink = LayerLink();
   final qtyController = TextEditingController();
   final discountController = TextEditingController();
+  final productNameController = TextEditingController();
+  final productPriceController = TextEditingController();
   final clientNameController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   List<TextEditingController> discountControllers = [];
   List<TextEditingController> qtyControllers = [];
+  List<TextEditingController> productNameControllers = [];
+  List<TextEditingController> productPriceControllers = [];
   Map<int, Product> products = {};
+  Map<int, String> productNames = {};
+  Map<int, double> productPrices = {};
   ClientModel? client;
   final List<String> paymentOptions = [
     'Bank_Transfer',
@@ -68,6 +75,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     for (var controller in discountControllers) {
       controller.dispose();
     }
+    for (var controller in productNameControllers) {
+      controller.dispose();
+    }
+    for (var controller in productPriceControllers) {
+      controller.dispose();
+    }
     clientNameController.dispose();
     clientNameFocusNode.dispose();
     overlayEntry?.remove();
@@ -79,11 +92,15 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     super.initState();
     qtyControllers.add(qtyController);
     discountControllers.add(discountController);
+    productNameControllers.add(productNameController);
+    productPriceControllers.add(productPriceController);
 
     // Initialize the first form field
     _textFields.add(FormFields(
       qtyController: qtyController,
       discountController: discountController,
+      productNameController: productNameController,
+      productPriceController: productPriceController,
       onPressed: selectProduct,
       index: 1,
     ));
@@ -164,15 +181,15 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                     ),
                     child: ListView.builder(
                       shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(vertical: 4), // Reduced padding
+                      padding: const EdgeInsets.symmetric(vertical: 4),
                       itemCount: filteredClients.length,
                       itemBuilder: (context, index) {
                         final client = filteredClients[index];
                         return ListTile(
-                          dense: true, // Makes ListTile more compact
+                          dense: true,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 2, // Reduced vertical padding
+                            vertical: 2,
                           ),
                           title: Text(
                             client.name,
@@ -222,15 +239,21 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     // Create new TextEditingControllers
     TextEditingController qtyController = TextEditingController();
     TextEditingController discountController = TextEditingController();
+    TextEditingController productNameController = TextEditingController();
+    TextEditingController productPriceController = TextEditingController();
 
     // Add the controllers to the lists
     qtyControllers.add(qtyController);
     discountControllers.add(discountController);
+    productNameControllers.add(productNameController);
+    productPriceControllers.add(productPriceController);
     // Add a new FormFields widget to the list
     setState(() {
       _textFields.add(FormFields(
         discountController: discountControllers.last,
         qtyController: qtyControllers.last,
+        productNameController: productNameControllers.last,
+        productPriceController: productPriceControllers.last,
         onPressed: selectProduct,
         index: _textFields.length + 1,
       ));
@@ -469,19 +492,43 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 
     List<Map<String, dynamic>> productList = [];
 
-    for (int index in products.keys) {
-      final product = products[index]!;
-
-      if (qtyControllers[index - 1].text.isEmpty) {
+    for (int i = 0; i < _textFields.length; i++) {
+      final index = i + 1;
+      
+      if (qtyControllers[i].text.isEmpty) {
         ToastService.showErrorSnackBar('Enter the qty purchased for product $index');
-        return; // Stops the entire function execution
-      } else {
+        return;
+      }
+
+      final quantity = int.parse(qtyControllers[i].text);
+      final discount = discountControllers[i].text.isNotEmpty
+          ? double.parse(discountControllers[i].text)
+          : null;
+
+      if (products.containsKey(index)) {
+        // Existing product
         productList.add({
-          "id": product.id.toString(),
-          "quantity_purchased": int.parse(qtyControllers[index - 1].text),
-          "discount": discountControllers[index - 1].text.isNotEmpty
-              ? double.parse(discountControllers[index - 1].text)
-              : null,
+          "id": products[index]!.id.toString(),
+          "quantity_purchased": quantity,
+          "discount": discount,
+          "vat": "0",
+        });
+      } else {
+        // New product
+        final productName = productNameControllers[i].text.trim();
+        final productPrice = double.tryParse(productPriceControllers[i].text.trim()) ?? 0.0;
+        
+        if (productName.isEmpty || productPrice <= 0) {
+          ToastService.showErrorSnackBar('Enter valid product name and price for product $index');
+          return;
+        }
+
+        productList.add({
+          "name": productName,
+          "price": productPrice,
+          "quantity_purchased": quantity,
+          "discount": discount,
+          "vat": "0",
         });
       }
     }
@@ -527,21 +574,19 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   String findMissingProducts() {
-    List<int> productIndexes = products.keys.toList();
-    List<int> missingIndexes = [];
-
-    for (int i = 0; i < qtyControllers.length; i++) {
-      if (!productIndexes.contains(i + 1)) {
-        missingIndexes.add(i + 1);
+    for (int i = 0; i < _textFields.length; i++) {
+      final index = i + 1;
+      final hasExistingProduct = products.containsKey(index);
+      final hasProductName = productNameControllers[i].text.trim().isNotEmpty;
+      
+      if (!hasExistingProduct && !hasProductName) {
+        return "Missing product $index name";
       }
     }
-
-    if (missingIndexes.isNotEmpty) {
-      return "Missing product ${missingIndexes[0]} name";
-    } else {
-      return "";
-    }
+    return "";
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -753,6 +798,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 class FormFields extends StatefulWidget {
   final TextEditingController qtyController;
   final TextEditingController discountController;
+  final TextEditingController productNameController;
+  final TextEditingController productPriceController;
   final Future<Product?> Function(int index) onPressed;
   final int index;
   Product? product;
@@ -762,6 +809,8 @@ class FormFields extends StatefulWidget {
     super.key,
     required this.qtyController,
     required this.discountController,
+    required this.productNameController,
+    required this.productPriceController,
     required this.onPressed,
     required this.index,
     this.product,
@@ -773,6 +822,165 @@ class FormFields extends StatefulWidget {
 }
 
 class _FormFieldsState extends State<FormFields> {
+  List<Product> filteredProducts = [];
+  bool showProductDropdown = false;
+  final FocusNode productNameFocusNode = FocusNode();
+  OverlayEntry? productOverlayEntry;
+  final LayerLink _productLayerLink = LayerLink();
+  bool isExistingProduct = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.productNameController.addListener(_onProductNameChanged);
+    productNameFocusNode.addListener(_onProductNameFocusChanged);
+  }
+
+  @override
+  void dispose() {
+    productNameFocusNode.dispose();
+    productOverlayEntry?.remove();
+    super.dispose();
+  }
+
+  void _onProductNameChanged() {
+    final query = widget.productNameController.text.trim();
+    if (query.isEmpty) {
+      setState(() {
+        filteredProducts.clear();
+        showProductDropdown = false;
+        isExistingProduct = false;
+      });
+      _hideProductOverlay();
+      return;
+    }
+
+    // Get products from provider using Consumer
+    if (mounted) {
+      final container = ProviderScope.containerOf(context);
+      final asyncProducts = container.read(getAllProductProvider);
+      final allProducts = asyncProducts.value ?? [];
+      
+      final filtered = allProducts
+          .where((product) =>
+              product.name?.toLowerCase().contains(query.toLowerCase()) ?? false)
+          .toList();
+
+      setState(() {
+        filteredProducts = filtered;
+        showProductDropdown = filtered.isNotEmpty;
+      });
+
+      if (filtered.isNotEmpty) {
+        _showProductOverlay();
+      } else {
+        _hideProductOverlay();
+      }
+    }
+  }
+
+  void _onProductNameFocusChanged() {
+    if (!productNameFocusNode.hasFocus) {
+      Future.delayed(const Duration(milliseconds: 150), () {
+        _hideProductOverlay();
+      });
+    }
+  }
+
+  void _showProductOverlay() {
+    _hideProductOverlay();
+
+    productOverlayEntry = OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _hideProductOverlay,
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+            Positioned(
+              left: ResponsiveInherited.of(context).paddingHorizontal,
+              right: ResponsiveInherited.of(context).paddingHorizontal,
+              child: CompositedTransformFollower(
+                link: _productLayerLink,
+                showWhenUnlinked: false,
+                offset: const Offset(0, 60),
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = filteredProducts[index];
+                        return ListTile(
+                          dense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2,
+                          ),
+                          title: Text(
+                            product.name ?? '',
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          subtitle: Text(
+                            '₦${product.price ?? '0'}',
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              fontSize: Responsive.fontSize(context, 12),
+                              color: Colors.grey,
+                            ),
+                          ),
+                          onTap: () {
+                            _selectExistingProduct(product);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    Overlay.of(context).insert(productOverlayEntry!);
+  }
+
+  void _hideProductOverlay() {
+    productOverlayEntry?.remove();
+    productOverlayEntry = null;
+  }
+
+  void _selectExistingProduct(Product selectedProduct) {
+    setState(() {
+      widget.product = selectedProduct;
+      widget.productNameController.text = selectedProduct.name ?? '';
+      widget.productPriceController.text = selectedProduct.price ?? '';
+      showProductDropdown = false;
+      isExistingProduct = true;
+    });
+    _hideProductOverlay();
+    productNameFocusNode.unfocus();
+    
+    // Store the selected product in the parent's products map
+    final parentState = context.findAncestorStateOfType<_GenerateReceiptState>();
+    if (parentState != null) {
+      parentState.products[widget.index] = selectedProduct;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
@@ -787,26 +995,46 @@ class _FormFieldsState extends State<FormFields> {
         SizedBox(
           height: responsiveData.scaleHeight(8),
         ),
-        GestureDetector(
-          onTap: () async {
-            if (widget.invoiceToReceipt == true) {
-              return;
-            }
-            final Product? result = await widget.onPressed.call(widget.index);
-            if (result == null) {
-            } else {
-              widget.product = result;
-              setState(() {});
-            }
-          },
+        CompositedTransformTarget(
+          link: _productLayerLink,
           child: AppTextField(
-            hintText: widget.product == null
-                ? "Select product"
-                : widget.product!.name!,
-            enabled: false,
-            suffixIcon: const Icon(Icons.keyboard_arrow_down),
-            controller: TextEditingController(),
+            hintText: 'Type or select product name',
+            controller: widget.productNameController,
+            focusNode: productNameFocusNode,
+            keyboardType: TextInputType.text,
+            enabled: !widget.invoiceToReceipt!,
+            validator: (val) {
+              if (val?.trim().isEmpty ?? true) {
+                return 'Please enter product name';
+              }
+              return null;
+            },
           ),
+        ),
+        SizedBox(
+          height: responsiveData.scaleHeight(20),
+        ),
+        Text(
+          'Product price',
+          style: Theme.of(context).textTheme.displaySmall,
+        ),
+        SizedBox(
+          height: responsiveData.scaleHeight(8),
+        ),
+        AppTextField(
+          hintText: 'Product price',
+          controller: widget.productPriceController,
+          keyboardType: TextInputType.number,
+          enabled: !widget.invoiceToReceipt! && !isExistingProduct,
+          validator: (val) {
+            if (val?.trim().isEmpty ?? true) {
+              return 'Please enter product price';
+            }
+            if (double.tryParse(val!) == null || double.parse(val) <= 0) {
+              return 'Enter a valid price greater than 0';
+            }
+            return null;
+          },
         ),
         SizedBox(
           height: responsiveData.scaleHeight(20),

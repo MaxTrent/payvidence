@@ -8,6 +8,7 @@ import 'package:payvidence/datasource/data/receipt_datasource.dart';
 import 'package:payvidence/repositories/repository/business_repository.dart';
 import 'package:payvidence/repositories/repository/client_repository.dart';
 import 'package:payvidence/repositories/repository/receipt_repository.dart';
+import 'package:payvidence/utilities/cache_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/api_services.dart';
@@ -33,69 +34,71 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
   locator.registerSingleton(sharedPreferences);
 
   locator.registerLazySingleton<SessionManager>(
-    () => SessionManager(sharedPreferences: locator()),
+        () => SessionManager(sharedPreferences: locator()),
   );
+
+  locator.registerLazySingleton<CacheService>(
+        () => CacheService(locator()),
+  );
+
   locator.registerLazySingleton(() => Dio());
 
-  locator
-      .registerLazySingleton<PayvidenceAppRouter>(() => PayvidenceAppRouter());
+  locator.registerLazySingleton<PayvidenceAppRouter>(() => PayvidenceAppRouter());
 
   locator.registerLazySingleton<NetworkService>(
-    () => NetworkService(dio: locator(), baseUrl: baseUrl),
+        () => NetworkService(dio: locator(), baseUrl: baseUrl),
   );
-
-
 
   locator.registerLazySingleton<ApiServices>(
-    () => ApiServices(),
+        () => ApiServices(),
   );
+
   locator.registerLazySingleton<IBusinessDatasource>(
-    () => BusinessDatasource(locator()),
+        () => BusinessDatasource(locator()),
   );
   locator.registerLazySingleton<IBusinessRepository>(
-    () => BusinessRepository(locator()),
+        () => BusinessRepository(locator()),
   );
 
   locator.registerLazySingleton<IProductDatasource>(
-    () => ProductDatasource(locator()),
+        () => ProductDatasource(locator()),
   );
   locator.registerLazySingleton<IProductRepository>(
-    () => ProductRepository(locator()),
+        () => ProductRepository(locator()),
   );
   locator.registerLazySingleton<ICategoryDatasource>(
-    () => CategoryDatasource(locator()),
+        () => CategoryDatasource(locator()),
   );
   locator.registerLazySingleton<ICategoryRepository>(
-    () => CategoryRepository(locator()),
+        () => CategoryRepository(locator()),
   );
   locator.registerLazySingleton<IBrandDatasource>(
-    () => BrandDatasource(locator()),
+        () => BrandDatasource(locator()),
   );
   locator.registerLazySingleton<IBrandRepository>(
-    () => BrandRepository(locator()),
+        () => BrandRepository(locator()),
   );
   locator.registerLazySingleton<IReceiptDatasource>(
-    () => ReceiptDatasource(locator()),
+        () => ReceiptDatasource(locator()),
   );
   locator.registerLazySingleton<IReceiptRepository>(
-    () => ReceiptRepository(locator()),
+        () => ReceiptRepository(locator()),
   );
   locator.registerLazySingleton<IClientDatasource>(
-    () => ClientDatasource(locator()),
+        () => ClientDatasource(locator()),
   );
   locator.registerLazySingleton<IClientRepository>(
-    () => ClientRepository(locator()),
+        () => ClientRepository(locator()),
   );
 
   locator.registerLazySingleton<ISalesDatasource>(
-    () => SalesDatasource(locator()),
+        () => SalesDatasource(locator()),
   );
   locator.registerLazySingleton<ISalesRepository>(
-    () => SalesRepository(locator()),
+        () => SalesRepository(locator()),
   );
 
-  locator
-      .registerLazySingleton<NotificationService>(() => NotificationService());
+  locator.registerLazySingleton<NotificationService>(() => NotificationService());
 
   await locator<NotificationService>().initialize();
 

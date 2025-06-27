@@ -194,7 +194,7 @@ class AllInvoices extends HookConsumerWidget {
                             child: ReceiptTile(receipt: filteredData[index]),
                           );
                         },
-                        physics: const NeverScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         separatorBuilder: (ctx, idx) => Column(
                           children: [SizedBox(height: responsiveData.scaleHeight(24))],
                         ),
