@@ -290,32 +290,32 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     try {
       final businessId = ref.read(getCurrentBusinessProvider)?.id;
       if (businessId == null) {
-        print('createClient: No businessId found');
+
         return null;
       }
 
       bool success = false;
       String? newClientId;
 
-      print('createClient: Starting addClient for name: $name, businessId: $businessId');
+
       ref.read(addClientViewModelProvider).addClient(
         name: name,
         address: null,
         phoneNumber: null,
         businessId: businessId,
         navigateOnSuccess: () {
-          print('navigateOnSuccess: Executed, success set to true');
+
           success = true;
           final response = ref.read(addClientLastResponseProvider);
           newClientId = response?.data?['data']?['id'] as String?;
-          print('navigateOnSuccess: newClientId = $newClientId, response = $response');
+
         },
       );
 
-      print('createClient: Waiting for isLoading to become false');
+
       await Future.doWhile(() async {
         final isLoading = ref.read(addClientLoadingProvider);
-        print('createClient: isLoading = $isLoading');
+
         if (isLoading) {
           await Future.delayed(const Duration(milliseconds: 100));
           return true;
@@ -323,13 +323,13 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         return false;
       });
 
-      print('createClient: isLoading is false, success = $success, newClientId = $newClientId');
+
       if (!success || newClientId == null) {
-        print('createClient: Operation failed, returning null');
+
         return null;
       }
 
-      print('createClient: Operation successful, creating ClientModel');
+
       ref.read(getAllClientsProvider.notifier).fetchClients();
 
       return ClientModel(
@@ -342,7 +342,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         updatedAt: DateTime.now(),
       );
     } catch (e) {
-      print('createClient: Error occurred - $e');
+
       return null;
     }
   }
