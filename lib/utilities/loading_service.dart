@@ -10,7 +10,7 @@ class LoadingService {
     
     _isShowing = true;
     _overlayEntry = OverlayEntry(
-      builder: (context) => const LoadingDialog._(),
+      builder: (context) => LoadingDialog.show(context),
     );
     
     Overlay.of(context).insert(_overlayEntry!);

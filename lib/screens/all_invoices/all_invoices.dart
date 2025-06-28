@@ -17,6 +17,7 @@ import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../all_receipts/all_receipts.dart';
 
 @RoutePage(name: 'AllInvoicesRoute')
@@ -94,22 +95,25 @@ class AllInvoices extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: responsiveData.scaleHeight(32)),
-              AppTextField(
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-                  child: SvgPicture.asset(
-                    Assets.svg.search,
-                    colorFilter: ColorFilter.mode(
-                      isDarkMode ? Colors.white : Colors.black,
-                      BlendMode.srcIn,
+              FadeInWidget(
+                delay: const Duration(milliseconds: 100),
+                child: AppTextField(
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                    child: SvgPicture.asset(
+                      Assets.svg.search,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
+                  hintText: 'Search for invoice',
+                  controller: searchController,
+                  radius: responsiveData.largeRadius,
+                  filled: true,
+                  fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
-                hintText: 'Search for invoice',
-                controller: searchController,
-                radius: responsiveData.largeRadius,
-                filled: true,
-                fillColor: isDarkMode ? Colors.black : appGrey5,
               ),
               SizedBox(height: responsiveData.scaleHeight(20)),
               Expanded(
@@ -182,16 +186,20 @@ class AllInvoices extends HookConsumerWidget {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              locator<PayvidenceAppRouter>().navigate(
-                                ReceiptScreenRoute(
-                                  record: filteredData[index],
-                                  isInvoice: true,
-                                ),
-                              );
-                            },
-                            child: ReceiptTile(receipt: filteredData[index]),
+                          return SlideInWidget(
+                            begin: const Offset(0, 0.3),
+                            delay: Duration(milliseconds: 100 + (index * 50)),
+                            child: GestureDetector(
+                              onTap: () {
+                                locator<PayvidenceAppRouter>().navigate(
+                                  ReceiptScreenRoute(
+                                    record: filteredData[index],
+                                    isInvoice: true,
+                                  ),
+                                );
+                              },
+                              child: ReceiptTile(receipt: filteredData[index]),
+                            ),
                           );
                         },
                         physics: const AlwaysScrollableScrollPhysics(),

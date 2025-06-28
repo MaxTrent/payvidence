@@ -6,6 +6,7 @@ import 'package:payvidence/components/custom_shimmer.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/all_businesses/all_businesses_vm.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../components/business_card.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/responsive.dart';
@@ -46,25 +47,28 @@ class AllBusinesses extends HookConsumerWidget with AutoRouteAware {
           child: Column(
             children: [
               SizedBox(height: responsiveData.scaleHeight(16)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'All businesses',
-                    style: Theme.of(context).textTheme.displayLarge,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.addBusiness);
-                    },
-                    child: Text(
-                      '+ Add New',
-                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                          fontSize: Responsive.fontSize(context, 14), color: primaryColor2),
+              FadeInWidget(
+                delay: const Duration(milliseconds: 100),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'All businesses',
+                      style: Theme.of(context).textTheme.displayLarge,
                     ),
-                  ),
-                ],
+                    GestureDetector(
+                      onTap: () {
+                        locator<PayvidenceAppRouter>()
+                            .navigateNamed(PayvidenceRoutes.addBusiness);
+                      },
+                      child: Text(
+                        '+ Add New',
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                            fontSize: Responsive.fontSize(context, 14), color: primaryColor2),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: responsiveData.scaleHeight(32)),
               Expanded(
@@ -89,8 +93,12 @@ class AllBusinesses extends HookConsumerWidget with AutoRouteAware {
                     : ListView.separated(
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return BusinessCard(
-                      business: viewModel.allBusinesses[index],
+                    return SlideInWidget(
+                      begin: const Offset(0, 0.3),
+                      delay: Duration(milliseconds: 100 + (index * 50)),
+                      child: BusinessCard(
+                        business: viewModel.allBusinesses[index],
+                      ),
                     );
                   },
                   separatorBuilder: (ctx, idx) {

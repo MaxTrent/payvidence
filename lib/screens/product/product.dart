@@ -12,6 +12,7 @@ import 'package:payvidence/providers/category_providers/get_all_category_provide
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
@@ -84,53 +85,25 @@ class Product extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: responsiveData.scaleHeight(32)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: AppTextField(
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-                        child: SvgPicture.asset(
-                          Assets.svg.search,
-                          colorFilter: ColorFilter.mode(
-                            isDarkMode ? Colors.white : Colors.black,
-                            BlendMode.srcIn,
-                          ),
-                          width: responsiveData.scaleWidth(24), // Added for consistency
-                          height: responsiveData.scaleHeight(24),
-                        ),
-                      ),
-                      hintText: 'Search for product',
-                      controller: searchController,
-                      radius: responsiveData.smallRadius * 4, // Approx 80 equivalent
-                      filled: true,
-                      fillColor: isDarkMode ? Colors.black : appGrey5,
-                    ),
-                  ),
-                  SizedBox(width: responsiveData.scaleWidth(12)),
-                  GestureDetector(
-                    onTap: () {
-                      FilterBottomSheet.show(context);
-                    },
-                    child: Container(
-                      height: responsiveData.scaleHeight(48),
-                      width: responsiveData.scaleWidth(56),
-                      decoration: BoxDecoration(
-                        color: borderColor,
-                        borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.8), // Approx 56.r equivalent
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(responsiveData.scaleHeight(14)),
-                        child: SvgPicture.asset(
-                          Assets.svg.filter,
-                          width: responsiveData.scaleWidth(24), // Added for consistency
-                          height: responsiveData.scaleHeight(24),
-                        ),
+              FadeInWidget(
+                delay: const Duration(milliseconds: 100),
+                child: AppTextField(
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                    child: SvgPicture.asset(
+                      Assets.svg.search,
+                      colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black,
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
-                ],
+                  hintText: 'Search for product',
+                  controller: searchController,
+                  radius: responsiveData.largeRadius,
+                  filled: true,
+                  fillColor: isDarkMode ? Colors.black : appGrey5,
+                ),
               ),
               SizedBox(height: responsiveData.scaleHeight(20)),
               Expanded(
@@ -208,21 +181,39 @@ class Product extends HookConsumerWidget {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return ProductTile(
-                            product: filteredProducts[index],
-                            ref: ref,
-                            onPressed: () {
-                              if (forProductSelection == true) {
-                                Navigator.of(context).pop(filteredProducts[index]);
-                              } else {
-                                locator<PayvidenceAppRouter>().navigate(
-                                    ProductDetailsRoute(
-                                        product: filteredProducts[index]));
-                                ref
-                                    .read(getCurrentProductProvider.notifier)
-                                    .setCurrentProduct(filteredProducts[index]);
-                              }
-                            },
+                          return SlideInWidget(
+                            begin: const Offset(0, 0.3),
+                            delay: Duration(milliseconds: 100 + (index * 50)),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (forProductSelection == true) {
+                                  Navigator.of(context).pop(filteredProducts[index]);
+                                } else {
+                                  locator<PayvidenceAppRouter>().navigate(
+                                      ProductDetailsRoute(
+                                          product: filteredProducts[index]));
+                                  ref
+                                      .read(getCurrentProductProvider.notifier)
+                                      .setCurrentProduct(filteredProducts[index]);
+                                }
+                              },
+                              child: ProductTile(
+                                product: filteredProducts[index],
+                                ref: ref,
+                                onPressed: () {
+                                  if (forProductSelection == true) {
+                                    Navigator.of(context).pop(filteredProducts[index]);
+                                  } else {
+                                    locator<PayvidenceAppRouter>().navigate(
+                                        ProductDetailsRoute(
+                                            product: filteredProducts[index]));
+                                    ref
+                                        .read(getCurrentProductProvider.notifier)
+                                        .setCurrentProduct(filteredProducts[index]);
+                                  }
+                                },
+                              ),
+                            ),
                           );
                         },
                         separatorBuilder: (ctx, idx) {

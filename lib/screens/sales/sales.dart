@@ -10,6 +10,7 @@ import 'package:payvidence/providers/sales_providers/sales_fillter_provider.dart
 import 'package:payvidence/utilities/extensions.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
+import 'package:payvidence/utilities/animations.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
@@ -45,18 +46,20 @@ class Sales extends HookConsumerWidget {
               child: ListView(
                 children: [
                   SizedBox(height: responsiveData.scaleHeight(12)),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (interval == "weekly") {
-                            return;
-                          }
-                          ref
-                              .read(salesFilterProvider.notifier)
-                              .setKey("interval", "weekly");
-                          ref.read(salesDataProvider.notifier).setFilter();
-                        },
+                  FadeInWidget(
+                    delay: const Duration(milliseconds: 100),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (interval == "weekly") {
+                              return;
+                            }
+                            ref
+                                .read(salesFilterProvider.notifier)
+                                .setKey("interval", "weekly");
+                            ref.read(salesDataProvider.notifier).setFilter();
+                          },
                         child: Container(
                           height: responsiveData.scaleHeight(45),
                           width: responsiveData.scaleWidth(83),
@@ -140,15 +143,19 @@ class Sales extends HookConsumerWidget {
                                         ? Colors.white
                                         : Colors.black),
                               )),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: responsiveData.scaleHeight(24),
                   ),
-                  GestureDetector(
-                    onTap: () async {
+                  SlideInWidget(
+                    begin: const Offset(0, 0.3),
+                    delay: const Duration(milliseconds: 200),
+                    child: GestureDetector(
+                      onTap: () async {
                       if (interval == "weekly") {
                         ref.read(salesDateFilterProvider.notifier).state =
                             (await selectDay(context)) ?? DateTime.now();
@@ -199,40 +206,43 @@ class Sales extends HookConsumerWidget {
                         ref.read(salesDataProvider.notifier).setFilter();
                       }
                     },
-                    child: AppTextField(
-                      hintText: interval == "weekly"
-                          ? DateFormat('d/M/y').format(date)
-                          : interval == "monthly"
-                          ? DateFormat('MMMM').format(date)
-                          : DateFormat('y').format(date),
-                      controller: TextEditingController(),
-                      enabled: false,
-                      suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                      child: AppTextField(
+                        hintText: interval == "weekly"
+                            ? DateFormat('d/M/y').format(date)
+                            : interval == "monthly"
+                            ? DateFormat('MMMM').format(date)
+                            : DateFormat('y').format(date),
+                        controller: TextEditingController(),
+                        enabled: false,
+                        suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                      ),
                     ),
                   ),
                   SizedBox(
                     height: responsiveData.scaleHeight(36),
                   ),
                   salesData.when(data: (data) {
-                    return Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SalesInfoTile(
-                              icon: Assets.svg.statusUp,
-                              amount: data.totalRevenue.toString().toKMB(),
-                              description: 'Total revenue',
-                              showCurrency: true,
-                            ),
-                            SalesInfoTile(
-                              icon: Assets.svg.boxTick,
-                              amount: data.totalSales.toString().commaSeparated(),
-                              description: 'Total sales',
-                              showCurrency: false,
-                            ),
-                          ],
-                        ),
+                    return FadeInWidget(
+                      delay: const Duration(milliseconds: 300),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SalesInfoTile(
+                                icon: Assets.svg.statusUp,
+                                amount: data.totalRevenue.toString().toKMB(),
+                                description: 'Total revenue',
+                                showCurrency: true,
+                              ),
+                              SalesInfoTile(
+                                icon: Assets.svg.boxTick,
+                                amount: data.totalSales.toString().commaSeparated(),
+                                description: 'Total sales',
+                                showCurrency: false,
+                              ),
+                            ],
+                          ),
                         SizedBox(
                           height: responsiveData.scaleHeight(18),
                         ),
@@ -264,8 +274,9 @@ class Sales extends HookConsumerWidget {
                           child: SalesOverviewChart(
                             graphData: data.graphData!,
                           ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     );
                   }, error: (error, _) {
                     return const Text('An error has occurred');

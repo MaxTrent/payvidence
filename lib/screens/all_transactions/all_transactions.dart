@@ -10,6 +10,7 @@ import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/extensions.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/transaction_tile.dart';
@@ -95,42 +96,45 @@ class AllTransactions extends HookConsumerWidget {
             child: ListView(
               children: [
                 SizedBox(height: responsiveData.scaleHeight(32)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: AppTextField(
-                        // width: responsiveData.scaleWidth(282),
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-                          child: SvgPicture.asset(Assets.svg.search),
-                        ),
-                        hintText: 'Search for transaction',
-                        controller: searchController,
-                        radius: responsiveData.largeRadius,
-                        filled: true,
-                        fillColor: appGrey5,
-                      ),
-                    ),
-                    SizedBox(width: responsiveData.scaleWidth(12)),
-                    GestureDetector(
-                      onTap: () {
-                        buildFilterBottomSheet(context, filterType, isDarkMode);
-                      },
-                      child: Container(
-                        height: responsiveData.scaleHeight(48),
-                        width: responsiveData.scaleWidth(56),
-                        decoration: BoxDecoration(
-                          color: borderColor,
-                          borderRadius: BorderRadius.circular(responsiveData.largeRadius),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(responsiveData.scaleHeight(14)),
-                          child: SvgPicture.asset(Assets.svg.filter),
+                FadeInWidget(
+                  delay: const Duration(milliseconds: 100),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: AppTextField(
+                          // width: responsiveData.scaleWidth(282),
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                            child: SvgPicture.asset(Assets.svg.search),
+                          ),
+                          hintText: 'Search for transaction',
+                          controller: searchController,
+                          radius: responsiveData.largeRadius,
+                          filled: true,
+                          fillColor: appGrey5,
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(width: responsiveData.scaleWidth(12)),
+                      GestureDetector(
+                        onTap: () {
+                          buildFilterBottomSheet(context, filterType, isDarkMode);
+                        },
+                        child: Container(
+                          height: responsiveData.scaleHeight(48),
+                          width: responsiveData.scaleWidth(56),
+                          decoration: BoxDecoration(
+                            color: borderColor,
+                            borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(responsiveData.scaleHeight(14)),
+                            child: SvgPicture.asset(Assets.svg.filter),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(height: responsiveData.scaleHeight(24)),
                 if (viewModel.isLoading) ...[
@@ -164,8 +168,10 @@ class AllTransactions extends HookConsumerWidget {
                         .copyWith(fontSize: Responsive.fontSize(context, 14)),
                   ),
                 ] else ...[
-                  ...filteredTransactions.map(
-                        (transaction) {
+                  ...filteredTransactions.asMap().entries.map(
+                        (entry) {
+                      final index = entry.key;
+                      final transaction = entry.value;
                       final firstProductDetail =
                           transaction.recordProductDetails.first;
                       final isInvoice = transaction.status == 'pending';
@@ -185,8 +191,11 @@ class AllTransactions extends HookConsumerWidget {
                           '';
                       final unitSold = product?.quantitySold?.toString() ?? '0';
 
-                      return GestureDetector(
-                        onTap: () {
+                      return SlideInWidget(
+                        begin: const Offset(0, 0.3),
+                        delay: Duration(milliseconds: 100 + (index * 50)),
+                        child: GestureDetector(
+                          onTap: () {
                           final receipt = Receipt(
                             id: transaction.id,
                             business: Business(
@@ -224,15 +233,16 @@ class AllTransactions extends HookConsumerWidget {
                             ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
                           );
                         },
-                        child: TransactionTile(
-                          amount: amount,
-                          dateTime: dateTime,
-                          productName: productName,
-                          receiptOrInvoice: transaction.status == 'pending'
-                              ? 'Invoice'
-                              : 'Receipt',
-                          unitSold: unitSold,
-                          imageUrl: imageUrl,
+                          child: TransactionTile(
+                            amount: amount,
+                            dateTime: dateTime,
+                            productName: productName,
+                            receiptOrInvoice: transaction.status == 'pending'
+                                ? 'Invoice'
+                                : 'Receipt',
+                            unitSold: unitSold,
+                            imageUrl: imageUrl,
+                          ),
                         ),
                       );
                     },

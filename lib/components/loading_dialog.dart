@@ -18,7 +18,6 @@ class LoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Disable back button while dialog is in view
     return FadeInWidget(
       duration: AppAnimations.fast,
       child: ScaleInWidget(

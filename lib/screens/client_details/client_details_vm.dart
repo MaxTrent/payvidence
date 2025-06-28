@@ -36,6 +36,7 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
       notifyListeners();
 
       print("ViewModel: Fetching client information");
+      print("BUSINESSID: $businessId, CLIENTID: $clientId");
       final response = await apiServices.getClientInfo(businessId, clientId);
       print(
           "ViewModel: API response - success: ${response.success}, data: ${response.data}");

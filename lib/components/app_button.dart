@@ -3,6 +3,7 @@ import 'package:payvidence/components/loading_indicator.dart';
 import '../constants/app_colors.dart';
 import '../utilities/responsive_wrapper.dart';
 import '../utilities/animations.dart';
+import '../utilities/haptic_service.dart';
 
 class AppButton extends StatelessWidget {
   AppButton({
@@ -33,7 +34,10 @@ class AppButton extends StatelessWidget {
     final dynamicWidth = width != null ? responsiveData.scaleWidth(width!) : null;
 
     return AnimatedPressButton(
-      onPressed: isProcessing || isDisabled ? null : onPressed,
+      onPressed: isProcessing || isDisabled ? null : () {
+        HapticService.lightImpact();
+        onPressed?.call();
+      },
       child: Container(
         height: dynamicHeight,
         width: dynamicWidth,

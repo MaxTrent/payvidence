@@ -12,6 +12,7 @@ import 'package:payvidence/screens/update_personal_details/update_personal_detai
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../components/loading_dialog.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -53,18 +54,19 @@ class Profile extends HookConsumerWidget {
       child: Scaffold(
         body: Column(
           children: [
-            Container(
-              height: responsiveData.scaleHeight(252),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: primaryColor4,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(responsiveData.smallRadius * 0.6), // Approx 12.r equivalent
-                  bottomRight: Radius.circular(responsiveData.smallRadius * 0.6), // Approx 12.r equivalent
+            FadeInWidget(
+              child: Container(
+                height: responsiveData.scaleHeight(252),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: primaryColor4,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(responsiveData.smallRadius * 0.6), // Approx 12.r equivalent
+                    bottomRight: Radius.circular(responsiveData.smallRadius * 0.6), // Approx 12.r equivalent
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
                 child: SafeArea(
                   child: Column(
                     children: [
@@ -201,88 +203,113 @@ class Profile extends HookConsumerWidget {
                       )
                     ],
                   ),
+                  ),
                 ),
               ),
             ),
             Expanded(
               child: ListView(
                 children: [
-                  ProfileOptionTile(
-                    isDarkMode: isDarkMode,
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.updatePersonalDetails);
-                    },
-                    title: 'Update personal details',
-                    icon: Assets.svg.userSquare,
-                  ),
-                  SizedBox(
-                    height: responsiveData.scaleHeight(24),
-                  ),
-                  ProfileOptionTile(
-                    isDarkMode: isDarkMode,
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.mySubscription);
-                    },
-                    icon: Assets.svg.medalStar,
-                    title: 'Manage subscription plan',
-                  ),
-                  SizedBox(
-                    height: responsiveData.scaleHeight(24),
-                  ),
-                  ProfileOptionTile(
-                    isDarkMode: isDarkMode,
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.businessData);
-                    },
-                    icon: Assets.svg.chart,
-                    title: 'Access business data',
-                  ),
-                  SizedBox(
-                    height: responsiveData.scaleHeight(24),
-                  ),
-                  ProfileOptionTile(
-                    isDarkMode: isDarkMode,
-                    onTap: () {
-                      locator<PayvidenceAppRouter>()
-                          .navigateNamed(PayvidenceRoutes.payvidenceInfo);
-                    },
-                    icon: Assets.svg.documentText,
-                    title: 'View Payvidence information',
-                  ),
-                  SizedBox(
-                    height: responsiveData.scaleHeight(24),
-                  ),
-                  ProfileOptionTile(
-                    isDarkMode: isDarkMode,
-                    onTap: () {
-                      // Handle rate app logic if needed
-                    },
-                    icon: Assets.svg.like,
-                    title: 'Rate app',
-                  ),
-                  SizedBox(
-                    height: responsiveData.scaleHeight(24),
-                  ),
-                  ProfileOptionTile(
-                    onTap: () {
-                      if (!context.mounted) return;
-                      LoadingDialog.show(context);
-                      viewModel.logout(navigateOnSuccess: () async {
+                  SlideInWidget(
+                    begin: const Offset(0, 0.3),
+                    delay: const Duration(milliseconds: 100),
+                    child: ProfileOptionTile(
+                      isDarkMode: isDarkMode,
+                      onTap: () {
                         locator<PayvidenceAppRouter>()
-                            .popUntil((route) => route is SplashScreen);
+                            .navigateNamed(PayvidenceRoutes.updatePersonalDetails);
+                      },
+                      title: 'Update personal details',
+                      icon: Assets.svg.userSquare,
+                    ),
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  SlideInWidget(
+                    begin: const Offset(0, 0.3),
+                    delay: const Duration(milliseconds: 150),
+                    child: ProfileOptionTile(
+                      isDarkMode: isDarkMode,
+                      onTap: () {
                         locator<PayvidenceAppRouter>()
-                            .navigateNamed(PayvidenceRoutes.onboarding);
-                      });
-                    },
-                    icon: Assets.svg.logout,
-                    title: 'Log out',
-                    showTrailing: false,
-                    color: appRed,
-                    isLogout: true,
-                    isDarkMode: isDarkMode,
+                            .navigateNamed(PayvidenceRoutes.mySubscription);
+                      },
+                      icon: Assets.svg.medalStar,
+                      title: 'Manage subscription plan',
+                    ),
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  SlideInWidget(
+                    begin: const Offset(0, 0.3),
+                    delay: const Duration(milliseconds: 200),
+                    child: ProfileOptionTile(
+                      isDarkMode: isDarkMode,
+                      onTap: () {
+                        locator<PayvidenceAppRouter>()
+                            .navigateNamed(PayvidenceRoutes.businessData);
+                      },
+                      icon: Assets.svg.chart,
+                      title: 'Access business data',
+                    ),
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  SlideInWidget(
+                    begin: const Offset(0, 0.3),
+                    delay: const Duration(milliseconds: 250),
+                    child: ProfileOptionTile(
+                      isDarkMode: isDarkMode,
+                      onTap: () {
+                        locator<PayvidenceAppRouter>()
+                            .navigateNamed(PayvidenceRoutes.payvidenceInfo);
+                      },
+                      icon: Assets.svg.documentText,
+                      title: 'View Payvidence information',
+                    ),
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  SlideInWidget(
+                    begin: const Offset(0, 0.3),
+                    delay: const Duration(milliseconds: 300),
+                    child: ProfileOptionTile(
+                      isDarkMode: isDarkMode,
+                      onTap: () {
+                        // Handle rate app logic if needed
+                      },
+                      icon: Assets.svg.like,
+                      title: 'Rate app',
+                    ),
+                  ),
+                  SizedBox(
+                    height: responsiveData.scaleHeight(24),
+                  ),
+                  SlideInWidget(
+                    begin: const Offset(0, 0.3),
+                    delay: const Duration(milliseconds: 350),
+                    child: ProfileOptionTile(
+                      onTap: () {
+                        if (!context.mounted) return;
+                        LoadingDialog.show(context);
+                        viewModel.logout(navigateOnSuccess: () async {
+                          locator<PayvidenceAppRouter>()
+                              .popUntil((route) => route is SplashScreen);
+                          locator<PayvidenceAppRouter>()
+                              .navigateNamed(PayvidenceRoutes.onboarding);
+                        });
+                      },
+                      icon: Assets.svg.logout,
+                      title: 'Log out',
+                      showTrailing: false,
+                      color: appRed,
+                      isLogout: true,
+                      isDarkMode: isDarkMode,
+                    ),
                   ),
                 ],
               ),

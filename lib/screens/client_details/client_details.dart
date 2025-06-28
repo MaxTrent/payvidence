@@ -19,8 +19,8 @@ class ClientDetails extends HookConsumerWidget {
 
   const ClientDetails({
     super.key,
-    @QueryParam('businessId') this.businessId = '',
-    @QueryParam('clientId') this.clientId = '',
+    @PathParam('businessId') this.businessId = '',
+    @PathParam('clientId') this.clientId = '',
   });
 
   @override
