@@ -23,5 +23,11 @@ class GetAllCategoryNotifier extends AsyncNotifier<List<CategoryModel>> {
         .addCategory(ref.watch(getCurrentBusinessProvider)!.id!, data);
   }
 
+  Future<void> deleteCategory(String categoryId) async {
+    await locator<ICategoryRepository>()
+        .deleteCategory(ref.watch(getCurrentBusinessProvider)!.id!, categoryId);
+    ref.invalidateSelf();
+  }
+
 // Add methods to mutate the state
 }

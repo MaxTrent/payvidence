@@ -113,15 +113,34 @@ class EmptyCategory extends HookConsumerWidget {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return CategoryTile(
-                            title: data[index].name ?? '',
-                            subtitle: data[index].description ?? '',
-                            onPressed: () {
-                              ref
-                                  .read(getCurrentCategoryProvider.notifier)
-                                  .setCurrentCategory(data[index]);
-                              Navigator.of(context).pop();
+                          return Dismissible(
+                            key: Key(data[index].id ?? index.toString()),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.only(right: responsiveData.scaleWidth(20)),
+                              color: Colors.red,
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: responsiveData.scaleHeight(24),
+                              ),
+                            ),
+                            onDismissed: (direction) async {
+                              if (data[index].id != null) {
+                                await ref.read(getAllCategoryProvider.notifier).deleteCategory(data[index].id!);
+                              }
                             },
+                            child: CategoryTile(
+                              title: data[index].name ?? '',
+                              subtitle: data[index].description ?? '',
+                              onPressed: () {
+                                ref
+                                    .read(getCurrentCategoryProvider.notifier)
+                                    .setCurrentCategory(data[index]);
+                                Navigator.of(context).pop();
+                              },
+                            ),
                           );
                         },
                         separatorBuilder: (ctx, idx) {

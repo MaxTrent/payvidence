@@ -22,5 +22,11 @@ class GetAllBrandNotifier extends AsyncNotifier<List<BrandModel>> {
         .addBrand(ref.watch(getCurrentBusinessProvider)!.id!, data);
   }
 
+  Future<void> deleteBrand(String brandId) async {
+    await locator<IBrandRepository>()
+        .deleteBrand(ref.watch(getCurrentBusinessProvider)!.id!, brandId);
+    ref.invalidateSelf();
+  }
+
 // Add methods to mutate the state
 }

@@ -8,6 +8,8 @@ abstract class ICategoryRepository {
 
   Future<List<CategoryModel>> fetchAllCategory(String businessId);
 
+  Future<void> deleteCategory(String businessId, String categoryId);
+
 //Future<Business> fetchBusiness(String id);
 }
 
@@ -25,6 +27,11 @@ class CategoryRepository extends ICategoryRepository {
   @override
   Future<List<CategoryModel>> fetchAllCategory(String businessId) {
     return categoryDatasource.fetchAllCategory(businessId);
+  }
+
+  @override
+  Future<void> deleteCategory(String businessId, String categoryId) {
+    return categoryDatasource.deleteCategory(businessId, categoryId);
   }
 
 // @override

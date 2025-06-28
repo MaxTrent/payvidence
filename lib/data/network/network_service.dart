@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../../shared_dependency/shared_dependency.dart';
-import '../../utilities/cache_service.dart';
+
 import '../../utilities/performance_monitor.dart';
 import '../local/session_constants.dart';
 import '../local/session_manager.dart';
@@ -15,15 +15,11 @@ enum RequestMethod { get, post, patch, delete }
 class NetworkService {
   final Dio dio;
   final String baseUrl;
-  CacheService? _cache;
+
 
   NetworkService({required this.dio, required this.baseUrl}) {
     _initClient(baseUrl);
-    try {
-      _cache = locator<CacheService>();
-    } catch (e) {
-      _cache = null;
-    }
+
   }
 
   void _initClient(baseUrl) {
@@ -46,47 +42,24 @@ class NetworkService {
       path, {
         bool useToken = true,
         bool isAccessToken = true,
-        bool useCache = true,
-        int? cacheTtlMinutes,
         dynamic data,
         Map<String, dynamic> headers = const {},
       }) async {
-    final cacheKey = _generateCacheKey(path, data);
-
-    // Check cache first for GET requests
-    if (useCache && _cache != null) {
-      final cached = _cache!.get(cacheKey);
-      if (cached != null) {
-        return Right(Success(cached));
-      }
-    }
-
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
       authorizedHeader = await getAuthorizedHeader(isAccessToken: isAccessToken);
     }
 
-    final result = await request(
+    return await request(
         requestData: data,
         headers: {...headers, ...authorizedHeader},
         path: path,
         requestMethod: RequestMethod.get);
-
-    // Cache successful GET responses
-    if (useCache && _cache != null && result.isRight()) {
-      result.fold(
-            (l) => null,
-            (success) => _cache!.set(cacheKey, success.data, ttlMinutes: cacheTtlMinutes),
-      );
-    }
-
-    return result;
   }
 
   Future<Either<Failure, Success>> post(
       path, {
         bool useToken = true,
-        bool clearCache = true,
         dynamic data,
         Map<String, dynamic> headers = const {},
       }) async {
@@ -95,24 +68,16 @@ class NetworkService {
       authorizedHeader = await getAuthorizedHeader(isAccessToken: true);
     }
 
-    final result = await request(
+    return await request(
         requestData: data,
         headers: {...headers, ...authorizedHeader},
         path: path,
         requestMethod: RequestMethod.post);
-
-    // Clear related cache on successful mutations
-    if (clearCache && _cache != null && result.isRight()) {
-      await _clearRelatedCache(path);
-    }
-
-    return result;
   }
 
   Future<Either<Failure, Success>> patch(
       path, {
         bool useToken = true,
-        bool clearCache = true,
         dynamic data,
         Map<String, dynamic> headers = const {},
       }) async {
@@ -121,23 +86,16 @@ class NetworkService {
       authorizedHeader = await getAuthorizedHeader(isAccessToken: true);
     }
 
-    final result = await request(
+    return await request(
         requestData: data,
         headers: {...headers, ...authorizedHeader},
         path: path,
         requestMethod: RequestMethod.patch);
-
-    if (clearCache && _cache != null && result.isRight()) {
-      await _clearRelatedCache(path);
-    }
-
-    return result;
   }
 
   Future<Either<Failure, Success>> delete(
       String path, {
         bool useToken = true,
-        bool clearCache = true,
         dynamic data,
         Map<String, dynamic> headers = const {},
       }) async {
@@ -146,18 +104,12 @@ class NetworkService {
       authorizedHeader = await getAuthorizedHeader(isAccessToken: true);
     }
 
-    final result = await request(
+    return await request(
       requestData: data,
       headers: {...headers, ...authorizedHeader},
       path: path,
       requestMethod: RequestMethod.delete,
     );
-
-    if (clearCache && _cache != null && result.isRight()) {
-      await _clearRelatedCache(path);
-    }
-
-    return result;
   }
 
   Future<Either<Failure, Success>> request({
@@ -254,15 +206,5 @@ class NetworkService {
     return accessData;
   }
 
-  String _generateCacheKey(String path, dynamic data) {
-    return '$path${data != null ? '_${data.hashCode}' : ''}';
-  }
 
-  Future<void> _clearRelatedCache(String path) async {
-    // Clear cache for related endpoints
-    final segments = path.split('/');
-    if (segments.isNotEmpty && _cache != null) {
-      await _cache!.clear(segments.first);
-    }
-  }
 }

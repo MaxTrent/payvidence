@@ -8,7 +8,7 @@ import 'package:payvidence/datasource/data/receipt_datasource.dart';
 import 'package:payvidence/repositories/repository/business_repository.dart';
 import 'package:payvidence/repositories/repository/client_repository.dart';
 import 'package:payvidence/repositories/repository/receipt_repository.dart';
-import 'package:payvidence/utilities/cache_service.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/api_services.dart';
@@ -37,9 +37,7 @@ Future<void> initializeSharedDependencies({required String baseUrl}) async {
         () => SessionManager(sharedPreferences: locator()),
   );
 
-  locator.registerLazySingleton<CacheService>(
-        () => CacheService(locator()),
-  );
+
 
   locator.registerLazySingleton(() => Dio());
 
