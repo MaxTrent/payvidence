@@ -553,6 +553,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       ref.invalidate(widget.isInvoice == true
           ? getAllInvoiceProvider
           : getAllReceiptProvider);
+      ref.invalidate(getAllProductProvider);
       Future.delayed(const Duration(seconds: 2), () {
         if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
           if (!context.mounted) return;

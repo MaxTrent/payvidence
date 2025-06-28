@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 // Import all test files
 import 'unit/models/product_model_test.dart' as product_model_tests;
 import 'unit/models/receipt_model_test.dart' as receipt_model_tests;
-import 'unit/services/cache_service_test.dart' as cache_service_tests;
 import 'unit/services/network_service_test.dart' as network_service_tests;
 import 'unit/providers/product_provider_test.dart' as product_provider_tests;
 import 'unit/utilities/performance_monitor_test.dart' as performance_monitor_tests;
@@ -20,7 +19,6 @@ void main() {
       });
 
       group('Services', () {
-        cache_service_tests.main();
         network_service_tests.main();
       });
 

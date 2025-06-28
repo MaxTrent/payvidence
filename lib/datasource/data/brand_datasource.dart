@@ -12,6 +12,8 @@ abstract class IBrandDatasource {
 
   Future<BrandModel> addBrand(
       String businessId, Map<String, dynamic> requestData);
+
+  Future<void> deleteBrand(String businessId, String brandId);
 }
 
 class BrandDatasource extends IBrandDatasource {
@@ -70,6 +72,23 @@ class BrandDatasource extends IBrandDatasource {
         print("Error $e");
       }
 
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteBrand(String businessId, String brandId) async {
+    try {
+      final Either<Failure, Success> response = await networkService.delete(
+          '${PayvidenceEndpoints.business}/$businessId/brand/$brandId');
+      
+      response.fold((fail) {
+        throw fail.error;
+      }, (success) => null);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error $e");
+      }
       rethrow;
     }
   }

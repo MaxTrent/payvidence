@@ -269,6 +269,7 @@ class Product extends HookConsumerWidget {
               child: Icon(
                 Icons.add,
                 size: responsiveData.scaleHeight(40),
+                color: Colors.white,
               ),
             )
                 : null;

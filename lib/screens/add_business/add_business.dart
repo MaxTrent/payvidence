@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/simple_bottom_sheet.dart';
 import 'package:payvidence/utilities/app_functions.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
@@ -20,6 +21,7 @@ import '../../providers/business_providers/get_all_business_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/responsive.dart';
 import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/toast_service.dart';
 import 'add_business_vm.dart';
@@ -44,6 +46,8 @@ class AddBusiness extends HookConsumerWidget {
     final sessionManager = locator<SessionManager>();
 
     final isCreatingBusiness = useState(false);
+    final selectedRole = useState<String?>(null);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     final firstName = sessionManager.get<String>(SessionConstants.userFirstName);
     final lastName = sessionManager.get<String>(SessionConstants.userLastName);
@@ -69,7 +73,7 @@ class AddBusiness extends HookConsumerWidget {
         "address": businessAddressController.text,
         "phone_number": phoneNumberController.text,
         "issuer": issuerController.text,
-        "issuer_role": roleController.text,
+        "issuer_role": selectedRole.value ?? '',
         "vat": 5,
         "logo_image": await MultipartFile.fromFile(
           logo.value!.path,
@@ -239,14 +243,98 @@ class AddBusiness extends HookConsumerWidget {
                       AppTextField(
                         hintText: issuerName.isEmpty ? 'Issuer name not available' : 'Issuer name',
                         controller: issuerController,
-                        enabled: false,
+                        enabled: true,
                         validator: issuerName.isEmpty ? (_) => 'Issuer name is required' : (val) => Validator.validateName(val),
                       ),
                       _buildSectionTitle(context, 'What is the role of this issuer?'),
-                      AppTextField(
-                        hintText: 'Role of issuer',
-                        controller: roleController,
-                        validator: (val) => Validator.validateName(val),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            clipBehavior: Clip.none,
+                            context: context,
+                            builder: (context) => SimpleBottomSheet(
+                              isDarkMode: isDarkMode,
+                              title: 'Select Role',
+                              subtitle: 'Choose the role of the issuer.',
+                              height: 400,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    selectedRole.value = 'Sales Manager';
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Sales Manager',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displaySmall!
+                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Divider(height: responsiveData.scaleHeight(1)),
+                                GestureDetector(
+                                  onTap: () {
+                                    selectedRole.value = 'Business Manager';
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Business Manager',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displaySmall!
+                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Divider(height: responsiveData.scaleHeight(1)),
+                                GestureDetector(
+                                  onTap: () {
+                                    selectedRole.value = 'Marketing Manager';
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Marketing Manager',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displaySmall!
+                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: AppTextField(
+                          hintText: selectedRole.value ?? 'Select role',
+                          controller: TextEditingController(text: selectedRole.value ?? ''),
+                          enabled: false,
+                          suffixIcon: Icon(Icons.keyboard_arrow_down),
+                        ),
                       ),
                       _buildSectionTitle(context, 'Issuer signature'),
                       GestureDetector(
@@ -301,6 +389,8 @@ class AddBusiness extends HookConsumerWidget {
                               ToastService.showErrorSnackBar("Select a signature image");
                             } else if (issuerName.isEmpty) {
                               ToastService.showErrorSnackBar("Issuer name is not available. Please update your profile in Settings.");
+                            } else if (selectedRole.value == null) {
+                              ToastService.showErrorSnackBar("Please select a role");
                             } else {
                               createBusiness();
                             }

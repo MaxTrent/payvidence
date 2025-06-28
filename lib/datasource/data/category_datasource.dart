@@ -12,6 +12,8 @@ abstract class ICategoryDatasource {
 
   Future<CategoryModel> addCategory(
       String businessId, Map<String, dynamic> requestData);
+
+  Future<void> deleteCategory(String businessId, String categoryId);
 }
 
 class CategoryDatasource extends ICategoryDatasource {
@@ -70,6 +72,23 @@ class CategoryDatasource extends ICategoryDatasource {
         print("Error $e");
       }
 
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteCategory(String businessId, String categoryId) async {
+    try {
+      final Either<Failure, Success> response = await networkService.delete(
+          '${PayvidenceEndpoints.business}/$businessId/category/$categoryId');
+      
+      response.fold((fail) {
+        throw fail.error;
+      }, (success) => null);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error $e");
+      }
       rethrow;
     }
   }

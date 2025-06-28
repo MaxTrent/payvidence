@@ -249,7 +249,7 @@ class AllInvoices extends HookConsumerWidget {
                 locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: true));
               },
               backgroundColor: primaryColor2,
-              child: Icon(Icons.add, size: responsiveData.scaleHeight(40)),
+              child: Icon(Icons.add, size: responsiveData.scaleHeight(40), color: Colors.white,),
             )
                 : null; // Hide FAB when there are no invoices
           },

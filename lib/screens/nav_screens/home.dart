@@ -34,6 +34,7 @@ class HomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
+    final currentBusiness = ref.watch(getCurrentBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
 
     useEffect(() {
@@ -69,6 +70,13 @@ class HomeScreen extends HookConsumerWidget {
 
       return null;
     }, [getAllBusiness]);
+
+    useEffect(() {
+      if (currentBusiness?.id != null) {
+        transactionsViewModel.fetchTransactions(currentBusiness!.id!);
+      }
+      return null;
+    }, [currentBusiness?.id]);
 
     Future<void> onRefresh() async {
       final businessId = ref.watch(getCurrentBusinessProvider)?.id;

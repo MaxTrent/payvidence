@@ -7,6 +7,7 @@ import '../constants/app_colors.dart';
 import '../utilities/responsive.dart';
 import '../utilities/responsive_wrapper.dart';
 import '../utilities/theme_mode.dart';
+import '../gen/assets.gen.dart';
 
 import 'app_naira.dart';
 
@@ -39,7 +40,34 @@ class ProductTile extends HookWidget {
             Container(
               height: responsiveData.scaleHeight(72),
               width: responsiveData.scaleHeight(72),
-              decoration: const BoxDecoration(color: Colors.black),
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: product.logoUrl != null && product.logoUrl!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        product.logoUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Image.asset(
+                              Assets.png.payvidenceLogo.path,
+                              fit: BoxFit.contain,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Image.asset(
+                        Assets.png.payvidenceLogo.path,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
             ),
             SizedBox(width: responsiveData.scaleWidth(14)),
             Expanded(

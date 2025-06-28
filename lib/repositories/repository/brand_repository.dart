@@ -8,6 +8,8 @@ abstract class IBrandRepository {
 
   Future<List<BrandModel>> fetchAllBrand(String businessId);
 
+  Future<void> deleteBrand(String businessId, String brandId);
+
 //Future<Business> fetchBusiness(String id);
 }
 
@@ -25,6 +27,11 @@ class BrandRepository extends IBrandRepository {
   @override
   Future<List<BrandModel>> fetchAllBrand(String businessId) {
     return brandDatasource.fetchAllBrand(businessId);
+  }
+
+  @override
+  Future<void> deleteBrand(String businessId, String brandId) {
+    return brandDatasource.deleteBrand(businessId, brandId);
   }
 
 // @override
