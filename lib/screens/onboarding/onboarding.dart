@@ -89,12 +89,15 @@ class OnboardingScreen extends HookConsumerWidget {
                           SizedBox(
                             height: responsiveData.scaleHeight(45),
                           ),
-                          AppButton(
-                            buttonText: 'Get started',
-                            onPressed: () {
-                              locator<PayvidenceAppRouter>()
-                                  .navigateNamed(PayvidenceRoutes.createAccount);
-                            },
+                          Padding(
+                            padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20)),
+                            child: AppButton(
+                              buttonText: 'Get started',
+                              onPressed: () {
+                                locator<PayvidenceAppRouter>()
+                                    .navigateNamed(PayvidenceRoutes.createAccount);
+                              },
+                            ),
                           ),
                           SizedBox(height: responsiveData.scaleHeight(26)),
                           GestureDetector(
