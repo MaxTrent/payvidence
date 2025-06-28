@@ -140,18 +140,13 @@ class Brands extends HookConsumerWidget {
                                   children: [
                                     GestureDetector(
                                       onTap: () async {
-                                        final navigator = Navigator.of(context);
-                                        navigator.pop();
+                                        Navigator.of(context).pop();
                                         if (data[index].id != null) {
                                           try {
                                             await ref.read(getAllBrandProvider.notifier).deleteBrand(data[index].id!);
-                                            navigator.pop(true);
                                           } catch (e) {
-                                            ToastService.showErrorSnackBar('Failed to delete brand');
-                                            navigator.pop(false);
+                                            ToastService.showErrorSnackBar('Failed to delete brand. It is associated with a receipt/invoice');
                                           }
-                                        } else {
-                                          navigator.pop(false);
                                         }
                                       },
                                       child: Padding(
