@@ -14,13 +14,13 @@ import 'onboarding_vm.dart';
 @RoutePage(name: 'OnboardingScreenRoute')
 class OnboardingScreen extends HookConsumerWidget {
   static String routeName = "/onboardingScreen";
-  OnboardingScreen({super.key});
-
-  final _pageController = PageController();
+  
+  const OnboardingScreen({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(onboardingScreenViewModelProvider);
+    final pageController = usePageController();
     final responsiveData = ResponsiveInherited.of(context);
 
     return ResponsiveWrapper(
@@ -33,24 +33,33 @@ class OnboardingScreen extends HookConsumerWidget {
                 allowImplicitScrolling: true,
                 physics: const AlwaysScrollableScrollPhysics(),
                 scrollDirection: Axis.horizontal,
-                controller: _pageController,
+                controller: pageController,
                 onPageChanged: (index) {
                   viewModel.changeIndex(index);
                 },
                 children: [
                   OnboardingPage(
+                    key: const ValueKey(0),
+                    pageIndex: 0,
+                    currentPageIndex: viewModel.currentPageIndex,
                     text: 'Your digital transaction evidence',
                     subtext:
                     'Easily issue receipts, invoices, and purchase orders to clients on the go.',
                     image: Assets.png.onboard1.path,
                   ),
                   OnboardingPage(
+                    key: const ValueKey(1),
+                    pageIndex: 1,
+                    currentPageIndex: viewModel.currentPageIndex,
                     text: 'Simplify your inventory management',
                     subtext:
                     'Manage all your transactions, invoices, receipts, and sales reports in one centralized location.',
                     image: Assets.png.onboard2.path,
                   ),
                   OnboardingPage(
+                    key: const ValueKey(2),
+                    pageIndex: 2,
+                    currentPageIndex: viewModel.currentPageIndex,
                     text: 'Gain Insights with Analytics',
                     subtext:
                     'Access reports to understand sales performance and make smarter decisions.',
@@ -58,59 +67,67 @@ class OnboardingScreen extends HookConsumerWidget {
                   )
                 ],
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ClipPath(
-                  clipper: CustomCurveClipper(curveHeight: responsiveData.scaleHeight(40)),
-                  child: Container(
-                    height: responsiveData.scaleHeight(310),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: scaffoldBackground,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, -responsiveData.scaleHeight(2)),
-                          blurRadius: responsiveData.smallRadius * 0.2, // Approx 4.r equivalent
-                          spreadRadius: responsiveData.scaleHeight(10),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: responsiveData.scaleHeight(62),
+              AnimatedSlide(
+                offset: Offset(0, 0),
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutBack,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ClipPath(
+                    clipper: CustomCurveClipper(curveHeight: responsiveData.scaleHeight(40)),
+                    child: Container(
+                      height: responsiveData.scaleHeight(310),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: scaffoldBackground,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(0, -responsiveData.scaleHeight(2)),
+                            blurRadius: responsiveData.smallRadius * 0.2,
+                            spreadRadius: responsiveData.scaleHeight(10),
                           ),
-                          PageIndicator(
-                            viewModel: viewModel,
-                          ),
-                          SizedBox(
-                            height: responsiveData.scaleHeight(45),
-                          ),
-                          AppButton(
-                            buttonText: 'Get started',
-                            onPressed: () {
-                              locator<PayvidenceAppRouter>()
-                                  .navigateNamed(PayvidenceRoutes.createAccount);
-                            },
-                          ),
-                          SizedBox(height: responsiveData.scaleHeight(26)),
-                          GestureDetector(
-                            onTap: () {
-                              locator<PayvidenceAppRouter>()
-                                  .navigateNamed(PayvidenceRoutes.login);
-                            },
-                            child: Text(
-                              'Log in instead',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .copyWith(color: primaryColor2),
-                            ),
-                          )
                         ],
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: responsiveData.scaleHeight(62),
+                            ),
+                            PageIndicator(
+                              viewModel: viewModel,
+                            ),
+                            SizedBox(
+                              height: responsiveData.scaleHeight(45),
+                            ),
+                            Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20)),
+                              child: AppButton(
+                                buttonText: 'Get started',
+                                onPressed: () {
+                                  locator<PayvidenceAppRouter>()
+                                      .navigateNamed(PayvidenceRoutes.createAccount);
+                                },
+                              ),
+                            ),
+                            SizedBox(height: responsiveData.scaleHeight(26)),
+                            GestureDetector(
+                              onTap: () {
+                                locator<PayvidenceAppRouter>()
+                                    .navigateNamed(PayvidenceRoutes.login);
+                              },
+                              child: Text(
+                                'Log in instead',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(color: primaryColor2),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -139,7 +156,9 @@ class PageIndicator extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
-        return Container(
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
           margin: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(6)),
           height: responsiveData.scaleHeight(8),
           width: viewModel.currentPageIndex == index
@@ -149,7 +168,7 @@ class PageIndicator extends StatelessWidget {
             color: viewModel.currentPageIndex == index
                 ? primaryColor2
                 : primaryColor2.withOpacity(0.4),
-            borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.6), // Approx 32.r equivalent
+            borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.6),
           ),
         );
       }),
@@ -157,21 +176,52 @@ class PageIndicator extends StatelessWidget {
   }
 }
 
-class OnboardingPage extends StatelessWidget {
+class OnboardingPage extends HookWidget {
   const OnboardingPage({
     required this.image,
     required this.subtext,
     required this.text,
+    required this.pageIndex,
+    required this.currentPageIndex,
     super.key,
   });
 
   final String text;
   final String subtext;
   final String image;
+  final int pageIndex;
+  final int currentPageIndex;
 
   @override
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
+    final animationController = useAnimationController(duration: const Duration(milliseconds: 1200));
+    
+    final fadeAnimation = useMemoized(() => 
+      Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: animationController, curve: const Interval(0.0, 0.6, curve: Curves.easeOut))
+      )
+    );
+    
+    final slideAnimation = useMemoized(() =>
+      Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+        CurvedAnimation(parent: animationController, curve: const Interval(0.2, 0.8, curve: Curves.easeOutBack))
+      )
+    );
+    
+    final scaleAnimation = useMemoized(() =>
+      Tween<double>(begin: 0.8, end: 1.0).animate(
+        CurvedAnimation(parent: animationController, curve: const Interval(0.4, 1.0, curve: Curves.elasticOut))
+      )
+    );
+
+    useEffect(() {
+      if (pageIndex == currentPageIndex && context.mounted) {
+        animationController.reset();
+        animationController.forward();
+      }
+      return null;
+    }, [currentPageIndex]);
 
     return SingleChildScrollView(
       child: Padding(
@@ -182,27 +232,60 @@ class OnboardingPage extends StatelessWidget {
             SizedBox(
               height: responsiveData.scaleHeight(40),
             ),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .displayLarge!
-                  .copyWith(fontWeight: FontWeight.w600, color: Colors.black),
+            AnimatedBuilder(
+              animation: animationController,
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: fadeAnimation,
+                  child: SlideTransition(
+                    position: slideAnimation,
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayLarge!
+                          .copyWith(fontWeight: FontWeight.w600, color: Colors.black),
+                    ),
+                  ),
+                );
+              },
             ),
             SizedBox(
               height: responsiveData.scaleHeight(10),
             ),
-            Text(
-              subtext,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                  fontWeight: FontWeight.w400, color: const Color(0xff333030)),
+            AnimatedBuilder(
+              animation: animationController,
+              builder: (context, child) {
+                return FadeTransition(
+                  opacity: fadeAnimation,
+                  child: SlideTransition(
+                    position: slideAnimation,
+                    child: Text(
+                      subtext,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontWeight: FontWeight.w400, color: const Color(0xff333030)),
+                    ),
+                  ),
+                );
+              },
             ),
             SizedBox(
               height: responsiveData.scaleHeight(85),
             ),
-            Image.asset(image)
+            AnimatedBuilder(
+              animation: animationController,
+              builder: (context, child) {
+                return ScaleTransition(
+                  scale: scaleAnimation,
+                  child: FadeTransition(
+                    opacity: fadeAnimation,
+                    child: Image.asset(image),
+                  ),
+                );
+              },
+            )
           ],
         ),
       ),
@@ -219,23 +302,17 @@ class CustomCurveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path();
 
-    path.moveTo(0, 0); // Start at the top left corner
+    path.moveTo(0, 0);
 
-    // Create an inward curved top edge
     path.quadraticBezierTo(
-      size.width / 2, // Control point x
-      curveHeight, // Control point y (pulls the curve downward)
-      size.width, // End point x
-      0, // End point y (back to the top at the end)
+      size.width / 2,
+      curveHeight,
+      size.width,
+      0,
     );
 
-    // Draw right side
     path.lineTo(size.width, size.height);
-
-    // Draw bottom
     path.lineTo(0, size.height);
-
-    // Close the path
     path.close();
 
     return path;
