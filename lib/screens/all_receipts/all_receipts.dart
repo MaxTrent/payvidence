@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 import 'package:payvidence/utilities/animations.dart';
+import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
 import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
@@ -359,7 +360,7 @@ class ReceiptTile extends StatelessWidget {
                 children: [
                   const AppNaira(fontSize: 14),
                   Text(
-                    '${receipt.recordProductDetails[0].total ?? ''} ',
+                    '${(double.tryParse(receipt.recordProductDetails[0].total ?? '0') ?? 0).toString().toCommaSeparated() ?? ''} ',
                     style: Theme.of(context)
                         .textTheme
                         .displayMedium!
