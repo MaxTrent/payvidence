@@ -13,6 +13,7 @@ import 'package:payvidence/providers/product_providers/get_all_product_provider.
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/animations.dart';
+
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../constants/app_colors.dart';
@@ -216,11 +217,9 @@ class Product extends HookConsumerWidget {
                             ),
                           );
                         },
-                        separatorBuilder: (ctx, idx) {
-                          return Column(
-                            children: [SizedBox(height: responsiveData.scaleHeight(24))],
-                          );
-                        },
+                        separatorBuilder: (ctx, idx) => Column(
+                          children: [SizedBox(height: responsiveData.scaleHeight(24))],
+                        ),
                         itemCount: filteredProducts.length,
                       ),
                     );
