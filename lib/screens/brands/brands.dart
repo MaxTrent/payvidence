@@ -5,10 +5,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/brand_providers/get_all_brand_provider.dart';
+import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/category_tile.dart';
 import '../../components/custom_shimmer.dart';
+import '../../components/simple_bottom_sheet.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
@@ -124,10 +126,85 @@ class Brands extends HookConsumerWidget {
                                 size: responsiveData.scaleHeight(24),
                               ),
                             ),
-                            onDismissed: (direction) async {
-                              if (data[index].id != null) {
-                                await ref.read(getAllBrandProvider.notifier).deleteBrand(data[index].id!);
-                              }
+                            confirmDismiss: (direction) async {
+                              final result = await showModalBottomSheet<bool>(
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                clipBehavior: Clip.none,
+                                context: context,
+                                builder: (context) => SimpleBottomSheet(
+                                  isDarkMode: isDarkMode,
+                                  title: 'Delete Brand',
+                                  subtitle: 'Are you sure you want to delete this brand?',
+                                  height: 300,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        Navigator.of(context).pop();
+                                        if (data[index].id != null) {
+                                          try {
+                                            await ref.read(getAllBrandProvider.notifier).deleteBrand(data[index].id!);
+                                            Navigator.of(context).pop(true);
+                                          } catch (e) {
+                                            ToastService.showErrorSnackBar('Failed to delete brand. Please try again later');
+                                            Navigator.of(context).pop(false);
+                                          }
+                                        } else {
+                                          Navigator.of(context).pop(false);
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                            ),
+                                            SizedBox(width: responsiveData.scaleWidth(16)),
+                                            Text(
+                                              'Delete',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall!
+                                                  .copyWith(
+                                                fontSize: Responsive.fontSize(context, 14),
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(height: responsiveData.scaleHeight(1)),
+                                    GestureDetector(
+                                      onTap: () => Navigator.of(context).pop(false),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.cancel,
+                                              color: isDarkMode ? Colors.white : Colors.black,
+                                            ),
+                                            SizedBox(width: responsiveData.scaleWidth(16)),
+                                            Text(
+                                              'Cancel',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall!
+                                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              return result ?? false;
                             },
                             child: CategoryTile(
                               title: data[index].name ?? '',
