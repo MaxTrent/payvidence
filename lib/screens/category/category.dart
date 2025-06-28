@@ -142,17 +142,18 @@ class EmptyCategory extends HookConsumerWidget {
                                   children: [
                                     GestureDetector(
                                       onTap: () async {
-                                        Navigator.of(context).pop();
+                                        final navigator = Navigator.of(context);
+                                        navigator.pop();
                                         if (data[index].id != null) {
                                           try {
                                             await ref.read(getAllCategoryProvider.notifier).deleteCategory(data[index].id!);
-                                            Navigator.of(context).pop(true);
+                                            navigator.pop(true);
                                           } catch (e) {
-                                            ToastService.showErrorSnackBar('Failed to delete category. Please try again later');
-                                            Navigator.of(context).pop(false);
+                                            ToastService.showErrorSnackBar('Failed to delete category');
+                                            navigator.pop(false);
                                           }
                                         } else {
-                                          Navigator.of(context).pop(false);
+                                          navigator.pop(false);
                                         }
                                       },
                                       child: Padding(
