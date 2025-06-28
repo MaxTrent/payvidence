@@ -24,6 +24,11 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
     print("ViewModel: Editing mode toggled to $_isEditing");
   }
 
+  void resetEditingState() {
+    _isEditing = false;
+    notifyListeners();
+  }
+
   set clientInfo(ClientModel? client) {
     _client = client;
     notifyListeners();
@@ -33,6 +38,7 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
   Future<void> fetchClientDetails(String businessId, String clientId) async {
     try {
       _isLoading = true;
+      _isEditing = false;
       notifyListeners();
 
       print("ViewModel: Fetching client information");
@@ -102,13 +108,14 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
     required String businessId,
     required String clientId,
     required String newName,
+    required String newPhoneNumber,
+    required String newAddress,
     required Function() navigateOnSuccess,
   }) async {
     try {
       _isLoading = true;
       notifyListeners();
 
-      // Check if _client is null
       if (_client == null) {
         print("ViewModel: Error - Client data not loaded before update");
         handleError(
@@ -116,25 +123,41 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
         return;
       }
 
+      // Only send fields that have changed
+      String? nameToSend = newName != _client!.name ? newName : null;
+      String? phoneToSend = newPhoneNumber != (_client!.phoneNumber ?? '') ? newPhoneNumber : null;
+      String? addressToSend = newAddress != (_client!.address ?? '') ? newAddress : null;
+
       print(
-          "ViewModel: Updating client with businessId: $businessId, clientId: $clientId, newName: $newName");
-      final response =
-      await apiServices.updateClient(businessId, clientId, newName);
+          "ViewModel: Updating client with businessId: $businessId, clientId: $clientId");
+      print("Name changed: ${nameToSend != null ? nameToSend : 'No change'}");
+      print("Phone changed: ${phoneToSend != null ? phoneToSend : 'No change'}");
+      print("Address changed: ${addressToSend != null ? addressToSend : 'No change'}");
+
+      final response = await apiServices.updateClient(
+        businessId, 
+        clientId, 
+        nameToSend,
+        phoneToSend,
+        addressToSend,
+      );
       print(
           "ViewModel: Update response - success: ${response.success}, data: ${response.data}");
 
       if (response.success) {
-        // Update clientInfo with the new data from the response (if provided) or manually
         if (response.data != null && response.data!.containsKey("data")) {
           _client = ClientModel.fromJson(
               response.data!["data"] as Map<String, dynamic>);
         } else {
-          // Since _client is guaranteed to be non-null, update manually
-          _client = _client!.copyWith(name: newName);
+          _client = _client!.copyWith(
+            name: newName,
+            phoneNumber: newPhoneNumber,
+            address: newAddress,
+          );
         }
         _isEditing = false;
         showSuccess(message: 'Client details updated!');
-        notifyListeners(); // Trigger UI update
+        notifyListeners();
         navigateOnSuccess();
       } else {
         var errorMessage = response.error?.errors?.first.message ??

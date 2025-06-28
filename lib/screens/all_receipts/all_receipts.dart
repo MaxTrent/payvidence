@@ -284,7 +284,7 @@ class ReceiptTile extends StatelessWidget {
           height: responsiveData.scaleHeight(72),
           width: responsiveData.scaleHeight(72),
           decoration: BoxDecoration(
-            color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+            color: isDarkMode ? Colors.grey[800] : Colors.grey[700],
             borderRadius: BorderRadius.circular(8),
           ),
           child: (receipt.recordProductDetails[0].product?.logoUrl != null && 
@@ -358,7 +358,7 @@ class ReceiptTile extends StatelessWidget {
               SizedBox(height: responsiveData.scaleHeight(8)),
               Row(
                 children: [
-                  const AppNaira(fontSize: 14),
+                  AppNaira(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black),
                   Text(
                     '${(double.tryParse(receipt.recordProductDetails[0].total ?? '0') ?? 0).toString().toCommaSeparated() ?? ''} ',
                     style: Theme.of(context)

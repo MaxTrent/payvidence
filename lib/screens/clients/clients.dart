@@ -55,6 +55,7 @@ class Clients extends HookConsumerWidget {
     final isDarkMode = theme.mode == ThemeMode.dark;
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
+    final copiedIndex = useState<int?>(null);
     final responsiveData = ResponsiveInherited.of(context);
 
     // Debounced search listener
@@ -310,31 +311,40 @@ class Clients extends HookConsumerWidget {
                                           ),
                                           SizedBox(width: responsiveData.scaleWidth(8)),
                                           GestureDetector(
-                                            onTap: () {
-                                              Clipboard.setData(ClipboardData(
+                                            onTap: () async {
+                                              await Clipboard.setData(ClipboardData(
                                                 text: filteredClients[index].phoneNumber ?? '',
                                               ));
+                                              copiedIndex.value = index;
                                               ToastService.showSnackBar('Copied to clipboard');
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                    'Copied to clipboard',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .displaySmall!
-                                                        .copyWith(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  backgroundColor: primaryColor2,
-                                                ),
-                                              );
+                                              
+                                              // Reset the visual feedback after 1 second
+                                              Timer(const Duration(seconds: 1), () {
+                                                copiedIndex.value = null;
+                                              });
                                             },
-                                            child: SvgPicture.asset(
-                                              Assets.svg.copy,
-                                              width: responsiveData.scaleWidth(16),
-                                              height: responsiveData.scaleHeight(16),
+                                            child: AnimatedContainer(
+                                              duration: const Duration(milliseconds: 200),
+                                              padding: EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: copiedIndex.value == index 
+                                                    ? primaryColor2.withOpacity(0.2) 
+                                                    : Colors.transparent,
+                                                borderRadius: BorderRadius.circular(4),
+                                              ),
+                                              child: SvgPicture.asset(
+                                                copiedIndex.value == index 
+                                                    ? Assets.svg.check 
+                                                    : Assets.svg.copy,
+                                                width: responsiveData.scaleWidth(16),
+                                                height: responsiveData.scaleHeight(16),
+                                                colorFilter: ColorFilter.mode(
+                                                  copiedIndex.value == index 
+                                                      ? primaryColor2 
+                                                      : (isDarkMode ? Colors.white : Colors.black),
+                                                  BlendMode.srcIn,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ],

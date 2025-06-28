@@ -42,7 +42,7 @@ class TransactionTile extends HookWidget {
             height: responsiveData.scaleHeight(72),
             width: responsiveData.scaleHeight(72),
             decoration: BoxDecoration(
-              color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+              color: isDarkMode ? Colors.grey[800] : Colors.grey[800],
               borderRadius: BorderRadius.circular(8),
             ),
             child: imageUrl.isNotEmpty

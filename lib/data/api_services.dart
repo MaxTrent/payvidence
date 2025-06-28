@@ -259,9 +259,11 @@ class ApiServices {
   }
 
   Future<ApiResult> updateClient(
-      String businessId, String clientId, String newName) async {
+      String businessId, String clientId, String? newName, String? newPhoneNumber, String? newAddress) async {
     var requestData = {
       "name": newName,
+      "address": newAddress,
+      "phone_number": newPhoneNumber
     };
 
     var response = await locator<NetworkService>().patch(
@@ -271,8 +273,7 @@ class ApiServices {
     return ApiResult.fromJson(response);
   }
 
-  Future<ApiResult> addClient(String name, String? address, String? phoneNumber,
-      String businessId) async {
+  Future<ApiResult> addClient(String name, String? address, String? phoneNumber, String businessId) async {
     var requestData = {
       "name": name,
       "address": address,
