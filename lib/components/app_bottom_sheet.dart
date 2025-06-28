@@ -5,6 +5,7 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import '../utilities/responsive_wrapper.dart';
+import '../utilities/animations.dart';
 
 class AppBottomSheet extends StatelessWidget {
   final bool isDarkMode;
@@ -40,83 +41,107 @@ class AppBottomSheet extends StatelessWidget {
     final buttonPaddingVertical = responsiveData.scaleHeight(14);
     final buttonHeight = responsiveData.scaleHeight(56);
 
-    return Container(
-      height: sheetHeight,
-      decoration: BoxDecoration(
-        color: isDarkMode ? Colors.black : Colors.white,
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(responsiveData.radius),
-          topLeft: Radius.circular(responsiveData.radius),
+    return SlideInWidget(
+      begin: const Offset(0, 1),
+      duration: AppAnimations.slow,
+      child: Container(
+        height: sheetHeight,
+        decoration: BoxDecoration(
+          color: isDarkMode ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(responsiveData.radius),
+            topLeft: Radius.circular(responsiveData.radius),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical),
-        child: Stack(
-          children: [
-            ListView(
-              padding: EdgeInsets.only(bottom: listViewPaddingBottom),
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: dragHandlePadding),
-                  child: Container(
-                    height: dragHandleHeight,
-                    width: dragHandleWidth,
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? Colors.white54 : const Color(0xffd9d9d9),
-                      borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-                    ),
-                  ),
-                ),
-                SizedBox(height: spacingLarge),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'PAYVIDENCE',
-                      style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                        fontSize: Responsive.fontSize(context, 24),
-                        fontWeight: FontWeight.w700,
-                        color: primaryColor2,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: paddingHorizontal, vertical: paddingVertical),
+          child: Stack(
+            children: [
+              ListView(
+                padding: EdgeInsets.only(bottom: listViewPaddingBottom),
+                children: [
+                  FadeInWidget(
+                    delay: const Duration(milliseconds: 200),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: dragHandlePadding),
+                      child: Container(
+                        height: dragHandleHeight,
+                        width: dragHandleWidth,
+                        decoration: BoxDecoration(
+                          color: isDarkMode ? Colors.white54 : const Color(0xffd9d9d9),
+                          borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                        ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => locator<PayvidenceAppRouter>().back(),
-                      child: Icon(
-                        Icons.close,
+                  ),
+                  SizedBox(height: spacingLarge),
+                  SlideInWidget(
+                    begin: const Offset(-0.3, 0),
+                    delay: const Duration(milliseconds: 300),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'PAYVIDENCE',
+                          style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                            fontSize: Responsive.fontSize(context, 24),
+                            fontWeight: FontWeight.w700,
+                            color: primaryColor2,
+                          ),
+                        ),
+                        AnimatedPressButton(
+                          onPressed: () => locator<PayvidenceAppRouter>().back(),
+                          child: Icon(
+                            Icons.close,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: spacingMedium),
+                  FadeInWidget(
+                    delay: const Duration(milliseconds: 400),
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                        fontSize: Responsive.fontSize(context, 40),
                         color: isDarkMode ? Colors.white : Colors.black,
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: spacingMedium),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                    fontSize: Responsive.fontSize(context, 40),
-                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
-                ),
-                SizedBox(height: spacingSmall),
-                ...children,
-              ],
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: buttonPaddingVertical),
-                child: SizedBox(
-                  height: buttonHeight,
-                  child: AppButton(
-                    height: buttonHeight,
-                    buttonText: buttonText,
-                    textColor: Colors.white,
-                    backgroundColor: primaryColor2,
-                    onPressed: onButtonPressed ?? () => locator<PayvidenceAppRouter>().back(),
+                  SizedBox(height: spacingSmall),
+                  ...children.asMap().entries.map((entry) {
+                    return SlideInWidget(
+                      delay: Duration(milliseconds: 500 + (entry.key * 100)),
+                      begin: const Offset(0, 0.2),
+                      child: entry.value,
+                    );
+                  }).toList(),
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SlideInWidget(
+                  begin: const Offset(0, 1),
+                  delay: const Duration(milliseconds: 600),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: buttonPaddingVertical),
+                    child: SizedBox(
+                      height: buttonHeight,
+                      child: AppButton(
+                        height: buttonHeight,
+                        buttonText: buttonText,
+                        textColor: Colors.white,
+                        backgroundColor: primaryColor2,
+                        onPressed: onButtonPressed ?? () => locator<PayvidenceAppRouter>().back(),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

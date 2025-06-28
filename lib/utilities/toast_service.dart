@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/utilities/animations.dart';
 import 'package:toastification/toastification.dart';
 
 
@@ -56,16 +57,23 @@ class ToastService {
 
     toastification.show(
       backgroundColor: Colors.green,
-      icon: const Icon(
-        Icons.info_outline,
-        color: Colors.white,
-      ),
-      title: Text(
-        msg,
-        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+      icon: ScaleInWidget(
+        duration: AppAnimations.fast,
+        child: const Icon(
+          Icons.info_outline,
           color: Colors.white,
         ),
-        overflow: TextOverflow.clip,
+      ),
+      title: SlideInWidget(
+        begin: const Offset(0.2, 0),
+        duration: AppAnimations.fast,
+        child: Text(
+          msg,
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+            color: Colors.white,
+          ),
+          overflow: TextOverflow.clip,
+        ),
       ),
       showProgressBar: false,
       autoCloseDuration: Duration(seconds: seconds ?? 5),
@@ -78,16 +86,23 @@ class ToastService {
 
     toastification.show(
       backgroundColor: appRed,
-      icon: const Icon(
-        Icons.info_outline,
-        color: Colors.white,
-      ),
-      title: Text(
-        msg,
-        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+      icon: ScaleInWidget(
+        duration: AppAnimations.fast,
+        child: const Icon(
+          Icons.info_outline,
           color: Colors.white,
         ),
-        overflow: TextOverflow.clip,
+      ),
+      title: SlideInWidget(
+        begin: const Offset(0.2, 0),
+        duration: AppAnimations.fast,
+        child: Text(
+          msg,
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+            color: Colors.white,
+          ),
+          overflow: TextOverflow.clip,
+        ),
       ),
       showProgressBar: false,
       autoCloseDuration: Duration(seconds: seconds ?? 5),

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import '../gen/assets.gen.dart';
 import '../utilities/responsive.dart';
 import '../utilities/responsive_wrapper.dart';
+import '../utilities/animations.dart';
 import 'app_naira.dart';
 
 class SubscriptionCard extends StatelessWidget {
@@ -26,38 +27,43 @@ class SubscriptionCard extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final responsiveData = ResponsiveInherited.of(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xffE3DDFF),
-        borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: responsiveData.paddingHorizontal,
-          vertical: responsiveData.scaleHeight(18),
+    return ScaleInWidget(
+      delay: const Duration(milliseconds: 200),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xffE3DDFF),
+          borderRadius: BorderRadius.circular(responsiveData.smallRadius),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: responsiveData.paddingHorizontal,
+            vertical: responsiveData.scaleHeight(18),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             recommended
-                ? Container(
-              height: responsiveData.scaleHeight(26),
-              width: responsiveData.scaleWidth(108),
-              decoration: BoxDecoration(
-                color: const Color(0xff7767BD),
-                borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-              ),
-              child: Center(
-                child: Text(
-                  'RECOMMENDED',
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                    fontSize: Responsive.fontSize(context, 12),
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            )
+                ? FadeInWidget(
+                    delay: const Duration(milliseconds: 300),
+                    child: Container(
+                      height: responsiveData.scaleHeight(26),
+                      width: responsiveData.scaleWidth(108),
+                      decoration: BoxDecoration(
+                        color: const Color(0xff7767BD),
+                        borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'RECOMMENDED',
+                          style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                            fontSize: Responsive.fontSize(context, 12),
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
                 : const SizedBox.shrink(),
             recommended
                 ? SizedBox(
@@ -162,7 +168,8 @@ class SubscriptionCard extends StatelessWidget {
               ],
             )
                 : const SizedBox.shrink(),
-          ],
+            ],
+          ),
         ),
       ),
     );
