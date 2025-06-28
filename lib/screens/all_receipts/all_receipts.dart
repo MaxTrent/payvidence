@@ -254,7 +254,7 @@ class AllReceipts extends HookConsumerWidget {
                 locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: false));
               },
               backgroundColor: primaryColor2,
-              child: Icon(Icons.add, size: responsiveData.scaleHeight(40)),
+              child: Icon(Icons.add, size: responsiveData.scaleHeight(40), color: Colors.white,),
             )
                 : null;
           },
