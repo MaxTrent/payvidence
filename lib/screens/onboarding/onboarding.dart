@@ -14,13 +14,13 @@ import 'onboarding_vm.dart';
 @RoutePage(name: 'OnboardingScreenRoute')
 class OnboardingScreen extends HookConsumerWidget {
   static String routeName = "/onboardingScreen";
-  OnboardingScreen({super.key});
-
-  final _pageController = PageController();
+  
+  const OnboardingScreen({super.key});
 
   @override
-  Widget build(BuildContext context, ref) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.watch(onboardingScreenViewModelProvider);
+    final pageController = usePageController();
     final responsiveData = ResponsiveInherited.of(context);
 
     return ResponsiveWrapper(
@@ -33,24 +33,33 @@ class OnboardingScreen extends HookConsumerWidget {
                 allowImplicitScrolling: true,
                 physics: const AlwaysScrollableScrollPhysics(),
                 scrollDirection: Axis.horizontal,
-                controller: _pageController,
+                controller: pageController,
                 onPageChanged: (index) {
                   viewModel.changeIndex(index);
                 },
                 children: [
                   OnboardingPage(
+                    key: const ValueKey(0),
+                    pageIndex: 0,
+                    currentPageIndex: viewModel.currentPageIndex,
                     text: 'Your digital transaction evidence',
                     subtext:
                     'Easily issue receipts, invoices, and purchase orders to clients on the go.',
                     image: Assets.png.onboard1.path,
                   ),
                   OnboardingPage(
+                    key: const ValueKey(1),
+                    pageIndex: 1,
+                    currentPageIndex: viewModel.currentPageIndex,
                     text: 'Simplify your inventory management',
                     subtext:
                     'Manage all your transactions, invoices, receipts, and sales reports in one centralized location.',
                     image: Assets.png.onboard2.path,
                   ),
                   OnboardingPage(
+                    key: const ValueKey(2),
+                    pageIndex: 2,
+                    currentPageIndex: viewModel.currentPageIndex,
                     text: 'Gain Insights with Analytics',
                     subtext:
                     'Access reports to understand sales performance and make smarter decisions.',
@@ -172,12 +181,16 @@ class OnboardingPage extends HookWidget {
     required this.image,
     required this.subtext,
     required this.text,
+    required this.pageIndex,
+    required this.currentPageIndex,
     super.key,
   });
 
   final String text;
   final String subtext;
   final String image;
+  final int pageIndex;
+  final int currentPageIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -203,9 +216,12 @@ class OnboardingPage extends HookWidget {
     );
 
     useEffect(() {
-      animationController.forward();
+      if (pageIndex == currentPageIndex && context.mounted) {
+        animationController.reset();
+        animationController.forward();
+      }
       return null;
-    }, []);
+    }, [currentPageIndex]);
 
     return SingleChildScrollView(
       child: Padding(
