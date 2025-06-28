@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
 import 'package:payvidence/utilities/toast_service.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
@@ -128,22 +129,25 @@ class Clients extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: responsiveData.scaleHeight(32)),
-              AppTextField(
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-                  child: SvgPicture.asset(
-                    Assets.svg.search,
-                    colorFilter: ColorFilter.mode(
-                        isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
-                    width: responsiveData.scaleWidth(24),
-                    height: responsiveData.scaleHeight(24),
+              FadeInWidget(
+                delay: const Duration(milliseconds: 100),
+                child: AppTextField(
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                    child: SvgPicture.asset(
+                      Assets.svg.search,
+                      colorFilter: ColorFilter.mode(
+                          isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+                      width: responsiveData.scaleWidth(24),
+                      height: responsiveData.scaleHeight(24),
+                    ),
                   ),
+                  hintText: 'Search for client',
+                  controller: searchController,
+                  radius: responsiveData.largeRadius,
+                  filled: true,
+                  fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
-                hintText: 'Search for client',
-                controller: searchController,
-                radius: responsiveData.largeRadius,
-                filled: true,
-                fillColor: isDarkMode ? Colors.black : appGrey5,
               ),
               SizedBox(height: responsiveData.scaleHeight(20)),
               Expanded(
@@ -212,24 +216,27 @@ class Clients extends HookConsumerWidget {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              if (forSelection == true) {
-                                Navigator.of(context).pop(filteredClients[index]);
-                              } else {
-                                if (filteredClients[index].id != null) {
-                                  await locator<PayvidenceAppRouter>().push(
-                                    ClientDetailsRoute(
-                                      businessId: businessId,
-                                      clientId: filteredClients[index].id!,
-                                    ),
-                                  );
-                                  ref
-                                      .read(getAllClientsProvider.notifier)
-                                      .fetchClients();
+                          return SlideInWidget(
+                            begin: const Offset(0, 0.3),
+                            delay: Duration(milliseconds: 100 + (index * 50)),
+                            child: GestureDetector(
+                              onTap: () async {
+                                if (forSelection == true) {
+                                  Navigator.of(context).pop(filteredClients[index]);
+                                } else {
+                                  if (filteredClients[index].id != null) {
+                                    await locator<PayvidenceAppRouter>().push(
+                                      ClientDetailsRoute(
+                                        businessId: businessId,
+                                        clientId: filteredClients[index].id!,
+                                      ),
+                                    );
+                                    ref
+                                        .read(getAllClientsProvider.notifier)
+                                        .fetchClients();
+                                  }
                                 }
-                              }
-                            },
+                              },
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -337,7 +344,8 @@ class Clients extends HookConsumerWidget {
                                 ),
                               ],
                             ),
-                          );
+                          ),
+                        );
                         },
                         separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(24)),
                         itemCount: filteredClients.length,

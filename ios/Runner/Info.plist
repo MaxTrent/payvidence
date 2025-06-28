@@ -6,8 +6,6 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>NSCameraUsageDescription</key>
-    <string>This app needs access to camera to take photos for profile pictures.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Payvidence</string>
 	<key>CFBundleExecutable</key>
@@ -32,6 +30,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to camera to take photos for profile pictures.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We use Face ID to securely authenticate your identity.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

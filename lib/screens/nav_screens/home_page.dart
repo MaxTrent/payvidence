@@ -9,6 +9,7 @@ import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/screens/sales/sales.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../gen/assets.gen.dart';
 import '../../utilities/theme_mode.dart';
 
@@ -41,7 +42,9 @@ class HomePage extends HookConsumerWidget {
 
     return ResponsiveWrapper(
       child: Scaffold(
-        body: pages[selectedIndex.value],
+        body: FadeInWidget(
+          child: pages[selectedIndex.value],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: selectedIndex.value,

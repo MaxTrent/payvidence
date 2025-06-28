@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:payvidence/components/loading_indicator.dart';
 import '../constants/app_colors.dart';
 import '../utilities/responsive_wrapper.dart';
+import '../utilities/animations.dart';
+import '../utilities/haptic_service.dart';
 
 class AppButton extends StatelessWidget {
   AppButton({
@@ -31,42 +33,28 @@ class AppButton extends StatelessWidget {
     final dynamicHeight = height != null ? responsiveData.scaleHeight(height!) : responsiveData.scaleHeight(56);
     final dynamicWidth = width != null ? responsiveData.scaleWidth(width!) : null;
 
-    return SizedBox(
-      height: dynamicHeight,
-      width: dynamicWidth,
-      child: ElevatedButton(
-        onPressed: isProcessing || isDisabled ? null : onPressed,
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(
-            isDisabled ? const Color.fromRGBO(78, 56, 178, 0.4) : backgroundColor,
-          ),
-          foregroundColor: WidgetStateProperty.all(textColor),
-          elevation: WidgetStateProperty.all(0),
-          minimumSize: WidgetStateProperty.all(
-            Size(
-              responsiveData.minButtonWidth,
-              responsiveData.minButtonHeight,
-            ),
-          ),
-          shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(
-              side: const BorderSide(
-                color: Colors.transparent,
-              ),
-              borderRadius: BorderRadius.circular(responsiveData.radius),
-            ),
-          ),
+    return AnimatedPressButton(
+      onPressed: isProcessing || isDisabled ? null : () {
+        HapticService.lightImpact();
+        onPressed?.call();
+      },
+      child: Container(
+        height: dynamicHeight,
+        width: dynamicWidth,
+        decoration: BoxDecoration(
+          color: isDisabled ? const Color.fromRGBO(78, 56, 178, 0.4) : backgroundColor,
+          borderRadius: BorderRadius.circular(responsiveData.radius),
         ),
-        child: isProcessing
-            ? const LoadingIndicator(
-          color: Colors.white,
-        )
-            : Text(
-          buttonText,
-          style: Theme.of(context)
-              .textTheme
-              .displayMedium!
-              .copyWith(fontWeight: FontWeight.w600, color: textColor),
+        child: Center(
+          child: isProcessing
+              ? const LoadingIndicator(color: Colors.white)
+              : Text(
+                  buttonText,
+                  style: Theme.of(context)
+                      .textTheme
+                      .displayMedium!
+                      .copyWith(fontWeight: FontWeight.w600, color: textColor),
+                ),
         ),
       ),
     );

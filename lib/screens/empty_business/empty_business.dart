@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
@@ -52,7 +53,7 @@ class EmptyBusiness extends StatelessWidget {
           buttonText: 'Set-up business',
           onPressed: () {
             locator<PayvidenceAppRouter>()
-                .navigateNamed(PayvidenceRoutes.addBusiness);
+                .push(AddBusinessRoute());
           },
         ),
       ),

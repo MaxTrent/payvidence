@@ -9,6 +9,7 @@ import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/model/notification_model.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../gen/assets.gen.dart';
 import 'notifications_vm.dart';
 
@@ -41,9 +42,11 @@ class Notifications extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: responsiveData.scaleHeight(8)),
-              Text(
-                'Notifications',
-                style: Theme.of(context).textTheme.displayLarge,
+              FadeInWidget(
+                child: Text(
+                  'Notifications',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
               ),
               SizedBox(height: responsiveData.scaleHeight(28)),
               Expanded(
@@ -79,7 +82,11 @@ class Notifications extends HookConsumerWidget {
                     itemCount: viewModel.notifications.length,
                     itemBuilder: (context, index) {
                       final notification = viewModel.notifications[index];
-                      return NotificationTile(notification: notification);
+                      return SlideInWidget(
+                        begin: const Offset(0, 0.3),
+                        delay: Duration(milliseconds: 100 + (index * 50)),
+                        child: NotificationTile(notification: notification),
+                      );
                     },
                   ),
                 ),

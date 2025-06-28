@@ -107,6 +107,7 @@ class LoginViewModel extends BaseChangeNotifier {
         // Save user credentials
         await saveUserCredentials(
           userId: user.account.id ?? '',
+          
           firstName: user.account.firstName,
           lastName: user.account.lastName ?? '',
           email: user.account.email ?? '',

@@ -11,6 +11,7 @@ import 'package:payvidence/utilities/extensions.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:ui' as ui;
+import '../../utilities/animations.dart';
 import '../../components/app_button.dart';
 import '../../components/app_naira.dart';
 import '../../constants/app_colors.dart';
@@ -85,26 +86,32 @@ class ReceiptScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: responsiveData.scaleHeight(32)),
-                RepaintBoundary(
-                  key: globalKey,
-                  child: ContainerWithClippedCircles(
-                    record: record,
-                    isInvoice: isInvoice ?? false,
+                FadeInWidget(
+                  child: RepaintBoundary(
+                    key: globalKey,
+                    child: ContainerWithClippedCircles(
+                      record: record,
+                      isInvoice: isInvoice ?? false,
+                    ),
                   ),
                 ),
                 SizedBox(height: responsiveData.scaleHeight(20)),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    AppButton(
-                      buttonText: 'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
-                      onPressed: () {
-                        shareReceipt();
-                      },
-                    ),
-                    SizedBox(height: responsiveData.scaleHeight(26)),
-                    SizedBox(height: responsiveData.scaleHeight(24)),
-                  ],
+                SlideInWidget(
+                  begin: const Offset(0, 0.3),
+                  delay: const Duration(milliseconds: 200),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AppButton(
+                        buttonText: 'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
+                        onPressed: () {
+                          shareReceipt();
+                        },
+                      ),
+                      SizedBox(height: responsiveData.scaleHeight(26)),
+                      SizedBox(height: responsiveData.scaleHeight(24)),
+                    ],
+                  ),
                 )
               ],
             ),

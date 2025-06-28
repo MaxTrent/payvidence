@@ -6,6 +6,7 @@ import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
+import 'package:payvidence/utilities/animations.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -30,71 +31,96 @@ class Settings extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: responsiveData.scaleHeight(8)),
-              Text(
-                'Settings',
-                style: Theme.of(context).textTheme.displayLarge,
+              FadeInWidget(
+                child: Text(
+                  'Settings',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
               ),
               SizedBox(height: responsiveData.scaleHeight(28)),
-              ProfileOptionTile(
-                isDarkMode: isDarkMode,
-                onTap: () {
-                  locator<PayvidenceAppRouter>().push(ChangePasswordRoute());
-                },
-                title: 'Change password',
-                icon: Assets.svg.passwordCheck,
+              SlideInWidget(
+                begin: const Offset(0, 0.3),
+                delay: const Duration(milliseconds: 100),
+                child: ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>().push(ChangePasswordRoute());
+                  },
+                  title: 'Change password',
+                  icon: Assets.svg.passwordCheck,
+                ),
               ),
-              ProfileOptionTile(
-                isDarkMode: isDarkMode,
-                onTap: () {
-                  locator<PayvidenceAppRouter>().push(ResetPasswordRoute());
-                },
-                title: 'Reset password',
-                icon: Assets.svg.check,
+              SlideInWidget(
+                begin: const Offset(0, 0.3),
+                delay: const Duration(milliseconds: 150),
+                child: ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>().push(ResetPasswordRoute());
+                  },
+                  title: 'Reset password',
+                  icon: Assets.svg.check,
+                ),
               ),
-              ProfileOptionTile(
-                isDarkMode: isDarkMode,
-                onTap: () {
-                  locator<PayvidenceAppRouter>()
-                      .navigateNamed(PayvidenceRoutes.privacyAndSecurity);
-                },
-                title: 'Privacy and security',
-                icon: Assets.svg.lockCircle,
+              SlideInWidget(
+                begin: const Offset(0, 0.3),
+                delay: const Duration(milliseconds: 200),
+                child: ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.privacyAndSecurity);
+                  },
+                  title: 'Privacy and security',
+                  icon: Assets.svg.lockCircle,
+                ),
               ),
-              ProfileOptionTile(
-                isDarkMode: isDarkMode,
-                onTap: () {
-                  locator<PayvidenceAppRouter>()
-                      .navigateNamed(PayvidenceRoutes.notificationSettings);
-                },
-                title: 'Notifications setting',
-                icon: Assets.svg.notificationBing,
+              SlideInWidget(
+                begin: const Offset(0, 0.3),
+                delay: const Duration(milliseconds: 250),
+                child: ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () {
+                    locator<PayvidenceAppRouter>()
+                        .navigateNamed(PayvidenceRoutes.notificationSettings);
+                  },
+                  title: 'Notifications setting',
+                  icon: Assets.svg.notificationBing,
+                ),
               ),
               SizedBox(height: responsiveData.scaleHeight(28)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Switch to dark mode',
-                    style: Theme.of(context)
-                        .textTheme
-                        .displaySmall!
-                        .copyWith(fontSize: Responsive.fontSize(context, 22)),
-                  ),
-                  AppSwitch(
-                    onChanged: (value) {
-                      theme.toggle();
-                    },
-                    isSwitchEnabled: theme.mode == ThemeMode.dark,
-                  ),
-                ],
+              SlideInWidget(
+                begin: const Offset(0, 0.3),
+                delay: const Duration(milliseconds: 300),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Switch to dark mode',
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall!
+                          .copyWith(fontSize: Responsive.fontSize(context, 22)),
+                    ),
+                    AppSwitch(
+                      onChanged: (value) {
+                        theme.toggle();
+                      },
+                      isSwitchEnabled: theme.mode == ThemeMode.dark,
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: responsiveData.scaleHeight(11)),
-              Text(
-                'You can use Payvidence App on dark mode too. Turn on the switch to get started.',
-                style: Theme.of(context)
-                    .textTheme
-                    .displaySmall!
-                    .copyWith(fontSize: Responsive.fontSize(context, 16)),
+              FadeInWidget(
+                delay: const Duration(milliseconds: 350),
+                child: Text(
+                  'You can use Payvidence App on dark mode too. Turn on the switch to get started.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .displaySmall!
+                      .copyWith(fontSize: Responsive.fontSize(context, 16)),
+                ),
               ),
             ],
           ),

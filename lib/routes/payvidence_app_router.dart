@@ -1,11 +1,19 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import '../data/local/session_constants.dart';
 import '../data/local/session_manager.dart';
+import '../main.dart';
 import '../shared_dependency/shared_dependency.dart';
 
 @AutoRouterConfig()
 class PayvidenceAppRouter extends RootStackRouter {
+
+  @override
+  List<NavigatorObserver> get navigatorObservers => [
+    routeObserver,
+  ];
+
   @override
   List<AutoRoute> get routes => [
     AutoRoute(page: SplashRoute.page, initial: true),
@@ -35,6 +43,7 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(
             page: CreateAccountRoute.page,
             path: PayvidenceRoutes.createAccount),
+
         AutoRoute(page: LoginRoute.page, path: PayvidenceRoutes.login),
         AutoRoute(
             page: ForgotPasswordRoute.page,
@@ -43,7 +52,7 @@ class PayvidenceAppRouter extends RootStackRouter {
             page: EmptyBusinessRoute.page,
             path: PayvidenceRoutes.emptyBusiness),
         AutoRoute(
-            page: AddBusinessRoute.page, path: PayvidenceRoutes.addBusiness),
+            page: AddBusinessRoute.page, path: PayvidenceRoutes.addBusiness, maintainState: true,),
         AutoRoute(
             page: AddCategoryRoute.page, path: PayvidenceRoutes.addCategory),
         AutoRoute(
@@ -74,6 +83,7 @@ class PayvidenceAppRouter extends RootStackRouter {
             page: CompleteDraftRoute.page,
             path: PayvidenceRoutes.completeDraft),
         AutoRoute(page: ClientsRoute.page, path: PayvidenceRoutes.clients),
+        AutoRoute(page: ProductRoute.page, path: PayvidenceRoutes.product),
         AutoRoute(page: ProductRoute.page, path: PayvidenceRoutes.product),
         AutoRoute(page: DraftsRoute.page, path: PayvidenceRoutes.drafts),
         AutoRoute(

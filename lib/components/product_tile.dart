@@ -7,6 +7,7 @@ import '../constants/app_colors.dart';
 import '../utilities/responsive.dart';
 import '../utilities/responsive_wrapper.dart';
 import '../utilities/theme_mode.dart';
+
 import 'app_naira.dart';
 
 class ProductTile extends HookWidget {
@@ -40,75 +41,66 @@ class ProductTile extends HookWidget {
               width: responsiveData.scaleHeight(72),
               decoration: const BoxDecoration(color: Colors.black),
             ),
-            SizedBox(
-              width: responsiveData.scaleWidth(14),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name ?? '',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-                SizedBox(
-                  height: responsiveData.scaleHeight(6),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${product.quantitySold.toString()} units sold',
-                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                        fontSize: Responsive.fontSize(context, 14),
-                        color: appGrey4,
+            SizedBox(width: responsiveData.scaleWidth(14)),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name ?? '',
+                    style: Theme.of(context).textTheme.displayMedium,
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(6)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${product.quantitySold.toString()} units sold',
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: Responsive.fontSize(context, 14),
+                          color: appGrey4,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: responsiveData.scaleWidth(10),
-                    ),
-                    Container(
-                      height: responsiveData.dotSize,
-                      width: responsiveData.dotSize,
-                      decoration: BoxDecoration(
-                        color: appGrey4,
-                        borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+                      SizedBox(width: responsiveData.scaleWidth(10)),
+                      Container(
+                        height: responsiveData.dotSize,
+                        width: responsiveData.dotSize,
+                        decoration: BoxDecoration(
+                          color: appGrey4,
+                          borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: responsiveData.scaleWidth(10),
-                    ),
-                    Text(
-                      '${product.quantityAvailable.toString()} units left',
-                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                        fontSize: Responsive.fontSize(context, 14),
-                        color: appGrey4,
+                      SizedBox(width: responsiveData.scaleWidth(10)),
+                      Text(
+                        '${product.quantityAvailable.toString()} units left',
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: Responsive.fontSize(context, 14),
+                          color: appGrey4,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: responsiveData.scaleHeight(8),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    AppNaira(
-                      fontSize: 14,
-                      color: isDarkMode ? Colors.white : Colors.black,
-                    ),
-                    Text(
-                      NumberFormat('#,###').format(
-                          double.tryParse(product.price.toString()) ?? 0
+                    ],
+                  ),
+                  SizedBox(height: responsiveData.scaleHeight(8)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      AppNaira(
+                        fontSize: 14,
+                        color: isDarkMode ? Colors.white : Colors.black,
                       ),
-                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                        fontSize: Responsive.fontSize(context, 14),
+                      Text(
+                        NumberFormat('#,###').format(
+                            double.tryParse(product.price.toString()) ?? 0
+                        ),
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                          fontSize: Responsive.fontSize(context, 14),
+                        ),
                       ),
-                    ),
-
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

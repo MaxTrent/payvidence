@@ -1,11 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:payvidence/data/api_services.dart';
 import 'package:payvidence/utilities/toast_service.dart';
+import 'package:payvidence/utilities/loading_service.dart';
 import '../shared_dependency/shared_dependency.dart';
 import 'enum.dart';
 import 'notification_service.dart';
 
-class BaseChangeNotifier extends ChangeNotifier {
+mixin LoadingMixin {
+  void showLoading(BuildContext context) {
+    LoadingService.show(context);
+  }
+
+  void hideLoading() {
+    LoadingService.hide();
+  }
+}
+
+class BaseChangeNotifier extends ChangeNotifier with LoadingMixin {
   late ApiServices apiServices;
   late NotificationService _notificationService;
 
@@ -22,6 +33,7 @@ class BaseChangeNotifier extends ChangeNotifier {
     String? message,
     bool shouldDisplayError = true,
   }) {
+    LoadingService.hide();
     if (shouldDisplayError) {
       showErrorToastMessage(
         message: message ?? "An error occurred",
@@ -46,6 +58,7 @@ class BaseChangeNotifier extends ChangeNotifier {
   void showSuccess({
     required String message,
   }) {
+    LoadingService.hide();
     ToastService.showSnackBar(message);
     // _notificationService.showNotification(
     //   id: DateTime.now().millisecondsSinceEpoch % 10000,

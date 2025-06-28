@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../constants/app_colors.dart';
+import '../utilities/haptic_service.dart';
 
 class AppSwitch extends StatelessWidget {
   const AppSwitch({
@@ -16,7 +17,10 @@ class AppSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoSwitch(
       value: isSwitchEnabled,
-      onChanged: onChanged,
+      onChanged: (value) {
+        HapticService.selectionClick();
+        onChanged?.call(value);
+      },
       activeTrackColor: primaryColor2,
       thumbColor: appGrey,
       inactiveTrackColor: borderColor,

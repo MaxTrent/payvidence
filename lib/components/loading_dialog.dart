@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utilities/animations.dart';
 
 class LoadingDialog extends StatelessWidget {
   static show(
@@ -17,27 +18,31 @@ class LoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Disable back button while dialog is in view
-    return Dialog(
-      surfaceTintColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      backgroundColor: Colors.transparent,
-      child: Container(
-        color: Colors.transparent,
-        width: double.infinity,
-        //height: 223,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Transform.scale(
-              scale: 0.45,
-              child: const CircularProgressIndicator(
-                strokeWidth: 2,
-              ),
-            )
-          ],
+    return FadeInWidget(
+      duration: AppAnimations.fast,
+      child: ScaleInWidget(
+        duration: AppAnimations.medium,
+        child: Dialog(
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          backgroundColor: Colors.transparent,
+          child: Container(
+            color: Colors.transparent,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Transform.scale(
+                  scale: 0.45,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
