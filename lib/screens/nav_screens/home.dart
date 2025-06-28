@@ -41,12 +41,12 @@ class HomeScreen extends HookConsumerWidget {
       getAllBusiness.when(
         data: (businesses) {
           if (businesses.isEmpty) {
-            developer.log('🏠 HomeScreen: No businesses found, navigating to EmptyBusinessRoute');
+            developer.log('HomeScreen: No businesses found, navigating to EmptyBusinessRoute');
             Future.microtask(() {
               locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
             });
-          } else {
-            developer.log('🏠 HomeScreen: Setting current business: ${businesses.last.name}');
+          } else if (currentBusiness == null) {
+            developer.log('HomeScreen: No current business set, setting to: ${businesses.last.name}');
 
             Future.microtask(() {
               ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
