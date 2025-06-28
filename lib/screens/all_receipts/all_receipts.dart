@@ -274,6 +274,7 @@ class ReceiptTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -282,12 +283,34 @@ class ReceiptTile extends StatelessWidget {
           height: responsiveData.scaleHeight(72),
           width: responsiveData.scaleHeight(72),
           decoration: BoxDecoration(
-            color: Colors.black,
-            image: DecorationImage(
-              image: NetworkImage(receipt.recordProductDetails[0].product?.logoUrl ?? ''),
-              fit: BoxFit.cover,
-            ),
+            color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+            borderRadius: BorderRadius.circular(8),
           ),
+          child: (receipt.recordProductDetails[0].product?.logoUrl != null && 
+                 receipt.recordProductDetails[0].product!.logoUrl!.isNotEmpty)
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    receipt.recordProductDetails[0].product!.logoUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.asset(
+                          Assets.png.payvidenceLogo.path,
+                          fit: BoxFit.contain,
+                        ),
+                      );
+                    },
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.asset(
+                    Assets.png.payvidenceLogo.path,
+                    fit: BoxFit.contain,
+                  ),
+                ),
         ),
         SizedBox(width: responsiveData.scaleWidth(14)),
         Expanded(

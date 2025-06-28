@@ -42,12 +42,33 @@ class TransactionTile extends HookWidget {
             height: responsiveData.scaleHeight(72),
             width: responsiveData.scaleHeight(72),
             decoration: BoxDecoration(
-              color: Colors.black,
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
-                fit: BoxFit.cover,
-              ),
+              color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
             ),
+            child: imageUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Image.asset(
+                            Assets.png.payvidenceLogo.path,
+                            fit: BoxFit.contain,
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Image.asset(
+                      Assets.png.payvidenceLogo.path,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
           ),
           SizedBox(
             width: responsiveData.scaleWidth(14),
