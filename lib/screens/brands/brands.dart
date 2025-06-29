@@ -30,7 +30,6 @@ class Brands extends HookConsumerWidget {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
     final responsiveData = ResponsiveInherited.of(context);
-
     final allBrand = ref.watch(getAllBrandProvider);
 
     return ResponsiveWrapper(
@@ -154,7 +153,7 @@ class Brands extends HookConsumerWidget {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.delete,
                                               color: Colors.red,
                                             ),

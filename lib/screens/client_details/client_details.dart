@@ -272,7 +272,7 @@ class ClientDetails extends HookConsumerWidget {
                                                   ),
                                                   GestureDetector(
                                                     onTap: () =>
-                                                        locator<PayvidenceAppRouter>().back(),
+                                  Navigator.pop(context),
                                                     child: const Icon(Icons.close),
                                                   ),
                                                 ],
