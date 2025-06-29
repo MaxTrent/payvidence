@@ -142,15 +142,17 @@ class AddBusiness extends HookConsumerWidget {
       child: GestureDetector(
         onTap: FocusManager.instance.primaryFocus?.unfocus,
         child: PopScope(
-          canPop: false,
+          canPop: !isCreatingBusiness.value,
           onPopInvoked: (didPop) {
             if (didPop) return;
-            developer.log('🚫 AddBusinessRoute: Back navigation blocked');
+            if (isCreatingBusiness.value) {
+              developer.log('AddBusinessRoute: Back navigation blocked during creation');
+            }
           },
           child: Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              automaticallyImplyLeading: false,
+              // automaticallyImplyLeading: false,
             ),
             body: SafeArea(
               child: Form(
