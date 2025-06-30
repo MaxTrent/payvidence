@@ -13,6 +13,7 @@ import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../components/keyboard_dismissible_scaffold.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../utilities/theme_mode.dart';
@@ -82,7 +83,7 @@ class Login extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
-        child: Scaffold(
+        child: KeyboardDismissibleScaffold(
           appBar: AppBar(),
           body: Form(
             key: formKey,

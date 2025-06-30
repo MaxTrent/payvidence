@@ -129,67 +129,67 @@ class AccountSuccessScreen extends HookWidget {
     final responsiveData = ResponsiveInherited.of(context);
 
     const privacyPolicyContent = '''
-At Payvidence, we prioritize your privacy and the security of your personal information. This Privacy Policy outlines how we collect, use, and share the information you provide when using our mobile application and related services. By using Payvidence, you consent to the practices described in this policy.\n\n'
-'1. Information We Collect\n'
-'- Account Data: Business name, owner details\n'
-'- Transaction Data: Sales records, payment info\n'
-'- Technical Data: IP address, device type\n\n'
-'2. Legal Basis for Processing\n'
-'- Contractual necessity (service delivery)\n'
-'- Legitimate business interests\n'
-'- Legal compliance (e.g., FIRS tax reporting)\n\n'
-'3. Data Sharing\n'
-'We may disclose information to:\n'
-'- Payment processors (Paystack/Flutterwave)\n'
-'- Regulatory authorities (when legally required)\n\n'
-'4. Data Security\n'
-'- AES-256 encryption for all data\n'
-'- Regular penetration testing\n'
-'- NDPR-compliant storage (AWS Africa servers)\n\n'
-'5. User Rights\n'
-'You may:\n'
-'- Request access to your data\n'
-'- Correct inaccuracies\n'
-'- Delete account (subject to tax retention requirements)\n\n'
-'6. Cookies\n'
-'We use essential cookies for:\n'
-'- Session management\n'
-'- Security purposes\n\n'
-'7. Policy Updates\n'
-'Users will be notified 30 days prior to material changes.'
+At Payvidence, we prioritize your privacy and the security of your personal information. This Privacy Policy outlines how we collect, use, and share the information you provide when using our mobile application and related services. By using Payvidence, you consent to the practices described in this policy.\n\n
+1. Information We Collect\n
+- Account Data: Business name, owner details\n
+- Transaction Data: Sales records, payment info\n
+- Technical Data: IP address, device type\n\n
+2. Legal Basis for Processing\n
+- Contractual necessity (service delivery)\n
+- Legitimate business interests\n
+- Legal compliance (e.g., FIRS tax reporting)\n\n
+3. Data Sharing\n
+We may disclose information to:\n
+- Payment processors (Paystack/Flutterwave)\n
+- Regulatory authorities (when legally required)\n\n
+4. Data Security\n
+- AES-256 encryption for all data\n
+- Regular penetration testing\n
+- NDPR-compliant storage (AWS Africa servers)\n\n
+5. User Rights\n
+You may:\n
+- Request access to your data\n
+- Correct inaccuracies\n
+- Delete account (subject to tax retention requirements)\n\n
+6. Cookies\n
+We use essential cookies for:\n
+- Session management\n
+- Security purposes\n\n
+7. Policy Updates\n
+Users will be notified 30 days prior to material changes.
 ''';
 
     const termsAndConditionsContent = '''
-These Terms and Conditions govern your use of PAYVIDENCE (the "Service"). By accessing or using the Service, you agree to be bound by these Terms. If you disagree, discontinue use immediately.\n\n'
-'1. Acceptance of Terms\n'
-'By accessing or using PAYVIDENCE, you agree to be bound by these Terms. If you disagree, discontinue use immediately.\n\n'
-'2. Service Description\n'
-'PAYVIDENCE provides:\n'
-'- Digital sales and inventory management tools\n'
-'- Payment processing integrations\n'
-'- Financial reporting features\n\n'
-'3. User Obligations\n'
-'You must:\n'
-'- Be at least 18 years old\n'
-'- Provide accurate business information\n'
-'- Not use the Service for illegal activities\n\n'
-'4. Subscription Plans\n'
-'- Starter: N20,000/year (500 transactions/month)\n'
-'- Pro: N54,000/year (Unlimited transactions)\n'
-'- Auto-renewal with 30-day cancellation notice\n\n'
-'5. Payment Processing\n'
-'- 0.75% fee applies to third-party payment integrations\n'
-'- All transactions in Naira (₦)\n\n'
-'6. Termination\n'
-'We may suspend accounts for:\n'
-'- Non-payment beyond 15 days\n'
-'- Violation of these Terms\n\n'
-'7. Limitation of Liability\n'
-'PAYVIDENCE is not liable for:\n'
-'- Indirect damages\n'
-'- Losses from service interruptions\n\n'
-'8. Governing Law\n'
-'These Terms are governed by Nigerian law. Disputes shall be resolved in Abuja courts.'
+These Terms and Conditions govern your use of PAYVIDENCE (the "Service"). By accessing or using the Service, you agree to be bound by these Terms. If you disagree, discontinue use immediately.\n\n
+1. Acceptance of Terms\n
+By accessing or using PAYVIDENCE, you agree to be bound by these Terms. If you disagree, discontinue use immediately.\n\n
+2. Service Description\n
+PAYVIDENCE provides:\n
+- Digital sales and inventory management tools\n
+- Payment processing integrations\n
+- Financial reporting features\n\n
+3. User Obligations\n
+You must:\n
+- Be at least 18 years old\n
+- Provide accurate business information\n
+- Not use the Service for illegal activities\n\n
+4. Subscription Plans\n
+- Starter: N20,000/year (500 transactions/month)\n
+- Pro: N54,000/year (Unlimited transactions)\n
+- Auto-renewal with 30-day cancellation notice\n\n
+5. Payment Processing\n
+- 0.75% fee applies to third-party payment integrations\n
+- All transactions in Naira (₦)\n\n
+6. Termination\n
+We may suspend accounts for:\n
+- Non-payment beyond 15 days\n
+- Violation of these Terms\n\n
+7. Limitation of Liability\n
+PAYVIDENCE is not liable for:\n
+- Indirect damages\n
+- Losses from service interruptions\n\n
+8. Governing Law\n
+These Terms are governed by Nigerian law. Disputes shall be resolved in Abuja courts.
 ''';
 
     return ResponsiveWrapper(
