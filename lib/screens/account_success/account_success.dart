@@ -194,30 +194,34 @@ These Terms and Conditions govern your use of PAYVIDENCE (the "Service"). By acc
 
     return ResponsiveWrapper(
       child: Scaffold(
-        floatingActionButton: AppButton(
-          buttonText: 'Go to Home',
-          onPressed: () {
-            buildBottomSheet(
-              context,
-              isDarkMode,
-              'Our Privacy\nPolicy',
-              privacyPolicyContent,
-                  () {
-                buildBottomSheet(
-                  context,
-                  isDarkMode,
-                  'Terms and\nConditions',
-                  termsAndConditionsContent,
-                      () {
-                    locator<PayvidenceAppRouter>()
-                        .popUntil((route) => route is OnboardingScreen);
-                    locator<PayvidenceAppRouter>()
-                        .navigateNamed(PayvidenceRoutes.login);
-                  },
-                );
-              },
-            );
-          },
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20)),
+          child: AppButton(
+            buttonText: 'Go to Home',
+            onPressed: () {
+              buildBottomSheet(
+                context,
+                isDarkMode,
+                'Our Privacy\nPolicy',
+                privacyPolicyContent,
+                    () {
+                  buildBottomSheet(
+                    context,
+                    isDarkMode,
+                    'Terms and\nConditions',
+                    termsAndConditionsContent,
+                        () {
+                      locator<PayvidenceAppRouter>()
+                          .popUntil((route) => route is OnboardingScreen);
+                      locator<PayvidenceAppRouter>()
+                          .navigateNamed(PayvidenceRoutes.login);
+                    },
+                  );
+                },
+              );
+            },
+          ),
         ),
         body: SafeArea(
           child: Padding(
@@ -233,7 +237,7 @@ These Terms and Conditions govern your use of PAYVIDENCE (the "Service"). By acc
                 ),
                 SizedBox(height: responsiveData.scaleHeight(40)),
                 Text(
-                  'Account created 그렇습니다!',
+                  'Account created!',
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 SizedBox(height: responsiveData.scaleHeight(10)),
