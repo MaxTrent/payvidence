@@ -31,7 +31,7 @@ class PullToRefresh extends HookWidget {
       enablePullUp: enablePullUp,
       header: CustomHeader(
         builder: (BuildContext context, RefreshStatus? mode) {
-          if (mode == RefreshStatus.refreshing) {
+          if (mode == RefreshStatus.refreshing || mode == RefreshStatus.canRefresh) {
             return const LoadingIndicator();
           }
           return const SizedBox.shrink();

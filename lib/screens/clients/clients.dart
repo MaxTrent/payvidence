@@ -83,6 +83,7 @@ class Clients extends HookConsumerWidget {
 
     return ResponsiveWrapper(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           titleSpacing: 0,
           centerTitle: false,
@@ -146,7 +147,8 @@ class Clients extends HookConsumerWidget {
                   hintText: 'Search for client',
                   controller: searchController,
                   radius: responsiveData.largeRadius,
-                  filled: true,
+                  filled: isDarkMode ? false : true,
+                  appBorderColor: isDarkMode ? Colors.white:Colors.transparent,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
               ),
@@ -167,46 +169,52 @@ class Clients extends HookConsumerWidget {
                     if (filteredClients.isEmpty) {
                       return PullToRefresh(
                         onRefresh: onRefresh,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(height: responsiveData.scaleHeight(80),),
-                            SvgPicture.asset(Assets.svg.emptyClient),
-                            SizedBox(height: responsiveData.scaleHeight(40)),
-                            Text(
-                              searchQuery.value.isEmpty
-                                  ? 'No client yet!'
-                                  : 'No clients found!',
-                              style: Theme.of(context).textTheme.displayLarge,
-                            ),
-                            SizedBox(height: responsiveData.scaleHeight(10)),
-                            Text(
-                              searchQuery.value.isEmpty
-                                  ? 'You can add your clients to your business. All clients will show here.'
-                                  : 'Try a different search term.',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                            ),
-                            const Spacer(),
-                            if (searchQuery.value.isEmpty) ...[
-                              Padding(
-                                padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
-                                child: AppButton(
-                                  buttonText: 'Add client',
-                                  onPressed: () async {
-                                    await locator<PayvidenceAppRouter>().navigate(
-                                        AddClientRoute(businessId: businessId));
-                                    ref
-                                        .read(getAllClientsProvider.notifier)
-                                        .fetchClients();
-                                  },
-                                ),
+                        child: CustomScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          slivers: [
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Column(
+                                children: [
+                                  const Spacer(),
+                                  SvgPicture.asset(Assets.svg.emptyClient),
+                                  SizedBox(height: responsiveData.scaleHeight(40)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'No client yet!'
+                                        : 'No clients found!',
+                                    style: Theme.of(context).textTheme.displayLarge,
+                                  ),
+                                  SizedBox(height: responsiveData.scaleHeight(10)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'You can add your clients to your business. All clients will show here.'
+                                        : 'Try a different search term.',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall!
+                                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                  ),
+                                  const Spacer(),
+                                  if (searchQuery.value.isEmpty) ...[
+                                    Padding(
+                                      padding: EdgeInsets.all(responsiveData.scaleHeight(20)),
+                                      child: AppButton(
+                                        buttonText: 'Add client',
+                                        onPressed: () async {
+                                          await locator<PayvidenceAppRouter>().navigate(
+                                              AddClientRoute(businessId: businessId));
+                                          ref
+                                              .read(getAllClientsProvider.notifier)
+                                              .fetchClients();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
-                            ],
+                            ),
                           ],
                         ),
                       );
@@ -378,12 +386,47 @@ class Clients extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                  loading: () => Expanded(
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(12)),
-                      itemCount: 5,
-                      itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(56)),
+                  loading: () => ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(24)),
+                    itemBuilder: (_, index) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: responsiveData.scaleHeight(56),
+                          width: responsiveData.scaleHeight(56),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                          child: CustomShimmer(
+                            height: responsiveData.scaleHeight(56),
+                            width: responsiveData.scaleHeight(56),
+                          ),
+                        ),
+                        SizedBox(width: responsiveData.scaleWidth(12)),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomShimmer(
+                                height: responsiveData.scaleHeight(16),
+                                width: responsiveData.scaleWidth(120),
+                              ),
+                              SizedBox(height: responsiveData.scaleHeight(8)),
+                              CustomShimmer(
+                                height: responsiveData.scaleHeight(14),
+                                width: responsiveData.scaleWidth(200),
+                              ),
+                              SizedBox(height: responsiveData.scaleHeight(12)),
+                              CustomShimmer(
+                                height: responsiveData.scaleHeight(14),
+                                width: responsiveData.scaleWidth(100),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

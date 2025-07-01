@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/app_text_field.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/gen/assets.gen.dart';
@@ -56,7 +57,8 @@ class AllInvoices extends HookConsumerWidget {
     }
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           titleSpacing: 0,
           centerTitle: false,
@@ -98,6 +100,7 @@ class AllInvoices extends HookConsumerWidget {
               FadeInWidget(
                 delay: const Duration(milliseconds: 100),
                 child: AppTextField(
+                  appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
                   prefixIcon: Padding(
                     padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
                     child: SvgPicture.asset(
@@ -111,7 +114,7 @@ class AllInvoices extends HookConsumerWidget {
                   hintText: 'Search for invoice',
                   controller: searchController,
                   radius: responsiveData.largeRadius,
-                  filled: true,
+                  filled: isDarkMode ? false : true,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
               ),
@@ -134,48 +137,48 @@ class AllInvoices extends HookConsumerWidget {
                       productNumber.value = 0;
                       return PullToRefresh(
                         onRefresh: onRefresh,
-                        child: SingleChildScrollView(
+                        child: CustomScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(height: responsiveData.scaleHeight(80),),
-                                SvgPicture.asset(Assets.svg.emptyInvoice),
-                                SizedBox(height: responsiveData.scaleHeight(40)),
-                                Text(
-                                  searchQuery.value.isEmpty ? 'No invoice yet!' : 'No invoices found!',
-                                  style: Theme.of(context).textTheme.displayLarge,
-                                ),
-                                SizedBox(height: responsiveData.scaleHeight(10)),
-                                Text(
-                                  searchQuery.value.isEmpty
-                                      ? 'Generate invoice for your business pending sales. All invoices generated will show here.'
-                                      : 'Try a different search term.',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                ),
-                                const Spacer(),
-                                if (searchQuery.value.isEmpty) ...[
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(44)),
-                                    child: AppButton(
-                                      buttonText: 'Generate invoice',
-                                      onPressed: () {
-                                        locator<PayvidenceAppRouter>()
-                                            .navigate(GenerateReceiptRoute(isInvoice: true));
-                                      },
-                                    ),
+                          slivers: [
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Column(
+                                children: [
+                                  const Spacer(),
+                                  SvgPicture.asset(Assets.svg.emptyInvoice),
+                                  SizedBox(height: responsiveData.scaleHeight(40)),
+                                  Text(
+                                    searchQuery.value.isEmpty ? 'No invoice yet!' : 'No invoices found!',
+                                    style: Theme.of(context).textTheme.displayLarge,
                                   ),
+                                  SizedBox(height: responsiveData.scaleHeight(10)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'Generate invoice for your business pending sales. All invoices generated will show here.'
+                                        : 'Try a different search term.',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall!
+                                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                  ),
+                                  const Spacer(),
+                                  if (searchQuery.value.isEmpty) ...[
+                                    Padding(
+                                      padding: EdgeInsets.all(responsiveData.scaleHeight(20)),
+                                      child: AppButton(
+                                        buttonText: 'Generate invoice',
+                                        onPressed: () {
+                                          locator<PayvidenceAppRouter>()
+                                              .navigate(GenerateReceiptRoute(isInvoice: true));
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       );
                     }
@@ -210,22 +213,72 @@ class AllInvoices extends HookConsumerWidget {
                       ),
                     );
                   },
-                  error: (error, _) => PullToRefresh(
-                    onRefresh: onRefresh,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
-                        child: const Center(child: Text('An error has occurred')),
+                  error: (error, _) {
+                    return const Text('An error has occurred');
+                  },
+                  loading: () {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                      itemBuilder: (_, index) => Container(
+                        height: responsiveData.scaleHeight(101),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: responsiveData.scaleHeight(69),
+                              width: responsiveData.scaleWidth(69),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                              ),
+                              child: CustomShimmer(
+                                height: responsiveData.scaleHeight(69),
+                                width: responsiveData.scaleWidth(69),
+                              ),
+                            ),
+                            SizedBox(width: responsiveData.scaleWidth(12)),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(16),
+                                        width: responsiveData.scaleWidth(120),
+                                      ),
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(16),
+                                        width: responsiveData.scaleWidth(80),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(12),
+                                        width: responsiveData.scaleWidth(100),
+                                      ),
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(12),
+                                        width: responsiveData.scaleWidth(60),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                  loading: () => ListView.separated(
-                    shrinkWrap: true,
-                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
-                    itemCount: 5,
-                    itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(60)),
-                  ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -251,10 +304,10 @@ class AllInvoices extends HookConsumerWidget {
               backgroundColor: primaryColor2,
               child: Icon(Icons.add, size: responsiveData.scaleHeight(40), color: Colors.white,),
             )
-                : null; // Hide FAB when there are no invoices
+                : null;
           },
-          error: (error, _) => null, // Hide FAB on error
-          loading: () => null, // Hide FAB while loading
+          error: (error, _) => null,
+          loading: () => null,
         ),
       ),
     );

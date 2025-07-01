@@ -66,6 +66,7 @@ class Product extends HookConsumerWidget {
 
     return ResponsiveWrapper(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           titleSpacing: 0,
           centerTitle: false,
@@ -102,7 +103,8 @@ class Product extends HookConsumerWidget {
                   hintText: 'Search for product',
                   controller: searchController,
                   radius: responsiveData.largeRadius,
-                  filled: true,
+                  appBorderColor: isDarkMode ? Colors.white:Colors.transparent,
+                  filled: isDarkMode ? false : true,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
               ),
@@ -124,54 +126,54 @@ class Product extends HookConsumerWidget {
                       productNumber.value = 0;
                       return PullToRefresh(
                         onRefresh: onRefresh,
-                        child: SingleChildScrollView(
+                        child: CustomScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(height: responsiveData.scaleHeight(80),),
-                                SvgPicture.asset(
-                                  Assets.svg.emptyProduct,
-                                  width: responsiveData.scaleWidth(208), // Added for consistency
-                                  height: responsiveData.scaleHeight(218),
-                                ),
-                                SizedBox(height: responsiveData.scaleHeight(40)),
-                                Text(
-                                  searchQuery.value.isEmpty
-                                      ? 'No product yet!'
-                                      : 'No products found!',
-                                  style: Theme.of(context).textTheme.displayLarge,
-                                ),
-                                SizedBox(height: responsiveData.scaleHeight(10)),
-                                Text(
-                                  searchQuery.value.isEmpty
-                                      ? 'Add products to your business account. All products added will show here.'
-                                      : 'Try a different search term.',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                ),
-                                const Spacer(),
-                                if (searchQuery.value.isEmpty) ...[
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
-                                    child: AppButton(
-                                      buttonText: 'Add product',
-                                      onPressed: () {
-                                        locator<PayvidenceAppRouter>()
-                                            .navigateNamed(PayvidenceRoutes.addProduct);
-                                      },
-                                    ),
+                          slivers: [
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Column(
+                                children: [
+                                  const Spacer(),
+                                  SvgPicture.asset(
+                                    Assets.svg.emptyProduct,
+                                    width: responsiveData.scaleWidth(208),
+                                    height: responsiveData.scaleHeight(218),
                                   ),
+                                  SizedBox(height: responsiveData.scaleHeight(40)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'No product yet!'
+                                        : 'No products found!',
+                                    style: Theme.of(context).textTheme.displayLarge,
+                                  ),
+                                  SizedBox(height: responsiveData.scaleHeight(10)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'Add products to your business account. All products added will show here.'
+                                        : 'Try a different search term.',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall!
+                                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                  ),
+                                  const Spacer(),
+                                  if (searchQuery.value.isEmpty) ...[
+                                    Padding(
+                                      padding: EdgeInsets.all(responsiveData.scaleHeight(20)),
+                                      child: AppButton(
+                                        buttonText: 'Add product',
+                                        onPressed: () {
+                                          locator<PayvidenceAppRouter>()
+                                              .navigateNamed(PayvidenceRoutes.addProduct);
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       );
                     }
@@ -239,9 +241,50 @@ class Product extends HookConsumerWidget {
                   loading: () {
                     return ListView.separated(
                       shrinkWrap: true,
-                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                       itemCount: 5,
-                      itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(60)),
+                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                      itemBuilder: (_, index) => Container(
+                        height: responsiveData.scaleHeight(101),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: responsiveData.scaleHeight(72),
+                              width: responsiveData.scaleHeight(72),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: CustomShimmer(
+                                height: responsiveData.scaleHeight(72),
+                                width: responsiveData.scaleHeight(72),
+                              ),
+                            ),
+                            SizedBox(width: responsiveData.scaleWidth(14)),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomShimmer(
+                                    height: responsiveData.scaleHeight(16),
+                                    width: responsiveData.scaleWidth(150),
+                                  ),
+                                  SizedBox(height: responsiveData.scaleHeight(6)),
+                                  CustomShimmer(
+                                    height: responsiveData.scaleHeight(14),
+                                    width: responsiveData.scaleWidth(200),
+                                  ),
+                                  SizedBox(height: responsiveData.scaleHeight(8)),
+                                  CustomShimmer(
+                                    height: responsiveData.scaleHeight(14),
+                                    width: responsiveData.scaleWidth(100),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),

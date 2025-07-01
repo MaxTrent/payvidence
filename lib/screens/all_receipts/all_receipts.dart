@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 import 'package:payvidence/utilities/animations.dart';
@@ -60,7 +61,8 @@ class AllReceipts extends HookConsumerWidget {
     }
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           titleSpacing: 0,
           centerTitle: false,
@@ -102,6 +104,7 @@ class AllReceipts extends HookConsumerWidget {
               FadeInWidget(
                 delay: const Duration(milliseconds: 100),
                 child: AppTextField(
+                  appBorderColor: isDarkMode ? Colors.white: Colors.transparent,
                   prefixIcon: Padding(
                     padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
                     child: SvgPicture.asset(
@@ -112,10 +115,10 @@ class AllReceipts extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  hintText: 'Search for receipt',
+                  hintText: 'Search for product',
                   controller: searchController,
                   radius: responsiveData.largeRadius,
-                  filled: true,
+                  filled: isDarkMode ? false : true,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
               ),
@@ -138,50 +141,50 @@ class AllReceipts extends HookConsumerWidget {
                       productNumber.value = 0;
                       return PullToRefresh(
                         onRefresh: onRefresh,
-                        child: SingleChildScrollView(
+                        child: CustomScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(height: responsiveData.scaleHeight(80)),
-                                SvgPicture.asset(Assets.svg.emptyReceipt, height: responsiveData.scaleHeight(200),width: responsiveData.scaleWidth(200),),
-                                SizedBox(height: responsiveData.scaleHeight(40)),
-                                Text(
-                                  searchQuery.value.isEmpty
-                                      ? 'No receipts yet!'
-                                      : 'No receipts found!',
-                                  style: Theme.of(context).textTheme.displayLarge,
-                                ),
-                                SizedBox(height: responsiveData.scaleHeight(10)),
-                                Text(
-                                  searchQuery.value.isEmpty
-                                      ? 'Generate receipts for your business sales. All receipts generated will show here.'
-                                      : 'Try a different search term.',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                ),
-                                const Spacer(),
-                                if (searchQuery.value.isEmpty) ...[
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
-                                    child: AppButton(
-                                      buttonText: 'Generate receipt',
-                                      onPressed: () {
-                                        locator<PayvidenceAppRouter>()
-                                            .navigate(GenerateReceiptRoute(isInvoice: false));
-                                      },
-                                    ),
+                          slivers: [
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Column(
+                                children: [
+                                  const Spacer(),
+                                  SvgPicture.asset(Assets.svg.emptyReceipt, height: responsiveData.scaleHeight(200),width: responsiveData.scaleWidth(200),),
+                                  SizedBox(height: responsiveData.scaleHeight(40)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'No receipts yet!'
+                                        : 'No receipts found!',
+                                    style: Theme.of(context).textTheme.displayLarge,
                                   ),
+                                  SizedBox(height: responsiveData.scaleHeight(10)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'Generate receipts for your business sales. All receipts generated will show here.'
+                                        : 'Try a different search term.',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall!
+                                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                  ),
+                                  const Spacer(),
+                                  if (searchQuery.value.isEmpty) ...[
+                                    Padding(
+                                      padding: EdgeInsets.all(responsiveData.scaleHeight(20)),
+                                      child: AppButton(
+                                        buttonText: 'Generate receipt',
+                                        onPressed: () {
+                                          locator<PayvidenceAppRouter>()
+                                              .navigate(GenerateReceiptRoute(isInvoice: false));
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       );
                     }
@@ -204,63 +207,91 @@ class AllReceipts extends HookConsumerWidget {
                                   ),
                                 );
                               },
-                              child: ReceiptTile(receipt: filteredData[index]),
+                              child: ReceiptTile(
+                                receipt: filteredData[index],
+                              ),
                             ),
                           );
                         },
-                        // physics: const AlwaysScrollableScrollPhysics(),
-                        separatorBuilder: (ctx, idx) => Column(
-                          children: [SizedBox(height: responsiveData.scaleHeight(24))],
-                        ),
+                        separatorBuilder: (ctx, idx) {
+                          return SizedBox(
+                            height: responsiveData.scaleHeight(24),
+                          );
+                        },
                         itemCount: filteredData.length,
                       ),
                     );
                   },
-                  error: (error, _) => PullToRefresh(
-                    onRefresh: onRefresh,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
-                        child: const Center(child: Text('An error has occurred')),
+                  error: (error, _) {
+                    return const Text('An error has occurred');
+                  },
+                  loading: () {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                      itemBuilder: (_, index) => Container(
+                        height: responsiveData.scaleHeight(101),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: responsiveData.scaleHeight(69),
+                              width: responsiveData.scaleWidth(69),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                              ),
+                              child: CustomShimmer(
+                                height: responsiveData.scaleHeight(69),
+                                width: responsiveData.scaleWidth(69),
+                              ),
+                            ),
+                            SizedBox(width: responsiveData.scaleWidth(12)),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(16),
+                                        width: responsiveData.scaleWidth(120),
+                                      ),
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(16),
+                                        width: responsiveData.scaleWidth(80),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(12),
+                                        width: responsiveData.scaleWidth(100),
+                                      ),
+                                      CustomShimmer(
+                                        height: responsiveData.scaleHeight(12),
+                                        width: responsiveData.scaleWidth(60),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                  loading: () => ListView.separated(
-                    shrinkWrap: true,
-                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
-                    itemCount: 5,
-                    itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(60)),
-                  ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
-        ),
-        floatingActionButton: allReceipts.when(
-          data: (data) {
-            final actualData = data.where((data) => data.publishedAt != null).toList();
-            final filteredData = searchQuery.value.isEmpty
-                ? actualData
-                : actualData
-                .where((receipt) =>
-            receipt.recordProductDetails?[0].product?.name
-                ?.toLowerCase()
-                .contains(searchQuery.value.toLowerCase()) ??
-                false)
-                .toList();
-            return filteredData.isNotEmpty
-                ? FloatingActionButton(
-              onPressed: () {
-                locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: false));
-              },
-              backgroundColor: primaryColor2,
-              child: Icon(Icons.add, size: responsiveData.scaleHeight(40), color: Colors.white,),
-            )
-                : null;
-          },
-          error: (error, _) => null,
-          loading: () => null,
         ),
       ),
     );
@@ -268,110 +299,146 @@ class AllReceipts extends HookConsumerWidget {
 }
 
 class ReceiptTile extends StatelessWidget {
-  final Receipt receipt;
+  const ReceiptTile({
+    required this.receipt,
+    super.key,
+  });
 
-  const ReceiptTile({super.key, required this.receipt});
+  final Receipt receipt;
 
   @override
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          height: responsiveData.scaleHeight(72),
-          width: responsiveData.scaleHeight(72),
-          decoration: BoxDecoration(
-            color: isDarkMode ? Colors.grey[800] : Colors.grey[700],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: (receipt.recordProductDetails[0].product?.logoUrl != null && 
-                 receipt.recordProductDetails[0].product!.logoUrl!.isNotEmpty)
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    receipt.recordProductDetails[0].product!.logoUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Image.asset(
-                          Assets.png.payvidenceLogo.path,
-                          fit: BoxFit.contain,
-                        ),
-                      );
-                    },
-                  ),
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Image.asset(
-                    Assets.png.payvidenceLogo.path,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+    final firstProductDetail = receipt.recordProductDetails?.isNotEmpty == true
+        ? receipt.recordProductDetails!.first
+        : null;
+
+    final product = firstProductDetail?.product;
+    final productName = product?.name ?? 'Unknown Product';
+    final amount = product != null
+        ? (double.tryParse(product.price ?? '0') ?? 0)
+        .toString()
+        .toCommaSeparated()
+        : '0';
+    final imageUrl = product?.logoUrl ?? "";
+    final dateTime = receipt.createdAt?.toString().toFormattedIsoDate() ?? '';
+    final unitSold = product?.quantitySold?.toString() ?? '0';
+
+    return Container(
+      height: responsiveData.scaleHeight(101),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+        border: Border.all(
+          color: borderColor,
+          width: responsiveData.scaleWidth(1),
         ),
-        SizedBox(width: responsiveData.scaleWidth(14)),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                receipt.recordProductDetails[0].product?.name ?? '',
-                style: Theme.of(context).textTheme.displayMedium,
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+        child: Row(
+          children: [
+            Container(
+              height: responsiveData.scaleHeight(69),
+              width: responsiveData.scaleWidth(69),
+              decoration: BoxDecoration(
+                color: appGrey5,
+                borderRadius: BorderRadius.circular(responsiveData.smallRadius),
               ),
-              SizedBox(height: responsiveData.scaleHeight(6)),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '${receipt.recordProductDetails[0].quantity ?? ''} units sold',
-                    style: Theme.of(context)
-                        .textTheme
-                        .displaySmall!
-                        .copyWith(fontSize: Responsive.fontSize(context, 14), color: appGrey4),
-                  ),
-                  SizedBox(width: responsiveData.scaleWidth(10)),
-                  Container(
-                    height: responsiveData.scaleHeight(6),
-                    width: responsiveData.scaleHeight(6),
-                    decoration: BoxDecoration(
-                      color: appGrey4,
+              child: imageUrl.isNotEmpty
+                  ? ClipRRect(
                       borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.image,
+                            color: Colors.grey,
+                            size: responsiveData.scaleHeight(30),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : Icon(
+                      Icons.image,
+                      color: Colors.grey,
+                      size: responsiveData.scaleHeight(30),
                     ),
-                  ),
-                  SizedBox(width: responsiveData.scaleWidth(10)),
-                  Expanded(
-                    child: Text(
-                      DateFormat.yMd().add_jm().format(receipt.createdAt!),
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall!
-                          .copyWith(fontSize: Responsive.fontSize(context, 14), color: appGrey4),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: responsiveData.scaleHeight(8)),
-              Row(
+            ),
+            SizedBox(width: responsiveData.scaleWidth(12)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppNaira(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black),
-                  Text(
-                    '${(double.tryParse(receipt.recordProductDetails[0].total ?? '0') ?? 0).toString().toCommaSeparated() ?? ''} ',
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayMedium!
-                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          productName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(fontSize: Responsive.fontSize(context, 16)),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          AppNaira(
+                            fontSize: 16,
+                          ),
+                          Text(
+                            amount,
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayMedium!
+                                .copyWith(fontSize: Responsive.fontSize(context, 16)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        dateTime,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(fontSize: Responsive.fontSize(context, 12)),
+                      ),
+                      Text(
+                        '$unitSold unit${int.tryParse(unitSold) != 1 ? 's' : ''} sold',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(fontSize: Responsive.fontSize(context, 12)),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

@@ -142,7 +142,15 @@ class LoginViewModel extends BaseChangeNotifier {
         handleError(message: _errorMessage);
       }
     } catch (e) {
-      _errorMessage = "Something went wrong. Please try again.";
+      if (e.toString().contains('DioExceptionType.unknown')) {
+        _errorMessage = "Network error. Please check your internet connection and try again.";
+      } else if (e.toString().contains('DioExceptionType.connectionTimeout')) {
+        _errorMessage = "Connection timeout. Please try again.";
+      } else if (e.toString().contains('DioExceptionType.receiveTimeout')) {
+        _errorMessage = "Server response timeout. Please try again.";
+      } else {
+        _errorMessage = "Something went wrong. Please try again.";
+      }
       developer.log('Login exception: $e');
       handleError(message: _errorMessage);
     } finally {
