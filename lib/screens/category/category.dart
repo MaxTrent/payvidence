@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/app_text_field.dart';
 import 'package:payvidence/components/category_tile.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/components/simple_bottom_sheet.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/providers/category_providers/current_category_provider.dart';
@@ -34,7 +35,7 @@ class EmptyCategory extends HookConsumerWidget {
     final allCategory = ref.watch(getAllCategoryProvider);
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: AppTextField(
@@ -58,15 +59,19 @@ class EmptyCategory extends HookConsumerWidget {
             fillColor: isDarkMode ? Colors.black : appGrey5,
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addCategory);
-          },
-          backgroundColor: primaryColor2,
-          child: Icon(
-            Icons.add,
-            size: responsiveData.scaleHeight(40),
-          ),
+        floatingActionButton: allCategory.maybeWhen(
+          data: (data) => data.isNotEmpty ? FloatingActionButton(
+            onPressed: () {
+              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.addCategory);
+            },
+            backgroundColor: primaryColor2,
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: responsiveData.scaleHeight(40),
+            ),
+          ) : null,
+          orElse: () => null,
         ),
         body: SafeArea(
           child: Padding(
@@ -75,6 +80,24 @@ class EmptyCategory extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 allCategory.when(
+                  loading: () => Expanded(
+                    child: ListView.separated(
+                      itemCount: 6,
+                      separatorBuilder: (context, index) => SizedBox(height: responsiveData.scaleHeight(16)),
+                      itemBuilder: (context, index) => CustomShimmer(
+                        height: responsiveData.scaleHeight(60),
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
+                  error: (error, stack) => Expanded(
+                    child: Center(
+                      child: Text(
+                        'Failed to load categories',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                    ),
+                  ),
                   data: (data) {
                     if (data.isEmpty) {
                       return Expanded(
@@ -224,12 +247,6 @@ class EmptyCategory extends HookConsumerWidget {
                         itemCount: data.length,
                       ),
                     );
-                  },
-                  error: (error, _) {
-                    return const Text('An error has occurred');
-                  },
-                  loading: () {
-                    return const CustomShimmer();
                   },
                 ),
               ],

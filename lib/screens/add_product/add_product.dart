@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/components/app_naira.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/category_providers/current_category_provider.dart';
@@ -26,6 +27,7 @@ import '../../utilities/responsive.dart';
 import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/toast_service.dart';
 import '../../utilities/validators.dart';
+import '../../utilities/number_formatter.dart';
 
 @RoutePage(name: 'AddProductRoute')
 class AddProduct extends ConsumerStatefulWidget {
@@ -54,11 +56,17 @@ class _AddProductState extends ConsumerState<AddProduct> {
       productNameController.text = widget.product?.name ?? '';
       productDescController.text = widget.product?.description ?? '';
       productQtyController.text = widget.product?.quantityAvailable.toString() ?? '';
-      productPriceController.text = widget.product?.price ?? '';
+      productPriceController.text = NumberFormatter.formatNumber(widget.product?.price ?? '');
       vatRateController.text = widget.product?.vat ?? '';
       Future.delayed(const Duration(milliseconds: 200), () {
         ref.read(getCurrentCategoryProvider.notifier).setCurrentCategory(widget.product!.category!);
         ref.read(getCurrentBrandProvider.notifier).setCurrentBrand(widget.product?.brand);
+      });
+    } else {
+      // Clear providers for new product
+      Future.delayed(const Duration(milliseconds: 200), () {
+        ref.read(getCurrentCategoryProvider.notifier).clearCategory();
+        ref.read(getCurrentBrandProvider.notifier).clearBrand();
       });
     }
   }
@@ -76,7 +84,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
       Map<String, dynamic> data = {
         "name": productNameController.text,
         "description": productDescController.text.isEmpty ? "No description" : productDescController.text, // Default to "No description"
-        "price": productPriceController.text,
+        "price": NumberFormatter.unformatNumber(productPriceController.text),
         "quantity": productQtyController.text,
         "category_id": categoryId,
       };
@@ -146,7 +154,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
     return ResponsiveWrapper(
       child: GestureDetector(
         onTap: FocusManager.instance.primaryFocus?.unfocus,
-        child: Scaffold(
+        child: KeyboardDismissibleScaffold(
           appBar: AppBar(),
           body: Form(
             key: formKey,
@@ -251,8 +259,8 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     controller: productPriceController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
-                      LengthLimitingTextInputFormatter(11),
-                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(15),
+                      NumberFormatter(),
                     ],
                     validator: (val) {
                       return Validator.validateName(val);

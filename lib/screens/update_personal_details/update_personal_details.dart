@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
 import 'package:payvidence/utilities/responsive.dart';
@@ -45,8 +46,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
         emailController.text = viewModel.userInfo?.account.email ?? "";
         phoneController.text = viewModel.userInfo?.account.phoneNumber ?? "";
         originalFirstName.value = viewModel.userInfo?.account.firstName ?? "";
-        originalLastName.value = viewModel.userInfo?.account.lastName ?? ""; // Set original last name
-        originalPhoneNumber.value = viewModel.userInfo?.account.phoneNumber ?? ""; // Set original phone number
+        originalLastName.value = viewModel.userInfo?.account.lastName ?? "";
+        originalPhoneNumber.value = viewModel.userInfo?.account.phoneNumber ?? "";
       }
       return null;
     }, [viewModel.userInfo, viewModel.isLoading]);
@@ -60,7 +61,8 @@ class UpdatePersonalDetails extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
+        child: KeyboardDismissibleScaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
@@ -143,7 +145,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                       SizedBox(height: responsiveData.scaleHeight(8)),
                       AppTextField(
                         hintText: 'Email address',
-                        enabled: false, // Email remains disabled
+                        enabled: false,
                         controller: emailController,
                       ),
                       SizedBox(height: responsiveData.scaleHeight(20)),
@@ -172,24 +174,25 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     AppButton(
                       isProcessing: viewModel.isLoading,
                       buttonText: viewModel.isEditing ? 'Save' : 'Update details',
-                      // isDisabled: viewModel.isEditing && !hasChanges(),
+                      isDisabled: viewModel.isEditing && !hasChanges(),
                       onPressed: () {
-                        if (!viewModel.isEditing) {
-                          viewModel.toggleEditing();
-                          firstNameFocusNode.requestFocus();
-                        } else if (hasChanges()) {
-                          if (formKey.currentState!.validate()) {
+                        if (viewModel.isEditing) {
+                          if (formKey.currentState!.validate() && hasChanges()) {
                             viewModel.updateUserInfo(
-                              newFirstName: firstNameController.text.trim(),
-                              newLastName: lastNameController.text.trim(),
-                              newPhoneNumber: phoneController.text.trim(),
+                              newFirstName: firstNameController.text,
+                              newLastName: lastNameController.text,
+                              newPhoneNumber: phoneController.text != originalPhoneNumber.value 
+                                  ? phoneController.text 
+                                  : null,
                               navigateOnSuccess: () {
-                                locator<PayvidenceAppRouter>().back();
+                                // Update original values to reflect saved state
+                                originalFirstName.value = firstNameController.text;
+                                originalLastName.value = lastNameController.text;
+                                originalPhoneNumber.value = phoneController.text;
                               },
                             );
                           }
                         } else {
-                          print("No changes detected, exiting edit mode");
                           viewModel.toggleEditing();
                         }
                       },

@@ -85,25 +85,31 @@ class ChangeProfilePicture extends HookConsumerWidget {
                         placeholder: (context, url) => LoadingIndicator(
                           color: isDarkMode ? Colors.white : Colors.black,
                         ),
-                        errorWidget: (context, url, error) => SvgPicture.asset(
-                          Assets.svg.defaultProfilepic,
-                          fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => Container(
                           width: responsiveData.scaleWidth(200),
                           height: responsiveData.scaleHeight(200),
-                          colorFilter: ColorFilter.mode(
-                            isDarkMode ? Colors.white : Colors.black,
-                            BlendMode.srcIn,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isDarkMode ? Colors.grey[800] : const Color(0xFFE8E8E8),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: responsiveData.scaleHeight(80),
+                            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                           ),
                         ),
                       )
-                          : SvgPicture.asset(
-                        Assets.svg.defaultProfilepic,
-                        fit: BoxFit.cover,
+                          : Container(
                         width: responsiveData.scaleWidth(200),
                         height: responsiveData.scaleHeight(200),
-                        colorFilter: ColorFilter.mode(
-                          isDarkMode ? Colors.white : Colors.black,
-                          BlendMode.srcIn,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isDarkMode ? Colors.grey[800] : const Color(0xFFE8E8E8),
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: responsiveData.scaleHeight(80),
+                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                     ),
@@ -122,7 +128,12 @@ class ChangeProfilePicture extends HookConsumerWidget {
                     } else {
                       viewModel.uploadImage(
                         navigateOnSuccess: () {
-                          locator<PayvidenceAppRouter>().back();
+                          // Clear all cached images to force refresh
+                          CachedNetworkImage.evictFromCache(viewModel.currentProfilePictureUrl ?? '');
+                          // Add a small delay to ensure cache is cleared
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            locator<PayvidenceAppRouter>().back();
+                          });
                         },
                       );
                     }

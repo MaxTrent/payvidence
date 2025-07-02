@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/model/category_model.dart';
 import 'package:payvidence/providers/category_providers/get_all_category_provider.dart';
 import 'package:payvidence/utilities/validators.dart';
@@ -58,7 +59,8 @@ class AddCategory extends ConsumerWidget {
     }
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
@@ -112,7 +114,7 @@ class AddCategory extends ConsumerWidget {
                   controller: descController,
                   validator: (val) => val != null && val.trim().isNotEmpty ? Validator.validateName(val) : null,
                 ),
-                Spacer(),
+                const Spacer(),
                 AppButton(
                   buttonText: 'Save category',
                   onPressed: () {
@@ -123,7 +125,7 @@ class AddCategory extends ConsumerWidget {
                   },
                 ),
                 SizedBox(
-                  height: responsiveData.scaleHeight(8),
+                  height: responsiveData.scaleHeight(14),
                 ),
               ],
             ),

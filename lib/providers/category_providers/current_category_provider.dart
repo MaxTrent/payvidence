@@ -17,5 +17,9 @@ class GetCurrentCategoryNotifier extends Notifier<CategoryModel?> {
   void setCurrentCategory(CategoryModel category) {
     state = category;
   }
+
+  void clearCategory() {
+    state = null;
+  }
 // Add methods to mutate the state
 }
