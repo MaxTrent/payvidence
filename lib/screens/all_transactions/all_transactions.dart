@@ -13,6 +13,7 @@ import 'package:payvidence/utilities/extensions.dart';
 import 'package:payvidence/utilities/animations.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
+import '../../components/keyboard_dismissible_scaffold.dart';
 import '../../components/transaction_tile.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
@@ -57,7 +58,7 @@ class AllTransactions extends HookConsumerWidget {
 
     final filteredTransactions = viewModel.transactions.where((transaction) {
       final isReceipt =
-          transaction.status != 'pending'; // 'pending' means Invoice
+          transaction.status != 'pending';
       final isInvoice = transaction.status == 'pending';
       final matchesFilter = filterType.value == 'All' ||
           (filterType.value == 'Receipt' && isReceipt) ||
@@ -80,7 +81,7 @@ class AllTransactions extends HookConsumerWidget {
     }
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
         appBar: AppBar(
 
           centerTitle: false,
@@ -91,165 +92,181 @@ class AllTransactions extends HookConsumerWidget {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
-          child: PullToRefresh(
-            onRefresh: onRefresh,
-            child: ListView(
-              children: [
-                SizedBox(height: responsiveData.scaleHeight(32)),
-                FadeInWidget(
-                  delay: const Duration(milliseconds: 100),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: AppTextField(
-                          // width: responsiveData.scaleWidth(282),
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-                            child: SvgPicture.asset(Assets.svg.search),
-                          ),
-                          hintText: 'Search for transaction',
-                          controller: searchController,
-                          radius: responsiveData.largeRadius,
-                          filled: true,
-                          fillColor: appGrey5,
+          child: Column(
+            children: [
+              SizedBox(height: responsiveData.scaleHeight(32)),
+              FadeInWidget(
+                delay: const Duration(milliseconds: 100),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: AppTextField(
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                          child: SvgPicture.asset(Assets.svg.search,colorFilter: ColorFilter.mode(
+                            isDarkMode ? Colors.white : Colors.black,
+                            BlendMode.srcIn,
+                          ),),
+                        ),
+                        hintText: 'Search for transaction',
+                        controller: searchController,
+                        radius: responsiveData.largeRadius,
+                        filled: isDarkMode ? false: true,
+                        appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
+                        fillColor: appGrey5,
+                      ),
+                    ),
+                    SizedBox(width: responsiveData.scaleWidth(12)),
+                    GestureDetector(
+                      onTap: () {
+                        buildFilterBottomSheet(context, filterType, isDarkMode);
+                      },
+                      child: Container(
+                        height: responsiveData.scaleHeight(48),
+                        width: responsiveData.scaleWidth(56),
+                        decoration: BoxDecoration(
+                          color: borderColor,
+                          borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(responsiveData.scaleHeight(14)),
+                          child: SvgPicture.asset(Assets.svg.filter),
                         ),
                       ),
-                      SizedBox(width: responsiveData.scaleWidth(12)),
-                      GestureDetector(
-                        onTap: () {
-                          buildFilterBottomSheet(context, filterType, isDarkMode);
-                        },
-                        child: Container(
-                          height: responsiveData.scaleHeight(48),
-                          width: responsiveData.scaleWidth(56),
-                          decoration: BoxDecoration(
-                            color: borderColor,
-                            borderRadius: BorderRadius.circular(responsiveData.largeRadius),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(responsiveData.scaleHeight(14)),
-                            child: SvgPicture.asset(Assets.svg.filter),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: responsiveData.scaleHeight(24)),
-                if (viewModel.isLoading) ...[
-                  CustomShimmer(height: responsiveData.scaleHeight(101)),
-                  SizedBox(height: responsiveData.scaleHeight(24)),
-                  CustomShimmer(height: responsiveData.scaleHeight(101)),
-                  SizedBox(height: responsiveData.scaleHeight(24)),
-                  CustomShimmer(height: responsiveData.scaleHeight(101)),
-                  SizedBox(height: responsiveData.scaleHeight(24)),
-                  CustomShimmer(height: responsiveData.scaleHeight(101)),
-                ] else if (filteredTransactions.isEmpty) ...[
-                  SizedBox(height: responsiveData.scaleHeight(80)),
-                  SvgPicture.asset(Assets.svg.emptyTransaction, height: responsiveData.scaleHeight(200), width: responsiveData.scaleWidth(200),),
-                  SizedBox(height: responsiveData.scaleHeight(40)),
-                  Text(
-                    filterType.value != 'All' && viewModel.transactions.isNotEmpty
-                        ? 'No ${filterType.value}s found!'
-                        : 'No transaction yet!',
-                    style: Theme.of(context).textTheme.displayLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: responsiveData.scaleHeight(10)),
-                  Text(
-                    filterType.value != 'All' && viewModel.transactions.isNotEmpty
-                        ? 'Try adjusting your filter or search.'
-                        : 'Start generating receipts and invoices for your business. All transactions will show here.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context)
-                        .textTheme
-                        .displaySmall!
-                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                  ),
-                ] else ...[
-                  ...filteredTransactions.asMap().entries.map(
-                        (entry) {
-                      final index = entry.key;
-                      final transaction = entry.value;
-                      final firstProductDetail =
-                          transaction.recordProductDetails.first;
-                      final isInvoice = transaction.status == 'pending';
-
-                      // Handle null product case
-                      final product = firstProductDetail.product;
-                      final productName = product?.name ?? 'Unknown Product';
-                      final imageUrl = product?.logoUrl ?? "";
-                      final amount = product != null
-                          ? (double.tryParse(product.price ?? '0') ?? 0)
-                          .toString()
-                          .toCommaSeparated()
-                          : '0';
-                      final dateTime = product?.createdAt
-                          ?.toString()
-                          .toFormattedIsoDate() ??
-                          '';
-                      final unitSold = product?.quantitySold?.toString() ?? '0';
-
-                      return SlideInWidget(
-                        begin: const Offset(0, 0.3),
-                        delay: Duration(milliseconds: 100 + (index * 50)),
-                        child: GestureDetector(
-                          onTap: () {
-                          final receipt = Receipt(
-                            id: transaction.id,
-                            business: Business(
-                              id: transaction.business.id,
-                              accountId: transaction.business.accountId,
-                              name: transaction.business.name,
-                              address: transaction.business.address,
-                              phoneNumber: transaction.business.phoneNumber,
-                              logoUrl: transaction.business.logoUrl,
-                              issuer: transaction.business.issuer,
-                              issuerRole: transaction.business.issuerRole,
-                              issuerSignatureUrl:
-                              transaction.business.issuerSignatureUrl,
-                              bankName: transaction.business.bankName,
-                              accountNumber: transaction.business.accountNumber,
-                              accountName: transaction.business.accountName,
-                              createdAt: transaction.business.createdAt,
-                              updatedAt: transaction.business.updatedAt,
+              ),
+              SizedBox(height: responsiveData.scaleHeight(24)),
+              Expanded(
+                child: viewModel.isLoading
+                    ? ListView.separated(
+                        itemCount: 4,
+                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                        itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(101)),
+                      )
+                    : filteredTransactions.isEmpty
+                        ? PullToRefresh(
+                            onRefresh: onRefresh,
+                            child: CustomScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              slivers: [
+                                SliverFillRemaining(
+                                  hasScrollBody: false,
+                                  child: Column(
+                                    children: [
+                                      const Spacer(),
+                                      SvgPicture.asset(Assets.svg.emptyTransaction, height: responsiveData.scaleHeight(200), width: responsiveData.scaleWidth(200)),
+                                      SizedBox(height: responsiveData.scaleHeight(40)),
+                                      Text(
+                                        filterType.value != 'All' && viewModel.transactions.isNotEmpty
+                                            ? 'No ${filterType.value}s found!'
+                                            : 'No transaction yet!',
+                                        style: Theme.of(context).textTheme.displayLarge,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      SizedBox(height: responsiveData.scaleHeight(10)),
+                                      Text(
+                                        filterType.value != 'All' && viewModel.transactions.isNotEmpty
+                                            ? 'Try adjusting your filter or search.'
+                                            : 'Start generating receipts and invoices for your business. All transactions will show here.',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall!
+                                            .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                      ),
+                                      const Spacer(),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            client: ClientModel(
-                              id: transaction.client.id,
-                              businessId: transaction.client.businessId,
-                              name: transaction.client.name,
-                              phoneNumber: transaction.client.phoneNumber,
-                              address: transaction.client.address,
-                              createdAt: transaction.client.createdAt,
-                              updatedAt: transaction.client.updatedAt,
+                          )
+                        : PullToRefresh(
+                            onRefresh: onRefresh,
+                            child: ListView.separated(
+                              itemCount: filteredTransactions.length,
+                              separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                              itemBuilder: (context, index) {
+                                final transaction = filteredTransactions[index];
+                                final firstProductDetail = transaction.recordProductDetails.first;
+                                final isInvoice = transaction.status == 'pending';
+
+                                // Handle null product case
+                                final product = firstProductDetail.product;
+                                final productName = product?.name ?? 'Unknown Product';
+                                final imageUrl = product?.logoUrl ?? "";
+                                final amount = product != null
+                                    ? (double.tryParse(product.price ?? '0') ?? 0)
+                                    .toString()
+                                    .toCommaSeparated()
+                                    : '0';
+                                final dateTime = product?.createdAt
+                                    ?.toString()
+                                    .toFormattedIsoDate() ??
+                                    '';
+                                final unitSold = product?.quantitySold?.toString() ?? '0';
+
+                                return SlideInWidget(
+                                  begin: const Offset(0, 0.3),
+                                  delay: Duration(milliseconds: 100 + (index * 50)),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      final receipt = Receipt(
+                                        id: transaction.id,
+                                        business: Business(
+                                          id: transaction.business.id,
+                                          accountId: transaction.business.accountId,
+                                          name: transaction.business.name,
+                                          address: transaction.business.address,
+                                          phoneNumber: transaction.business.phoneNumber,
+                                          logoUrl: transaction.business.logoUrl,
+                                          issuer: transaction.business.issuer,
+                                          issuerRole: transaction.business.issuerRole,
+                                          issuerSignatureUrl: transaction.business.issuerSignatureUrl,
+                                          bankName: transaction.business.bankName,
+                                          accountNumber: transaction.business.accountNumber,
+                                          accountName: transaction.business.accountName,
+                                          createdAt: transaction.business.createdAt,
+                                          updatedAt: transaction.business.updatedAt,
+                                        ),
+                                        client: ClientModel(
+                                          id: transaction.client.id,
+                                          businessId: transaction.client.businessId,
+                                          name: transaction.client.name,
+                                          phoneNumber: transaction.client.phoneNumber,
+                                          address: transaction.client.address,
+                                          createdAt: transaction.client.createdAt,
+                                          updatedAt: transaction.client.updatedAt,
+                                        ),
+                                        recordProductDetails: transaction.recordProductDetails,
+                                        total: transaction.total.toString(),
+                                        createdAt: transaction.createdAt,
+                                        modeOfPayment: transaction.modeOfPayment,
+                                      );
+                                      locator<PayvidenceAppRouter>().push(
+                                        ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
+                                      );
+                                    },
+                                    child: TransactionTile(
+                                      amount: amount,
+                                      dateTime: dateTime,
+                                      productName: productName,
+                                      receiptOrInvoice: transaction.status == 'pending'
+                                          ? 'Invoice'
+                                          : 'Receipt',
+                                      unitSold: unitSold,
+                                      imageUrl: imageUrl,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                            recordProductDetails: transaction.recordProductDetails,
-                            total: transaction.total.toString(),
-                            createdAt: transaction.createdAt,
-                            modeOfPayment: transaction.modeOfPayment,
-                          );
-                          locator<PayvidenceAppRouter>().push(
-                            ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
-                          );
-                        },
-                          child: TransactionTile(
-                            amount: amount,
-                            dateTime: dateTime,
-                            productName: productName,
-                            receiptOrInvoice: transaction.status == 'pending'
-                                ? 'Invoice'
-                                : 'Receipt',
-                            unitSold: unitSold,
-                            imageUrl: imageUrl,
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

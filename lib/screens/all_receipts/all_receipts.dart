@@ -131,7 +131,7 @@ class AllReceipts extends HookConsumerWidget {
                         ? actualData
                         : actualData
                         .where((receipt) =>
-                    receipt.recordProductDetails?[0].product?.name
+                    receipt.recordProductDetails[0].product?.name
                         ?.toLowerCase()
                         .contains(searchQuery.value.toLowerCase()) ??
                         false)
