@@ -80,7 +80,9 @@ class TransactionTile extends HookWidget {
               children: [
                 Text(
                   productName,
-                  style: Theme.of(context).textTheme.displayMedium,
+                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    fontSize: Responsive.fontSize(context, 14),
+                  ),
                 ),
                 SizedBox(
                   height: responsiveData.scaleHeight(6),

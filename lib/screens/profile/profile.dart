@@ -82,47 +82,32 @@ class Profile extends HookConsumerWidget {
                                 height: responsiveData.scaleHeight(73),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
+                                  color: Colors.transparent,
                                   border: Border.all(
                                     color: Colors.white,
                                     width: responsiveData.scaleWidth(1),
                                   ),
                                 ),
                                 child: (useUpdatePersonalDetailsViewModel.userInfo?.account.profilePictureUrl != null && useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!.isNotEmpty)
-                                    ? CachedNetworkImage(
-                                  key: ValueKey('${useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!}_${DateTime.now().millisecondsSinceEpoch}'),
-                                  imageUrl: '${useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!}?t=${DateTime.now().millisecondsSinceEpoch}',
-                                  imageBuilder: (context, imageProvider) => Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  placeholder: (context, url) => Container(
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color(0xFFE8E8E8),
-                                    ),
-                                    child: Icon(
-                                      Icons.person,
-                                      size: responsiveData.scaleHeight(40),
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) => Container(
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color(0xFFE8E8E8),
-                                    ),
-                                    child: Icon(
-                                      Icons.person,
-                                      size: responsiveData.scaleHeight(40),
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                )
+                                    ? ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl: useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!,
+                                          fit: BoxFit.cover,
+                                          width: responsiveData.scaleHeight(73),
+                                          height: responsiveData.scaleHeight(73),
+                                          errorWidget: (context, url, error) => Container(
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xFFE8E8E8),
+                                            ),
+                                            child: Icon(
+                                              Icons.person,
+                                              size: responsiveData.scaleHeight(40),
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ),
+                                      )
                                     : Container(
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
@@ -139,11 +124,10 @@ class Profile extends HookConsumerWidget {
                                 bottom: 0,
                                 right: 0,
                                 child: GestureDetector(
-                                  onTap: () async {
-                                    await locator<PayvidenceAppRouter>().navigateNamed(
+                                  onTap: () {
+                                    // Navigate to change profile picture without refreshing current profile
+                                    locator<PayvidenceAppRouter>().navigateNamed(
                                         PayvidenceRoutes.changeProfilePicture);
-                                    // Refresh user info when returning from change profile picture
-                                    useUpdatePersonalDetailsViewModel.fetchUserInformation();
                                   },
                                   child: CircleAvatar(
                                     radius: responsiveData.smallRadius * 0.7,

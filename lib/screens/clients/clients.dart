@@ -278,7 +278,9 @@ class Clients extends HookConsumerWidget {
                                     children: [
                                       Text(
                                         filteredClients[index].name ?? '',
-                                        style: Theme.of(context).textTheme.displayMedium,
+                                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                          fontSize: Responsive.fontSize(context, 14),
+                                        ),
                                       ),
                                       SizedBox(height: responsiveData.scaleHeight(8)),
                                       Row(

@@ -77,7 +77,9 @@ class ProductTile extends HookWidget {
                 children: [
                   Text(
                     product.name ?? '',
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                      fontSize: Responsive.fontSize(context, 14),
+                    ),
                   ),
                   SizedBox(height: responsiveData.scaleHeight(6)),
                   Row(
