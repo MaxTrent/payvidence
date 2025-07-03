@@ -29,6 +29,14 @@ class ChangeProfilePictureViewModel extends BaseChangeNotifier {
         "Initial profile picture URL from UpdatePersonalDetailsVM: $_currentProfilePictureUrl");
   }
 
+  void refreshProfilePicture() {
+    final updateVM = ref.read(updatePersonalDetailsViewModelProvider);
+    _currentProfilePictureUrl = updateVM.userInfo?.account.profilePictureUrl;
+    _selectedImage = null; // Clear any previously selected image
+    notifyListeners();
+    print("Refreshed profile picture URL: $_currentProfilePictureUrl");
+  }
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

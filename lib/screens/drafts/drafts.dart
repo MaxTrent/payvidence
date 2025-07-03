@@ -100,7 +100,8 @@ class Drafts extends HookConsumerWidget {
                   hintText: 'Search for product',
                   controller: _searchController,
                   radius: responsiveData.largeRadius,
-                  filled: true,
+                  filled: isDarkMode ? false : true,
+                  appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
                 SizedBox(

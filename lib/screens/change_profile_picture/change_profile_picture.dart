@@ -34,6 +34,16 @@ class ChangeProfilePicture extends HookConsumerWidget {
       return () => viewModel.removeListener(listener);
     }, [viewModel]);
 
+    useEffect(() {
+      // Refresh profile picture when screen loads
+      viewModel.refreshProfilePicture();
+      // Clear cached image to force refresh
+      if (viewModel.currentProfilePictureUrl != null) {
+        CachedNetworkImage.evictFromCache(viewModel.currentProfilePictureUrl!);
+      }
+      return null;
+    }, []);
+
     return ResponsiveWrapper(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

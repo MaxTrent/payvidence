@@ -883,6 +883,9 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                                   .copyWith(color: isLoading ? Colors.grey : primaryColor2),
                             ),
                           ),
+                          SizedBox(
+                            height: responsiveData.scaleHeight(14),
+                          ),
                         ],
                       ),
                     ],

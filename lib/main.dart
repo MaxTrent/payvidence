@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -20,10 +21,23 @@ import 'firebase_options.dart';
 
 final routeObserver = RouteObserver<ModalRoute>();
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  // Bypass certificate verification for all HTTP clients in debug mode
+  if (kDebugMode) {
+    HttpOverrides.global = MyHttpOverrides();
+  }
 
   AppLogger.setLogger(showLogs: kDebugMode);
 
