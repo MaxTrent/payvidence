@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utilities/animations.dart';
+import '../constants/app_colors.dart';
 
 class LoadingDialog extends StatelessWidget {
   static show(
@@ -38,6 +39,7 @@ class LoadingDialog extends StatelessWidget {
                   scale: 0.45,
                   child: const CircularProgressIndicator(
                     strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(primaryColor2),
                   ),
                 )
               ],

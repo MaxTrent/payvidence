@@ -39,7 +39,7 @@ class AppTheme {
         fontFamily: 'Polysans',
         color: Colors.black,
         fontSize: Responsive.fontSize(context, 16),
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w200,
       ),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(

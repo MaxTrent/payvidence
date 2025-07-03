@@ -79,17 +79,33 @@ class ProductDetails extends HookConsumerWidget {
                   height: responsiveData.scaleHeight(320),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: currentProduct?.logoUrl != null
-                          ? NetworkImage(currentProduct!.logoUrl!)
-                          : AssetImage(Assets.png.payvidenceLogo.path) as ImageProvider,
-                      fit: BoxFit.cover,
-                    ),
+                    color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
                   ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
-                      child: Column(
+                  child: Stack(
+                    children: [
+                      currentProduct?.logoUrl != null
+                          ? Image.network(
+                              currentProduct!.logoUrl!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              errorBuilder: (context, error, stackTrace) => Center(
+                                child: Image.asset(
+                                  Assets.png.payvidenceLogo.path,
+                                  height: responsiveData.scaleHeight(450),
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: Image.asset(
+                                Assets.png.payvidenceLogo.path,
+                                height: responsiveData.scaleHeight(150),
+                              ),
+                            ),
+                      SafeArea(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+                          child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           SizedBox(height: responsiveData.scaleHeight(18)),
@@ -141,35 +157,40 @@ class ProductDetails extends HookConsumerWidget {
                             ],
                           ),
                           const Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              locator<PayvidenceAppRouter>().navigate(
-                                  AddProductRoute(product: currentProduct));
-                            },
-                            child: Container(
-                              height: responsiveData.scaleHeight(40),
-                              width: responsiveData.scaleWidth(139),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.6),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: responsiveData.scaleHeight(10),
-                                    horizontal: responsiveData.scaleWidth(12)),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      Assets.svg.edit,
-                                      width: responsiveData.scaleWidth(20),
-                                      height: responsiveData.scaleHeight(20),
-                                    ),
-                                    SizedBox(width: responsiveData.scaleWidth(4)),
-                                    Text(
-                                      'Edit product',
-                                      style: Theme.of(context).textTheme.displaySmall,
-                                    )
-                                  ],
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: GestureDetector(
+                              onTap: () {
+                                locator<PayvidenceAppRouter>().navigate(
+                                    AddProductRoute(product: currentProduct));
+                              },
+                              child: Container(
+                                // height: responsiveData.scaleHeight(40),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.6),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: responsiveData.scaleHeight(10),
+                                      horizontal: responsiveData.scaleWidth(12)),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        Assets.svg.edit,
+                                        width: responsiveData.scaleWidth(20),
+                                        height: responsiveData.scaleHeight(20),
+                                      ),
+                                      SizedBox(width: responsiveData.scaleWidth(4)),
+                                      Flexible(
+                                        child: Text(
+                                          'Edit product',
+                                          style: Theme.of(context).textTheme.displaySmall,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -178,6 +199,8 @@ class ProductDetails extends HookConsumerWidget {
                         ],
                       ),
                     ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
@@ -194,31 +217,37 @@ class ProductDetails extends HookConsumerWidget {
                           fontSize: Responsive.fontSize(context, 22),
                         ),
                       ),
-                      SizedBox(
-                        height: responsiveData.scaleHeight(12),
-                      ),
-                      Text(
-                        currentProduct?.description?.capitalize() ?? '',
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
-                      SizedBox(
-                        height: responsiveData.scaleHeight(10),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '${currentProduct?.category?.name?.capitalize() ?? ''}   ',
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                          AppDot(
-                            color: isDarkMode ? Colors.white : Colors.black,
-                          ),
-                          Text(
-                            '   ${currentProduct?.brand?.name?.capitalize() ?? ''}',
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                        ],
-                      ),
+                      if (currentProduct?.description?.isNotEmpty == true) ...[
+                        SizedBox(
+                          height: responsiveData.scaleHeight(12),
+                        ),
+                        Text(
+                          currentProduct!.description!.capitalize(),
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        SizedBox(
+                          height: responsiveData.scaleHeight(10),
+                        ),
+                      ],
+                      if (currentProduct?.category?.name?.isNotEmpty == true || currentProduct?.brand?.name?.isNotEmpty == true)
+                        Row(
+                          children: [
+                            if (currentProduct?.category?.name?.isNotEmpty == true)
+                              Text(
+                                '${currentProduct!.category!.name!.capitalize()}   ',
+                                style: Theme.of(context).textTheme.displaySmall,
+                              ),
+                            if (currentProduct?.category?.name?.isNotEmpty == true && currentProduct?.brand?.name?.isNotEmpty == true)
+                              AppDot(
+                                color: isDarkMode ? Colors.white : Colors.black,
+                              ),
+                            if (currentProduct?.brand?.name?.isNotEmpty == true)
+                              Text(
+                                currentProduct?.category?.name?.isNotEmpty == true ? '   ${currentProduct!.brand!.name!.capitalize()}' : currentProduct!.brand!.name!.capitalize(),
+                                style: Theme.of(context).textTheme.displaySmall,
+                              ),
+                          ],
+                        ),
                       SizedBox(
                         height: responsiveData.scaleHeight(20),
                       ),
@@ -287,14 +316,22 @@ class ProductDetails extends HookConsumerWidget {
                       ),
                       AppButton(
                         buttonText: 'Record sale',
-                        onPressed: () {},
+                        onPressed: () {
+                          locator<PayvidenceAppRouter>().navigate(
+                            GenerateReceiptRoute(isInvoice: false),
+                          );
+                        },
                       ),
                       SizedBox(
                         height: responsiveData.scaleHeight(8),
                       ),
                       AppButton(
                         buttonText: 'Generate invoice',
-                        onPressed: () {},
+                        onPressed: () {
+                          locator<PayvidenceAppRouter>().navigate(
+                            GenerateReceiptRoute(isInvoice: true),
+                          );
+                        },
                         backgroundColor: Colors.transparent,
                         textColor: primaryColor2,
                       ),

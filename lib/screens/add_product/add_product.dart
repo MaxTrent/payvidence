@@ -28,6 +28,7 @@ import '../../utilities/responsive_wrapper.dart';
 import '../../utilities/toast_service.dart';
 import '../../utilities/validators.dart';
 import '../../utilities/number_formatter.dart';
+import '../../utilities/real_time_number_formatter.dart';
 
 @RoutePage(name: 'AddProductRoute')
 class AddProduct extends ConsumerStatefulWidget {
@@ -56,7 +57,14 @@ class _AddProductState extends ConsumerState<AddProduct> {
       productNameController.text = widget.product?.name ?? '';
       productDescController.text = widget.product?.description ?? '';
       productQtyController.text = widget.product?.quantityAvailable.toString() ?? '';
-      productPriceController.text = NumberFormatter.formatNumber(widget.product?.price ?? '');
+      // Format price with commas manually
+      final price = widget.product?.price ?? '0';
+      final numPrice = double.tryParse(price) ?? 0;
+      final formattedPrice = numPrice.toStringAsFixed(2).replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+      productPriceController.text = formattedPrice;
       vatRateController.text = widget.product?.vat ?? '';
       Future.delayed(const Duration(milliseconds: 200), () {
         ref.read(getCurrentCategoryProvider.notifier).setCurrentCategory(widget.product!.category!);
@@ -79,34 +87,59 @@ class _AddProductState extends ConsumerState<AddProduct> {
     final responsiveData = ResponsiveInherited.of(context);
 
     Future<void> createProduct() async {
-      // Use "Uncategorized" category if no category is selected
-      String categoryId = currentCategory?.id ?? "0";
-      Map<String, dynamic> data = {
-        "name": productNameController.text,
-        "description": productDescController.text.isEmpty ? "No description" : productDescController.text, // Default to "No description"
-        "price": NumberFormatter.unformatNumber(productPriceController.text),
-        "quantity": productQtyController.text,
-        "category_id": categoryId,
-      };
-      if (currentBrand != null) {
-        data.addAll({"brand_id": currentBrand.id});
-      } else {
-        data.addAll({"brand_id": "0"}); // Default to "0" for "New brand"
-      }
+      Map<String, dynamic> data = {};
+      
       if (widget.product == null) {
-        data.addAll({
+        // Creating new product - send all fields
+        String categoryId = currentCategory?.id ?? "0";
+        data = {
+          "name": productNameController.text,
+          "description": productDescController.text.isEmpty ? "No description" : productDescController.text,
+          "price": productPriceController.text.replaceAll(',', ''),
+          "quantity": productQtyController.text,
+          "category_id": categoryId,
           "logo_image": await MultipartFile.fromFile(productImage.value!.path,
               filename: productImage.value!.path.split('/').last),
           "business_id": ref.read(getCurrentBusinessProvider)?.id,
-          "vat": vatRateController.text,
-        });
+        };
+        if (currentBrand != null) {
+          data.addAll({"brand_id": currentBrand.id});
+        } else {
+          data.addAll({"brand_id": "0"});
+        }
+        if (vatRateController.text.isNotEmpty) {
+          data["vat"] = vatRateController.text;
+        }
       } else {
+        // Updating existing product - only send changed fields
         data.addAll({"_method": "PATCH"});
+        
+        // Only add fields that have changed
+        if (productNameController.text != (widget.product?.name ?? '')) {
+          data["name"] = productNameController.text;
+        }
+        if ((productDescController.text.isEmpty ? "No description" : productDescController.text) != (widget.product?.description ?? '')) {
+          data["description"] = productDescController.text.isEmpty ? "No description" : productDescController.text;
+        }
+        final cleanPrice = productPriceController.text.replaceAll(',', '');
+        if (cleanPrice != (widget.product?.price ?? '')) {
+          data["price"] = cleanPrice;
+        }
+        if (productQtyController.text != (widget.product?.quantityAvailable.toString() ?? '')) {
+          data["quantity"] = productQtyController.text;
+        }
+        if (vatRateController.text != (widget.product?.vat ?? '')) {
+          data["vat"] = vatRateController.text;
+        }
+        if (currentCategory?.id != widget.product?.category?.id) {
+          data["category_id"] = currentCategory?.id ?? "0";
+        }
+        if (currentBrand?.id != widget.product?.brand?.id) {
+          data["brand_id"] = currentBrand?.id ?? "0";
+        }
         if (productImage.value != null) {
-          data.addAll({
-            "logo_image": await MultipartFile.fromFile(productImage.value!.path,
-                filename: productImage.value!.path.split('/').last),
-          });
+          data["logo_image"] = await MultipartFile.fromFile(productImage.value!.path,
+              filename: productImage.value!.path.split('/').last);
         }
       }
       FormData requestData = FormData.fromMap(data);
@@ -239,6 +272,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                   AppTextField(
                     hintText: 'Product quantity',
                     controller: productQtyController,
+                    enabled: widget.product == null,
                     validator: (val) {
                       return Validator.validateEmpty(val);
                     },
@@ -260,10 +294,17 @@ class _AddProductState extends ConsumerState<AddProduct> {
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(15),
-                      NumberFormatter(),
+                      RealTimeNumberFormatter(),
                     ],
                     validator: (val) {
-                      return Validator.validateName(val);
+                      if (val?.trim().isEmpty ?? true) {
+                        return 'Please enter product price';
+                      }
+                      final cleanPrice = val!.replaceAll(',', '');
+                      if (double.tryParse(cleanPrice) == null || double.parse(cleanPrice) <= 0) {
+                        return 'Enter a valid price greater than 0';
+                      }
+                      return null;
                     },
                     prefixIcon: Padding(
                       padding: EdgeInsets.fromLTRB(
@@ -374,9 +415,7 @@ class _AddProductState extends ConsumerState<AddProduct> {
                       LengthLimitingTextInputFormatter(11),
                       FilteringTextInputFormatter.digitsOnly,
                     ],
-                    validator: (val) {
-                      return Validator.validateEmpty(val);
-                    },
+                    validator: (val) => null, // VAT is optional
                   ),
                   SizedBox(height: responsiveData.scaleHeight(32)),
                   AppButton(

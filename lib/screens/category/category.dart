@@ -36,6 +36,7 @@ class EmptyCategory extends HookConsumerWidget {
 
     return ResponsiveWrapper(
       child: KeyboardDismissibleScaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: AppTextField(
@@ -55,7 +56,8 @@ class EmptyCategory extends HookConsumerWidget {
             hintText: 'Search for category',
             controller: _searchController,
             radius: responsiveData.largeRadius,
-            filled: true,
+            filled: isDarkMode ? false : true,
+            appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
             fillColor: isDarkMode ? Colors.black : appGrey5,
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/brand_providers/get_all_brand_provider.dart';
 import 'package:payvidence/utilities/toast_service.dart';
@@ -33,7 +34,8 @@ class Brands extends HookConsumerWidget {
     final allBrand = ref.watch(getAllBrandProvider);
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: AppTextField(
@@ -51,20 +53,25 @@ class Brands extends HookConsumerWidget {
             hintText: 'Search for brand',
             controller: _searchController,
             radius: responsiveData.largeRadius,
-            filled: true,
+            filled: isDarkMode ? false : true,
+            appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
             fillColor: isDarkMode ? Colors.black : appGrey5,
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            locator<PayvidenceAppRouter>()
-                .navigateNamed(PayvidenceRoutes.addBrand);
-          },
-          backgroundColor: primaryColor2,
-          child: Icon(
-            Icons.add,
-            size: responsiveData.scaleHeight(40),
-          ),
+        floatingActionButton: allBrand.maybeWhen(
+          data: (data) => data.isNotEmpty ? FloatingActionButton(
+            onPressed: () {
+              locator<PayvidenceAppRouter>()
+                  .navigateNamed(PayvidenceRoutes.addBrand);
+            },
+            backgroundColor: primaryColor2,
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: responsiveData.scaleHeight(40),
+            ),
+          ) : null,
+          orElse: () => null,
         ),
         body: SafeArea(
           child: Padding(
@@ -203,7 +210,9 @@ class Brands extends HookConsumerWidget {
                             },
                             child: CategoryTile(
                               title: data[index].name ?? '',
-                              subtitle: data[index].description ?? '',
+                              subtitle: data[index].description?.isEmpty == true || data[index].description == null 
+                                  ? 'No description' 
+                                  : data[index].description!,
                               onPressed: () {
                                 ref
                                     .read(getCurrentBrandProvider.notifier)
@@ -226,7 +235,35 @@ class Brands extends HookConsumerWidget {
                     return const Text('An error has occurred');
                   },
                   loading: () {
-                    return const CustomShimmer();
+                    return Expanded(
+                      child: ListView.separated(
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                            decoration: BoxDecoration(
+                              color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomShimmer(
+                                  height: responsiveData.scaleHeight(20),
+                                  width: responsiveData.scaleWidth(120),
+                                ),
+                                SizedBox(height: responsiveData.scaleHeight(8)),
+                                CustomShimmer(
+                                  height: responsiveData.scaleHeight(16),
+                                  width: responsiveData.scaleWidth(200),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                        itemCount: 6,
+                      ),
+                    );
                   },
                 ),
               ],

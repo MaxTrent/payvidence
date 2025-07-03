@@ -6,13 +6,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
-import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'UpdatePersonalDetailsRoute')
 class UpdatePersonalDetails extends HookConsumerWidget {

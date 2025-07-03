@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
+import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 import 'package:payvidence/utilities/animations.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import '../../components/app_button.dart';
@@ -63,6 +64,26 @@ class AllReceipts extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: KeyboardDismissibleScaffold(
         resizeToAvoidBottomInset: false,
+        floatingActionButton: ValueListenableBuilder(
+          valueListenable: productNumber,
+          builder: (context, value, _) {
+            if ((value ?? 0) > 0) {
+              return FloatingActionButton(
+                onPressed: () {
+                  ref.read(getCurrentProductProvider.notifier).state = null;
+                  locator<PayvidenceAppRouter>()
+                      .navigate(GenerateReceiptRoute(isInvoice: false));
+                },
+                backgroundColor: primaryColor2,
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
         appBar: AppBar(
           titleSpacing: 0,
           centerTitle: false,
@@ -175,6 +196,7 @@ class AllReceipts extends HookConsumerWidget {
                                       child: AppButton(
                                         buttonText: 'Generate receipt',
                                         onPressed: () {
+                                          ref.read(getCurrentProductProvider.notifier).state = null;
                                           locator<PayvidenceAppRouter>()
                                               .navigate(GenerateReceiptRoute(isInvoice: false));
                                         },
@@ -299,146 +321,110 @@ class AllReceipts extends HookConsumerWidget {
 }
 
 class ReceiptTile extends StatelessWidget {
-  const ReceiptTile({
-    required this.receipt,
-    super.key,
-  });
-
   final Receipt receipt;
+
+  const ReceiptTile({super.key, required this.receipt});
 
   @override
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    final firstProductDetail = receipt.recordProductDetails?.isNotEmpty == true
-        ? receipt.recordProductDetails!.first
-        : null;
-
-    final product = firstProductDetail?.product;
-    final productName = product?.name ?? 'Unknown Product';
-    final amount = product != null
-        ? (double.tryParse(product.price ?? '0') ?? 0)
-        .toString()
-        .toCommaSeparated()
-        : '0';
-    final imageUrl = product?.logoUrl ?? "";
-    final dateTime = receipt.createdAt?.toString().toFormattedIsoDate() ?? '';
-    final unitSold = product?.quantitySold?.toString() ?? '0';
-
-    return Container(
-      height: responsiveData.scaleHeight(101),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-        border: Border.all(
-          color: borderColor,
-          width: responsiveData.scaleWidth(1),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-        child: Row(
-          children: [
-            Container(
-              height: responsiveData.scaleHeight(69),
-              width: responsiveData.scaleWidth(69),
-              decoration: BoxDecoration(
-                color: appGrey5,
-                borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-              ),
-              child: imageUrl.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.image,
-                            color: Colors.grey,
-                            size: responsiveData.scaleHeight(30),
-                          );
-                        },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : Icon(
-                      Icons.image,
-                      color: Colors.grey,
-                      size: responsiveData.scaleHeight(30),
-                    ),
-            ),
-            SizedBox(width: responsiveData.scaleWidth(12)),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          productName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium!
-                              .copyWith(fontSize: Responsive.fontSize(context, 16)),
-                          overflow: TextOverflow.ellipsis,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          height: responsiveData.scaleHeight(72),
+          width: responsiveData.scaleHeight(72),
+          decoration: BoxDecoration(
+            color: isDarkMode ? Colors.grey[800] : Colors.grey[700],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: (receipt.recordProductDetails[0].product?.logoUrl != null && 
+                 receipt.recordProductDetails[0].product!.logoUrl!.isNotEmpty)
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    receipt.recordProductDetails[0].product!.logoUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.asset(
+                          Assets.png.payvidenceLogo.path,
+                          fit: BoxFit.contain,
                         ),
-                      ),
-                      Row(
-                        children: [
-                          AppNaira(
-                            fontSize: 16,
-                          ),
-                          Text(
-                            amount,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displayMedium!
-                                .copyWith(fontSize: Responsive.fontSize(context, 16)),
-                          ),
-                        ],
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        dateTime,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(fontSize: Responsive.fontSize(context, 12)),
-                      ),
-                      Text(
-                        '$unitSold unit${int.tryParse(unitSold) != 1 ? 's' : ''} sold',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(fontSize: Responsive.fontSize(context, 12)),
-                      ),
-                    ],
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.asset(
+                    Assets.png.payvidenceLogo.path,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+        ),
+        SizedBox(width: responsiveData.scaleWidth(14)),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                receipt.recordProductDetails[0].product?.name ?? '',
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              SizedBox(height: responsiveData.scaleHeight(6)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '${receipt.recordProductDetails[0].quantity ?? ''} units sold',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displaySmall!
+                        .copyWith(fontSize: Responsive.fontSize(context, 14), color: appGrey4),
+                  ),
+                  SizedBox(width: responsiveData.scaleWidth(10)),
+                  Container(
+                    height: responsiveData.scaleHeight(6),
+                    width: responsiveData.scaleHeight(6),
+                    decoration: BoxDecoration(
+                      color: appGrey4,
+                      borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                    ),
+                  ),
+                  SizedBox(width: responsiveData.scaleWidth(10)),
+                  Expanded(
+                    child: Text(
+                      DateFormat.yMd().add_jm().format(receipt.createdAt!),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall!
+                          .copyWith(fontSize: Responsive.fontSize(context, 14), color: appGrey4),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              SizedBox(height: responsiveData.scaleHeight(8)),
+              Row(
+                children: [
+                  AppNaira(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black),
+                  Text(
+                    '${(double.tryParse(receipt.recordProductDetails[0].total ?? '0') ?? 0).toString().toCommaSeparated() ?? ''} ',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium!
+                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

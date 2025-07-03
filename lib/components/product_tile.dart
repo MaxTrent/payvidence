@@ -101,10 +101,12 @@ class ProductTile extends HookWidget {
                       ),
                       SizedBox(width: responsiveData.scaleWidth(10)),
                       Text(
-                        '${product.quantityAvailable.toString()} units left',
+                        product.quantityAvailable == 0 
+                            ? 'Out of stock'
+                            : '${product.quantityAvailable.toString()} units left',
                         style: Theme.of(context).textTheme.displaySmall!.copyWith(
                           fontSize: Responsive.fontSize(context, 14),
-                          color: appGrey4,
+                          color: product.quantityAvailable == 0 ? appRed : appGrey4,
                         ),
                       ),
                     ],
