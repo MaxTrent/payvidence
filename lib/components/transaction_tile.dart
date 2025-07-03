@@ -43,25 +43,21 @@ class TransactionTile extends HookWidget {
             width: responsiveData.scaleHeight(72),
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.grey[800] : Colors.grey[800],
-              borderRadius: BorderRadius.circular(8),
             ),
             child: imageUrl.isNotEmpty
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Image.asset(
-                            Assets.png.payvidenceLogo.path,
-                            fit: BoxFit.contain,
-                          ),
-                        );
-                      },
-                    ),
-                  )
+                ? Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Image.asset(
+                        Assets.png.payvidenceLogo.path,
+                        fit: BoxFit.contain,
+                      ),
+                    );
+                  },
+                )
                 : Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Image.asset(
@@ -80,8 +76,8 @@ class TransactionTile extends HookWidget {
               children: [
                 Text(
                   productName,
-                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                    fontSize: Responsive.fontSize(context, 14),
+                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                    fontWeight:FontWeight.w600,
                   ),
                 ),
                 SizedBox(
@@ -130,35 +126,41 @@ class TransactionTile extends HookWidget {
                       ],
                     ),
                     Container(
-                      height: responsiveData.scaleHeight(23),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: responsiveData.scaleWidth(6),
-                          vertical: responsiveData.scaleHeight(5)),
+                      // height: responsiveData.scaleHeight(23),
+                      // padding: EdgeInsets.symmetric(
+                      //     horizontal: responsiveData.scaleWidth(6),
+                      //     vertical: responsiveData.scaleHeight(5)),
                       decoration: BoxDecoration(
                           color: isDarkMode
                               ? primaryColor2
                               : primaryColor2.withOpacity(0.2),
                           borderRadius:
-                          BorderRadius.circular(responsiveData.smallRadius)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SvgPicture.asset(
-                            receiptOrInvoice.trim().toLowerCase() == 'receipt'
-                                ? Assets.svg.receipt
-                                : Assets.svg.invoice,
-                            colorFilter: ColorFilter.mode(
-                                isDarkMode ? Colors.white : primaryColor2,
-                                BlendMode.srcIn),
-                          ),
-                          Text(
-                            receiptOrInvoice,
-                            style: Theme.of(context).textTheme.displaySmall!
-                                .copyWith(
-                                fontSize: Responsive.fontSize(context, 12),
-                                color: isDarkMode ? Colors.white : primaryColor2),
-                          ),
-                        ],
+                          BorderRadius.circular(responsiveData.scaleHeight(6))),
+                      child: Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(7), vertical: responsiveData.scaleHeight(4) ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SvgPicture.asset(
+                              receiptOrInvoice.trim().toLowerCase() == 'receipt'
+                                  ? Assets.svg.receipt
+                                  : Assets.svg.invoice,
+                              colorFilter: ColorFilter.mode(
+                                  isDarkMode ? Colors.white : primaryColor2,
+                                  BlendMode.srcIn),
+                              height: responsiveData.scaleHeight(14),
+                              width: responsiveData.scaleWidth(12),
+                            ),
+                            SizedBox(width: responsiveData.scaleWidth(4),),
+                            Text(
+                              receiptOrInvoice,
+                              style: Theme.of(context).textTheme.displaySmall!
+                                  .copyWith(
+                                  fontSize: Responsive.fontSize(context, 12),
+                                  color: isDarkMode ? Colors.white : primaryColor2),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   ],

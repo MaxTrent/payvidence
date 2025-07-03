@@ -58,10 +58,13 @@ class Receipt {
     business: json["business"] == null
         ? null
         : Business.fromJson(json["business"]),
-    recordProductDetails: json["record_product_details"] == null
-        ? []
-        : List<RecordProductDetail>.from(json["record_product_details"]!
-        .map((x) => RecordProductDetail.fromJson(x))),
+    recordProductDetails: json["record_product_details"] != null
+        ? List<RecordProductDetail>.from(json["record_product_details"]!
+            .map((x) => RecordProductDetail.fromJson(x)))
+        : json["products"] != null
+        ? List<RecordProductDetail>.from(json["products"]!
+            .map((x) => RecordProductDetail.fromJson(x)))
+        : [],
   );
 
   Map<String, dynamic> toJson() => {

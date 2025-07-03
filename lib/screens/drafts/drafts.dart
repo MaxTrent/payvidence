@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
+import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/loading_dialog.dart';
@@ -214,6 +215,7 @@ class DraftTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
@@ -241,7 +243,7 @@ class DraftTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    draft.recordProductDetails?[0].product?.name ?? '',
+                    draft.recordProductDetails[0].product?.name ?? '',
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   SizedBox(
@@ -250,7 +252,7 @@ class DraftTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${draft.recordProductDetails?[0].quantity ?? ''} units sold',
+                        '${draft.recordProductDetails[0].quantity ?? ''} units sold',
                         style: Theme.of(context)
                             .textTheme
                             .displaySmall!
@@ -306,8 +308,9 @@ class DraftTile extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      AppNaira(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black),
                       Text(
-                        '₦${draft.recordProductDetails?[0].total ?? ''} ',
+                        '${draft.recordProductDetails[0].total ?? ''} ',
                         style: Theme.of(context)
                             .textTheme
                             .displayMedium!

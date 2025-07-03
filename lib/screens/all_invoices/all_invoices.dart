@@ -19,6 +19,7 @@ import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/animations.dart';
+import '../../providers/product_providers/current_product_provider.dart';
 import '../all_receipts/all_receipts.dart';
 
 @RoutePage(name: 'AllInvoicesRoute')
@@ -169,6 +170,7 @@ class AllInvoices extends HookConsumerWidget {
                                       child: AppButton(
                                         buttonText: 'Generate invoice',
                                         onPressed: () {
+                                          ref.read(getCurrentProductProvider.notifier).state = null;
                                           locator<PayvidenceAppRouter>()
                                               .navigate(GenerateReceiptRoute(isInvoice: true));
                                         },
@@ -214,7 +216,28 @@ class AllInvoices extends HookConsumerWidget {
                     );
                   },
                   error: (error, _) {
-                    return const Text('An error has occurred');
+                    return PullToRefresh(
+                      onRefresh: onRefresh,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            error.toString().contains('timeout')
+                                ? 'Connection is slow. Please check your internet and try again.'
+                                : 'Unable to load invoices. Please try again.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          SizedBox(height: responsiveData.scaleHeight(16)),
+                          AppButton(
+                            buttonText: 'Retry',
+                            onPressed: () async {
+                              await onRefresh();
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   loading: () {
                     return ListView.separated(
@@ -299,6 +322,7 @@ class AllInvoices extends HookConsumerWidget {
             return filteredData.isNotEmpty
                 ? FloatingActionButton(
               onPressed: () {
+                ref.read(getCurrentProductProvider.notifier).state = null;
                 locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: true));
               },
               backgroundColor: primaryColor2,

@@ -133,15 +133,17 @@ class ContainerWithClippedCircles extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
 
-    double subtotal = record.recordProductDetails.fold(
+    final productDetails = record.recordProductDetails ?? [];
+    double subtotal = productDetails.fold(
         0,
             (sum, item) =>
         sum + (double.tryParse(item.price ?? '0') ?? 0) * (item.quantity ?? 0));
-    double discountRate =
-        (double.tryParse(record.recordProductDetails.first.discount ?? '0') ?? 0) /
-            100;
-    double vatRate =
-        (double.tryParse(record.recordProductDetails.first.product?.vat ?? '0') ?? 0) / 100;
+    double discountRate = productDetails.isNotEmpty
+        ? (double.tryParse(productDetails.first.discount ?? '0') ?? 0) / 100
+        : 0;
+    double vatRate = productDetails.isNotEmpty
+        ? (double.tryParse(productDetails.first.product?.vat ?? '0') ?? 0) / 100
+        : 0;
     double discount = subtotal * discountRate;
     double vat = (subtotal - discount) * vatRate;
     double grandTotal = subtotal - discount + vat;
@@ -400,7 +402,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                               const TextSpan(text: 'RATE ('),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: AppNaira(fontSize: 10, color: Colors.white), // Reduced from 14
+                                child: AppNaira(fontSize: 10, color: Colors.white),
                               ),
                               const TextSpan(text: ')'),
                             ],
@@ -439,7 +441,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                               const TextSpan(text: 'AMT. ('),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: AppNaira(fontSize: 10, color: Colors.white), // Reduced from 14
+                                child: AppNaira(fontSize: 10, color: Colors.white),
                               ),
                               const TextSpan(text: ')'),
                             ],
@@ -448,7 +450,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                       ),
                     ],
                   ),
-                  ...record.recordProductDetails.map(
+                  ...productDetails.map(
                         (row) => TableRow(
                       decoration: const BoxDecoration(
                         border: Border(
@@ -734,7 +736,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             children: [
                               const WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: AppNaira(fontSize: 10, color: Colors.white), // Reduced from 14
+                                child: AppNaira(fontSize: 10, color: Colors.white),
                               ),
                               TextSpan(text: grandTotal.toString().commaSeparated()),
                             ],

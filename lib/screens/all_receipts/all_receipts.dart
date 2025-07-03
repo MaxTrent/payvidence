@@ -245,7 +245,28 @@ class AllReceipts extends HookConsumerWidget {
                     );
                   },
                   error: (error, _) {
-                    return const Text('An error has occurred');
+                    return PullToRefresh(
+                      onRefresh: onRefresh,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            error.toString().contains('timeout')
+                                ? 'Connection is slow. Please check your internet and try again.'
+                                : 'Unable to load receipts. Please try again.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          SizedBox(height: responsiveData.scaleHeight(16)),
+                          AppButton(
+                            buttonText: 'Retry',
+                            onPressed: () async {
+                              await onRefresh();
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   loading: () {
                     return ListView.separated(
@@ -338,26 +359,22 @@ class ReceiptTile extends StatelessWidget {
           width: responsiveData.scaleHeight(72),
           decoration: BoxDecoration(
             color: isDarkMode ? Colors.grey[800] : Colors.grey[700],
-            borderRadius: BorderRadius.circular(8),
           ),
           child: (receipt.recordProductDetails[0].product?.logoUrl != null && 
                  receipt.recordProductDetails[0].product!.logoUrl!.isNotEmpty)
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    receipt.recordProductDetails[0].product!.logoUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Image.asset(
-                          Assets.png.payvidenceLogo.path,
-                          fit: BoxFit.contain,
-                        ),
-                      );
-                    },
-                  ),
-                )
+              ? Image.network(
+                receipt.recordProductDetails[0].product!.logoUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Image.asset(
+                      Assets.png.payvidenceLogo.path,
+                      fit: BoxFit.contain,
+                    ),
+                  );
+                },
+              )
               : Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Image.asset(
@@ -374,8 +391,8 @@ class ReceiptTile extends StatelessWidget {
             children: [
               Text(
                 receipt.recordProductDetails[0].product?.name ?? '',
-                style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                  fontSize: Responsive.fontSize(context, 14),
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                  fontWeight: FontWeight.w600
                 ),
               ),
               SizedBox(height: responsiveData.scaleHeight(6)),

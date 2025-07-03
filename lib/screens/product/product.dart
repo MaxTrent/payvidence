@@ -229,12 +229,24 @@ class Product extends HookConsumerWidget {
                   error: (error, _) {
                     return PullToRefresh(
                       onRefresh: onRefresh,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height - responsiveData.scaleHeight(200),
-                          child: const Center(child: Text('An error has occurred')),
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            error.toString().contains('timeout')
+                                ? 'Connection is slow. Please check your internet and try again.'
+                                : 'Unable to load products. Please try again.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          SizedBox(height: responsiveData.scaleHeight(16)),
+                          AppButton(
+                            buttonText: 'Retry',
+                            onPressed: () async {
+                              await onRefresh();
+                            },
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -486,7 +498,13 @@ class FilterBottomSheet extends HookConsumerWidget {
                 );
               },
               error: (error, _) {
-                return const Text('An error has occurred');
+                return Text(
+                  error.toString().contains('timeout')
+                      ? 'Connection is slow. Please try again.'
+                      : 'Unable to load categories. Please try again.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.displaySmall,
+                );
               },
               loading: () => ListView.separated(
                 shrinkWrap: true,

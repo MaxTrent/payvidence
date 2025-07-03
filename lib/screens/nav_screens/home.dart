@@ -88,14 +88,18 @@ class HomeScreen extends HookConsumerWidget {
 
     final responsiveData = ResponsiveInherited.of(context);
 
+    final isLoading = getAllBusiness.isLoading || transactionsViewModel.isLoading;
+
     return ResponsiveWrapper(
-      child: KeyboardDismissibleScaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
-            child: PullToRefresh(
-              onRefresh: onRefresh,
-              child: ListView(
+      child: AbsorbPointer(
+        absorbing: isLoading,
+        child: KeyboardDismissibleScaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+              child: PullToRefresh(
+                onRefresh: onRefresh,
+                child: ListView(
                 physics: const BouncingScrollPhysics(),
                 children: [
                   SizedBox(height: responsiveData.scaleHeight(8)),
@@ -183,7 +187,13 @@ class HomeScreen extends HookConsumerWidget {
                         ],
                       );
                     },
-                    error: (error, _) => const Text("Error fetching businesses"),
+                    error: (error, _) => Text(
+                      error.toString().contains('timeout')
+                          ? 'Connection is slow. Please check your internet and try again.'
+                          : 'Unable to load business data. Please try again.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displaySmall,
+                    ),
                     loading: () => const CustomShimmer(),
                   ),
 
@@ -323,6 +333,7 @@ class HomeScreen extends HookConsumerWidget {
                 ],
               ),
             ),
+          ),
           ),
         ),
       ),

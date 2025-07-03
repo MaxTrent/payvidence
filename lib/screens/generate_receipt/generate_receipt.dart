@@ -15,6 +15,7 @@ import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/app_button.dart';
+import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
 import '../../constants/app_colors.dart';
@@ -233,13 +234,15 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             client.name,
                             style: Theme.of(context).textTheme.displaySmall,
                           ),
-                          subtitle: Text(
-                            client.address.isNotEmpty ? client.address : client.phoneNumber,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              fontSize: Responsive.fontSize(context, 12),
-                              color: Colors.grey,
-                            ),
-                          ),
+                          subtitle: client.address.isNotEmpty || client.phoneNumber.isNotEmpty
+                              ? Text(
+                                  client.address.isNotEmpty ? client.address : client.phoneNumber,
+                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    fontSize: Responsive.fontSize(context, 12),
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : null,
                           onTap: () {
                             _selectExistingClient(client);
                           },
@@ -649,9 +652,23 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       
       // Navigate to receipt screen if not a draft
       if (isDraft != true) {
+        // Refresh the receipts list to get the full data
+        await ref.refresh(widget.isInvoice == true
+            ? getAllInvoiceProvider.future
+            : getAllReceiptProvider.future);
+        
+        // Find the newly created receipt with full data
+        final receipts = ref.read(widget.isInvoice == true
+            ? getAllInvoiceProvider
+            : getAllReceiptProvider).value ?? [];
+        final fullReceipt = receipts.firstWhere(
+          (r) => r.id == response.id,
+          orElse: () => response,
+        );
+        
         locator<PayvidenceAppRouter>().navigate(
           ReceiptScreenRoute(
-            record: response,
+            record: fullReceipt,
             isInvoice: widget.isInvoice == true,
           ),
         );
@@ -665,6 +682,24 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         isLoading = false;
       });
       String errorMessage = e.message ?? 'An unknown error has occurred!';
+      
+      // Handle specific error types with user-friendly messages
+      if (errorMessage.contains('not enough stock')) {
+        errorMessage = 'Not enough stock available for this product. Please check quantity.';
+      } else if (errorMessage.contains('timeout')) {
+        errorMessage = 'Connection is slow. Please try again.';
+      } else if (errorMessage.contains('unauthorized')) {
+        errorMessage = 'Session expired. Please log in again.';
+      } else if (errorMessage.startsWith('ApiErrorResponseV2(')) {
+        // Extract just the meaningful part from complex error messages
+        final match = RegExp(r'not enough stock.*?Available: (\d+)').firstMatch(errorMessage);
+        if (match != null) {
+          errorMessage = 'Not enough stock available. Only ${match.group(1)} units left.';
+        } else {
+          errorMessage = 'Something went wrong. Please try again.';
+        }
+      }
+      
       ToastService.showErrorSnackBar(errorMessage);
     } catch (e, stackTrace) {
       if (context.mounted) Navigator.of(context).pop();
@@ -696,13 +731,23 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     final responsiveData = ResponsiveInherited.of(context);
 
     return ResponsiveWrapper(
-      child: GestureDetector(
-        onTap: () {
-          FocusManager.instance.primaryFocus?.unfocus();
-          _hideOverlay();
+      child: PopScope(
+        canPop: !isPrefilledProduct,
+        onPopInvoked: (didPop) {
+          if (!didPop && isPrefilledProduct) {
+            Navigator.of(context).pop();
+          }
         },
-        child: KeyboardDismissibleScaffold(
-          appBar: AppBar(),
+        child: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+            _hideOverlay();
+          },
+          child: KeyboardDismissibleScaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: true,
+
+          ),
           body: Form(
             key: formKey,
             child: Padding(
@@ -894,6 +939,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
               ),
             ),
           ),
+          ),
         ),
       ),
     );
@@ -1046,12 +1092,17 @@ class _FormFieldsState extends State<FormFields> {
                             product.name ?? '',
                             style: Theme.of(context).textTheme.displaySmall,
                           ),
-                          subtitle: Text(
-                            '₦${product.price ?? '0'}',
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              fontSize: Responsive.fontSize(context, 12),
-                              color: Colors.grey,
-                            ),
+                          subtitle: Row(
+                            children: [
+                              AppNaira(fontSize: 14, color: Colors.grey),
+                              Text(
+                                product.price ?? '0',
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  fontSize: Responsive.fontSize(context, 12),
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                           onTap: () {
                             _selectExistingProduct(product);

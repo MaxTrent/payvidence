@@ -38,7 +38,7 @@ class RecordProductDetail {
         productId: json["product_id"] as String?,
         quantity: json["quantity"] as int?,
         price: json["price"] as String?,
-        discount: json["discount"] as String?,
+        discount: json["discount"]?.toString(),
         total: json["total"] as String?,
         createdAt: json["created_at"] == null
             ? null
