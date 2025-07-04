@@ -65,16 +65,18 @@ class ClientDetails extends HookConsumerWidget {
 
     Future<bool> onWillPop() async {
       if (viewModel.isEditing && hasChanges()) {
-        viewModel.updateClient(
-          businessId: businessId,
-          clientId: clientId,
-          newName: nameController.text,
-          newPhoneNumber: phoneNumberController.text,
-          newAddress: addressController.text,
-          navigateOnSuccess: () {
-            locator<PayvidenceAppRouter>().back();
-          },
-        );
+        if (formKey.currentState!.validate()) {
+          viewModel.updateClient(
+            businessId: businessId,
+            clientId: clientId,
+            newName: nameController.text,
+            newPhoneNumber: phoneNumberController.text,
+            newAddress: addressController.text,
+            navigateOnSuccess: () {
+              locator<PayvidenceAppRouter>().back();
+            },
+          );
+        }
         return false;
       }
       return true;
@@ -144,6 +146,15 @@ class ClientDetails extends HookConsumerWidget {
                           focusNode: nameFocusNode,
                           keyboardType: TextInputType.name,
                           textCapitalization: TextCapitalization.words,
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Client name is required';
+                            }
+                            if (val.trim().length < 2) {
+                              return 'Name must be at least 2 characters long';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: responsiveData.scaleHeight(20)),
                         Text(
@@ -162,7 +173,7 @@ class ClientDetails extends HookConsumerWidget {
                           ],
                           validator: (val) {
                             if (val != null && val.isNotEmpty && !val.trim().isValidPhone) {
-                              return 'Enter a valid Nigerian phone number (11 digits starting with 070, 080, 081, 090, etc.)';
+                              return 'Enter a valid Nigerian phone number';
                             }
                             return null;
                           },
@@ -178,6 +189,12 @@ class ClientDetails extends HookConsumerWidget {
                           controller: addressController,
                           enabled: viewModel.isEditing,
                           textCapitalization: TextCapitalization.words,
+                          validator: (val) {
+                            if (val != null && val.isNotEmpty && val.trim().length < 5) {
+                              return 'Address must be at least 5 characters long';
+                            }
+                            return null;
+                          },
                         ),
                       ],
                       SizedBox(height: responsiveData.scaleHeight(32)),
@@ -194,16 +211,18 @@ class ClientDetails extends HookConsumerWidget {
                                 viewModel.toggleEditing();
                                 nameFocusNode.requestFocus();
                               } else if (hasChanges()) {
-                                viewModel.updateClient(
-                                  businessId: businessId,
-                                  clientId: clientId,
-                                  newName: nameController.text,
-                                  newPhoneNumber: phoneNumberController.text,
-                                  newAddress: addressController.text,
-                                  navigateOnSuccess: () {
-                                    locator<PayvidenceAppRouter>().back();
-                                  },
-                                );
+                                if (formKey.currentState!.validate()) {
+                                  viewModel.updateClient(
+                                    businessId: businessId,
+                                    clientId: clientId,
+                                    newName: nameController.text,
+                                    newPhoneNumber: phoneNumberController.text,
+                                    newAddress: addressController.text,
+                                    navigateOnSuccess: () {
+                                      locator<PayvidenceAppRouter>().back();
+                                    },
+                                  );
+                                }
                               } else {
                                 print("No changes detected, exiting edit mode");
                                 viewModel.toggleEditing();
