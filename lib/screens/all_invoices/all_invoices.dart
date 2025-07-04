@@ -19,6 +19,8 @@ import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/animations.dart';
+import 'package:payvidence/utilities/toast_service.dart';
+import '../../components/simple_bottom_sheet.dart';
 import '../../providers/product_providers/current_product_provider.dart';
 import '../all_receipts/all_receipts.dart';
 
@@ -194,16 +196,113 @@ class AllInvoices extends HookConsumerWidget {
                           return SlideInWidget(
                             begin: const Offset(0, 0.3),
                             delay: Duration(milliseconds: 100 + (index * 50)),
-                            child: GestureDetector(
-                              onTap: () {
-                                locator<PayvidenceAppRouter>().navigate(
-                                  ReceiptScreenRoute(
-                                    record: filteredData[index],
-                                    isInvoice: true,
+                            child: Dismissible(
+                              key: Key(filteredData[index].id ?? index.toString()),
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: EdgeInsets.only(right: responsiveData.scaleWidth(20)),
+                                color: appRed,
+                                child: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                  size: responsiveData.scaleHeight(24),
+                                ),
+                              ),
+                              confirmDismiss: (direction) async {
+                                final result = await showModalBottomSheet<bool>(
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                  clipBehavior: Clip.none,
+                                  context: context,
+                                  builder: (context) => SimpleBottomSheet(
+                                    isDarkMode: isDarkMode,
+                                    title: 'Delete Invoice',
+                                    subtitle: 'Are you sure you want to delete this invoice?',
+                                    height: responsiveData.scaleHeight(500),
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () => Navigator.of(context).pop(true),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Icon(
+                                                Icons.delete,
+                                                color: appRed,
+                                              ),
+                                              SizedBox(width: responsiveData.scaleWidth(16)),
+                                              Text(
+                                                'Delete',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displaySmall!
+                                                    .copyWith(
+                                                  fontSize: Responsive.fontSize(context, 14),
+                                                  color: appRed,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Divider(height: responsiveData.scaleHeight(1)),
+                                      GestureDetector(
+                                        onTap: () => Navigator.of(context).pop(false),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Icon(
+                                                Icons.cancel,
+                                                color: isDarkMode ? Colors.white : Colors.black,
+                                              ),
+                                              SizedBox(width: responsiveData.scaleWidth(16)),
+                                              Text(
+                                                'Cancel',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displaySmall!
+                                                    .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 );
+                                if (result == true) {
+                                  try {
+                                    await ref.read(getAllInvoiceProvider.notifier).deleteDraft(filteredData[index].id!);
+                                    return true;
+                                  } catch (e) {
+                                    String errorMessage = 'Failed to delete invoice';
+                                    if (e.toString().contains('forbidden') || e.toString().contains('cannot delete published record')) {
+                                      errorMessage = 'Cannot delete published invoice';
+                                    }
+                                    ToastService.showErrorSnackBar(errorMessage);
+                                    return false;
+                                  }
+                                }
+                                return false;
                               },
-                              child: ReceiptTile(receipt: filteredData[index]),
+                              onDismissed: (direction) {
+                                ref.invalidate(getAllInvoiceProvider);
+                              },
+                              child: GestureDetector(
+                                onTap: () {
+                                  locator<PayvidenceAppRouter>().navigate(
+                                    ReceiptScreenRoute(
+                                      record: filteredData[index],
+                                      isInvoice: true,
+                                    ),
+                                  );
+                                },
+                                child: ReceiptTile(receipt: filteredData[index]),
+                              ),
                             ),
                           );
                         },

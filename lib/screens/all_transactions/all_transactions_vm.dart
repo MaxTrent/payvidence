@@ -66,4 +66,11 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
       notifyListeners();
     }
   }
+
+  void refreshTransactionsIfNeeded(String businessId) {
+    // Only refresh if we have existing data to avoid unnecessary calls
+    if (_transactions.isNotEmpty) {
+      fetchTransactions(businessId);
+    }
+  }
 }

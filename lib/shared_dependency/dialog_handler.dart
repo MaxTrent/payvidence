@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_colors.dart';
 import '../utilities/enum.dart';
 
 class DialogHandler {
@@ -12,7 +13,7 @@ class DialogHandler {
       SnackBar(
         content: Text(message),
         backgroundColor: toastMessageType == ToastMessageType.failure
-            ? Colors.red
+            ? appRed
             : toastMessageType == ToastMessageType.success
                 ? Colors.green
                 : Colors.blue,

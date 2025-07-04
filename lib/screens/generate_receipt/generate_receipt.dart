@@ -645,9 +645,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         ToastService.showSnackBar("Receipt generated successfully");
       }
       
-      ref.invalidate(widget.isInvoice == true
-          ? getAllInvoiceProvider
-          : getAllReceiptProvider);
+      ref.invalidate(getAllReceiptProvider);
+      ref.invalidate(getAllInvoiceProvider);
       ref.invalidate(getAllProductProvider);
       
       // Navigate to receipt screen if not a draft
@@ -955,6 +954,8 @@ class FormFields extends StatefulWidget {
   final int index;
   Product? product;
   final bool? invoiceToReceipt;
+  final bool? productNameEditable;
+  final bool? productPriceEditable;
   final Function(int index)? onRemove;
 
   FormFields({
@@ -967,6 +968,8 @@ class FormFields extends StatefulWidget {
     required this.index,
     this.product,
     this.invoiceToReceipt = false,
+    this.productNameEditable,
+    this.productPriceEditable,
     this.onRemove,
   });
 
@@ -985,8 +988,9 @@ class _FormFieldsState extends State<FormFields> {
   @override
   void initState() {
     super.initState();
-    // Only add listeners if not prefilled (invoiceToReceipt = false)
-    if (!widget.invoiceToReceipt!) {
+    // Only add listeners if product name is editable
+    final isProductNameEditable = widget.productNameEditable ?? !widget.invoiceToReceipt!;
+    if (isProductNameEditable) {
       widget.productNameController.addListener(_onProductNameChanged);
       productNameFocusNode.addListener(_onProductNameFocusChanged);
     }
@@ -1001,7 +1005,8 @@ class _FormFieldsState extends State<FormFields> {
 
   void _onProductNameChanged() {
     // Don't show suggestions if field is disabled
-    if (widget.invoiceToReceipt!) return;
+    final isProductNameEditable = widget.productNameEditable ?? !widget.invoiceToReceipt!;
+    if (!isProductNameEditable) return;
     
     final query = widget.productNameController.text.trim();
     if (query.isEmpty) {
@@ -1170,7 +1175,7 @@ class _FormFieldsState extends State<FormFields> {
                 child: Icon(
                   Icons.close,
                   size: responsiveData.scaleHeight(20),
-                  color: Colors.red,
+                  color: appRed,
                 ),
               ),
             ),
@@ -1189,7 +1194,7 @@ class _FormFieldsState extends State<FormFields> {
             controller: widget.productNameController,
             focusNode: productNameFocusNode,
             keyboardType: TextInputType.text,
-            enabled: !widget.invoiceToReceipt!,
+            enabled: widget.productNameEditable ?? !widget.invoiceToReceipt!,
             validator: (val) {
               if (val?.trim().isEmpty ?? true) {
                 return 'Please enter product name';
@@ -1212,7 +1217,7 @@ class _FormFieldsState extends State<FormFields> {
           hintText: 'Product price',
           controller: widget.productPriceController,
           keyboardType: TextInputType.number,
-          enabled: !widget.invoiceToReceipt! && !isExistingProduct,
+          enabled: widget.productPriceEditable ?? (!widget.invoiceToReceipt! && !isExistingProduct),
           inputFormatters: [
             LengthLimitingTextInputFormatter(15),
             RealTimeNumberFormatter(),

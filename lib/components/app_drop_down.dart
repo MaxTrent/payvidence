@@ -71,11 +71,11 @@ class AppDropdown<T> extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: const BorderSide(color: appRed),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: const BorderSide(color: appRed),
         ),
       ),
       value: value,

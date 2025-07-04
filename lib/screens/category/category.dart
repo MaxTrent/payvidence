@@ -146,7 +146,7 @@ class EmptyCategory extends HookConsumerWidget {
                             background: Container(
                               alignment: Alignment.centerRight,
                               padding: EdgeInsets.only(right: responsiveData.scaleWidth(20)),
-                              color: Colors.red,
+                              color: appRed,
                               child: Icon(
                                 Icons.delete,
                                 color: Colors.white,
@@ -163,7 +163,7 @@ class EmptyCategory extends HookConsumerWidget {
                                   isDarkMode: isDarkMode,
                                   title: 'Delete Category',
                                   subtitle: 'Are you sure you want to delete this category?',
-                                  height: 300,
+                                  height: responsiveData.scaleHeight(500),
                                   children: [
                                     GestureDetector(
                                       onTap: () async {
@@ -183,7 +183,7 @@ class EmptyCategory extends HookConsumerWidget {
                                           children: [
                                             Icon(
                                               Icons.delete,
-                                              color: Colors.red,
+                                              color:appRed,
                                             ),
                                             SizedBox(width: responsiveData.scaleWidth(16)),
                                             Text(
@@ -193,7 +193,7 @@ class EmptyCategory extends HookConsumerWidget {
                                                   .displaySmall!
                                                   .copyWith(
                                                 fontSize: Responsive.fontSize(context, 14),
-                                                color: Colors.red,
+                                                color: appRed,
                                               ),
                                             ),
                                           ],

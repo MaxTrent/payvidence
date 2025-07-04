@@ -109,9 +109,9 @@ class AppTextField extends HookWidget {
               .copyWith(fontWeight: FontWeight.w400),
           errorStyle: Theme.of(context).textTheme.displaySmall!.copyWith(
               fontWeight: FontWeight.w400,
-              color: Colors.red,
+              color: appRed,
               height: 0.3,
-              fontSize: Responsive.fontSize(context, 12)), // Replaces 12.sp
+              fontSize: Responsive.fontSize(context, 12)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(effectiveRadius),
             borderSide: BorderSide(
@@ -139,14 +139,14 @@ class AppTextField extends HookWidget {
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(effectiveRadius),
             borderSide: const BorderSide(
-              color: Colors.red,
+              color: appRed,
               width: 1,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(effectiveRadius),
             borderSide: const BorderSide(
-              color: Colors.red,
+              color: appRed,
               width: 1,
             ),
           ),
