@@ -29,10 +29,8 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
     final router = AutoRouter.of(context);
 
     useEffect(() {
-      void onRouteChange() => viewModel.fetchBusinessInformation(businessId);
-      router.addListener(onRouteChange);
-      viewModel.fetchBusinessInformation(businessId);
-      return () => router.removeListener(onRouteChange);
+      Future(() => viewModel.fetchBusinessInformation(businessId));
+      return null;
     }, [businessId]);
 
     return ResponsiveWrapper(
@@ -219,6 +217,7 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
 
   Future<dynamic> _buildConfirmDeleteBottomSheet(BuildContext context, BusinessDetailViewModel viewModel, WidgetRef ref) {
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -227,7 +226,7 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
         return Container(
           height: responsiveData.scaleHeight(368),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDarkMode ? const Color(0xFF2C2C2C) : Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(responsiveData.largeRadius)),
           ),
           child: Padding(
@@ -247,9 +246,8 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                   onPressed: () {
                     viewModel.deleteBusiness(
                       navigateOnSuccess: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        // locator<PayvidenceAppRouter>().back();
+                        Navigator.of(context).pop(); // Close bottom sheet
+                        Navigator.of(context).pop(); // Go back to previous screen
                       },
                     );
                   },
@@ -261,8 +259,8 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black,
+                  backgroundColor: Colors.transparent,
+                  textColor: isDarkMode ? Colors.white : Colors.black,
                 ),
               ],
             ),

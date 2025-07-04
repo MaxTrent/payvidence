@@ -9,13 +9,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/components/simple_bottom_sheet.dart';
 import 'package:payvidence/utilities/app_functions.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
+import '../../components/create_product_dialog.dart';
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
+import '../../model/business_model.dart';
 import '../../gen/assets.gen.dart';
 import '../../providers/business_providers/get_all_business_provider.dart';
 import '../../providers/business_providers/current_business_provider.dart';
@@ -104,16 +107,25 @@ class AddBusiness extends HookConsumerWidget {
         Navigator.of(context).pop();
         ToastService.showSnackBar("Business created successfully");
         
-        // Refresh business list and set new business as current
-        await ref.refresh(getAllBusinessProvider.future);
-        final businesses = await ref.read(getAllBusinessProvider.future);
-        if (businesses.isNotEmpty) {
-          // Set the most recently created business as current (first in sorted list)
-          ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.first);
-        }
+        // Set the newly created business as current
+        locator<SessionManager>().save(key: SessionConstants.businessId, value: response.id);
+        
+        // Delay provider operations to avoid circular dependency
+        Future.microtask(() {
+          ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(response);
+          ref.refresh(getAllBusinessProvider.future);
+        });
 
         if (context.mounted) {
-          await locator<PayvidenceAppRouter>().navigate(const HomePageRoute());
+          locator<PayvidenceAppRouter>().replaceAll([const HomePageRoute()]);
+          // Show create product dialog after navigation
+          Future.delayed(const Duration(milliseconds: 500), () {
+            showDialog(
+              context: locator<PayvidenceAppRouter>().navigatorKey.currentContext!,
+              barrierDismissible: false,
+              builder: (context) => const CreateProductDialog(),
+            );
+          });
         }
 
       } on DioException catch (e) {
@@ -151,7 +163,7 @@ class AddBusiness extends HookConsumerWidget {
               developer.log('AddBusinessRoute: Back navigation blocked during creation');
             }
           },
-          child: Scaffold(
+          child: KeyboardDismissibleScaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               // automaticallyImplyLeading: false,
@@ -181,8 +193,11 @@ class AddBusiness extends HookConsumerWidget {
                         keyboardType: TextInputType.name,
                         textCapitalization: TextCapitalization.words,
                         validator: (val) {
-                          if (!val!.trim().isValidName || val.isEmpty) {
-                            return 'Enter a valid name';
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Business name is required';
+                          }
+                          if (val.trim().length < 2) {
+                            return 'Business name must be at least 2 characters long';
                           }
                           return null;
                         },

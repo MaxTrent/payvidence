@@ -117,14 +117,9 @@ class BusinessCard extends HookConsumerWidget {
               buttonText: 'Switch to business',
               isDisabled: business.id == currentBusiness?.id,
               onPressed: () {
-                Future.microtask(() {
-                  ref
-                      .read(getCurrentBusinessProvider.notifier)
-                      .setCurrentBusiness(business);
-                  locator<SessionManager>().save(key: SessionConstants.businessId, value: business.id);
-                  ref.read(allTransactionsViewModelProvider).forceRefreshTransactions(business.id!);
-                });
-                locator<PayvidenceAppRouter>().back();
+                ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
+                locator<SessionManager>().save(key: SessionConstants.businessId, value: business.id);
+                locator<PayvidenceAppRouter>().replaceAll([const HomePageRoute()]);
               },
             ),
           ],

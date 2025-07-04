@@ -47,7 +47,18 @@ class HomeScreen extends HookConsumerWidget {
               locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
             });
           } else {
-            if (currentBusiness == null) {
+            // Check if there's a specific business ID in session (from business creation)
+            final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+            
+            if (sessionBusinessId != null) {
+              // Find the business from session ID
+              final sessionBusiness = businesses.where((b) => b.id == sessionBusinessId).firstOrNull;
+              if (sessionBusiness != null && currentBusiness?.id != sessionBusinessId) {
+                Future.microtask(() {
+                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(sessionBusiness);
+                });
+              }
+            } else if (currentBusiness == null) {
               Future.microtask(() {
                 ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
                 final businessId = businesses.last.id;
@@ -67,8 +78,10 @@ class HomeScreen extends HookConsumerWidget {
     }, [getAllBusiness]);
 
     useEffect(() {
-      if (currentBusiness?.id != null && !transactionsViewModel.hasLoadedTransactions) {
-        transactionsViewModel.fetchTransactions(currentBusiness!.id!);
+      if (currentBusiness?.id != null) {
+        Future.microtask(() {
+          transactionsViewModel.forceRefreshTransactions(currentBusiness!.id!);
+        });
       }
       return null;
     }, [currentBusiness?.id]);

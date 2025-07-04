@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/all_businesses/all_businesses_vm.dart';
@@ -40,7 +41,7 @@ class AllBusinesses extends HookConsumerWidget with AutoRouteAware {
     }, []);
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
         appBar: AppBar(),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
