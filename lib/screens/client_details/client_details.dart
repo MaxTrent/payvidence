@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/screens/client_details/client_details_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
@@ -37,12 +38,29 @@ class ClientDetails extends HookConsumerWidget {
     final originalAddress = useState("");
     final nameFocusNode = useFocusNode();
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     useEffect(() {
       Future.microtask(
               () => viewModel.fetchClientDetails(businessId, clientId));
       return null;
     }, [businessId, clientId]);
+
+    useEffect(() {
+      void clearValidationOnEmpty() {
+        if (phoneNumberController.text.isEmpty || addressController.text.isEmpty) {
+          formKey.currentState?.validate();
+        }
+      }
+
+      phoneNumberController.addListener(clearValidationOnEmpty);
+      addressController.addListener(clearValidationOnEmpty);
+
+      return () {
+        phoneNumberController.removeListener(clearValidationOnEmpty);
+        addressController.removeListener(clearValidationOnEmpty);
+      };
+    }, []);
 
     useEffect(() {
       if (viewModel.clientInfo != null && !viewModel.isLoading) {
@@ -92,7 +110,7 @@ class ClientDetails extends HookConsumerWidget {
         },
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
+          child: KeyboardDismissibleScaffold(
             appBar: AppBar(),
             body: Padding(
               padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
@@ -244,7 +262,7 @@ class ClientDetails extends HookConsumerWidget {
                                   return Container(
                                     height: responsiveData.scaleHeight(398),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: isDarkMode ? Colors.black : Colors.white,
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(responsiveData.largeRadius),
                                         topLeft: Radius.circular(responsiveData.largeRadius),
@@ -292,7 +310,10 @@ class ClientDetails extends HookConsumerWidget {
                                                   GestureDetector(
                                                     onTap: () =>
                                   Navigator.pop(context),
-                                                    child: const Icon(Icons.close),
+                                                    child: Icon(
+                                                      Icons.close,
+                                                      color: isDarkMode ? Colors.white : Colors.black,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -326,7 +347,7 @@ class ClientDetails extends HookConsumerWidget {
                                                   Navigator.pop(context);
                                                 },
                                                 backgroundColor: Colors.transparent,
-                                                textColor: Colors.black,
+                                                textColor: isDarkMode ? Colors.white : Colors.black,
                                               ),
                                             ],
                                           ),

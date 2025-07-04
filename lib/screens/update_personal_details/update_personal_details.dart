@@ -37,6 +37,20 @@ class UpdatePersonalDetails extends HookConsumerWidget {
     }, []);
 
     useEffect(() {
+      void clearValidationOnEmpty() {
+        if (phoneController.text.isEmpty) {
+          formKey.currentState?.validate();
+        }
+      }
+
+      phoneController.addListener(clearValidationOnEmpty);
+
+      return () {
+        phoneController.removeListener(clearValidationOnEmpty);
+      };
+    }, []);
+
+    useEffect(() {
       if (viewModel.userInfo != null && !viewModel.isLoading) {
         firstNameController.text = viewModel.userInfo?.account.firstName ?? "";
         lastNameController.text = viewModel.userInfo?.account.lastName ?? "";
@@ -59,15 +73,14 @@ class UpdatePersonalDetails extends HookConsumerWidget {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: KeyboardDismissibleScaffold(
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
             child: SafeArea(
               child: Form(
                 key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ListView(
                   children: [
                     SizedBox(height: responsiveData.scaleHeight(16)),
                     Text(
@@ -112,8 +125,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                         focusNode: firstNameFocusNode,
                         textCapitalization: TextCapitalization.words,
                         validator: (val) {
-                          if (!val!.trim().isValidName || val.isEmpty) {
-                            return 'Enter a valid name';
+                          if (val == null || val.trim().isEmpty) {
+                            return 'First name is required';
+                          }
+                          if (val.trim().length < 2) {
+                            return 'Name must be at least 2 characters long';
                           }
                           return null;
                         },
@@ -130,8 +146,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                         focusNode: lastNameFocusNode,
                         textCapitalization: TextCapitalization.words,
                         validator: (val) {
-                          if (!val!.trim().isValidName || val.isEmpty) {
-                            return 'Enter a valid name';
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Last name is required';
+                          }
+                          if (val.trim().length < 2) {
+                            return 'Name must be at least 2 characters long';
                           }
                           return null;
                         },
@@ -160,8 +179,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                           FilteringTextInputFormatter.digitsOnly,
                         ],
                         validator: (val) {
-                          if (val!.trim().isEmpty || !val.isValidPhone) {
-                            return 'Enter a valid phone number';
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Phone number is required';
+                          }
+                          if (!val.trim().isValidPhone) {
+                            return 'Enter a valid Nigerian phone number';
                           }
                           return null;
                         },
