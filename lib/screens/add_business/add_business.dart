@@ -18,6 +18,7 @@ import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
 import '../../gen/assets.gen.dart';
 import '../../providers/business_providers/get_all_business_provider.dart';
+import '../../providers/business_providers/current_business_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -102,16 +103,17 @@ class AddBusiness extends HookConsumerWidget {
 
         Navigator.of(context).pop();
         ToastService.showSnackBar("Business created successfully");
-        ref.invalidate(getAllBusinessProvider);
+        
+        // Refresh business list and set new business as current
+        await ref.refresh(getAllBusinessProvider.future);
+        final businesses = await ref.read(getAllBusinessProvider.future);
+        if (businesses.isNotEmpty) {
+          // Set the most recently created business as current (first in sorted list)
+          ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.first);
+        }
 
         if (context.mounted) {
-          await locator<PayvidenceAppRouter>().replaceAll([
-            HomeScreenRoute(
-              onViewAllTransactions: () {
-                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allTransactions);
-              },
-            ),
-          ]);
+          await locator<PayvidenceAppRouter>().navigate(const HomePageRoute());
         }
 
       } on DioException catch (e) {
@@ -178,24 +180,40 @@ class AddBusiness extends HookConsumerWidget {
                         controller: businessNameController,
                         keyboardType: TextInputType.name,
                         textCapitalization: TextCapitalization.words,
-                        validator: (val) => Validator.validateName(val),
+                        validator: (val) {
+                          if (!val!.trim().isValidName || val.isEmpty) {
+                            return 'Enter a valid name';
+                          }
+                          return null;
+                        },
                       ),
                       _buildSectionTitle(context, 'Business address'),
                       AppTextField(
                         hintText: 'Business address',
                         controller: businessAddressController,
                         textCapitalization: TextCapitalization.words,
-                        validator: (val) => Validator.validateName(val),
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Enter a valid address';
+                          }
+                          return null;
+                        },
                       ),
                       _buildSectionTitle(context, 'Business phone number'),
                       AppTextField(
                         hintText: 'Business phone number',
                         controller: phoneNumberController,
+                        keyboardType: TextInputType.number,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(11),
                           FilteringTextInputFormatter.digitsOnly,
                         ],
-                        validator: (val) => Validator.validatePhoneNumber(val),
+                        validator: (val) {
+                          if (!val!.trim().isValidPhone || val.isEmpty) {
+                            return 'Enter a valid phone number';
+                          }
+                          return null;
+                        },
                       ),
                       _buildSectionTitle(context, 'Business logo'),
                       GestureDetector(
@@ -351,10 +369,13 @@ class AddBusiness extends HookConsumerWidget {
                             } else {
                               return Stack(
                                 children: [
-                                  Image.file(
-                                    File(val.path),
-                                    height: responsiveData.scaleHeight(200),
-                                    fit: BoxFit.cover,
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Image.file(
+                                      File(val.path),
+                                      height: responsiveData.scaleHeight(200),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                   Positioned(
                                     bottom: responsiveData.scaleHeight(8),

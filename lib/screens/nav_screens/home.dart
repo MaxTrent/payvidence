@@ -47,19 +47,36 @@ class HomeScreen extends HookConsumerWidget {
             Future.microtask(() {
               locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
             });
-          } else if (currentBusiness == null) {
-            developer.log('HomeScreen: No current business set, setting to: ${businesses.last.name}');
-
-            Future.microtask(() {
-              ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
-
-              final businessId = businesses.last.id;
-              locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
-
-              if (businessId != null && !transactionsViewModel.hasLoadedTransactions) {
-                transactionsViewModel.fetchTransactions(businessId);
+          } else {
+            // Check if session has a specific business ID (from business switching)
+            final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+            developer.log('HomeScreen: Session business ID: $sessionBusinessId');
+            
+            if (sessionBusinessId != null) {
+              // Find the business from session ID
+              final sessionBusiness = businesses.firstWhere(
+                (b) => b.id == sessionBusinessId,
+                orElse: () => businesses.last,
+              );
+              
+              if (currentBusiness?.id != sessionBusinessId) {
+                developer.log('HomeScreen: Setting business from session: ${sessionBusiness.name}');
+                Future.microtask(() {
+                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(sessionBusiness);
+                  transactionsViewModel.forceRefreshTransactions(sessionBusinessId);
+                });
               }
-            });
+            } else if (currentBusiness == null) {
+              developer.log('HomeScreen: No current business set, setting to: ${businesses.last.name}');
+              Future.microtask(() {
+                ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
+                final businessId = businesses.last.id;
+                locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+                if (businessId != null && !transactionsViewModel.hasLoadedTransactions) {
+                  transactionsViewModel.fetchTransactions(businessId);
+                }
+              });
+            }
           }
         },
         loading: () {
@@ -119,7 +136,12 @@ class HomeScreen extends HookConsumerWidget {
                               CircleAvatar(
                                 radius: responsiveData.smallRadius * 1.6,
                                 backgroundColor: Colors.black,
-                                backgroundImage: NetworkImage(data.last.logoUrl ?? ''),
+                                backgroundImage: currentBusiness?.logoUrl != null 
+                                    ? NetworkImage(currentBusiness!.logoUrl!) 
+                                    : null,
+                                child: currentBusiness?.logoUrl == null 
+                                    ? const Icon(Icons.business, color: Colors.white) 
+                                    : null,
                               ),
                               SizedBox(width: responsiveData.scaleWidth(10)),
                               Column(
