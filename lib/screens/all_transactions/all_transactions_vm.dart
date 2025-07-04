@@ -47,7 +47,7 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
           transactions = transactionData
               .map((item) => Transaction.fromJson(item as Map<String, dynamic>))
               .toList()
-            ..sort((a, b) => (b.createdAt ?? DateTime.now()).compareTo(a.createdAt ?? DateTime.now()));
+            ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
         } else {
           print("ViewModel: Unexpected data format - $transactionData");
           handleError(message: "Unexpected data format");

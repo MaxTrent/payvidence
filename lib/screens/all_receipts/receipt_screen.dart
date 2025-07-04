@@ -24,8 +24,9 @@ import '../../utilities/responsive_wrapper.dart';
 class ReceiptScreen extends ConsumerWidget {
   final Receipt record;
   final bool? isInvoice;
+  final String? source;
 
-  ReceiptScreen(this.record, this.isInvoice, {super.key});
+  ReceiptScreen(this.record, this.isInvoice, {super.key, this.source});
 
   GlobalKey globalKey = GlobalKey();
 
@@ -59,9 +60,13 @@ class ReceiptScreen extends ConsumerWidget {
         canPop: false,
         onPopInvoked: (didPop) {
           if (!didPop) {
-            locator<PayvidenceAppRouter>().navigate(
-              isInvoice == true ? const AllInvoicesRoute() : const AllReceiptsRoute()
-            );
+            if (source == 'home') {
+              Navigator.of(context).pop();
+            } else {
+              locator<PayvidenceAppRouter>().navigate(
+                isInvoice == true ? const AllInvoicesRoute() : const AllReceiptsRoute()
+              );
+            }
           }
         },
         child: Scaffold(

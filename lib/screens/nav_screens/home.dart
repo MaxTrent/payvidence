@@ -15,6 +15,7 @@ import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
+import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_card.dart';
@@ -317,15 +318,32 @@ class HomeScreen extends HookConsumerWidget {
                             '';
                         final unitSold = product?.quantitySold?.toString() ?? '0';
 
-                        return TransactionTile(
-                          amount: amount,
-                          dateTime: dateTime,
-                          productName: productName,
-                          receiptOrInvoice: transaction.status == 'pending'
-                              ? 'Invoice'
-                              : 'Receipt',
-                          unitSold: unitSold,
-                          imageUrl: imageUrl,
+                        return GestureDetector(
+                          onTap: () {
+                            final isInvoice = transaction.status == 'pending';
+                            final receipt = Receipt(
+                              id: transaction.id,
+                              business: transaction.business,
+                              client: transaction.client,
+                              recordProductDetails: transaction.recordProductDetails,
+                              total: transaction.total.toString(),
+                              createdAt: transaction.createdAt,
+                              modeOfPayment: transaction.modeOfPayment,
+                            );
+                            locator<PayvidenceAppRouter>().push(
+                              ReceiptScreenRoute(record: receipt, isInvoice: isInvoice, source: 'home'),
+                            );
+                          },
+                          child: TransactionTile(
+                            amount: amount,
+                            dateTime: dateTime,
+                            productName: productName,
+                            receiptOrInvoice: transaction.status == 'pending'
+                                ? 'Invoice'
+                                : 'Receipt',
+                            unitSold: unitSold,
+                            imageUrl: imageUrl,
+                          ),
                         );
                       },
                     ),
