@@ -37,7 +37,6 @@ class HomeScreen extends HookConsumerWidget {
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final currentBusiness = ref.watch(getCurrentBusinessProvider);
     final useMySubscriptionViewModel = ref.watch(mySubscriptionViewModel);
-    final hasLoadedTransactions = useState(false);
 
     useEffect(() {
       getAllBusiness.when(
@@ -56,9 +55,8 @@ class HomeScreen extends HookConsumerWidget {
               final businessId = businesses.last.id;
               locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
 
-              if (businessId != null && !hasLoadedTransactions.value) {
+              if (businessId != null && !transactionsViewModel.hasLoadedTransactions) {
                 transactionsViewModel.fetchTransactions(businessId);
-                hasLoadedTransactions.value = true;
               }
             });
           }
@@ -75,9 +73,8 @@ class HomeScreen extends HookConsumerWidget {
     }, [getAllBusiness]);
 
     useEffect(() {
-      if (currentBusiness?.id != null && !hasLoadedTransactions.value) {
+      if (currentBusiness?.id != null && !transactionsViewModel.hasLoadedTransactions) {
         transactionsViewModel.fetchTransactions(currentBusiness!.id!);
-        hasLoadedTransactions.value = true;
       }
       return null;
     }, [currentBusiness?.id]);
@@ -86,7 +83,6 @@ class HomeScreen extends HookConsumerWidget {
       final businessId = ref.watch(getCurrentBusinessProvider)?.id;
       if (businessId != null) {
         await transactionsViewModel.fetchTransactions(businessId);
-        hasLoadedTransactions.value = true;
       }
     }
 

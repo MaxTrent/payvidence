@@ -11,6 +11,7 @@ import 'package:payvidence/providers/client_providers/get_all_client_provider.da
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
 import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/toast_service.dart';
@@ -648,6 +649,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       ref.invalidate(getAllReceiptProvider);
       ref.invalidate(getAllInvoiceProvider);
       ref.invalidate(getAllProductProvider);
+      
+      // Refresh transactions list
+      final businessId = ref.read(getCurrentBusinessProvider)?.id;
+      if (businessId != null) {
+        ref.read(allTransactionsViewModelProvider).forceRefreshTransactions(businessId);
+      }
       
       // Navigate to receipt screen if not a draft
       if (isDraft != true) {

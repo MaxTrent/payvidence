@@ -134,14 +134,14 @@ class Drafts extends HookConsumerWidget {
                             height: responsiveData.screenHeight / 4,
                           ),
                           Text(
-                            'No receipts in drafts!',
+                            'No ${isInvoice == true ? "invoices" : "receipts"} in drafts!',
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                           SizedBox(
                             height: responsiveData.scaleHeight(10),
                           ),
                           Text(
-                            'All receipts in drafts will appear here.',
+                            'All ${isInvoice == true ? "invoices" : "receipts"} in drafts will appear here.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme

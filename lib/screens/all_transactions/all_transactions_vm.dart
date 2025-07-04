@@ -12,10 +12,12 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
   List<Transaction> _transactions = [];
   bool _isLoading = false;
   Transaction? _selectedTransaction;
+  bool _hasLoadedTransactions = false;
 
   List<Transaction> get transactions => _transactions;
   bool get isLoading => _isLoading;
   Transaction? get selectedTransaction => _selectedTransaction;
+  bool get hasLoadedTransactions => _hasLoadedTransactions;
 
   set transactions(List<Transaction> value) {
     _transactions = value;
@@ -44,7 +46,8 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
         if (transactionData is List) {
           transactions = transactionData
               .map((item) => Transaction.fromJson(item as Map<String, dynamic>))
-              .toList();
+              .toList()
+            ..sort((a, b) => (b.createdAt ?? DateTime.now()).compareTo(a.createdAt ?? DateTime.now()));
         } else {
           print("ViewModel: Unexpected data format - $transactionData");
           handleError(message: "Unexpected data format");
@@ -63,6 +66,7 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
       handleError(message: "Something went wrong. Please try again.");
     } finally {
       _isLoading = false;
+      _hasLoadedTransactions = true;
       notifyListeners();
     }
   }
@@ -72,5 +76,10 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
     if (_transactions.isNotEmpty) {
       fetchTransactions(businessId);
     }
+  }
+
+  void forceRefreshTransactions(String businessId) {
+    _hasLoadedTransactions = false;
+    fetchTransactions(businessId);
   }
 }

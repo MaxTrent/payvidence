@@ -55,7 +55,16 @@ class ReceiptScreen extends ConsumerWidget {
     }
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (!didPop) {
+            locator<PayvidenceAppRouter>().navigate(
+              isInvoice == true ? const AllInvoicesRoute() : const AllReceiptsRoute()
+            );
+          }
+        },
+        child: Scaffold(
         appBar: AppBar(
           actions: [
             if (isInvoice == true)
@@ -117,6 +126,7 @@ class ReceiptScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

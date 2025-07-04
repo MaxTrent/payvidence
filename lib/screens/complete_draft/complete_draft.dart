@@ -8,6 +8,7 @@ import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/utilities/extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
+import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
 import '../../data/network/api_response.dart';
 import '../../components/app_button.dart';
 import '../../components/app_drop_down.dart';
@@ -198,6 +199,12 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
           widget.isInvoice == true && widget.inVoiceToReceipt == false
               ? getAllInvoiceProvider
               : getAllReceiptProvider);
+      
+      // Refresh transactions list
+      final businessId = ref.read(getCurrentBusinessProvider)?.id;
+      if (businessId != null) {
+        ref.read(allTransactionsViewModelProvider).forceRefreshTransactions(businessId);
+      }
       Future.delayed(const Duration(seconds: 2), () {
         if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
           if (!context.mounted) return;
