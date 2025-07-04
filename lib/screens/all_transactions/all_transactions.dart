@@ -247,7 +247,7 @@ class AllTransactions extends HookConsumerWidget {
                                         modeOfPayment: transaction.modeOfPayment,
                                       );
                                       locator<PayvidenceAppRouter>().push(
-                                        ReceiptScreenRoute(record: receipt, isInvoice: isInvoice),
+                                        ReceiptScreenRoute(record: receipt, isInvoice: isInvoice, source: 'transactions'),
                                       );
                                     },
                                     child: TransactionTile(
