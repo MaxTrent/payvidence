@@ -161,8 +161,8 @@ class ClientDetails extends HookConsumerWidget {
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           validator: (val) {
-                            if (!val!.trim().isValidPhone || val.isEmpty) {
-                              return 'Enter a valid phone number';
+                            if (val != null && val.isNotEmpty && !val.trim().isValidPhone) {
+                              return 'Enter a valid Nigerian phone number (11 digits starting with 070, 080, 081, 090, etc.)';
                             }
                             return null;
                           },

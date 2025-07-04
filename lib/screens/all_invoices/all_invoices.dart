@@ -125,7 +125,8 @@ class AllInvoices extends HookConsumerWidget {
               Expanded(
                 child: allInvoices.when(
                   data: (data) {
-                    final actualData = data.where((data) => data.publishedAt != null).toList();
+                    final actualData = data.where((data) => data.publishedAt != null).toList()
+                      ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
                     final filteredData = searchQuery.value.isEmpty
                         ? actualData
                         : actualData
@@ -408,7 +409,8 @@ class AllInvoices extends HookConsumerWidget {
         ),
         floatingActionButton: allInvoices.when(
           data: (data) {
-            final actualData = data.where((data) => data.publishedAt != null).toList();
+            final actualData = data.where((data) => data.publishedAt != null).toList()
+              ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
             final filteredData = searchQuery.value.isEmpty
                 ? actualData
                 : actualData
