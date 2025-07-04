@@ -117,9 +117,16 @@ class BusinessCard extends HookConsumerWidget {
               buttonText: 'Switch to business',
               isDisabled: business.id == currentBusiness?.id,
               onPressed: () {
-                ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
+                // Save business ID to session
                 locator<SessionManager>().save(key: SessionConstants.businessId, value: business.id);
-                locator<PayvidenceAppRouter>().replaceAll([const HomePageRoute()]);
+                
+                // Set current business immediately
+                Future.delayed(Duration.zero, () {
+                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
+                });
+                
+                // Navigate to home
+                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
               },
             ),
           ],
