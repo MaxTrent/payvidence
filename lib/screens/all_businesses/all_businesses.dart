@@ -27,12 +27,12 @@ class AllBusinesses extends HookConsumerWidget with AutoRouteAware {
 
     useEffect(() {
       void onRouteChange() {
-        viewModel.fetchAllBusinesses();
+        Future.microtask(() => viewModel.fetchAllBusinesses());
       }
 
       router.addListener(onRouteChange);
 
-      viewModel.fetchAllBusinesses();
+      Future.microtask(() => viewModel.fetchAllBusinesses());
 
       return () {
         router.removeListener(onRouteChange);

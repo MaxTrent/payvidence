@@ -117,22 +117,14 @@ class BusinessCard extends HookConsumerWidget {
               buttonText: 'Switch to business',
               isDisabled: business.id == currentBusiness?.id,
               onPressed: () {
-                print('BusinessCard: Switch button pressed for business: ${business.name}');
-                
-                // Update session with new business ID first
-                locator<SessionManager>().save(key: SessionConstants.businessId, value: business.id);
-                print('BusinessCard: Updated session with business ID: ${business.id}');
-                
-                // Navigate to home screen - let it handle the business switching
-                print('BusinessCard: Attempting to navigate to HomeScreenRoute');
-                locator<PayvidenceAppRouter>().replaceAll([
-                  HomeScreenRoute(
-                    onViewAllTransactions: () {
-                      locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allTransactions);
-                    },
-                  ),
-                ]);
-                print('BusinessCard: Navigation command executed');
+                Future.microtask(() {
+                  ref
+                      .read(getCurrentBusinessProvider.notifier)
+                      .setCurrentBusiness(business);
+                  locator<SessionManager>().save(key: SessionConstants.businessId, value: business.id);
+                  ref.read(allTransactionsViewModelProvider).forceRefreshTransactions(business.id!);
+                });
+                locator<PayvidenceAppRouter>().back();
               },
             ),
           ],

@@ -43,31 +43,11 @@ class HomeScreen extends HookConsumerWidget {
       getAllBusiness.when(
         data: (businesses) {
           if (businesses.isEmpty) {
-            developer.log('HomeScreen: No businesses found, navigating to EmptyBusinessRoute');
             Future.microtask(() {
               locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
             });
           } else {
-            // Check if session has a specific business ID (from business switching)
-            final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
-            developer.log('HomeScreen: Session business ID: $sessionBusinessId');
-            
-            if (sessionBusinessId != null) {
-              // Find the business from session ID
-              final sessionBusiness = businesses.firstWhere(
-                (b) => b.id == sessionBusinessId,
-                orElse: () => businesses.last,
-              );
-              
-              if (currentBusiness?.id != sessionBusinessId) {
-                developer.log('HomeScreen: Setting business from session: ${sessionBusiness.name}');
-                Future.microtask(() {
-                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(sessionBusiness);
-                  transactionsViewModel.forceRefreshTransactions(sessionBusinessId);
-                });
-              }
-            } else if (currentBusiness == null) {
-              developer.log('HomeScreen: No current business set, setting to: ${businesses.last.name}');
+            if (currentBusiness == null) {
               Future.microtask(() {
                 ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
                 final businessId = businesses.last.id;
@@ -79,12 +59,8 @@ class HomeScreen extends HookConsumerWidget {
             }
           }
         },
-        loading: () {
-          developer.log('Still loading businesses...');
-        },
-        error: (error, stackTrace) {
-          developer.log('Error loading businesses: $error');
-        },
+        loading: () {},
+        error: (error, stackTrace) {},
       );
 
       return null;
