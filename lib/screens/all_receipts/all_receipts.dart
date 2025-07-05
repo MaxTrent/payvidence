@@ -337,7 +337,7 @@ class AllReceipts extends HookConsumerWidget {
                         },
                         separatorBuilder: (ctx, idx) {
                           return SizedBox(
-                            height: responsiveData.scaleHeight(24),
+                            height: responsiveData.scaleHeight(12),
                           );
                         },
                         itemCount: filteredData.length,
@@ -372,7 +372,7 @@ class AllReceipts extends HookConsumerWidget {
                     return ListView.separated(
                       shrinkWrap: true,
                       itemCount: 5,
-                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                       itemBuilder: (_, index) => Container(
                         height: responsiveData.scaleHeight(101),
                         decoration: BoxDecoration(

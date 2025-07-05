@@ -220,7 +220,7 @@ class Product extends HookConsumerWidget {
                           );
                         },
                         separatorBuilder: (ctx, idx) => Column(
-                          children: [SizedBox(height: responsiveData.scaleHeight(24))],
+                          children: [SizedBox(height: responsiveData.scaleHeight(12))],
                         ),
                         itemCount: filteredProducts.length,
                       ),
@@ -254,7 +254,7 @@ class Product extends HookConsumerWidget {
                     return ListView.separated(
                       shrinkWrap: true,
                       itemCount: 5,
-                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                       itemBuilder: (_, index) => Container(
                         height: responsiveData.scaleHeight(101),
                         child: Row(

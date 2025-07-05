@@ -643,7 +643,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       if (isDraft == true) {
         ToastService.showSnackBar("Draft saved successfully");
       } else {
-        ToastService.showSnackBar("Receipt generated successfully");
+        ToastService.showSnackBar(widget.isInvoice == true ? "Invoice generated successfully" : "Receipt generated successfully");
       }
       
       ref.invalidate(getAllReceiptProvider);
@@ -676,6 +676,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           ReceiptScreenRoute(
             record: fullReceipt,
             isInvoice: widget.isInvoice == true,
+            source: isPrefilledProduct ? 'product' : null,
           ),
         );
       } else {
@@ -1108,7 +1109,10 @@ class _FormFieldsState extends State<FormFields> {
                             children: [
                               AppNaira(fontSize: 14, color: Colors.grey),
                               Text(
-                                product.price ?? '0',
+                                (double.tryParse(product.price ?? '0') ?? 0).toStringAsFixed(2).replaceAllMapped(
+                                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                  (Match m) => '${m[1]},',
+                                ),
                                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                   fontSize: Responsive.fontSize(context, 12),
                                   color: Colors.grey,

@@ -188,7 +188,7 @@ class AllTransactions extends HookConsumerWidget {
                             onRefresh: onRefresh,
                             child: ListView.separated(
                               itemCount: filteredTransactions.length,
-                              separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                              separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                               itemBuilder: (context, index) {
                                 final transaction = filteredTransactions[index];
                                 final firstProductDetail = transaction.recordProductDetails.first;

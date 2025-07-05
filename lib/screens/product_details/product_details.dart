@@ -317,7 +317,7 @@ class ProductDetails extends HookConsumerWidget {
                       AppButton(
                         buttonText: 'Record sale',
                         onPressed: () {
-                          locator<PayvidenceAppRouter>().navigate(
+                          locator<PayvidenceAppRouter>().push(
                             GenerateReceiptRoute(isInvoice: false),
                           );
                         },
@@ -328,7 +328,7 @@ class ProductDetails extends HookConsumerWidget {
                       AppButton(
                         buttonText: 'Generate invoice',
                         onPressed: () {
-                          locator<PayvidenceAppRouter>().navigate(
+                          locator<PayvidenceAppRouter>().push(
                             GenerateReceiptRoute(isInvoice: true),
                           );
                         },

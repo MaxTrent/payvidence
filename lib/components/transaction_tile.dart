@@ -33,7 +33,7 @@ class TransactionTile extends HookWidget {
     final responsiveData = ResponsiveInherited.of(context);
 
     return Container(
-      height: responsiveData.scaleHeight(101),
+      height: responsiveData.scaleHeight(72),
       decoration: const BoxDecoration(color: Colors.transparent),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -206,7 +206,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
         ref.read(allTransactionsViewModelProvider).forceRefreshTransactions(businessId);
       }
       Future.delayed(const Duration(seconds: 2), () {
-        if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
+        if (isDraft != true && ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
           if (!context.mounted) return;
           Navigator.of(context).pop();
           locator<PayvidenceAppRouter>().navigate(UpdateBankDetailsRoute());

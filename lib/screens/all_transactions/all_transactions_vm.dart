@@ -32,6 +32,8 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
   }
 
   Future<void> fetchTransactions(String businessId) async {
+    if (_isLoading) return; // Prevent multiple simultaneous calls
+    
     try {
       _isLoading = true;
       notifyListeners();
@@ -44,9 +46,19 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
       if (response.success) {
         final transactionData = response.data!["data"];
         if (transactionData is List) {
-          transactions = transactionData
+          final newTransactions = transactionData
               .map((item) => Transaction.fromJson(item as Map<String, dynamic>))
-              .toList()
+              .toList();
+          
+          // Remove duplicates based on transaction ID
+          final uniqueTransactions = <String, Transaction>{};
+          for (final transaction in newTransactions) {
+            if (transaction.id != null) {
+              uniqueTransactions[transaction.id!] = transaction;
+            }
+          }
+          
+          transactions = uniqueTransactions.values.toList()
             ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
         } else {
           print("ViewModel: Unexpected data format - $transactionData");

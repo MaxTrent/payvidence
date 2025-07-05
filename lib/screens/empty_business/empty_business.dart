@@ -49,12 +49,16 @@ class EmptyBusiness extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: AppButton(
-          buttonText: 'Set-up business',
-          onPressed: () {
-            locator<PayvidenceAppRouter>()
-                .push(AddBusinessRoute());
-          },
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20), vertical: responsiveData.scaleHeight(14)),
+          child: AppButton(
+            buttonText: 'Set-up business',
+            onPressed: () {
+              locator<PayvidenceAppRouter>()
+                  .push(AddBusinessRoute());
+            },
+          ),
         ),
       ),
     );

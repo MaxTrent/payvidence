@@ -117,6 +117,20 @@ class HomeScreen extends HookConsumerWidget {
                           child: LoadingIndicator(),
                         );
                       }
+                      
+                      // If currentBusiness is null but we have businesses, set the first one
+                      if (currentBusiness == null && data.isNotEmpty) {
+                        Future.microtask(() {
+                          final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+                          final businessToSet = sessionBusinessId != null 
+                              ? data.firstWhere((b) => b.id == sessionBusinessId, orElse: () => data.first)
+                              : data.first;
+                          ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businessToSet);
+                        });
+                        return const Center(
+                          child: LoadingIndicator(),
+                        );
+                      }
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

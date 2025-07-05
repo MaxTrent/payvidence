@@ -79,10 +79,11 @@ class AddBusiness extends HookConsumerWidget {
         "issuer": issuerController.text,
         "issuer_role": selectedRole.value ?? '',
         "vat": 5,
-        "logo_image": await MultipartFile.fromFile(
-          logo.value!.path,
-          filename: logo.value!.path.split('/').last,
-        ),
+        if (logo.value != null)
+          "logo_image": await MultipartFile.fromFile(
+            logo.value!.path,
+            filename: logo.value!.path.split('/').last,
+          ),
         "issuer_signature_image": await MultipartFile.fromFile(
           signature.value!.path,
           filename: signature.value!.path.split('/').last,
@@ -421,9 +422,7 @@ class AddBusiness extends HookConsumerWidget {
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
-                            if (logo.value == null) {
-                              ToastService.showErrorSnackBar("Select a logo image");
-                            } else if (signature.value == null) {
+                            if (signature.value == null) {
                               ToastService.showErrorSnackBar("Select a signature image");
                             } else if (issuerName.isEmpty) {
                               ToastService.showErrorSnackBar("Issuer name is not available. Please update your profile in Settings.");

@@ -371,7 +371,7 @@ class Clients extends HookConsumerWidget {
                           ),
                         );
                         },
-                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(24)),
+                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                         itemCount: filteredClients.length,
                       ),
                     );
@@ -401,7 +401,7 @@ class Clients extends HookConsumerWidget {
                   loading: () => ListView.separated(
                     shrinkWrap: true,
                     itemCount: 5,
-                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(24)),
+                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                     itemBuilder: (_, index) => Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
