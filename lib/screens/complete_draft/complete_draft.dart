@@ -174,8 +174,16 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
       "client_id": client?.id ?? (clientNameController.text.trim().isNotEmpty ? null : null),
       "client_name": clientNameController.text.trim().isNotEmpty ? clientNameController.text.trim() : null,
-      "mode_of_payment": selectedPayment?.toLowerCase()
     };
+    
+    // Only include mode_of_payment if not saving as draft or if payment method is selected
+    if (widget.isInvoice == true && widget.inVoiceToReceipt == false) {
+      // For invoices, mode_of_payment is always null
+      requestData["mode_of_payment"] = null;
+    } else if (isDraft != true || selectedPayment != null) {
+      // For receipts: include if not draft OR if payment method is selected
+      requestData["mode_of_payment"] = selectedPayment?.toLowerCase();
+    }
     
     if (!context.mounted) return;
     LoadingDialog.show(context);
@@ -511,7 +519,7 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                                   selectedPayment = value;
                                 });
                               },
-                              validator: (value) => value == null ? 'Please select a payment method' : null,
+                              validator: (value) => (isDraft != true && value == null) ? 'Please select a payment method' : null,
                             ),
                           ],
                         ),
@@ -526,13 +534,13 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             buttonText:
                             'Generate ${widget.isInvoice == true && widget.inVoiceToReceipt == false ? "invoice" : "receipt"}',
                             onPressed: () {
+                              isDraft = false;
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
                                 if (client == null && clientNameController.text.trim().isEmpty) {
                                   ToastService.showErrorSnackBar("Please enter client name");
                                   return;
                                 }
-                                isDraft = false;
                                 createReceipt();
                               }
                             },
@@ -544,13 +552,13 @@ class _CompleteDraftState extends ConsumerState<CompleteDraft> {
                             visible: widget.inVoiceToReceipt == false,
                             child: GestureDetector(
                               onTap: () {
+                                isDraft = true;
                                 if (formKey.currentState!.validate()) {
                                   formKey.currentState!.save();
                                   if (client == null && clientNameController.text.trim().isEmpty) {
                                     ToastService.showErrorSnackBar("Please enter client name");
                                     return;
                                   }
-                                  isDraft = true;
                                   createReceipt();
                                 }
                               },

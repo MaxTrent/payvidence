@@ -103,11 +103,11 @@ class HomeScreen extends HookConsumerWidget {
 
     final responsiveData = ResponsiveInherited.of(context);
 
-    final isLoading = getAllBusiness.isLoading || transactionsViewModel.isLoading;
+    final isBusinessLoading = getAllBusiness.isLoading;
 
     return ResponsiveWrapper(
       child: AbsorbPointer(
-        absorbing: isLoading,
+        absorbing: isBusinessLoading,
         child: KeyboardDismissibleScaffold(
           body: SafeArea(
             child: Padding(

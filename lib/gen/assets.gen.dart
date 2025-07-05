@@ -42,6 +42,10 @@ class $AssetsPngGen {
   AssetGenImage get payvidenceLogo =>
       const AssetGenImage('assets/png/payvidence_logo.png');
 
+  /// File path: assets/png/payvidence_logo2.png
+  AssetGenImage get payvidenceLogo2 =>
+      const AssetGenImage('assets/png/payvidence_logo2.png');
+
   /// File path: assets/png/product picture.png
   AssetGenImage get productPicture =>
       const AssetGenImage('assets/png/product picture.png');
@@ -65,6 +69,7 @@ class $AssetsPngGen {
         onboard2,
         onboard3,
         payvidenceLogo,
+        payvidenceLogo2,
         productPicture,
         productpic,
         receipts,

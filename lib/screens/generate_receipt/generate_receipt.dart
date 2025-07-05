@@ -646,11 +646,32 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       if (!context.mounted) return;
       Navigator.of(context).pop(); // pop loading dialog on success
       
-      // Show appropriate toast message
+      // Show comprehensive success message
       if (isDraft == true) {
         ToastService.showSnackBar("Draft saved successfully");
       } else {
-        ToastService.showSnackBar(widget.isInvoice == true ? "Invoice generated successfully" : "Receipt generated successfully");
+        // Count new items created
+        int newProductsCount = 0;
+        bool newClientCreated = finalClient != null && client == null && clientNameController.text.trim().isNotEmpty;
+        
+        for (int i = 0; i < _textFields.length; i++) {
+          final index = i + 1;
+          if (!products.containsKey(index)) {
+            newProductsCount++;
+          }
+        }
+        
+        String message = widget.isInvoice == true ? "Invoice generated successfully" : "Receipt generated successfully";
+        
+        if (newClientCreated && newProductsCount > 0) {
+          message += ". New client and ${newProductsCount} product${newProductsCount > 1 ? 's' : ''} added";
+        } else if (newClientCreated) {
+          message += ". New client added";
+        } else if (newProductsCount > 0) {
+          message += ". ${newProductsCount} new product${newProductsCount > 1 ? 's' : ''} added";
+        }
+        
+        ToastService.showSnackBar(message);
       }
       
       ref.invalidate(getAllReceiptProvider);
@@ -912,6 +933,11 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                                 formKey.currentState!.save();
                                 if (clientNameController.text.trim().isEmpty) {
                                   ToastService.showErrorSnackBar("Please enter client name");
+                                  return;
+                                }
+                                // Check payment method only for receipts when generating (not draft)
+                                if (widget.isInvoice == false && selectedPayment == null) {
+                                  ToastService.showErrorSnackBar("Please select a payment method");
                                   return;
                                 }
                                 isDraft = false;

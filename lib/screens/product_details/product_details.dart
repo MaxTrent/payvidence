@@ -93,15 +93,16 @@ class ProductDetails extends HookConsumerWidget {
                               height: double.infinity,
                               errorBuilder: (context, error, stackTrace) => Center(
                                 child: Image.asset(
-                                  Assets.png.payvidenceLogo.path,
+                                  Assets.png.payvidenceLogo2.path,
                                   height: responsiveData.scaleHeight(450),
                                 ),
                               ),
                             )
                           : Center(
                               child: Image.asset(
-                                Assets.png.payvidenceLogo.path,
-                                height: responsiveData.scaleHeight(150),
+                                fit: BoxFit.cover,
+                                Assets.png.payvidenceLogo2.path,
+                                // height: responsiveData.scaleHeight(150),
                               ),
                             ),
                       SafeArea(
