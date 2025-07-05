@@ -250,19 +250,23 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                   onPressed: () {
                     Navigator.of(context).pop(); // Close bottom sheet first
                     viewModel.deleteBusiness(
-                      navigateOnSuccess: () {
-                        // Check if deleted business was the current one and switch to next available
+                      navigateOnSuccess: () async {
+                        // Check if deleted business was the current one
                         final currentBusiness = ref.read(getCurrentBusinessProvider);
                         if (currentBusiness?.id == businessId) {
-                          // Get fresh business list and switch to first available
-                          Future.microtask(() async {
-                            await ref.refresh(getAllBusinessProvider.future);
-                            final allBusinesses = ref.read(getAllBusinessProvider).value ?? [];
-                            if (allBusinesses.isNotEmpty) {
+                          // Refresh business list first
+                          await ref.refresh(getAllBusinessProvider.future);
+                          final allBusinesses = ref.read(getAllBusinessProvider).value ?? [];
+                          
+                          if (allBusinesses.isNotEmpty) {
+                            // Switch to first available business
+                            try {
                               ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(allBusinesses.first);
                               locator<SessionManager>().save(key: SessionConstants.businessId, value: allBusinesses.first.id);
+                            } catch (e) {
+                              print('Auto-switch business error (ignored): $e');
                             }
-                          });
+                          }
                         }
                         locator<PayvidenceAppRouter>().navigate(const AllBusinessesRoute());
                       },
