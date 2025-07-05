@@ -664,9 +664,9 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         String message = widget.isInvoice == true ? "Invoice generated successfully" : "Receipt generated successfully";
         
         if (newClientCreated && newProductsCount > 0) {
-          message += ". New client and ${newProductsCount} product${newProductsCount > 1 ? 's' : ''} added";
+          message += "${newProductsCount} product${newProductsCount > 1 ? 's' : ''} added";
         } else if (newClientCreated) {
-          message += ". New client added";
+          message += "";
         } else if (newProductsCount > 0) {
           message += ". ${newProductsCount} new product${newProductsCount > 1 ? 's' : ''} added";
         }

@@ -47,6 +47,13 @@ class LoginViewModel extends BaseChangeNotifier {
   }
 
   Future<String?> loadSavedEmail() async {
+    // Prioritize signup email over saved login email
+    final signupEmail = locator<SessionManager>().get<String>(SessionConstants.signupEmail);
+    if (signupEmail != null && signupEmail.isNotEmpty) {
+      // Clear signup email after using it once
+      await locator<SessionManager>().remove(SessionConstants.signupEmail);
+      return signupEmail;
+    }
     return locator<SessionManager>().get<String>(SessionConstants.savedLoginEmail);
   }
 

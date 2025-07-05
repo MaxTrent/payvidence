@@ -109,23 +109,58 @@ class AddBusiness extends HookConsumerWidget {
         ToastService.showSnackBar("Business created successfully");
         
         // Set the newly created business as current
-        locator<SessionManager>().save(key: SessionConstants.businessId, value: response.id);
+        final businessId = response.id;
+        print('Saving business ID to session: $businessId');
         
-        // Delay provider operations to avoid circular dependency
-        Future.microtask(() {
-          ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(response);
-          ref.refresh(getAllBusinessProvider.future);
-        });
+        if (businessId != null && businessId.isNotEmpty) {
+          try {
+            await locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+            
+            // Add a small delay to ensure the save completes
+            await Future.delayed(const Duration(milliseconds: 100));
+            
+            // Verify the save operation
+            final savedId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+            print('Verified saved business ID: $savedId');
+            
+            if (savedId == null || savedId != businessId) {
+              print('Session save failed, trying alternative approach');
+              // Try saving again without await
+              locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+              await Future.delayed(const Duration(milliseconds: 200));
+              final retryId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+              print('Retry saved business ID: $retryId');
+            }
+          } catch (e) {
+            print('Error saving business ID to session: $e');
+          }
+        } else {
+          print('Business ID is null or empty, cannot save to session');
+        }
+        
+        // Set current business immediately
+        ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(response);
+        
+        // Refresh business list and wait a moment for it to update
+        ref.invalidate(getAllBusinessProvider);
+        
+        // Wait for business list to refresh before navigation
+        await Future.delayed(const Duration(milliseconds: 500));
 
         if (context.mounted) {
-          locator<PayvidenceAppRouter>().replaceAll([const HomePageRoute()]);
+          // Navigate to home screen
+          context.router.replaceAll([const HomePageRoute()]);
+          
           // Show create product dialog after navigation
-          Future.delayed(const Duration(milliseconds: 500), () {
-            showDialog(
-              context: locator<PayvidenceAppRouter>().navigatorKey.currentContext!,
-              barrierDismissible: false,
-              builder: (context) => const CreateProductDialog(),
-            );
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            final currentContext = locator<PayvidenceAppRouter>().navigatorKey.currentContext;
+            if (currentContext != null) {
+              showDialog(
+                context: currentContext,
+                barrierDismissible: false,
+                builder: (context) => const CreateProductDialog(),
+              );
+            }
           });
         }
 

@@ -39,26 +39,30 @@ class EmptyCategory extends HookConsumerWidget {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: AppTextField(
-            prefixIcon: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Padding(
-                padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-                child: SvgPicture.asset(
-                  Assets.svg.backbutton,
-                  colorFilter: ColorFilter.mode(
-                      isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+          toolbarHeight: kToolbarHeight + MediaQuery.of(context).padding.top,
+          title: Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: AppTextField(
+              prefixIcon: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                  child: SvgPicture.asset(
+                    Assets.svg.backbutton,
+                    colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+                  ),
                 ),
               ),
+              hintText: 'Search for category',
+              controller: _searchController,
+              radius: responsiveData.largeRadius,
+              filled: isDarkMode ? false : true,
+              appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
+              fillColor: isDarkMode ? Colors.black : appGrey5,
             ),
-            hintText: 'Search for category',
-            controller: _searchController,
-            radius: responsiveData.largeRadius,
-            filled: isDarkMode ? false : true,
-            appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
-            fillColor: isDarkMode ? Colors.black : appGrey5,
           ),
         ),
         floatingActionButton: allCategory.maybeWhen(

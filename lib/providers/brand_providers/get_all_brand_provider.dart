@@ -13,19 +13,41 @@ class GetAllBrandNotifier extends AsyncNotifier<List<BrandModel>> {
   @override
   Future<List<BrandModel>> build() {
     //final userModel = getUser();
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      return Future.value([]);
+    }
     return locator<IBrandRepository>()
-        .fetchAllBrand(ref.watch(getCurrentBusinessProvider)!.id!);
+        .fetchAllBrand(currentBusiness!.id!);
   }
 
   Future<BrandModel> addBrand(Map<String, dynamic> data) {
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      throw Exception('No business selected');
+    }
     return locator<IBrandRepository>()
-        .addBrand(ref.watch(getCurrentBusinessProvider)!.id!, data);
+        .addBrand(currentBusiness!.id!, data);
   }
 
   Future<void> deleteBrand(String brandId) async {
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      throw Exception('No business selected');
+    }
     await locator<IBrandRepository>()
-        .deleteBrand(ref.watch(getCurrentBusinessProvider)!.id!, brandId);
+        .deleteBrand(currentBusiness!.id!, brandId);
     ref.invalidateSelf();
+  }
+
+  Future<void> refreshBrands(String businessId) async {
+    state = const AsyncLoading();
+    try {
+      final brands = await locator<IBrandRepository>().fetchAllBrand(businessId);
+      state = AsyncData(brands);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+    }
   }
 
 // Add methods to mutate the state

@@ -52,6 +52,10 @@ class CreateAccountViewModel extends BaseChangeNotifier {
             phoneNumber: user.account.phoneNumber?? '',
             // token: user.token ?? ""
         );
+        
+        // Save the signup email for login screen
+        await locator<SessionManager>().save(key: SessionConstants.signupEmail, value: email);
+        
          navigateOnSuccess();
 
       } else {

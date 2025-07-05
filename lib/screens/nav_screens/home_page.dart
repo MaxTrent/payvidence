@@ -28,10 +28,10 @@ class HomePage extends HookConsumerWidget {
     final selectedIndex = useState(0);
     final getAllBusiness = ref.watch(getAllBusinessProvider);
     final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
-    final isLoading = getAllBusiness.isLoading || transactionsViewModel.isLoading;
+    final isBusinessLoading = getAllBusiness.isLoading;
 
     void onItemTapped(int index) {
-      if (!isLoading) {
+      if (!isBusinessLoading) {
         selectedIndex.value = index;
       }
     }

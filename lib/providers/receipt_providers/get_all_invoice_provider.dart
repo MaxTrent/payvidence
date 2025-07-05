@@ -13,8 +13,12 @@ class GetAllInvoiceNotifier extends AsyncNotifier<List<Receipt>> {
   @override
   Future<List<Receipt>> build() {
     //final userModel = getUser();
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      return Future.value([]);
+    }
     return locator<IReceiptRepository>()
-        .fetchAllReceipts(ref.watch(getCurrentBusinessProvider)!.id!, 'invoice');
+        .fetchAllReceipts(currentBusiness!.id!, 'invoice');
   }
 
   Future<Receipt> addInvoice(Map<String, dynamic> data) {
@@ -23,6 +27,16 @@ class GetAllInvoiceNotifier extends AsyncNotifier<List<Receipt>> {
 
   Future<void> deleteDraft(String id) async {
     await locator<IReceiptRepository>().deleteReceipt(id);
+  }
+
+  Future<void> refreshInvoices(String businessId) async {
+    state = const AsyncLoading();
+    try {
+      final invoices = await locator<IReceiptRepository>().fetchAllReceipts(businessId, 'invoice');
+      state = AsyncData(invoices);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+    }
   }
 // Add methods to mutate the state
 }

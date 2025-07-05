@@ -16,8 +16,12 @@ class GetAllProductNotifier extends AsyncNotifier<List<Product>> {
   @override
   Future<List<Product>> build() {
     //final userModel = getUser();
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      return Future.value([]);
+    }
     return locator<IProductRepository>()
-        .fetchAllProduct(ref.watch(getCurrentBusinessProvider)!.id!);
+        .fetchAllProduct(currentBusiness!.id!);
   }
 
   Future<void> deleteProduct(
@@ -53,12 +57,28 @@ class GetAllProductNotifier extends AsyncNotifier<List<Product>> {
   }
 
   Future<void> setFilter() async {
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      state = const AsyncData([]);
+      return;
+    }
+    
     final Map<String, dynamic> filterData = ref.read(productFilterProvider);
     print(filterData);
     state = AsyncData(await locator<IProductRepository>().fetchAllProduct(
-        ref.watch(getCurrentBusinessProvider)!.id!,
+        currentBusiness!.id!,
         categoryId: filterData['category_id'] ?? '',
         name: filterData['name'] ?? ''));
+  }
+
+  Future<void> refreshProducts(String businessId) async {
+    state = const AsyncLoading();
+    try {
+      final products = await locator<IProductRepository>().fetchAllProduct(businessId);
+      state = AsyncData(products);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+    }
   }
 // Add methods to mutate the state
 }

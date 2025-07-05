@@ -43,17 +43,24 @@ class HomeScreen extends HookConsumerWidget {
       getAllBusiness.when(
         data: (businesses) {
           if (businesses.isEmpty) {
-            Future.microtask(() {
-              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
-            });
+            // Only redirect if we don't have a current business set (from recent creation)
+            if (currentBusiness == null) {
+              Future.microtask(() {
+                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
+              });
+            }
           } else {
             // Check if there's a specific business ID in session (from business creation)
             final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+            print('Home: sessionBusinessId=$sessionBusinessId, currentBusiness=${currentBusiness?.id}');
+            print('Home: available businesses=${businesses.map((b) => b.id).toList()}');
             
             if (sessionBusinessId != null) {
               // Find the business from session ID
               final sessionBusiness = businesses.where((b) => b.id == sessionBusinessId).firstOrNull;
+              print('Home: found sessionBusiness=${sessionBusiness?.name}');
               if (sessionBusiness != null && currentBusiness?.id != sessionBusinessId) {
+                print('Home: setting current business to ${sessionBusiness.name}');
                 Future.microtask(() {
                   try {
                     ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(sessionBusiness);

@@ -17,4 +17,5 @@ class SessionConstants {
   static const refreshToken = "refreshToken";
   static const isOnboarded = "isOnboarded";
   static const String savedLoginEmail = 'saved_login_email';
+  static const String signupEmail = 'signup_email';
 }

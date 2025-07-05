@@ -32,7 +32,6 @@ class GetCurrentBusinessNotifier extends Notifier<Business?> {
       ref.invalidate(getCurrentProductProvider);
       ref.invalidate(getCurrentBrandProvider);
       ref.invalidate(getCurrentCategoryProvider);
-      ref.invalidate(getAllProductProvider);
       ref.invalidate(getAllCategoryProvider);
       ref.invalidate(getAllBrandProvider);
       ref.invalidate(productFilterProvider);
@@ -40,6 +39,22 @@ class GetCurrentBusinessNotifier extends Notifier<Business?> {
       ref.invalidate(getAllReceiptProvider);
       ref.invalidate(getAllInvoiceProvider);
       ref.invalidate(salesFilterProvider);
+      
+      // Refresh all data providers for new business instead of invalidating
+      if (business.id != null) {
+        Future.microtask(() {
+          try {
+            ref.read(getAllProductProvider.notifier).refreshProducts(business.id!);
+            ref.read(getAllCategoryProvider.notifier).refreshCategories(business.id!);
+            ref.read(getAllBrandProvider.notifier).refreshBrands(business.id!);
+            ref.read(getAllReceiptProvider.notifier).refreshReceipts(business.id!);
+            ref.read(getAllInvoiceProvider.notifier).refreshInvoices(business.id!);
+            ref.read(salesDataProvider.notifier).refreshSales(business.id!);
+          } catch (e) {
+            print('Error refreshing data: $e');
+          }
+        });
+      }
     }
   }
 

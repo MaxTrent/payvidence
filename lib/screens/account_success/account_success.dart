@@ -196,7 +196,7 @@ These Terms are governed by Nigerian law. Disputes shall be resolved in Abuja co
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20)),
+          padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20), vertical: responsiveData.scaleHeight(14)),
           child: AppButton(
             buttonText: 'Go to Home',
             onPressed: () {
