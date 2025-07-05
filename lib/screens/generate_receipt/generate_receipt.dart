@@ -629,9 +629,16 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
       "client_id": finalClient?.id,
       "is_draft": isDraft,
-      "mode_of_payment":
-      widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
     };
+    
+    // Only include mode_of_payment if not saving as draft or if payment method is selected
+    if (widget.isInvoice == true) {
+      // For invoices, mode_of_payment is always null
+      requestData["mode_of_payment"] = null;
+    } else if (isDraft != true || selectedPayment != null) {
+      // For receipts: include if not draft OR if payment method is selected
+      requestData["mode_of_payment"] = selectedPayment?.toLowerCase();
+    }
     try {
       final Receipt response = await ref
           .read(getAllReceiptProvider.notifier)

@@ -55,7 +55,9 @@ class ProductDetails extends HookConsumerWidget {
         });
       } on ApiErrorResponseV2 catch (e) {
         Navigator.of(context).pop();
-        String errorMessage = e.message ?? 'An unknown error has occurred!';
+        String errorMessage = e.errors?.isNotEmpty == true 
+            ? e.errors!.first.message ?? e.message ?? 'An unknown error has occurred!'
+            : e.message ?? 'An unknown error has occurred!';
         ToastService.showErrorSnackBar(errorMessage);
       } on DioException catch (e) {
         Navigator.of(context).pop();

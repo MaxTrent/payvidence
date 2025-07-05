@@ -251,6 +251,19 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                     Navigator.of(context).pop(); // Close bottom sheet first
                     viewModel.deleteBusiness(
                       navigateOnSuccess: () {
+                        // Check if deleted business was the current one and switch to next available
+                        final currentBusiness = ref.read(getCurrentBusinessProvider);
+                        if (currentBusiness?.id == businessId) {
+                          // Get fresh business list and switch to first available
+                          Future.microtask(() async {
+                            await ref.refresh(getAllBusinessProvider.future);
+                            final allBusinesses = ref.read(getAllBusinessProvider).value ?? [];
+                            if (allBusinesses.isNotEmpty) {
+                              ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(allBusinesses.first);
+                              locator<SessionManager>().save(key: SessionConstants.businessId, value: allBusinesses.first.id);
+                            }
+                          });
+                        }
                         locator<PayvidenceAppRouter>().navigate(const AllBusinessesRoute());
                       },
                     );

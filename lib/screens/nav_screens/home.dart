@@ -55,16 +55,24 @@ class HomeScreen extends HookConsumerWidget {
               final sessionBusiness = businesses.where((b) => b.id == sessionBusinessId).firstOrNull;
               if (sessionBusiness != null && currentBusiness?.id != sessionBusinessId) {
                 Future.microtask(() {
-                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(sessionBusiness);
+                  try {
+                    ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(sessionBusiness);
+                  } catch (e) {
+                    print('Business switch error in home (ignored): $e');
+                  }
                 });
               }
             } else if (currentBusiness == null) {
               Future.microtask(() {
-                ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
-                final businessId = businesses.last.id;
-                locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
-                if (businessId != null && !transactionsViewModel.hasLoadedTransactions) {
-                  transactionsViewModel.fetchTransactions(businessId);
+                try {
+                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
+                  final businessId = businesses.last.id;
+                  locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+                  if (businessId != null && !transactionsViewModel.hasLoadedTransactions) {
+                    transactionsViewModel.fetchTransactions(businessId);
+                  }
+                } catch (e) {
+                  print('Business initialization error in home (ignored): $e');
                 }
               });
             }
