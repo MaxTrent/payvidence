@@ -5,6 +5,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/business_detail/business_detail_vm.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
+import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import '../../components/app_button.dart';
 import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
@@ -244,10 +248,10 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                 AppButton(
                   buttonText: 'Delete business',
                   onPressed: () {
+                    Navigator.of(context).pop(); // Close bottom sheet first
                     viewModel.deleteBusiness(
                       navigateOnSuccess: () {
-                        Navigator.of(context).pop(); // Close bottom sheet
-                        Navigator.of(context).pop(); // Go back to previous screen
+                        locator<PayvidenceAppRouter>().navigate(const AllBusinessesRoute());
                       },
                     );
                   },

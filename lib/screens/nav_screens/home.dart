@@ -118,15 +118,8 @@ class HomeScreen extends HookConsumerWidget {
                         );
                       }
                       
-                      // If currentBusiness is null but we have businesses, set the first one
-                      if (currentBusiness == null && data.isNotEmpty) {
-                        Future.microtask(() {
-                          final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
-                          final businessToSet = sessionBusinessId != null 
-                              ? data.firstWhere((b) => b.id == sessionBusinessId, orElse: () => data.first)
-                              : data.first;
-                          ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businessToSet);
-                        });
+                      // If currentBusiness is null, show loading
+                      if (currentBusiness == null) {
                         return const Center(
                           child: LoadingIndicator(),
                         );
@@ -309,7 +302,7 @@ class HomeScreen extends HookConsumerWidget {
                       ],
                     ),
                   ] else ...[
-                    ...transactionsViewModel.transactions.take(5).map(
+                    ...transactionsViewModel.transactions.take(5).expand(
                           (transaction) {
                         final firstProductDetail =
                         transaction.recordProductDetails.isNotEmpty
@@ -317,7 +310,7 @@ class HomeScreen extends HookConsumerWidget {
                             : null;
 
                         if (firstProductDetail == null) {
-                          return TransactionTile(
+                          final tile = TransactionTile(
                             amount: '0',
                             dateTime: '',
                             productName: 'Unknown Product',
@@ -327,6 +320,8 @@ class HomeScreen extends HookConsumerWidget {
                             unitSold: '0',
                             imageUrl: '',
                           );
+                          final isLast = transactionsViewModel.transactions.take(5).toList().indexOf(transaction) == transactionsViewModel.transactions.take(5).length - 1;
+                          return isLast ? [tile] : [tile, SizedBox(height: responsiveData.scaleHeight(12))];
                         }
 
                         final product = firstProductDetail.product;
@@ -343,7 +338,7 @@ class HomeScreen extends HookConsumerWidget {
                             '';
                         final unitSold = product?.quantitySold?.toString() ?? '0';
 
-                        return GestureDetector(
+                        final tile = GestureDetector(
                           onTap: () {
                             final isInvoice = transaction.status == 'pending';
                             final receipt = Receipt(
@@ -370,6 +365,10 @@ class HomeScreen extends HookConsumerWidget {
                             imageUrl: imageUrl,
                           ),
                         );
+                        
+                        final isLast = transactionsViewModel.transactions.take(5).toList().indexOf(transaction) == transactionsViewModel.transactions.take(5).length - 1;
+                        
+                        return isLast ? [tile] : [tile, SizedBox(height: responsiveData.scaleHeight(12))];
                       },
                     ),
                   ],

@@ -173,9 +173,7 @@ Future<void> deleteBusiness({
 
     if (response.success) {
       showSuccess(message: "Business deleted successfully");
-      Future.delayed(const Duration(milliseconds: 500), () {
-        navigateOnSuccess();
-      });
+      navigateOnSuccess();
     } else {
       var errorMessage = response.error?.errors?.first.message ??
           response.error?.message;

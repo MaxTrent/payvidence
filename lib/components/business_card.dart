@@ -121,9 +121,7 @@ class BusinessCard extends HookConsumerWidget {
                 locator<SessionManager>().save(key: SessionConstants.businessId, value: business.id);
                 
                 // Set current business immediately
-                Future.delayed(Duration.zero, () {
-                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
-                });
+                ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
                 
                 // Navigate to home
                 locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
