@@ -140,10 +140,10 @@ class HomeScreen extends HookConsumerWidget {
                               CircleAvatar(
                                 radius: responsiveData.smallRadius * 1.6,
                                 backgroundColor: Colors.black,
-                                backgroundImage: currentBusiness?.logoUrl != null 
-                                    ? NetworkImage(currentBusiness!.logoUrl!) 
+                                backgroundImage: currentBusiness.logoUrl != null
+                                    ? NetworkImage(currentBusiness.logoUrl!)
                                     : null,
-                                child: currentBusiness?.logoUrl == null 
+                                child: currentBusiness.logoUrl == null
                                     ? const Icon(Icons.business, color: Colors.white) 
                                     : null,
                               ),

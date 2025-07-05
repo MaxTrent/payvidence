@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               child: ScaleTransition(
                 scale: _scaleAnimation,
                 child: Image.asset(
-                  Assets.png.payvidenceLogo.path,
+                  Assets.png.payvidenceLogo2.path,
                   width: 120,
                   height: 120,
                 ),

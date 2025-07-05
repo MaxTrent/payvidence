@@ -466,22 +466,16 @@ class ReceiptTile extends StatelessWidget {
                 receipt.recordProductDetails[0].product!.logoUrl!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Image.asset(
-                      Assets.png.payvidenceLogo.path,
-                      fit: BoxFit.contain,
-                    ),
+                  return Image.asset(
+                    Assets.png.payvidenceLogo.path,
+                    fit: BoxFit.cover,
                   );
                 },
               )
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Image.asset(
-                    Assets.png.payvidenceLogo.path,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+              : Image.asset(
+                Assets.png.payvidenceLogo.path,
+                fit: BoxFit.cover,
+              ),
         ),
         SizedBox(width: responsiveData.scaleWidth(14)),
         Expanded(
