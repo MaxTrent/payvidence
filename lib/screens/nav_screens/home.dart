@@ -43,7 +43,6 @@ class HomeScreen extends HookConsumerWidget {
       getAllBusiness.when(
         data: (businesses) {
           if (businesses.isEmpty) {
-            // Only redirect if we don't have a current business set (from recent creation)
             if (currentBusiness == null) {
               Future.microtask(() {
                 locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
