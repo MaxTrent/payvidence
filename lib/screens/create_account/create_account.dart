@@ -76,9 +76,15 @@ class CreateAccountScreen extends HookConsumerWidget {
     }, []);
 
     return ResponsiveWrapper(
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: KeyboardDismissibleScaffold(
+      child: PopScope(
+        onPopInvoked: (didPop) {
+          if (viewModel.isLoading) {
+            viewModel.cancelOperation();
+          }
+        },
+        child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: KeyboardDismissibleScaffold(
           appBar: AppBar(),
           body: Form(
             key: _formKey,
@@ -341,6 +347,6 @@ class CreateAccountScreen extends HookConsumerWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

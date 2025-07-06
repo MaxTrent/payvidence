@@ -104,4 +104,12 @@ class CreateAccountViewModel extends BaseChangeNotifier {
     // await locator<SessionManager>()
     //     .save(key: SessionConstants.accessTokenPref, value: token);
   }
+
+  void cancelOperation() {
+    if (_isLoading) {
+      _isLoading = false;
+      notifyListeners();
+      debugPrint('Create account operation cancelled');
+    }
+  }
 }

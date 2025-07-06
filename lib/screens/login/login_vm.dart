@@ -346,4 +346,13 @@ class LoginViewModel extends BaseChangeNotifier {
     await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: token);
     await locator<SessionManager>().save(key: SessionConstants.refreshToken, value: refreshToken);
   }
+
+  void cancelOperation() {
+    if (_isLoading) {
+      _isLoading = false;
+      _errorMessage = 'Operation cancelled';
+      notifyListeners();
+      developer.log('Login operation cancelled');
+    }
+  }
 }

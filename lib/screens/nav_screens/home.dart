@@ -128,9 +128,8 @@ class HomeScreen extends HookConsumerWidget {
                   getAllBusiness.when(
                     data: (data) {
                       if (data.isEmpty) {
-                        return const Center(
-                          child: LoadingIndicator(),
-                        );
+                        // Don't show loading indicator, let redirect happen
+                        return const SizedBox.shrink();
                       }
                       
                       // If currentBusiness is null, show loading

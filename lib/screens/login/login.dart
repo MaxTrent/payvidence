@@ -87,9 +87,15 @@ class Login extends HookConsumerWidget {
     final useBiometricLogin = viewModel.shouldUseBiometricLogin && !showManualLogin.value;
 
     return ResponsiveWrapper(
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
-        child: KeyboardDismissibleScaffold(
+      child: PopScope(
+        onPopInvoked: (didPop) {
+          if (viewModel.isLoading) {
+            viewModel.cancelOperation();
+          }
+        },
+        child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+          child: KeyboardDismissibleScaffold(
           appBar: AppBar(),
           body: Form(
             key: formKey,
@@ -275,6 +281,6 @@ class Login extends HookConsumerWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
