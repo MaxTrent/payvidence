@@ -73,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color(0xFF49379C),
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               child: ScaleTransition(
                 scale: _scaleAnimation,
                 child: Image.asset(
-                  Assets.png.payvidenceLogo2.path,
+                  'assets/logo/newlogo2.png',
                   width: 120,
                   height: 120,
                 ),

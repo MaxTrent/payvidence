@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
@@ -17,8 +19,15 @@ class EmptyBusiness extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
 
-    return ResponsiveWrapper(
-      child: Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          SystemNavigator.pop();
+        }
+      },
+      child: ResponsiveWrapper(
+        child: KeyboardDismissibleScaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
         ),
@@ -58,6 +67,7 @@ class EmptyBusiness extends StatelessWidget {
               locator<PayvidenceAppRouter>()
                   .push(AddBusinessRoute());
             },
+          ),
           ),
         ),
       ),
