@@ -33,7 +33,10 @@ class CreateNewPassword extends HookConsumerWidget {
 
     useEffect(() {
       void updateFieldsEmptyStatus() {
-        areFieldsEmpty.value = checkFieldsEmpty();
+        final isEmpty = checkFieldsEmpty();
+        if (areFieldsEmpty.value != isEmpty) {
+          areFieldsEmpty.value = isEmpty;
+        }
         print("Fields empty: ${areFieldsEmpty.value}");
       }
 

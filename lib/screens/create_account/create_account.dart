@@ -52,7 +52,10 @@ class CreateAccountScreen extends HookConsumerWidget {
 
     useEffect(() {
       void updateFieldsEmptyStatus() {
-        _areFieldsEmpty.value = areFieldsEmpty();
+        final isEmpty = areFieldsEmpty();
+        if (_areFieldsEmpty.value != isEmpty) {
+          _areFieldsEmpty.value = isEmpty;
+        }
       }
 
       firstNameController.addListener(updateFieldsEmptyStatus);
@@ -70,14 +73,7 @@ class CreateAccountScreen extends HookConsumerWidget {
         passwordController.removeListener(updateFieldsEmptyStatus);
         passwordConfirmController.removeListener(updateFieldsEmptyStatus);
       };
-    }, [
-      firstNameController,
-      lastNameController,
-      emailController,
-      phoneController,
-      passwordController,
-      passwordConfirmController,
-    ]);
+    }, []);
 
     return ResponsiveWrapper(
       child: GestureDetector(

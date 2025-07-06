@@ -62,7 +62,8 @@ class NetworkService {
       }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
-      authorizedHeader = await getAuthorizedHeader(isAccessToken: isAccessToken);
+      authorizedHeader =
+      await getAuthorizedHeader(isAccessToken: isAccessToken);
     }
 
     return await request(

@@ -64,8 +64,14 @@ class Login extends HookConsumerWidget {
 
     useEffect(() {
       void updateFieldsStatus() {
-        areFieldsEmpty.value = checkFieldsEmpty();
-        isEmailValid.value = checkEmailValid(emailController.text);
+        final isEmpty = checkFieldsEmpty();
+        final emailValid = checkEmailValid(emailController.text);
+        if (areFieldsEmpty.value != isEmpty) {
+          areFieldsEmpty.value = isEmpty;
+        }
+        if (isEmailValid.value != emailValid) {
+          isEmailValid.value = emailValid;
+        }
         print("Fields empty: ${areFieldsEmpty.value}, Email valid: ${isEmailValid.value}");
       }
 
