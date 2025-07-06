@@ -248,12 +248,12 @@ class AllReceipts extends HookConsumerWidget {
                                     subtitle: 'Are you sure you want to delete this receipt?',
                                     height: responsiveData.scaleHeight(500),
                                     children: [
-                                      GestureDetector(
+                                      InkWell(
                                         onTap: () => Navigator.of(context).pop(true),
-                                        child: Padding(
+                                        child: Container(
+                                          width: double.infinity,
                                           padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
                                               Icon(
                                                 Icons.delete,
@@ -275,12 +275,12 @@ class AllReceipts extends HookConsumerWidget {
                                         ),
                                       ),
                                       Divider(height: responsiveData.scaleHeight(1)),
-                                      GestureDetector(
+                                      InkWell(
                                         onTap: () => Navigator.of(context).pop(false),
-                                        child: Padding(
+                                        child: Container(
+                                          width: double.infinity,
                                           padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
                                               Icon(
                                                 Icons.cancel,

@@ -345,15 +345,15 @@ class AllTransactions extends HookConsumerWidget {
                       ),
                     ),
                     SizedBox(height: responsiveData.scaleHeight(40)),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         filterType.value = 'Receipt';
                         Navigator.of(context).pop();
                       },
-                      child: Padding(
+                      child: Container(
+                        width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SvgPicture.asset(
                               Assets.svg.receipt,
@@ -374,15 +374,15 @@ class AllTransactions extends HookConsumerWidget {
                       ),
                     ),
                     Divider(height: responsiveData.scaleHeight(1)),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         filterType.value = 'Invoice';
                         Navigator.of(context).pop();
                       },
-                      child: Padding(
+                      child: Container(
+                        width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SvgPicture.asset(
                                 Assets.svg.invoice,

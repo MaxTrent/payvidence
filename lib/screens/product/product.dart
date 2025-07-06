@@ -440,7 +440,7 @@ class FilterBottomSheet extends HookConsumerWidget {
                 return ListView.separated(
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return GestureDetector(
+                    return InkWell(
                       onTap: () {
                         if (ref.read(productFilterProvider)['category_id'] ==
                             data[index].id) {
@@ -452,13 +452,13 @@ class FilterBottomSheet extends HookConsumerWidget {
                         }
                         ref.read(getAllProductProvider.notifier).setFilter();
                       },
-                      child: Padding(
+                      child: Container(
+                        width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 SvgPicture.asset(
                                   Assets.svg.shapes,
@@ -466,7 +466,7 @@ class FilterBottomSheet extends HookConsumerWidget {
                                     isDarkMode ? Colors.white : Colors.black,
                                     BlendMode.srcIn,
                                   ),
-                                  width: responsiveData.scaleWidth(24), // Added for consistency
+                                  width: responsiveData.scaleWidth(24),
                                   height: responsiveData.scaleHeight(24),
                                 ),
                                 SizedBox(width: responsiveData.scaleWidth(16)),

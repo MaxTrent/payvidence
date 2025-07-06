@@ -501,26 +501,22 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                     ),
                     SizedBox(height: responsiveData.scaleHeight(40)),
                     ...paymentOptions.map((option) {
-                      return GestureDetector(
+                      return InkWell(
                         onTap: () {
                           setState(() {
                             selectedPayment = option;
                           });
                           Navigator.of(context).pop();
                         },
-                        child: Padding(
+                        child: Container(
+                          width: double.infinity,
                           padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                option.replaceAll(RegExp('_'), ' '),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                              ),
-                            ],
+                          child: Text(
+                            option.replaceAll(RegExp('_'), ' '),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(fontSize: Responsive.fontSize(context, 14)),
                           ),
                         ),
                       );

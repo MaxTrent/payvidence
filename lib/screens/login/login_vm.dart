@@ -75,16 +75,13 @@ class LoginViewModel extends BaseChangeNotifier {
       final response = await apiServices.getAccount();
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
-        await saveUserCredentials(
-          userId: user.account.id ?? '',
-          firstName: user.account.firstName,
-          lastName: user.account.lastName ?? '',
-          email: user.account.email ?? '',
-          phoneNumber: user.account.phoneNumber ?? '',
-          profilePictureUrl: user.account.profilePictureUrl ?? "",
-          token: user.token ?? "",
-          refreshToken: user.refreshToken ?? "",
-        );
+        // Only update profile data, preserve existing tokens
+        await locator<SessionManager>().save(key: SessionConstants.userId, value: user.account.id ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.userFirstName, value: user.account.firstName);
+        await locator<SessionManager>().save(key: SessionConstants.userLastName, value: user.account.lastName ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.userEmail, value: user.account.email ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.userPhone, value: user.account.phoneNumber ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.profilePictureUrl, value: user.account.profilePictureUrl ?? "");
         developer.log('User profile synced: ${user.account.firstName} ${user.account.lastName}');
       } else {
         developer.log('Profile sync failed: ${response.error?.message}');

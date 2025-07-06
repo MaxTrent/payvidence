@@ -29,6 +29,9 @@ class $AssetsPngGen {
   AssetGenImage get keekee24158PM =>
       const AssetGenImage('assets/png/keekee 2.41.58 PM.png');
 
+  /// File path: assets/png/newlogo2.png
+  AssetGenImage get newlogo2 => const AssetGenImage('assets/png/newlogo2.png');
+
   /// File path: assets/png/onboard1.png
   AssetGenImage get onboard1 => const AssetGenImage('assets/png/onboard1.png');
 
@@ -65,6 +68,7 @@ class $AssetsPngGen {
   List<AssetGenImage> get values => [
         faceId,
         keekee24158PM,
+        newlogo2,
         onboard1,
         onboard2,
         onboard3,

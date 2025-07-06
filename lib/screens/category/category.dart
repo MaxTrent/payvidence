@@ -169,7 +169,7 @@ class EmptyCategory extends HookConsumerWidget {
                                   subtitle: 'Are you sure you want to delete this category?',
                                   height: responsiveData.scaleHeight(500),
                                   children: [
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () async {
                                         Navigator.of(context).pop();
                                         if (data[index].id != null) {
@@ -180,10 +180,10 @@ class EmptyCategory extends HookConsumerWidget {
                                           }
                                         }
                                       },
-                                      child: Padding(
+                                      child: Container(
+                                        width: double.infinity,
                                         padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Icon(
                                               Icons.delete,
@@ -205,12 +205,12 @@ class EmptyCategory extends HookConsumerWidget {
                                       ),
                                     ),
                                     Divider(height: responsiveData.scaleHeight(1)),
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () => Navigator.of(context).pop(false),
-                                      child: Padding(
+                                      child: Container(
+                                        width: double.infinity,
                                         padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Icon(
                                               Icons.cancel,

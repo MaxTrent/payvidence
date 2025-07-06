@@ -331,68 +331,56 @@ class AddBusiness extends HookConsumerWidget {
                               subtitle: 'Choose the role of the issuer.',
                               height: 400,
                               children: [
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     selectedRole.value = 'Sales Manager';
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
+                                  child: Container(
+                                    width: double.infinity,
                                     padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Sales Manager',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall!
-                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      'Sales Manager',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: Responsive.fontSize(context, 14)),
                                     ),
                                   ),
                                 ),
                                 Divider(height: responsiveData.scaleHeight(1)),
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     selectedRole.value = 'Business Manager';
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
+                                  child: Container(
+                                    width: double.infinity,
                                     padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Business Manager',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall!
-                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      'Business Manager',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: Responsive.fontSize(context, 14)),
                                     ),
                                   ),
                                 ),
                                 Divider(height: responsiveData.scaleHeight(1)),
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     selectedRole.value = 'Marketing Manager';
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
+                                  child: Container(
+                                    width: double.infinity,
                                     padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Marketing Manager',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall!
-                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      'Marketing Manager',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: Responsive.fontSize(context, 14)),
                                     ),
                                   ),
                                 ),
