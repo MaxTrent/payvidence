@@ -49,7 +49,7 @@ class HomeScreen extends HookConsumerWidget {
               });
             }
           } else {
-            // Check if there's a specific business ID in session (from business creation)
+            // Check if there's a specific business ID in session
             final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
             print('Home: sessionBusinessId=$sessionBusinessId, currentBusiness=${currentBusiness?.id}');
             print('Home: available businesses=${businesses.map((b) => b.id).toList()}');
