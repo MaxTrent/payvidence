@@ -173,21 +173,25 @@ Future<void> deleteBusiness({
 
     if (response.success) {
       showSuccess(message: "Business deleted successfully");
-      notifyListeners();
       navigateOnSuccess();
     } else {
       var errorMessage = response.error?.errors?.first.message ??
-          response.error?.message ??
-          "An error occurred!";
-      print("ViewModel: Delete failed - $errorMessage");
-      navigateOnSuccess();
-      handleError(message: errorMessage);
-      notifyListeners();
+          response.error?.message;
+      
+      // Handle case where error message might be boolean or null
+      String finalErrorMessage;
+      if (errorMessage == null || errorMessage.toString() == 'false' || errorMessage.toString() == 'null') {
+        finalErrorMessage = "Failed to delete business";
+      } else {
+        finalErrorMessage = errorMessage.toString();
+      }
+      
+      print("ViewModel: Delete failed - $finalErrorMessage");
+      handleError(message: finalErrorMessage);
     }
   } catch (e) {
     print("ViewModel: Exception in deleteBusiness - $e");
-    handleError(message: "Something went wrong");
-    notifyListeners();
+    handleError(message: "Something went wrong while deleting business");
   } finally {
     _setLoading(false);
   }

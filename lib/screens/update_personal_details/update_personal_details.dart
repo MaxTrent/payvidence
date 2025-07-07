@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
-import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
-import '../../routes/payvidence_app_router.dart';
-import '../../shared_dependency/shared_dependency.dart';
 
 @RoutePage(name: 'UpdatePersonalDetailsRoute')
 class UpdatePersonalDetails extends HookConsumerWidget {
@@ -39,14 +37,28 @@ class UpdatePersonalDetails extends HookConsumerWidget {
     }, []);
 
     useEffect(() {
+      void clearValidationOnEmpty() {
+        if (phoneController.text.isEmpty) {
+          formKey.currentState?.validate();
+        }
+      }
+
+      phoneController.addListener(clearValidationOnEmpty);
+
+      return () {
+        phoneController.removeListener(clearValidationOnEmpty);
+      };
+    }, []);
+
+    useEffect(() {
       if (viewModel.userInfo != null && !viewModel.isLoading) {
         firstNameController.text = viewModel.userInfo?.account.firstName ?? "";
         lastNameController.text = viewModel.userInfo?.account.lastName ?? "";
         emailController.text = viewModel.userInfo?.account.email ?? "";
         phoneController.text = viewModel.userInfo?.account.phoneNumber ?? "";
         originalFirstName.value = viewModel.userInfo?.account.firstName ?? "";
-        originalLastName.value = viewModel.userInfo?.account.lastName ?? ""; // Set original last name
-        originalPhoneNumber.value = viewModel.userInfo?.account.phoneNumber ?? ""; // Set original phone number
+        originalLastName.value = viewModel.userInfo?.account.lastName ?? "";
+        originalPhoneNumber.value = viewModel.userInfo?.account.phoneNumber ?? "";
       }
       return null;
     }, [viewModel.userInfo, viewModel.isLoading]);
@@ -60,15 +72,15 @@ class UpdatePersonalDetails extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
+        child: KeyboardDismissibleScaffold(
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(),
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
             child: SafeArea(
               child: Form(
                 key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ListView(
                   children: [
                     SizedBox(height: responsiveData.scaleHeight(16)),
                     Text(
@@ -113,8 +125,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                         focusNode: firstNameFocusNode,
                         textCapitalization: TextCapitalization.words,
                         validator: (val) {
-                          if (!val!.trim().isValidName || val.isEmpty) {
-                            return 'Enter a valid name';
+                          if (val == null || val.trim().isEmpty) {
+                            return 'First name is required';
+                          }
+                          if (val.trim().length < 2) {
+                            return 'Name must be at least 2 characters long';
                           }
                           return null;
                         },
@@ -131,8 +146,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                         focusNode: lastNameFocusNode,
                         textCapitalization: TextCapitalization.words,
                         validator: (val) {
-                          if (!val!.trim().isValidName || val.isEmpty) {
-                            return 'Enter a valid name';
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Last name is required';
+                          }
+                          if (val.trim().length < 2) {
+                            return 'Name must be at least 2 characters long';
                           }
                           return null;
                         },
@@ -143,7 +161,7 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                       SizedBox(height: responsiveData.scaleHeight(8)),
                       AppTextField(
                         hintText: 'Email address',
-                        enabled: false, // Email remains disabled
+                        enabled: false,
                         controller: emailController,
                       ),
                       SizedBox(height: responsiveData.scaleHeight(20)),
@@ -161,8 +179,11 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                           FilteringTextInputFormatter.digitsOnly,
                         ],
                         validator: (val) {
-                          if (val!.trim().isEmpty || !val.isValidPhone) {
-                            return 'Enter a valid phone number';
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Phone number is required';
+                          }
+                          if (!val.trim().isValidPhone) {
+                            return 'Enter a valid Nigerian phone number';
                           }
                           return null;
                         },
@@ -172,24 +193,25 @@ class UpdatePersonalDetails extends HookConsumerWidget {
                     AppButton(
                       isProcessing: viewModel.isLoading,
                       buttonText: viewModel.isEditing ? 'Save' : 'Update details',
-                      // isDisabled: viewModel.isEditing && !hasChanges(),
+                      isDisabled: viewModel.isEditing && !hasChanges(),
                       onPressed: () {
-                        if (!viewModel.isEditing) {
-                          viewModel.toggleEditing();
-                          firstNameFocusNode.requestFocus();
-                        } else if (hasChanges()) {
-                          if (formKey.currentState!.validate()) {
+                        if (viewModel.isEditing) {
+                          if (formKey.currentState!.validate() && hasChanges()) {
                             viewModel.updateUserInfo(
-                              newFirstName: firstNameController.text.trim(),
-                              newLastName: lastNameController.text.trim(),
-                              newPhoneNumber: phoneController.text.trim(),
+                              newFirstName: firstNameController.text,
+                              newLastName: lastNameController.text,
+                              newPhoneNumber: phoneController.text != originalPhoneNumber.value 
+                                  ? phoneController.text 
+                                  : null,
                               navigateOnSuccess: () {
-                                locator<PayvidenceAppRouter>().back();
+                                // Update original values to reflect saved state
+                                originalFirstName.value = firstNameController.text;
+                                originalLastName.value = lastNameController.text;
+                                originalPhoneNumber.value = phoneController.text;
                               },
                             );
                           }
                         } else {
-                          print("No changes detected, exiting edit mode");
                           viewModel.toggleEditing();
                         }
                       },

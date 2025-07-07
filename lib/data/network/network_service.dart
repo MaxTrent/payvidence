@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -22,6 +24,7 @@ class NetworkService {
 
   }
 
+
   void _initClient(baseUrl) {
     final options = BaseOptions(
         baseUrl: baseUrl,
@@ -30,6 +33,16 @@ class NetworkService {
         receiveTimeout: const Duration(seconds: 20));
 
     dio.options = options;
+    
+    // Bypass certificate verification in debug mode
+    if (kDebugMode) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        final client = HttpClient();
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      };
+    }
+    
     dio.interceptors.add(ConnectionStatusInterceptor());
 
     if (kDebugMode) {
@@ -37,6 +50,8 @@ class NetworkService {
           .add(PrettyDioLogger(requestHeader: true, requestBody: true));
     }
   }
+
+
 
   Future<Either<Failure, Success>> get(
       path, {
@@ -47,7 +62,8 @@ class NetworkService {
       }) async {
     Map<String, dynamic> authorizedHeader = {};
     if (useToken) {
-      authorizedHeader = await getAuthorizedHeader(isAccessToken: isAccessToken);
+      authorizedHeader =
+      await getAuthorizedHeader(isAccessToken: isAccessToken);
     }
 
     return await request(
@@ -172,10 +188,16 @@ class NetworkService {
     } on DioException catch (e) {
       PerformanceMonitor.endTimer(operation);
 
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.unknown) {
-        return Left(Failure(ApiErrorResponseV2(message: e.message)));
+      if (e.type == DioExceptionType.connectionTimeout) {
+        return Left(Failure(const ApiErrorResponseV2(message: "Connection timeout. Please check your internet connection and try again.")));
+      }
+      
+      if (e.type == DioExceptionType.receiveTimeout) {
+        return Left(Failure(const ApiErrorResponseV2(message: "Server response timeout. Please try again.")));
+      }
+      
+      if (e.type == DioExceptionType.unknown) {
+        return Left(Failure(const ApiErrorResponseV2(message: "Network error. Please check your internet connection and try again.")));
       }
 
       if (e.response == null) {

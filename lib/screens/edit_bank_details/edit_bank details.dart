@@ -147,7 +147,7 @@ class EditBankDetails extends HookConsumerWidget {
                       SizedBox(height: responsiveData.scaleHeight(20)),
                       AppButton(
                         buttonText: 'Update bank details',
-                        textColor: isDarkMode ? Colors.black : Colors.white,
+                        textColor: Colors.white,
                         isProcessing: viewModel.isLoading,
                         onPressed: () {
                           _buildConfirmBankDetailsBottomSheet(context, viewModel, isDarkMode, () {

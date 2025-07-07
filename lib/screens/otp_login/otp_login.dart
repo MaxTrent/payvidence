@@ -90,6 +90,7 @@ class OtpLogin extends HookConsumerWidget {
                       controller: pinController,
                       showCursor: true,
                       length: 5,
+                      autofillHints: const [AutofillHints.oneTimeCode],
                       defaultPinTheme: PinTheme(
                         height: responsiveData.scaleHeight(68),
                         width: responsiveData.scaleWidth(64),

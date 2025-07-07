@@ -639,7 +639,7 @@ class ClientDetailsRoute extends _i65.PageRouteInfo<ClientDetailsRouteArgs> {
             businessId: businessId,
             clientId: clientId,
           ),
-          rawQueryParams: {
+          rawPathParams: {
             'businessId': businessId,
             'clientId': clientId,
           },
@@ -651,14 +651,14 @@ class ClientDetailsRoute extends _i65.PageRouteInfo<ClientDetailsRouteArgs> {
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      final queryParams = data.queryParams;
+      final pathParams = data.inheritedPathParams;
       final args = data.argsAs<ClientDetailsRouteArgs>(
           orElse: () => ClientDetailsRouteArgs(
-                businessId: queryParams.getString(
+                businessId: pathParams.getString(
                   'businessId',
                   '',
                 ),
-                clientId: queryParams.getString(
+                clientId: pathParams.getString(
                   'clientId',
                   '',
                 ),
@@ -1371,14 +1371,10 @@ class NotificationsRoute extends _i65.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i41.OnboardingScreen]
-class OnboardingScreenRoute
-    extends _i65.PageRouteInfo<OnboardingScreenRouteArgs> {
-  OnboardingScreenRoute({
-    _i66.Key? key,
-    List<_i65.PageRouteInfo>? children,
-  }) : super(
+class OnboardingScreenRoute extends _i65.PageRouteInfo<void> {
+  const OnboardingScreenRoute({List<_i65.PageRouteInfo>? children})
+      : super(
           OnboardingScreenRoute.name,
-          args: OnboardingScreenRouteArgs(key: key),
           initialChildren: children,
         );
 
@@ -1387,22 +1383,9 @@ class OnboardingScreenRoute
   static _i65.PageInfo page = _i65.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<OnboardingScreenRouteArgs>(
-          orElse: () => const OnboardingScreenRouteArgs());
-      return _i41.OnboardingScreen(key: args.key);
+      return const _i41.OnboardingScreen();
     },
   );
-}
-
-class OnboardingScreenRouteArgs {
-  const OnboardingScreenRouteArgs({this.key});
-
-  final _i66.Key? key;
-
-  @override
-  String toString() {
-    return 'OnboardingScreenRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for
@@ -1716,6 +1699,7 @@ class ReceiptScreenRoute extends _i65.PageRouteInfo<ReceiptScreenRouteArgs> {
     required _i68.Receipt record,
     required bool? isInvoice,
     _i66.Key? key,
+    String? source,
     List<_i65.PageRouteInfo>? children,
   }) : super(
           ReceiptScreenRoute.name,
@@ -1723,6 +1707,7 @@ class ReceiptScreenRoute extends _i65.PageRouteInfo<ReceiptScreenRouteArgs> {
             record: record,
             isInvoice: isInvoice,
             key: key,
+            source: source,
           ),
           initialChildren: children,
         );
@@ -1737,6 +1722,7 @@ class ReceiptScreenRoute extends _i65.PageRouteInfo<ReceiptScreenRouteArgs> {
         args.record,
         args.isInvoice,
         key: args.key,
+        source: args.source,
       );
     },
   );
@@ -1747,6 +1733,7 @@ class ReceiptScreenRouteArgs {
     required this.record,
     required this.isInvoice,
     this.key,
+    this.source,
   });
 
   final _i68.Receipt record;
@@ -1755,9 +1742,11 @@ class ReceiptScreenRouteArgs {
 
   final _i66.Key? key;
 
+  final String? source;
+
   @override
   String toString() {
-    return 'ReceiptScreenRouteArgs{record: $record, isInvoice: $isInvoice, key: $key}';
+    return 'ReceiptScreenRouteArgs{record: $record, isInvoice: $isInvoice, key: $key, source: $source}';
   }
 }
 

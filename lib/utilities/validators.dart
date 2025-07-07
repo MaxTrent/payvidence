@@ -14,7 +14,8 @@ extension ExtString on String {
   }
 
   bool get isValidPhone {
-    final phoneRegExp = RegExp(r"^\+?0[0-9]{10}$");
+    // Nigerian phone number format: 11 digits starting with 07x, 08x, 09x
+    final phoneRegExp = RegExp(r'^0[789][01]\d{8}$');
     return phoneRegExp.hasMatch(this);
   }
 

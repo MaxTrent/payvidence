@@ -9,15 +9,19 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/components/simple_bottom_sheet.dart';
 import 'package:payvidence/utilities/app_functions.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
+import '../../components/create_product_dialog.dart';
 import '../../data/local/session_constants.dart';
 import '../../data/local/session_manager.dart';
+import '../../model/business_model.dart';
 import '../../gen/assets.gen.dart';
 import '../../providers/business_providers/get_all_business_provider.dart';
+import '../../providers/business_providers/current_business_provider.dart';
 import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -75,10 +79,11 @@ class AddBusiness extends HookConsumerWidget {
         "issuer": issuerController.text,
         "issuer_role": selectedRole.value ?? '',
         "vat": 5,
-        "logo_image": await MultipartFile.fromFile(
-          logo.value!.path,
-          filename: logo.value!.path.split('/').last,
-        ),
+        if (logo.value != null)
+          "logo_image": await MultipartFile.fromFile(
+            logo.value!.path,
+            filename: logo.value!.path.split('/').last,
+          ),
         "issuer_signature_image": await MultipartFile.fromFile(
           signature.value!.path,
           filename: signature.value!.path.split('/').last,
@@ -102,16 +107,61 @@ class AddBusiness extends HookConsumerWidget {
 
         Navigator.of(context).pop();
         ToastService.showSnackBar("Business created successfully");
+        
+        // Set the newly created business as current
+        final businessId = response.id;
+        print('Saving business ID to session: $businessId');
+        
+        if (businessId != null && businessId.isNotEmpty) {
+          try {
+            await locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+            
+            // Add a small delay to ensure the save completes
+            await Future.delayed(const Duration(milliseconds: 100));
+            
+            // Verify the save operation
+            final savedId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+            print('Verified saved business ID: $savedId');
+            
+            if (savedId == null || savedId != businessId) {
+              print('Session save failed, trying alternative approach');
+              // Try saving again without await
+              locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+              await Future.delayed(const Duration(milliseconds: 200));
+              final retryId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+              print('Retry saved business ID: $retryId');
+            }
+          } catch (e) {
+            print('Error saving business ID to session: $e');
+          }
+        } else {
+          print('Business ID is null or empty, cannot save to session');
+        }
+        
+        // Set current business immediately
+        ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(response);
+        
+        // Refresh business list and wait a moment for it to update
         ref.invalidate(getAllBusinessProvider);
+        
+        // Wait for business list to refresh before navigation
+        await Future.delayed(const Duration(milliseconds: 500));
 
         if (context.mounted) {
-          await locator<PayvidenceAppRouter>().replaceAll([
-            HomeScreenRoute(
-              onViewAllTransactions: () {
-                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.allTransactions);
-              },
-            ),
-          ]);
+          // Navigate to home screen
+          context.router.replaceAll([const HomePageRoute()]);
+          
+          // Show create product dialog after navigation
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            final currentContext = locator<PayvidenceAppRouter>().navigatorKey.currentContext;
+            if (currentContext != null) {
+              showDialog(
+                context: currentContext,
+                barrierDismissible: false,
+                builder: (context) => const CreateProductDialog(),
+              );
+            }
+          });
         }
 
       } on DioException catch (e) {
@@ -142,15 +192,17 @@ class AddBusiness extends HookConsumerWidget {
       child: GestureDetector(
         onTap: FocusManager.instance.primaryFocus?.unfocus,
         child: PopScope(
-          canPop: false,
+          canPop: !isCreatingBusiness.value,
           onPopInvoked: (didPop) {
             if (didPop) return;
-            developer.log('🚫 AddBusinessRoute: Back navigation blocked');
+            if (isCreatingBusiness.value) {
+              developer.log('AddBusinessRoute: Back navigation blocked during creation');
+            }
           },
-          child: Scaffold(
+          child: KeyboardDismissibleScaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
-              automaticallyImplyLeading: false,
+              // automaticallyImplyLeading: false,
             ),
             body: SafeArea(
               child: Form(
@@ -176,24 +228,43 @@ class AddBusiness extends HookConsumerWidget {
                         controller: businessNameController,
                         keyboardType: TextInputType.name,
                         textCapitalization: TextCapitalization.words,
-                        validator: (val) => Validator.validateName(val),
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Business name is required';
+                          }
+                          if (val.trim().length < 2) {
+                            return 'Business name must be at least 2 characters long';
+                          }
+                          return null;
+                        },
                       ),
                       _buildSectionTitle(context, 'Business address'),
                       AppTextField(
                         hintText: 'Business address',
                         controller: businessAddressController,
                         textCapitalization: TextCapitalization.words,
-                        validator: (val) => Validator.validateName(val),
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Enter a valid address';
+                          }
+                          return null;
+                        },
                       ),
                       _buildSectionTitle(context, 'Business phone number'),
                       AppTextField(
                         hintText: 'Business phone number',
                         controller: phoneNumberController,
+                        keyboardType: TextInputType.number,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(11),
                           FilteringTextInputFormatter.digitsOnly,
                         ],
-                        validator: (val) => Validator.validatePhoneNumber(val),
+                        validator: (val) {
+                          if (!val!.trim().isValidPhone || val.isEmpty) {
+                            return 'Enter a valid phone number';
+                          }
+                          return null;
+                        },
                       ),
                       _buildSectionTitle(context, 'Business logo'),
                       GestureDetector(
@@ -260,68 +331,56 @@ class AddBusiness extends HookConsumerWidget {
                               subtitle: 'Choose the role of the issuer.',
                               height: 400,
                               children: [
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     selectedRole.value = 'Sales Manager';
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
+                                  child: Container(
+                                    width: double.infinity,
                                     padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Sales Manager',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall!
-                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      'Sales Manager',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: Responsive.fontSize(context, 14)),
                                     ),
                                   ),
                                 ),
                                 Divider(height: responsiveData.scaleHeight(1)),
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     selectedRole.value = 'Business Manager';
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
+                                  child: Container(
+                                    width: double.infinity,
                                     padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Business Manager',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall!
-                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      'Business Manager',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: Responsive.fontSize(context, 14)),
                                     ),
                                   ),
                                 ),
                                 Divider(height: responsiveData.scaleHeight(1)),
-                                GestureDetector(
+                                InkWell(
                                   onTap: () {
                                     selectedRole.value = 'Marketing Manager';
                                     Navigator.pop(context);
                                   },
-                                  child: Padding(
+                                  child: Container(
+                                    width: double.infinity,
                                     padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Marketing Manager',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall!
-                                              .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      'Marketing Manager',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: Responsive.fontSize(context, 14)),
                                     ),
                                   ),
                                 ),
@@ -349,10 +408,13 @@ class AddBusiness extends HookConsumerWidget {
                             } else {
                               return Stack(
                                 children: [
-                                  Image.file(
-                                    File(val.path),
-                                    height: responsiveData.scaleHeight(200),
-                                    fit: BoxFit.cover,
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Image.file(
+                                      File(val.path),
+                                      height: responsiveData.scaleHeight(200),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                   Positioned(
                                     bottom: responsiveData.scaleHeight(8),
@@ -383,9 +445,7 @@ class AddBusiness extends HookConsumerWidget {
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
-                            if (logo.value == null) {
-                              ToastService.showErrorSnackBar("Select a logo image");
-                            } else if (signature.value == null) {
+                            if (signature.value == null) {
                               ToastService.showErrorSnackBar("Select a signature image");
                             } else if (issuerName.isEmpty) {
                               ToastService.showErrorSnackBar("Issuer name is not available. Please update your profile in Settings.");

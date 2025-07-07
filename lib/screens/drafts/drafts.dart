@@ -7,9 +7,12 @@ import 'package:intl/intl.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
+import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
 import '../../components/loading_dialog.dart';
+import '../../components/simple_bottom_sheet.dart';
+import '../../components/pull_to_refresh.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../model/receipt_model.dart';
@@ -42,7 +45,6 @@ class Drafts extends HookConsumerWidget {
       if (!context.mounted) return;
       LoadingDialog.show(context);
       try {
-        final response =
         await ref.read(getAllReceiptProvider.notifier).deleteDraft(id);
         if (!context.mounted) return;
         Navigator.of(context).pop(); //pop loading dialog on success
@@ -61,6 +63,12 @@ class Drafts extends HookConsumerWidget {
       }
     }
 
+    Future<void> onRefresh() async {
+      await ref.refresh(isInvoice == true
+          ? getAllInvoiceProvider.future
+          : getAllReceiptProvider.future);
+    }
+
     ValueNotifier<int?> productNumber = ValueNotifier(null);
     return ResponsiveWrapper(
       child: Scaffold(
@@ -77,9 +85,11 @@ class Drafts extends HookConsumerWidget {
             valueListenable: productNumber,
           ),
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
-          child: SingleChildScrollView(
+        body: PullToRefresh(
+          onRefresh: onRefresh,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+            child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -100,7 +110,8 @@ class Drafts extends HookConsumerWidget {
                   hintText: 'Search for product',
                   controller: _searchController,
                   radius: responsiveData.largeRadius,
-                  filled: true,
+                  filled: isDarkMode ? false : true,
+                  appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
                 SizedBox(
@@ -123,14 +134,14 @@ class Drafts extends HookConsumerWidget {
                             height: responsiveData.screenHeight / 4,
                           ),
                           Text(
-                            'No receipts in drafts!',
+                            'No ${isInvoice == true ? "invoices" : "receipts"} in drafts!',
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                           SizedBox(
                             height: responsiveData.scaleHeight(10),
                           ),
                           Text(
-                            'All receipts in drafts will appear here.',
+                            'All ${isInvoice == true ? "invoices" : "receipts"} in drafts will appear here.',
                             textAlign: TextAlign.center,
                             style: Theme.of(context)
                                 .textTheme
@@ -162,8 +173,74 @@ class Drafts extends HookConsumerWidget {
                         itemBuilder: (context, index) {
                           return DraftTile(
                             draft: actualData[index],
-                            onPressed: (String id) {
-                              deleteProduct(id);
+                            onPressed: (String id) async {
+                              await showModalBottomSheet<bool>(
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                clipBehavior: Clip.none,
+                                context: context,
+                                builder: (context) => SimpleBottomSheet(
+                                  isDarkMode: isDarkMode,
+                                  title: 'Delete Draft',
+                                  subtitle: 'Are you sure you want to delete this draft?',
+                                  height: responsiveData.scaleHeight(500),
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).pop(true);
+                                        deleteProduct(id);
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.delete,
+                                              color: appRed,
+                                            ),
+                                            SizedBox(width: responsiveData.scaleWidth(16)),
+                                            Text(
+                                              'Delete',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall!
+                                                  .copyWith(
+                                                fontSize: Responsive.fontSize(context, 14),
+                                                color: appRed,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Divider(height: responsiveData.scaleHeight(1)),
+                                    GestureDetector(
+                                      onTap: () => Navigator.of(context).pop(false),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.cancel,
+                                              color: isDarkMode ? Colors.white : Colors.black,
+                                            ),
+                                            SizedBox(width: responsiveData.scaleWidth(16)),
+                                            Text(
+                                              'Cancel',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall!
+                                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
                             },
                             isInvoice: isInvoice ?? false,
                           );
@@ -191,6 +268,7 @@ class Drafts extends HookConsumerWidget {
                 }),
               ],
             ),
+            ),
           ),
         ),
       ),
@@ -213,6 +291,7 @@ class DraftTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
@@ -240,8 +319,8 @@ class DraftTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    draft.recordProductDetails?[0].product?.name ?? '',
-                    style: Theme.of(context).textTheme.displayMedium,
+                    draft.recordProductDetails[0].product?.name ?? '',
+                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.w600)
                   ),
                   SizedBox(
                     height: responsiveData.scaleHeight(6),
@@ -249,7 +328,7 @@ class DraftTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${draft.recordProductDetails?[0].quantity ?? ''} units sold',
+                        '${draft.recordProductDetails[0].quantity ?? ''} units sold',
                         style: Theme.of(context)
                             .textTheme
                             .displaySmall!
@@ -305,8 +384,9 @@ class DraftTile extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      AppNaira(fontSize: 14, color: isDarkMode ? Colors.white : Colors.black),
                       Text(
-                        '₦${draft.recordProductDetails?[0].total ?? ''} ',
+                        '${NumberFormat('#,###').format(double.tryParse(draft.recordProductDetails[0].total ?? '0') ?? 0)} ',
                         style: Theme.of(context)
                             .textTheme
                             .displayMedium!

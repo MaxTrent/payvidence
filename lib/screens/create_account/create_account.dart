@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/create_account/create_account_vm.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
@@ -51,7 +52,10 @@ class CreateAccountScreen extends HookConsumerWidget {
 
     useEffect(() {
       void updateFieldsEmptyStatus() {
-        _areFieldsEmpty.value = areFieldsEmpty();
+        final isEmpty = areFieldsEmpty();
+        if (_areFieldsEmpty.value != isEmpty) {
+          _areFieldsEmpty.value = isEmpty;
+        }
       }
 
       firstNameController.addListener(updateFieldsEmptyStatus);
@@ -69,19 +73,18 @@ class CreateAccountScreen extends HookConsumerWidget {
         passwordController.removeListener(updateFieldsEmptyStatus);
         passwordConfirmController.removeListener(updateFieldsEmptyStatus);
       };
-    }, [
-      firstNameController,
-      lastNameController,
-      emailController,
-      phoneController,
-      passwordController,
-      passwordConfirmController,
-    ]);
+    }, []);
 
     return ResponsiveWrapper(
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
+      child: PopScope(
+        onPopInvoked: (didPop) {
+          if (viewModel.isLoading) {
+            viewModel.cancelOperation();
+          }
+        },
+        child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: KeyboardDismissibleScaffold(
           appBar: AppBar(),
           body: Form(
             key: _formKey,
@@ -344,6 +347,6 @@ class CreateAccountScreen extends HookConsumerWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

@@ -7,6 +7,8 @@ import 'package:payvidence/screens/all_transactions/all_transactions.dart';
 import 'package:payvidence/screens/nav_screens/home.dart';
 import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/screens/sales/sales.dart';
+import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
+import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/animations.dart';
@@ -24,9 +26,14 @@ class HomePage extends HookConsumerWidget {
     final responsiveData = ResponsiveInherited.of(context);
 
     final selectedIndex = useState(0);
+    final getAllBusiness = ref.watch(getAllBusinessProvider);
+    final transactionsViewModel = ref.watch(allTransactionsViewModelProvider);
+    final isBusinessLoading = getAllBusiness.isLoading;
 
     void onItemTapped(int index) {
-      selectedIndex.value = index;
+      if (!isBusinessLoading) {
+        selectedIndex.value = index;
+      }
     }
 
     void switchToTab(int index) {

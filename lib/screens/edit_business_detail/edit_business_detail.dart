@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
@@ -14,7 +15,7 @@ import '../../gen/assets.gen.dart';
 import '../business_detail/business_detail_vm.dart';
 
 @RoutePage(name: 'EditBusinessRoute')
-class EditBusinessDetail extends HookConsumerWidget {
+class EditBusinessDetail extends ConsumerStatefulWidget {
   final String businessId;
 
   const EditBusinessDetail({
@@ -23,54 +24,73 @@ class EditBusinessDetail extends HookConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(businessDetailViewModel(businessId));
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    final nameController = useTextEditingController();
-    final addressController = useTextEditingController();
-    final phoneController = useTextEditingController();
-    final issuerController = useTextEditingController();
-    final issuerRoleController = useTextEditingController();
+  ConsumerState<EditBusinessDetail> createState() => _EditBusinessDetailState();
+}
+
+class _EditBusinessDetailState extends ConsumerState<EditBusinessDetail> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final addressController = TextEditingController();
+  final phoneController = TextEditingController();
+  final issuerController = TextEditingController();
+  final issuerRoleController = TextEditingController();
+  
+  String? originalName;
+  String? originalAddress;
+  String? originalPhone;
+  String? originalIssuer;
+  String? originalIssuerRole;
+  String? originalLogo;
+  String? originalSignature;
+  bool hasInitialized = false;
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    addressController.dispose();
+    phoneController.dispose();
+    issuerController.dispose();
+    issuerRoleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(businessDetailViewModel(widget.businessId)).fetchBusinessInformation(widget.businessId);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = ref.watch(businessDetailViewModel(widget.businessId));
     final responsiveData = ResponsiveInherited.of(context);
 
-    final originalName = useState<String?>(null);
-    final originalAddress = useState<String?>(null);
-    final originalPhone = useState<String?>(null);
-    final originalIssuer = useState<String?>(null);
-    final originalIssuerRole = useState<String?>(null);
-    final originalLogo = useState<String?>(null);
-    final originalSignature = useState<String?>(null);
-
-    useEffect(() {
-      viewModel.fetchBusinessInformation(businessId);
-      return null;
-    }, [businessId]);
-
-    useEffect(() {
-      if (viewModel.businessInfo != null && !viewModel.isLoading) {
-        nameController.text = viewModel.businessInfo!.name ?? '';
-        addressController.text = viewModel.businessInfo!.address ?? '';
-        phoneController.text = viewModel.businessInfo!.phoneNumber ?? '';
-        issuerController.text = viewModel.businessInfo!.issuer ?? '';
-        issuerRoleController.text = viewModel.businessInfo!.issuerRole ?? '';
-        originalName.value = viewModel.businessInfo!.name;
-        originalAddress.value = viewModel.businessInfo!.address;
-        originalPhone.value = viewModel.businessInfo!.phoneNumber;
-        originalIssuer.value = viewModel.businessInfo!.issuer;
-        originalIssuerRole.value = viewModel.businessInfo!.issuerRole;
-        originalLogo.value = viewModel.currentLogo;
-        originalSignature.value = viewModel.currentSignature;
-      }
-      return null;
-    }, [viewModel.businessInfo, viewModel.isLoading]);
+    // Initialize data when first loaded
+    if (viewModel.businessInfo != null && !viewModel.isLoading && !hasInitialized) {
+      nameController.text = viewModel.businessInfo!.name ?? '';
+      addressController.text = viewModel.businessInfo!.address ?? '';
+      phoneController.text = viewModel.businessInfo!.phoneNumber ?? '';
+      issuerController.text = viewModel.businessInfo!.issuer ?? '';
+      issuerRoleController.text = viewModel.businessInfo!.issuerRole ?? '';
+      originalName = viewModel.businessInfo!.name;
+      originalAddress = viewModel.businessInfo!.address;
+      originalPhone = viewModel.businessInfo!.phoneNumber;
+      originalIssuer = viewModel.businessInfo!.issuer;
+      originalIssuerRole = viewModel.businessInfo!.issuerRole;
+      originalLogo = viewModel.currentLogo;
+      originalSignature = viewModel.currentSignature;
+      hasInitialized = true;
+    }
 
     // Function to check if there are any changes
     bool hasChanges() {
-      return nameController.text != originalName.value ||
-          addressController.text != originalAddress.value ||
-          phoneController.text != originalPhone.value ||
-          issuerController.text != originalIssuer.value ||
-          issuerRoleController.text != originalIssuerRole.value ||
+      return nameController.text != originalName ||
+          addressController.text != originalAddress ||
+          phoneController.text != originalPhone ||
+          issuerController.text != originalIssuer ||
+          issuerRoleController.text != originalIssuerRole ||
           viewModel.selectedLogoImage != null ||
           viewModel.selectedSignatureImage != null;
     }
@@ -78,7 +98,7 @@ class EditBusinessDetail extends HookConsumerWidget {
     return ResponsiveWrapper(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
+        child: KeyboardDismissibleScaffold(
           appBar: AppBar(),
           body: Form(
             key: formKey,
@@ -98,14 +118,17 @@ class EditBusinessDetail extends HookConsumerWidget {
                   ),
                   SizedBox(height: responsiveData.scaleHeight(12)),
                   _buildSectionTitle(context, 'Business name'),
-                  AppTextField(
-                    hintText: 'Business name',
-                    controller: nameController,
-                    keyboardType: TextInputType.name,
-                    textCapitalization: TextCapitalization.words,
-                    validator: (val) {
-                      return Validator.validateName(val);
-                    },
+                  GestureDetector(
+                    onTap: () => print('EditBusinessDetail: Business name field tapped'),
+                    child: AppTextField(
+                      hintText: 'Business name',
+                      controller: nameController,
+                      keyboardType: TextInputType.name,
+                      textCapitalization: TextCapitalization.words,
+                      validator: (val) {
+                        return Validator.validateName(val);
+                      },
+                    ),
                   ),
                   _buildSectionTitle(context, 'Business address'),
                   AppTextField(
@@ -306,7 +329,7 @@ class EditBusinessDetail extends HookConsumerWidget {
                     onPressed: () {
                       if (formKey.currentState!.validate() && hasChanges()) {
                         viewModel.updateBusinessInfo(
-                          businessId,
+                          widget.businessId,
                           name: nameController.text.trim(),
                           address: addressController.text.trim(),
                           phone: phoneController.text.trim(),

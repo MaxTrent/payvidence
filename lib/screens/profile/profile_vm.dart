@@ -30,18 +30,19 @@ class ProfileViewModel extends BaseChangeNotifier {
 
       if (response.success) {
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: false);
-
+        _setLoading(false);
         navigateOnSuccess();
       } else {
-        var errorMessage = response.error?.errors?.first.message ??
-            response.error?.message ??
-            "An error occurred!";
-        handleError(message: errorMessage);
+        // Even if server logout fails, logout locally
+        await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: false);
+        _setLoading(false);
+        navigateOnSuccess();
       }
     } catch (e) {
-      handleError(message: "Something went wrong.");
-    } finally {
+      // Even if network fails, logout locally
+      await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: false);
       _setLoading(false);
+      navigateOnSuccess();
     }
   }
 }

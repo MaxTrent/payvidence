@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/brand_providers/get_all_brand_provider.dart';
 import 'package:payvidence/utilities/toast_service.dart';
@@ -30,42 +31,51 @@ class Brands extends HookConsumerWidget {
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
     final responsiveData = ResponsiveInherited.of(context);
-
     final allBrand = ref.watch(getAllBrandProvider);
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: AppTextField(
-            prefixIcon: Padding(
-              padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
-              child: GestureDetector(
-                onTap: ()=>Navigator.of(context).pop(),
-                child: SvgPicture.asset(
-                  Assets.svg.backbutton,
-                  colorFilter: ColorFilter.mode(
-                      isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+          toolbarHeight: kToolbarHeight + MediaQuery.of(context).padding.top,
+          title: Padding(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: AppTextField(
+              prefixIcon: Padding(
+                padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                child: GestureDetector(
+                  onTap: ()=>Navigator.of(context).pop(),
+                  child: SvgPicture.asset(
+                    Assets.svg.backbutton,
+                    colorFilter: ColorFilter.mode(
+                        isDarkMode ? Colors.white : Colors.black, BlendMode.srcIn),
+                  ),
                 ),
               ),
+              hintText: 'Search for brand',
+              controller: _searchController,
+              radius: responsiveData.largeRadius,
+              filled: isDarkMode ? false : true,
+              appBorderColor: isDarkMode ? Colors.white : Colors.transparent,
+              fillColor: isDarkMode ? Colors.black : appGrey5,
             ),
-            hintText: 'Search for brand',
-            controller: _searchController,
-            radius: responsiveData.largeRadius,
-            filled: true,
-            fillColor: isDarkMode ? Colors.black : appGrey5,
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            locator<PayvidenceAppRouter>()
-                .navigateNamed(PayvidenceRoutes.addBrand);
-          },
-          backgroundColor: primaryColor2,
-          child: Icon(
-            Icons.add,
-            size: responsiveData.scaleHeight(40),
-          ),
+        floatingActionButton: allBrand.maybeWhen(
+          data: (data) => data.isNotEmpty ? FloatingActionButton(
+            onPressed: () {
+              locator<PayvidenceAppRouter>()
+                  .navigateNamed(PayvidenceRoutes.addBrand);
+            },
+            backgroundColor: primaryColor2,
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+              size: responsiveData.scaleHeight(40),
+            ),
+          ) : null,
+          orElse: () => null,
         ),
         body: SafeArea(
           child: Padding(
@@ -119,7 +129,7 @@ class Brands extends HookConsumerWidget {
                             background: Container(
                               alignment: Alignment.centerRight,
                               padding: EdgeInsets.only(right: responsiveData.scaleWidth(20)),
-                              color: Colors.red,
+                              color: appRed,
                               child: Icon(
                                 Icons.delete,
                                 color: Colors.white,
@@ -136,9 +146,9 @@ class Brands extends HookConsumerWidget {
                                   isDarkMode: isDarkMode,
                                   title: 'Delete Brand',
                                   subtitle: 'Are you sure you want to delete this brand?',
-                                  height: 300,
+                                  height: responsiveData.scaleHeight(500),
                                   children: [
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () async {
                                         Navigator.of(context).pop();
                                         if (data[index].id != null) {
@@ -149,14 +159,14 @@ class Brands extends HookConsumerWidget {
                                           }
                                         }
                                       },
-                                      child: Padding(
+                                      child: Container(
+                                        width: double.infinity,
                                         padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.delete,
-                                              color: Colors.red,
+                                              color: appRed,
                                             ),
                                             SizedBox(width: responsiveData.scaleWidth(16)),
                                             Text(
@@ -166,7 +176,7 @@ class Brands extends HookConsumerWidget {
                                                   .displaySmall!
                                                   .copyWith(
                                                 fontSize: Responsive.fontSize(context, 14),
-                                                color: Colors.red,
+                                                color: appRed,
                                               ),
                                             ),
                                           ],
@@ -174,12 +184,12 @@ class Brands extends HookConsumerWidget {
                                       ),
                                     ),
                                     Divider(height: responsiveData.scaleHeight(1)),
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () => Navigator.of(context).pop(false),
-                                      child: Padding(
+                                      child: Container(
+                                        width: double.infinity,
                                         padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Icon(
                                               Icons.cancel,
@@ -204,7 +214,9 @@ class Brands extends HookConsumerWidget {
                             },
                             child: CategoryTile(
                               title: data[index].name ?? '',
-                              subtitle: data[index].description ?? '',
+                              subtitle: data[index].description?.isEmpty == true || data[index].description == null 
+                                  ? 'No description' 
+                                  : data[index].description!,
                               onPressed: () {
                                 ref
                                     .read(getCurrentBrandProvider.notifier)
@@ -227,7 +239,35 @@ class Brands extends HookConsumerWidget {
                     return const Text('An error has occurred');
                   },
                   loading: () {
-                    return const CustomShimmer();
+                    return Expanded(
+                      child: ListView.separated(
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.all(responsiveData.scaleHeight(16)),
+                            decoration: BoxDecoration(
+                              color: isDarkMode ? Colors.grey[800] : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomShimmer(
+                                  height: responsiveData.scaleHeight(20),
+                                  width: responsiveData.scaleWidth(120),
+                                ),
+                                SizedBox(height: responsiveData.scaleHeight(8)),
+                                CustomShimmer(
+                                  height: responsiveData.scaleHeight(16),
+                                  width: responsiveData.scaleWidth(200),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(24)),
+                        itemCount: 6,
+                      ),
+                    );
                   },
                 ),
               ],

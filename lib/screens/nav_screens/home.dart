@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/components/custom_shimmer.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/components/loading_indicator.dart';
 import 'package:payvidence/components/pull_to_refresh.dart';
 import 'package:payvidence/constants/app_colors.dart';
@@ -14,6 +15,7 @@ import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
+import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import '../../components/app_card.dart';
@@ -41,31 +43,49 @@ class HomeScreen extends HookConsumerWidget {
       getAllBusiness.when(
         data: (businesses) {
           if (businesses.isEmpty) {
-            developer.log('HomeScreen: No businesses found, navigating to EmptyBusinessRoute');
-            Future.microtask(() {
-              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
-            });
-          } else if (currentBusiness == null) {
-            developer.log('HomeScreen: No current business set, setting to: ${businesses.last.name}');
-
-            Future.microtask(() {
-              ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
-
-              final businessId = businesses.last.id;
-              locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
-
-              if (businessId != null) {
-                transactionsViewModel.fetchTransactions(businessId);
+            if (currentBusiness == null) {
+              Future.microtask(() {
+                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.emptyBusiness);
+              });
+            }
+          } else {
+            // Check if there's a specific business ID in session
+            final sessionBusinessId = locator<SessionManager>().get<String>(SessionConstants.businessId);
+            print('Home: sessionBusinessId=$sessionBusinessId, currentBusiness=${currentBusiness?.id}');
+            print('Home: available businesses=${businesses.map((b) => b.id).toList()}');
+            
+            if (sessionBusinessId != null) {
+              // Find the business from session ID
+              final sessionBusiness = businesses.where((b) => b.id == sessionBusinessId).firstOrNull;
+              print('Home: found sessionBusiness=${sessionBusiness?.name}');
+              if (sessionBusiness != null && currentBusiness?.id != sessionBusinessId) {
+                print('Home: setting current business to ${sessionBusiness.name}');
+                Future.microtask(() {
+                  try {
+                    ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(sessionBusiness);
+                  } catch (e) {
+                    print('Business switch error in home (ignored): $e');
+                  }
+                });
               }
-            });
+            } else if (currentBusiness == null) {
+              Future.microtask(() {
+                try {
+                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(businesses.last);
+                  final businessId = businesses.last.id;
+                  locator<SessionManager>().save(key: SessionConstants.businessId, value: businessId);
+                  if (businessId != null && !transactionsViewModel.hasLoadedTransactions) {
+                    transactionsViewModel.fetchTransactions(businessId);
+                  }
+                } catch (e) {
+                  print('Business initialization error in home (ignored): $e');
+                }
+              });
+            }
           }
         },
-        loading: () {
-          developer.log('Still loading businesses...');
-        },
-        error: (error, stackTrace) {
-          developer.log('Error loading businesses: $error');
-        },
+        loading: () {},
+        error: (error, stackTrace) {},
       );
 
       return null;
@@ -73,7 +93,9 @@ class HomeScreen extends HookConsumerWidget {
 
     useEffect(() {
       if (currentBusiness?.id != null) {
-        transactionsViewModel.fetchTransactions(currentBusiness!.id!);
+        Future.microtask(() {
+          transactionsViewModel.forceRefreshTransactions(currentBusiness!.id!);
+        });
       }
       return null;
     }, [currentBusiness?.id]);
@@ -87,20 +109,30 @@ class HomeScreen extends HookConsumerWidget {
 
     final responsiveData = ResponsiveInherited.of(context);
 
+    final isBusinessLoading = getAllBusiness.isLoading;
+
     return ResponsiveWrapper(
-      child: Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
-            child: PullToRefresh(
-              onRefresh: onRefresh,
-              child: ListView(
+      child: AbsorbPointer(
+        absorbing: isBusinessLoading,
+        child: KeyboardDismissibleScaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+              child: PullToRefresh(
+                onRefresh: onRefresh,
+                child: ListView(
                 physics: const BouncingScrollPhysics(),
                 children: [
                   SizedBox(height: responsiveData.scaleHeight(8)),
                   getAllBusiness.when(
                     data: (data) {
                       if (data.isEmpty) {
+                        // Don't show loading indicator, let redirect happen
+                        return const SizedBox.shrink();
+                      }
+                      
+                      // If currentBusiness is null, show loading
+                      if (currentBusiness == null) {
                         return const Center(
                           child: LoadingIndicator(),
                         );
@@ -113,7 +145,12 @@ class HomeScreen extends HookConsumerWidget {
                               CircleAvatar(
                                 radius: responsiveData.smallRadius * 1.6,
                                 backgroundColor: Colors.black,
-                                backgroundImage: NetworkImage(data.last.logoUrl ?? ''),
+                                backgroundImage: currentBusiness.logoUrl != null
+                                    ? NetworkImage(currentBusiness.logoUrl!)
+                                    : null,
+                                child: currentBusiness.logoUrl == null
+                                    ? const Icon(Icons.business, color: Colors.white) 
+                                    : null,
                               ),
                               SizedBox(width: responsiveData.scaleWidth(10)),
                               Column(
@@ -182,7 +219,13 @@ class HomeScreen extends HookConsumerWidget {
                         ],
                       );
                     },
-                    error: (error, _) => const Text("Error fetching businesses"),
+                    error: (error, _) => Text(
+                      error.toString().contains('timeout')
+                          ? 'Connection is slow. Please check your internet and try again.'
+                          : 'Unable to load business data. Please try again.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displaySmall,
+                    ),
                     loading: () => const CustomShimmer(),
                   ),
 
@@ -272,7 +315,7 @@ class HomeScreen extends HookConsumerWidget {
                       ],
                     ),
                   ] else ...[
-                    ...transactionsViewModel.transactions.take(5).map(
+                    ...transactionsViewModel.transactions.take(5).expand(
                           (transaction) {
                         final firstProductDetail =
                         transaction.recordProductDetails.isNotEmpty
@@ -280,7 +323,7 @@ class HomeScreen extends HookConsumerWidget {
                             : null;
 
                         if (firstProductDetail == null) {
-                          return TransactionTile(
+                          final tile = TransactionTile(
                             amount: '0',
                             dateTime: '',
                             productName: 'Unknown Product',
@@ -290,6 +333,8 @@ class HomeScreen extends HookConsumerWidget {
                             unitSold: '0',
                             imageUrl: '',
                           );
+                          final isLast = transactionsViewModel.transactions.take(5).toList().indexOf(transaction) == transactionsViewModel.transactions.take(5).length - 1;
+                          return isLast ? [tile] : [tile, SizedBox(height: responsiveData.scaleHeight(12))];
                         }
 
                         final product = firstProductDetail.product;
@@ -306,22 +351,44 @@ class HomeScreen extends HookConsumerWidget {
                             '';
                         final unitSold = product?.quantitySold?.toString() ?? '0';
 
-                        return TransactionTile(
-                          amount: amount,
-                          dateTime: dateTime,
-                          productName: productName,
-                          receiptOrInvoice: transaction.status == 'pending'
-                              ? 'Invoice'
-                              : 'Receipt',
-                          unitSold: unitSold,
-                          imageUrl: imageUrl,
+                        final tile = GestureDetector(
+                          onTap: () {
+                            final isInvoice = transaction.status == 'pending';
+                            final receipt = Receipt(
+                              id: transaction.id,
+                              business: transaction.business,
+                              client: transaction.client,
+                              recordProductDetails: transaction.recordProductDetails,
+                              total: transaction.total.toString(),
+                              createdAt: transaction.createdAt,
+                              modeOfPayment: transaction.modeOfPayment,
+                            );
+                            locator<PayvidenceAppRouter>().push(
+                              ReceiptScreenRoute(record: receipt, isInvoice: isInvoice, source: 'home'),
+                            );
+                          },
+                          child: TransactionTile(
+                            amount: amount,
+                            dateTime: dateTime,
+                            productName: productName,
+                            receiptOrInvoice: transaction.status == 'pending'
+                                ? 'Invoice'
+                                : 'Receipt',
+                            unitSold: unitSold,
+                            imageUrl: imageUrl,
+                          ),
                         );
+                        
+                        final isLast = transactionsViewModel.transactions.take(5).toList().indexOf(transaction) == transactionsViewModel.transactions.take(5).length - 1;
+                        
+                        return isLast ? [tile] : [tile, SizedBox(height: responsiveData.scaleHeight(12))];
                       },
                     ),
                   ],
                 ],
               ),
             ),
+          ),
           ),
         ),
       ),

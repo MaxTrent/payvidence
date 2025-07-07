@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/screens/client_details/client_details_vm.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
@@ -37,12 +38,29 @@ class ClientDetails extends HookConsumerWidget {
     final originalAddress = useState("");
     final nameFocusNode = useFocusNode();
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     useEffect(() {
       Future.microtask(
               () => viewModel.fetchClientDetails(businessId, clientId));
       return null;
     }, [businessId, clientId]);
+
+    useEffect(() {
+      void clearValidationOnEmpty() {
+        if (phoneNumberController.text.isEmpty || addressController.text.isEmpty) {
+          formKey.currentState?.validate();
+        }
+      }
+
+      phoneNumberController.addListener(clearValidationOnEmpty);
+      addressController.addListener(clearValidationOnEmpty);
+
+      return () {
+        phoneNumberController.removeListener(clearValidationOnEmpty);
+        addressController.removeListener(clearValidationOnEmpty);
+      };
+    }, []);
 
     useEffect(() {
       if (viewModel.clientInfo != null && !viewModel.isLoading) {
@@ -65,16 +83,18 @@ class ClientDetails extends HookConsumerWidget {
 
     Future<bool> onWillPop() async {
       if (viewModel.isEditing && hasChanges()) {
-        viewModel.updateClient(
-          businessId: businessId,
-          clientId: clientId,
-          newName: nameController.text,
-          newPhoneNumber: phoneNumberController.text,
-          newAddress: addressController.text,
-          navigateOnSuccess: () {
-            locator<PayvidenceAppRouter>().back();
-          },
-        );
+        if (formKey.currentState!.validate()) {
+          viewModel.updateClient(
+            businessId: businessId,
+            clientId: clientId,
+            newName: nameController.text,
+            newPhoneNumber: phoneNumberController.text,
+            newAddress: addressController.text,
+            navigateOnSuccess: () {
+              locator<PayvidenceAppRouter>().back();
+            },
+          );
+        }
         return false;
       }
       return true;
@@ -90,7 +110,7 @@ class ClientDetails extends HookConsumerWidget {
         },
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
+          child: KeyboardDismissibleScaffold(
             appBar: AppBar(),
             body: Padding(
               padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
@@ -144,6 +164,15 @@ class ClientDetails extends HookConsumerWidget {
                           focusNode: nameFocusNode,
                           keyboardType: TextInputType.name,
                           textCapitalization: TextCapitalization.words,
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Client name is required';
+                            }
+                            if (val.trim().length < 2) {
+                              return 'Name must be at least 2 characters long';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: responsiveData.scaleHeight(20)),
                         Text(
@@ -161,8 +190,8 @@ class ClientDetails extends HookConsumerWidget {
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           validator: (val) {
-                            if (!val!.trim().isValidPhone || val.isEmpty) {
-                              return 'Enter a valid phone number';
+                            if (val != null && val.isNotEmpty && !val.trim().isValidPhone) {
+                              return 'Enter a valid Nigerian phone number';
                             }
                             return null;
                           },
@@ -178,6 +207,12 @@ class ClientDetails extends HookConsumerWidget {
                           controller: addressController,
                           enabled: viewModel.isEditing,
                           textCapitalization: TextCapitalization.words,
+                          validator: (val) {
+                            if (val != null && val.isNotEmpty && val.trim().length < 5) {
+                              return 'Address must be at least 5 characters long';
+                            }
+                            return null;
+                          },
                         ),
                       ],
                       SizedBox(height: responsiveData.scaleHeight(32)),
@@ -194,16 +229,18 @@ class ClientDetails extends HookConsumerWidget {
                                 viewModel.toggleEditing();
                                 nameFocusNode.requestFocus();
                               } else if (hasChanges()) {
-                                viewModel.updateClient(
-                                  businessId: businessId,
-                                  clientId: clientId,
-                                  newName: nameController.text,
-                                  newPhoneNumber: phoneNumberController.text,
-                                  newAddress: addressController.text,
-                                  navigateOnSuccess: () {
-                                    locator<PayvidenceAppRouter>().back();
-                                  },
-                                );
+                                if (formKey.currentState!.validate()) {
+                                  viewModel.updateClient(
+                                    businessId: businessId,
+                                    clientId: clientId,
+                                    newName: nameController.text,
+                                    newPhoneNumber: phoneNumberController.text,
+                                    newAddress: addressController.text,
+                                    navigateOnSuccess: () {
+                                      locator<PayvidenceAppRouter>().back();
+                                    },
+                                  );
+                                }
                               } else {
                                 print("No changes detected, exiting edit mode");
                                 viewModel.toggleEditing();
@@ -225,7 +262,7 @@ class ClientDetails extends HookConsumerWidget {
                                   return Container(
                                     height: responsiveData.scaleHeight(398),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: isDarkMode ? Colors.black : Colors.white,
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(responsiveData.largeRadius),
                                         topLeft: Radius.circular(responsiveData.largeRadius),
@@ -272,8 +309,11 @@ class ClientDetails extends HookConsumerWidget {
                                                   ),
                                                   GestureDetector(
                                                     onTap: () =>
-                                                        locator<PayvidenceAppRouter>().back(),
-                                                    child: const Icon(Icons.close),
+                                  Navigator.pop(context),
+                                                    child: Icon(
+                                                      Icons.close,
+                                                      color: isDarkMode ? Colors.white : Colors.black,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -307,7 +347,7 @@ class ClientDetails extends HookConsumerWidget {
                                                   Navigator.pop(context);
                                                 },
                                                 backgroundColor: Colors.transparent,
-                                                textColor: Colors.black,
+                                                textColor: isDarkMode ? Colors.white : Colors.black,
                                               ),
                                             ],
                                           ),

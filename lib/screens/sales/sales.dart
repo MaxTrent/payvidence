@@ -15,6 +15,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
 import '../../components/custom_shimmer.dart';
+import '../../components/keyboard_dismissible_scaffold.dart';
 import '../../gen/assets.gen.dart';
 import '../../model/sales_model.dart';
 import '../../utilities/theme_mode.dart';
@@ -37,7 +38,7 @@ class Sales extends HookConsumerWidget {
     }
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
@@ -158,7 +159,7 @@ class Sales extends HookConsumerWidget {
                       onTap: () async {
                       if (interval == "weekly") {
                         ref.read(salesDateFilterProvider.notifier).state =
-                            (await selectDay(context)) ?? DateTime.now();
+                            (await selectDay(context, date)) ?? date;
 
                         ref.read(salesFilterProvider.notifier).setKey(
                             "endDate",
@@ -174,8 +175,8 @@ class Sales extends HookConsumerWidget {
                         ref.read(salesDateFilterProvider.notifier).state =
                             (await showMonthPicker(
                                 context: context,
-                                initialDate: DateTime.now())) ??
-                                DateTime.now();
+                                initialDate: date)) ??
+                                date;
                         ref.read(salesFilterProvider.notifier).setKey(
                             "endDate",
                             DateFormat("y-M-d").format(DateTime(
@@ -193,8 +194,8 @@ class Sales extends HookConsumerWidget {
                         ref.read(salesDateFilterProvider.notifier).state =
                             (await showYearPicker(
                                 context: context,
-                                initialDate: DateTime.now())) ??
-                                DateTime.now();
+                                initialDate: date)) ??
+                                date;
                         ref.read(salesFilterProvider.notifier).setKey(
                             "endDate",
                             DateFormat("y-M-d").format(DateTime(
@@ -226,44 +227,56 @@ class Sales extends HookConsumerWidget {
                       delay: const Duration(milliseconds: 300),
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SalesInfoTile(
-                                icon: Assets.svg.statusUp,
-                                amount: data.totalRevenue.toString().toKMB(),
-                                description: 'Total revenue',
-                                showCurrency: true,
-                              ),
-                              SalesInfoTile(
-                                icon: Assets.svg.boxTick,
-                                amount: data.totalSales.toString().commaSeparated(),
-                                description: 'Total sales',
-                                showCurrency: false,
-                              ),
-                            ],
+                          IntrinsicHeight(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: SalesInfoTile(
+                                    icon: Assets.svg.statusUp,
+                                    amount: data.totalRevenue.toString().toKMB(),
+                                    description: 'Total revenue',
+                                    showCurrency: true,
+                                  ),
+                                ),
+                                SizedBox(width: responsiveData.scaleWidth(8)),
+                                Flexible(
+                                  child: SalesInfoTile(
+                                    icon: Assets.svg.boxTick,
+                                    amount: data.totalSales.toString().commaSeparated(),
+                                    description: 'Total sales',
+                                    showCurrency: false,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         SizedBox(
                           height: responsiveData.scaleHeight(18),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SalesInfoTile(
-                              icon: Assets.svg.noteText,
-                              amount:
-                              data.totalReceipts.toString().commaSeparated(),
-                              description: 'Total receipts',
-                              showCurrency: false,
-                            ),
-                            SalesInfoTile(
-                              icon: Assets.svg.archiveBook,
-                              amount:
-                              data.totalInvoices.toString().commaSeparated(),
-                              description: 'Total invoices',
-                              showCurrency: false,
-                            ),
-                          ],
+                        IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: SalesInfoTile(
+                                  icon: Assets.svg.noteText,
+                                  amount: data.totalReceipts.toString().commaSeparated(),
+                                  description: 'Total receipts',
+                                  showCurrency: false,
+                                ),
+                              ),
+                              SizedBox(width: responsiveData.scaleWidth(8)),
+                              Flexible(
+                                child: SalesInfoTile(
+                                  icon: Assets.svg.archiveBook,
+                                  amount: data.totalInvoices.toString().commaSeparated(),
+                                  description: 'Total invoices',
+                                  showCurrency: false,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: responsiveData.scaleHeight(36),
@@ -315,77 +328,69 @@ class SalesInfoTile extends StatelessWidget {
     final responsiveData = ResponsiveInherited.of(context);
 
     return Container(
-      height: responsiveData.scaleHeight(98),
-      width: responsiveData.scaleWidth(167),
       decoration: BoxDecoration(
         color: const Color(0xffE3DDFF),
-        borderRadius: BorderRadius.circular(responsiveData.smallRadius * 0.3), // Approx 6.r
+        borderRadius: BorderRadius.circular(responsiveData.smallRadius * 0.3),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-            left: responsiveData.scaleWidth(12),
-            right: responsiveData.scaleWidth(12),
-            top: responsiveData.scaleHeight(16),
-            bottom: responsiveData.scaleHeight(14)),
+        padding: EdgeInsets.all(responsiveData.scaleHeight(10)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  height: responsiveData.scaleHeight(40),
-                  width: responsiveData.scaleWidth(40),
+                  height: responsiveData.scaleHeight(32),
+                  width: responsiveData.scaleWidth(32),
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2.4)), // Approx 48.r
+                      borderRadius: BorderRadius.circular(responsiveData.smallRadius * 2)),
                   child: Padding(
-                    padding: EdgeInsets.all(responsiveData.scaleHeight(8)),
+                    padding: EdgeInsets.all(responsiveData.scaleHeight(6)),
                     child: SvgPicture.asset(
                       icon,
-                      width: responsiveData.scaleWidth(24), // Adjusted for consistency
-                      height: responsiveData.scaleHeight(24),
+                      width: responsiveData.scaleWidth(16),
+                      height: responsiveData.scaleHeight(16),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: responsiveData.scaleWidth(8),
-                ),
+                SizedBox(width: responsiveData.scaleWidth(6)),
                 Expanded(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      showCurrency
-                          ? AppNaira(
-                        fontSize: Responsive.fontSize(context, 22).toInt(),
-                      )
-                          : const SizedBox.shrink(),
-                      Text(
-                        amount,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayLarge!
-                            .copyWith(
-                            fontSize: Responsive.fontSize(context, 22),
-                            color: Colors.black),
-                        overflow: TextOverflow.ellipsis,
+                      if (showCurrency)
+                        AppNaira(
+                          fontSize: Responsive.fontSize(context, 16).toInt(),
+                        ),
+                      Flexible(
+                        child: Text(
+                          amount,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayLarge!
+                              .copyWith(
+                              fontSize: Responsive.fontSize(context, 16),
+                              color: Colors.black),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
                 )
               ],
             ),
-            SizedBox(
-              height: responsiveData.scaleHeight(6),
-            ),
+            SizedBox(height: responsiveData.scaleHeight(6)),
             Text(
               description,
               style: Theme.of(context)
                   .textTheme
                   .displaySmall!
                   .copyWith(
-                  fontSize: Responsive.fontSize(context, 14),
+                  fontSize: Responsive.fontSize(context, 11),
                   color: Colors.black),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             )
           ],
         ),
@@ -531,22 +536,13 @@ Future<DateTime?> showMonthPicker({
   final DateTime now = DateTime.now();
   final DateTime first = firstDate ?? DateTime(now.year - 1);
   final DateTime last = lastDate ?? DateTime(now.year + 1);
+  final responsiveData = ResponsiveInherited.of(context);
 
   DateTime selectedDate = DateTime(initialDate.year, initialDate.month);
 
   final List<String> months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
   int selectedYear = selectedDate.year;
@@ -555,76 +551,99 @@ Future<DateTime?> showMonthPicker({
   await showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Select Month'),
-        content: SizedBox(
-          width: 300,
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(responsiveData.scaleHeight(24)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: () {
-                      if (selectedYear > first.year) {
-                        selectedYear--;
-                      }
-                    },
-                  ),
-                  Text(
-                    selectedYear.toString(),
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: () {
-                      if (selectedYear < last.year) {
-                        selectedYear++;
-                      }
-                    },
-                  ),
-                ],
+              Text(
+                'Select Month',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  fontSize: Responsive.fontSize(context, 20),
+                ),
               ),
-              const SizedBox(height: 16),
-              // Month grid
+              SizedBox(height: responsiveData.scaleHeight(24)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsiveData.scaleWidth(16),
+                  vertical: responsiveData.scaleHeight(8),
+                ),
+                decoration: BoxDecoration(
+                  color: primaryColor2.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.chevron_left, color: primaryColor2),
+                      onPressed: selectedYear > first.year ? () {
+                        selectedYear--;
+                        (context as Element).markNeedsBuild();
+                      } : null,
+                    ),
+                    Text(
+                      selectedYear.toString(),
+                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                        fontSize: Responsive.fontSize(context, 18),
+                        color: primaryColor2,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.chevron_right, color: primaryColor2),
+                      onPressed: selectedYear < last.year ? () {
+                        selectedYear++;
+                        (context as Element).markNeedsBuild();
+                      } : null,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(20)),
               GridView.count(
                 shrinkWrap: true,
                 crossAxisCount: 3,
+                mainAxisSpacing: responsiveData.scaleHeight(8),
+                crossAxisSpacing: responsiveData.scaleWidth(8),
                 children: List.generate(12, (index) {
                   final month = index + 1;
-                  final isSelected = month == selectedMonth &&
-                      selectedYear == selectedDate.year;
+                  final isSelected = month == selectedMonth;
                   final isDisabled =
                       (selectedYear == first.year && month < first.month) ||
                           (selectedYear == last.year && month > last.month);
 
-                  return InkWell(
-                    onTap: isDisabled
-                        ? null
-                        : () {
+                  return GestureDetector(
+                    onTap: isDisabled ? null : () {
                       selectedMonth = month;
                       Navigator.of(context).pop();
                     },
                     child: Container(
-                      margin: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
+                        color: isSelected ? primaryColor2 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                        border: Border.all(
+                          color: isSelected ? primaryColor2 : Colors.grey.withOpacity(0.3),
+                          width: 1,
+                        ),
                       ),
                       child: Center(
                         child: Text(
                           months[index].substring(0, 3),
-                          style: TextStyle(
+                          style: Theme.of(context).textTheme.displaySmall!.copyWith(
                             color: isSelected
                                 ? Colors.white
                                 : isDisabled
                                 ? Colors.grey
-                                : Colors.black,
+                                : Theme.of(context).textTheme.bodyLarge!.color,
+                            fontSize: Responsive.fontSize(context, 14),
                           ),
                         ),
                       ),
@@ -650,26 +669,59 @@ Future<DateTime?> showYearPicker({
 }) async {
   final DateTime first = firstDate ?? DateTime(initialDate.year - 10);
   final DateTime last = lastDate ?? DateTime(initialDate.year + 10);
+  final responsiveData = ResponsiveInherited.of(context);
 
   int selectedYear = initialDate.year;
 
   final DateTime? picked = await showDialog<DateTime>(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Select Year'),
-        content: SizedBox(
-          width: 300,
-          height: 300,
-          child: YearPicker(
-            firstDate: first,
-            lastDate: last,
-            initialDate: initialDate,
-            selectedDate: initialDate,
-            onChanged: (DateTime date) {
-              selectedYear = date.year;
-              Navigator.of(context).pop(DateTime(selectedYear));
-            },
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(responsiveData.scaleHeight(24)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(responsiveData.largeRadius),
+            color: Theme.of(context).scaffoldBackgroundColor,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Select Year',
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  fontSize: Responsive.fontSize(context, 20),
+                ),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(16)),
+              Container(
+                height: responsiveData.scaleHeight(300),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                ),
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: Theme.of(context).colorScheme.copyWith(
+                      primary: primaryColor2,
+                      onPrimary: Colors.white,
+                    ),
+                  ),
+                  child: YearPicker(
+                    firstDate: first,
+                    lastDate: last,
+                    initialDate: initialDate,
+                    selectedDate: initialDate,
+                    onChanged: (DateTime date) {
+                      selectedYear = date.year;
+                      Navigator.of(context).pop(DateTime(selectedYear));
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -679,23 +731,40 @@ Future<DateTime?> showYearPicker({
   return picked;
 }
 
-Future<DateTime?> selectDay(BuildContext context) async {
+Future<DateTime?> selectDay(BuildContext context, DateTime currentDate) async {
+  final responsiveData = ResponsiveInherited.of(context);
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  
   final DateTime? picked = await showDatePicker(
     context: context,
-    initialDate: DateTime.now(),
+    initialDate: currentDate,
     firstDate: DateTime(2000),
     lastDate: DateTime(2100),
+    initialEntryMode: DatePickerEntryMode.calendarOnly,
     builder: (context, child) {
       return Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: primaryColor2,
+            brightness: isDarkMode ? Brightness.dark : Brightness.light,
+          ).copyWith(
             primary: primaryColor2,
             onPrimary: Colors.white,
-            onSurface: Colors.black,
+            surface: isDarkMode ? Colors.grey[900] : Colors.white,
+            onSurface: isDarkMode ? Colors.white : Colors.black,
           ),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
               foregroundColor: primaryColor2,
+              textStyle: TextStyle(
+                fontSize: Responsive.fontSize(context, 14),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          dialogTheme: DialogTheme(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(responsiveData.largeRadius),
             ),
           ),
         ),

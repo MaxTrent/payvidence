@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pinput/pinput.dart';
@@ -91,6 +92,7 @@ class OtpScreen extends HookConsumerWidget {
                       controller: pinController,
                       showCursor: true,
                       length: 5,
+                      autofillHints: const [AutofillHints.oneTimeCode],
                       defaultPinTheme: PinTheme(
                         height: responsiveData.scaleHeight(68),
                         width: responsiveData.scaleWidth(64),

@@ -13,6 +13,7 @@ import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/validators.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
+import '../../components/keyboard_dismissible_scaffold.dart';
 import '../../constants/app_colors.dart';
 import '../../gen/assets.gen.dart';
 import '../../utilities/theme_mode.dart';
@@ -63,8 +64,14 @@ class Login extends HookConsumerWidget {
 
     useEffect(() {
       void updateFieldsStatus() {
-        areFieldsEmpty.value = checkFieldsEmpty();
-        isEmailValid.value = checkEmailValid(emailController.text);
+        final isEmpty = checkFieldsEmpty();
+        final emailValid = checkEmailValid(emailController.text);
+        if (areFieldsEmpty.value != isEmpty) {
+          areFieldsEmpty.value = isEmpty;
+        }
+        if (isEmailValid.value != emailValid) {
+          isEmailValid.value = emailValid;
+        }
         print("Fields empty: ${areFieldsEmpty.value}, Email valid: ${isEmailValid.value}");
       }
 
@@ -80,9 +87,15 @@ class Login extends HookConsumerWidget {
     final useBiometricLogin = viewModel.shouldUseBiometricLogin && !showManualLogin.value;
 
     return ResponsiveWrapper(
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
-        child: Scaffold(
+      child: PopScope(
+        onPopInvoked: (didPop) {
+          if (viewModel.isLoading) {
+            viewModel.cancelOperation();
+          }
+        },
+        child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+          child: KeyboardDismissibleScaffold(
           appBar: AppBar(),
           body: Form(
             key: formKey,
@@ -268,6 +281,6 @@ class Login extends HookConsumerWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

@@ -14,19 +14,41 @@ class GetAllCategoryNotifier extends AsyncNotifier<List<CategoryModel>> {
   @override
   Future<List<CategoryModel>> build() {
     //final userModel = getUser();
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      return Future.value([]);
+    }
     return locator<ICategoryRepository>()
-        .fetchAllCategory(ref.watch(getCurrentBusinessProvider)!.id!);
+        .fetchAllCategory(currentBusiness!.id!);
   }
 
   Future<CategoryModel> addCategory(Map<String, dynamic> data) {
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      throw Exception('No business selected');
+    }
     return locator<ICategoryRepository>()
-        .addCategory(ref.watch(getCurrentBusinessProvider)!.id!, data);
+        .addCategory(currentBusiness!.id!, data);
   }
 
   Future<void> deleteCategory(String categoryId) async {
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      throw Exception('No business selected');
+    }
     await locator<ICategoryRepository>()
-        .deleteCategory(ref.watch(getCurrentBusinessProvider)!.id!, categoryId);
+        .deleteCategory(currentBusiness!.id!, categoryId);
     ref.invalidateSelf();
+  }
+
+  Future<void> refreshCategories(String businessId) async {
+    state = const AsyncLoading();
+    try {
+      final categories = await locator<ICategoryRepository>().fetchAllCategory(businessId);
+      state = AsyncData(categories);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+    }
   }
 
 // Add methods to mutate the state

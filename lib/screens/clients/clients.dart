@@ -83,6 +83,7 @@ class Clients extends HookConsumerWidget {
 
     return ResponsiveWrapper(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           titleSpacing: 0,
           centerTitle: false,
@@ -146,7 +147,8 @@ class Clients extends HookConsumerWidget {
                   hintText: 'Search for client',
                   controller: searchController,
                   radius: responsiveData.largeRadius,
-                  filled: true,
+                  filled: isDarkMode ? false : true,
+                  appBorderColor: isDarkMode ? Colors.white:Colors.transparent,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
               ),
@@ -167,46 +169,52 @@ class Clients extends HookConsumerWidget {
                     if (filteredClients.isEmpty) {
                       return PullToRefresh(
                         onRefresh: onRefresh,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(height: responsiveData.scaleHeight(80),),
-                            SvgPicture.asset(Assets.svg.emptyClient),
-                            SizedBox(height: responsiveData.scaleHeight(40)),
-                            Text(
-                              searchQuery.value.isEmpty
-                                  ? 'No client yet!'
-                                  : 'No clients found!',
-                              style: Theme.of(context).textTheme.displayLarge,
-                            ),
-                            SizedBox(height: responsiveData.scaleHeight(10)),
-                            Text(
-                              searchQuery.value.isEmpty
-                                  ? 'You can add your clients to your business. All clients will show here.'
-                                  : 'Try a different search term.',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall!
-                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                            ),
-                            const Spacer(),
-                            if (searchQuery.value.isEmpty) ...[
-                              Padding(
-                                padding: EdgeInsets.only(bottom: responsiveData.scaleHeight(14)),
-                                child: AppButton(
-                                  buttonText: 'Add client',
-                                  onPressed: () async {
-                                    await locator<PayvidenceAppRouter>().navigate(
-                                        AddClientRoute(businessId: businessId));
-                                    ref
-                                        .read(getAllClientsProvider.notifier)
-                                        .fetchClients();
-                                  },
-                                ),
+                        child: CustomScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          slivers: [
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Column(
+                                children: [
+                                  const Spacer(),
+                                  SvgPicture.asset(Assets.svg.emptyClient),
+                                  SizedBox(height: responsiveData.scaleHeight(40)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'No client yet!'
+                                        : 'No clients found!',
+                                    style: Theme.of(context).textTheme.displayLarge,
+                                  ),
+                                  SizedBox(height: responsiveData.scaleHeight(10)),
+                                  Text(
+                                    searchQuery.value.isEmpty
+                                        ? 'You can add your clients to your business. All clients will show here.'
+                                        : 'Try a different search term.',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall!
+                                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                  ),
+                                  const Spacer(),
+                                  if (searchQuery.value.isEmpty) ...[
+                                    Padding(
+                                      padding: EdgeInsets.all(responsiveData.scaleHeight(20)),
+                                      child: AppButton(
+                                        buttonText: 'Add client',
+                                        onPressed: () async {
+                                          await locator<PayvidenceAppRouter>().navigate(
+                                              AddClientRoute(businessId: businessId));
+                                          ref
+                                              .read(getAllClientsProvider.notifier)
+                                              .fetchClients();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
-                            ],
+                            ),
                           ],
                         ),
                       );
@@ -270,85 +278,91 @@ class Clients extends HookConsumerWidget {
                                     children: [
                                       Text(
                                         filteredClients[index].name ?? '',
-                                        style: Theme.of(context).textTheme.displayMedium,
+                                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                          fontSize: Responsive.fontSize(context, 14),
+                                        ),
                                       ),
-                                      SizedBox(height: responsiveData.scaleHeight(8)),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SvgPicture.asset(
-                                            Assets.svg.location,
-                                            colorFilter: ColorFilter.mode(
-                                              isDarkMode ? Colors.white : Colors.black,
-                                              BlendMode.srcIn,
+                                      if (filteredClients[index].address?.isNotEmpty == true) ...[
+                                        SizedBox(height: responsiveData.scaleHeight(8)),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            SvgPicture.asset(
+                                              Assets.svg.location,
+                                              colorFilter: ColorFilter.mode(
+                                                isDarkMode ? Colors.white : Colors.black,
+                                                BlendMode.srcIn,
+                                              ),
+                                              width: responsiveData.scaleWidth(16),
+                                              height: responsiveData.scaleHeight(16),
                                             ),
-                                            width: responsiveData.scaleWidth(16),
-                                            height: responsiveData.scaleHeight(16),
-                                          ),
-                                          SizedBox(width: responsiveData.scaleWidth(6)),
-                                          Expanded(
-                                            child: Text(
-                                              filteredClients[index].address ?? '',
+                                            SizedBox(width: responsiveData.scaleWidth(6)),
+                                            Expanded(
+                                              child: Text(
+                                                filteredClients[index].address!,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displaySmall!
+                                                    .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                      if (filteredClients[index].phoneNumber?.isNotEmpty == true) ...[
+                                        SizedBox(height: responsiveData.scaleHeight(12)),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              filteredClients[index].phoneNumber!,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .displaySmall!
                                                   .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: responsiveData.scaleHeight(12)),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            filteredClients[index].phoneNumber ?? '',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .displaySmall!
-                                                .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                          ),
-                                          SizedBox(width: responsiveData.scaleWidth(8)),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              await Clipboard.setData(ClipboardData(
-                                                text: filteredClients[index].phoneNumber ?? '',
-                                              ));
-                                              copiedIndex.value = index;
-                                              ToastService.showSnackBar('Copied to clipboard');
-                                              
-                                              // Reset the visual feedback after 1 second
-                                              Timer(const Duration(seconds: 1), () {
-                                                copiedIndex.value = null;
-                                              });
-                                            },
-                                            child: AnimatedContainer(
-                                              duration: const Duration(milliseconds: 200),
-                                              padding: EdgeInsets.all(4),
-                                              decoration: BoxDecoration(
-                                                color: copiedIndex.value == index 
-                                                    ? primaryColor2.withOpacity(0.2) 
-                                                    : Colors.transparent,
-                                                borderRadius: BorderRadius.circular(4),
-                                              ),
-                                              child: SvgPicture.asset(
-                                                copiedIndex.value == index 
-                                                    ? Assets.svg.check 
-                                                    : Assets.svg.copy,
-                                                width: responsiveData.scaleWidth(16),
-                                                height: responsiveData.scaleHeight(16),
-                                                colorFilter: ColorFilter.mode(
+                                            SizedBox(width: responsiveData.scaleWidth(8)),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                await Clipboard.setData(ClipboardData(
+                                                  text: filteredClients[index].phoneNumber!,
+                                                ));
+                                                copiedIndex.value = index;
+                                                ToastService.showSnackBar('Copied to clipboard');
+                                                
+                                                // Reset the visual feedback after 1 second
+                                                Timer(const Duration(seconds: 1), () {
+                                                  copiedIndex.value = null;
+                                                });
+                                              },
+                                              child: AnimatedContainer(
+                                                duration: const Duration(milliseconds: 200),
+                                                padding: EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                  color: copiedIndex.value == index 
+                                                      ? primaryColor2.withOpacity(0.2) 
+                                                      : Colors.transparent,
+                                                  borderRadius: BorderRadius.circular(4),
+                                                ),
+                                                child: SvgPicture.asset(
                                                   copiedIndex.value == index 
-                                                      ? primaryColor2 
-                                                      : (isDarkMode ? Colors.white : Colors.black),
-                                                  BlendMode.srcIn,
+                                                      ? Assets.svg.check 
+                                                      : Assets.svg.copy,
+                                                  width: responsiveData.scaleWidth(16),
+                                                  height: responsiveData.scaleHeight(16),
+                                                  colorFilter: ColorFilter.mode(
+                                                    copiedIndex.value == index 
+                                                        ? primaryColor2 
+                                                        : (isDarkMode ? Colors.white : Colors.black),
+                                                    BlendMode.srcIn,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ),
@@ -357,7 +371,7 @@ class Clients extends HookConsumerWidget {
                           ),
                         );
                         },
-                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(24)),
+                        separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                         itemCount: filteredClients.length,
                       ),
                     );
@@ -367,7 +381,13 @@ class Clients extends HookConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('An error occurred: $error'),
+                        Text(
+                          error.toString().contains('timeout') 
+                              ? 'Connection is slow. Please check your internet and try again.'
+                              : 'Something went wrong. Please try again.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
                         SizedBox(height: responsiveData.scaleHeight(16)),
                         AppButton(
                           buttonText: 'Retry',
@@ -378,12 +398,47 @@ class Clients extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                  loading: () => Expanded(
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.verticalSpace(12)),
-                      itemCount: 5,
-                      itemBuilder: (_, index) => CustomShimmer(height: responsiveData.scaleHeight(56)),
+                  loading: () => ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
+                    itemBuilder: (_, index) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: responsiveData.scaleHeight(56),
+                          width: responsiveData.scaleHeight(56),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                          child: CustomShimmer(
+                            height: responsiveData.scaleHeight(56),
+                            width: responsiveData.scaleHeight(56),
+                          ),
+                        ),
+                        SizedBox(width: responsiveData.scaleWidth(12)),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomShimmer(
+                                height: responsiveData.scaleHeight(16),
+                                width: responsiveData.scaleWidth(120),
+                              ),
+                              SizedBox(height: responsiveData.scaleHeight(8)),
+                              CustomShimmer(
+                                height: responsiveData.scaleHeight(14),
+                                width: responsiveData.scaleWidth(200),
+                              ),
+                              SizedBox(height: responsiveData.scaleHeight(12)),
+                              CustomShimmer(
+                                height: responsiveData.scaleHeight(14),
+                                width: responsiveData.scaleWidth(100),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

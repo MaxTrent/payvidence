@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../providers/client_providers/get_all_client_provider.dart';
@@ -19,14 +20,18 @@ class ClientSuccess extends HookConsumerWidget {
     final responsiveData = ResponsiveInherited.of(context);
 
     return ResponsiveWrapper(
-      child: Scaffold(
-        floatingActionButton: AppButton(
-          buttonText: 'Alright!',
-          onPressed: () {
-            ref.read(getAllClientsProvider.notifier).fetchClients();
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-          },
+      child: KeyboardDismissibleScaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20), vertical: responsiveData.scaleHeight(14)),
+          child: AppButton(
+            buttonText: 'Alright!',
+            onPressed: () {
+              ref.read(getAllClientsProvider.notifier).fetchClients();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         body: SafeArea(
           child: Padding(

@@ -29,20 +29,23 @@ class ConnectionStatusInterceptor extends InterceptorsWrapper {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (err.response?.statusCode == 401) {
-      _handleUnauthorized();
+      _handleUnauthorized(err);
     }
     handler.next(err);
   }
 
-  Future<void> _handleUnauthorized() async {
-    final router = locator<PayvidenceAppRouter>();
-    final current = router.current.name;
+  Future<void> _handleUnauthorized(DioException err) async {
+    if (err.response?.data is Map && 
+        err.response?.data['message'] == 'unauthorized') {
+      final router = locator<PayvidenceAppRouter>();
+      final current = router.current.name;
 
-    // Prevent redirect loop
-    if (current != 'LoginRoute' && current != 'LoginRouteWrapper') {
-      Future.microtask(() {
-        router.replaceAll([const LoginRoute()]);
-      });
+
+      if (current != 'OnboardingScreenRoute' && current != 'LoginRoute' && current != 'LoginRouteWrapper') {
+        Future.microtask(() {
+          router.replaceAll([OnboardingScreenRoute()]);
+        });
+      }
     }
   }
 

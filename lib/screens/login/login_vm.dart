@@ -47,6 +47,13 @@ class LoginViewModel extends BaseChangeNotifier {
   }
 
   Future<String?> loadSavedEmail() async {
+    // Prioritize signup email over saved login email
+    final signupEmail = locator<SessionManager>().get<String>(SessionConstants.signupEmail);
+    if (signupEmail != null && signupEmail.isNotEmpty) {
+      // Clear signup email after using it once
+      await locator<SessionManager>().remove(SessionConstants.signupEmail);
+      return signupEmail;
+    }
     return locator<SessionManager>().get<String>(SessionConstants.savedLoginEmail);
   }
 
@@ -68,16 +75,13 @@ class LoginViewModel extends BaseChangeNotifier {
       final response = await apiServices.getAccount();
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
-        await saveUserCredentials(
-          userId: user.account.id ?? '',
-          firstName: user.account.firstName,
-          lastName: user.account.lastName ?? '',
-          email: user.account.email ?? '',
-          phoneNumber: user.account.phoneNumber ?? '',
-          profilePictureUrl: user.account.profilePictureUrl ?? "",
-          token: user.token ?? "",
-          refreshToken: user.refreshToken ?? "",
-        );
+        // Only update profile data, preserve existing tokens
+        await locator<SessionManager>().save(key: SessionConstants.userId, value: user.account.id ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.userFirstName, value: user.account.firstName);
+        await locator<SessionManager>().save(key: SessionConstants.userLastName, value: user.account.lastName ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.userEmail, value: user.account.email ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.userPhone, value: user.account.phoneNumber ?? '');
+        await locator<SessionManager>().save(key: SessionConstants.profilePictureUrl, value: user.account.profilePictureUrl ?? "");
         developer.log('User profile synced: ${user.account.firstName} ${user.account.lastName}');
       } else {
         developer.log('Profile sync failed: ${response.error?.message}');
@@ -142,7 +146,15 @@ class LoginViewModel extends BaseChangeNotifier {
         handleError(message: _errorMessage);
       }
     } catch (e) {
-      _errorMessage = "Something went wrong. Please try again.";
+      if (e.toString().contains('DioExceptionType.unknown')) {
+        _errorMessage = "Network error. Please check your internet connection and try again.";
+      } else if (e.toString().contains('DioExceptionType.connectionTimeout')) {
+        _errorMessage = "Connection timeout. Please try again.";
+      } else if (e.toString().contains('DioExceptionType.receiveTimeout')) {
+        _errorMessage = "Server response timeout. Please try again.";
+      } else {
+        _errorMessage = "Something went wrong. Please try again.";
+      }
       developer.log('Login exception: $e');
       handleError(message: _errorMessage);
     } finally {
@@ -154,27 +166,61 @@ class LoginViewModel extends BaseChangeNotifier {
   Future<bool> _refreshAccessToken(String refreshToken) async {
     try {
       developer.log('Attempting to refresh token');
+      
+      // Validate refresh token before making the call
+      if (refreshToken.isEmpty) {
+        _errorMessage = "Invalid refresh token.";
+        developer.log('Token refresh failed: $_errorMessage');
+        return false;
+      }
+
       final response = await apiServices.refreshToken();
       developer.log('Refresh response: success=${response.success}, data=${response.data}');
 
       if (response.success && response.data?['data'] != null) {
         final newToken = response.data!['data']['access_token'] as String?;
-        if (newToken != null) {
-          developer.log('Token refresh successful: $newToken');
+        final newRefreshToken = response.data!['data']['refresh_token'] as String?;
+        
+        if (newToken != null && newToken.isNotEmpty) {
+          developer.log('Token refresh successful');
           await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: newToken);
+          
+          // Update refresh token if provided
+          if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+            await locator<SessionManager>().save(key: SessionConstants.refreshToken, value: newRefreshToken);
+            developer.log('Refresh token also updated');
+          }
+          
           return true;
         } else {
-          _errorMessage = "No access token in response.";
+          _errorMessage = "Invalid token received from server.";
           developer.log('Token refresh failed: $_errorMessage');
           return false;
         }
       } else {
-        _errorMessage = response.error?.message ?? "Failed to refresh token.";
+        // Handle specific error cases
+        final errorMsg = response.error?.message ?? "Failed to refresh token.";
+        if (errorMsg.toLowerCase().contains('expired') || errorMsg.toLowerCase().contains('invalid')) {
+          _errorMessage = "Session expired. Please login again.";
+        } else if (errorMsg.toLowerCase().contains('network') || errorMsg.toLowerCase().contains('connection')) {
+          _errorMessage = "Network error. Please check your connection.";
+        } else {
+          _errorMessage = "Unable to refresh session. Please login again.";
+        }
         developer.log('Token refresh failed: $_errorMessage');
         return false;
       }
     } catch (e) {
-      _errorMessage = "Error refreshing token: $e";
+      // Handle different types of exceptions
+      if (e.toString().contains('DioExceptionType.connectionTimeout') || 
+          e.toString().contains('DioExceptionType.receiveTimeout')) {
+        _errorMessage = "Connection timeout. Please try again.";
+      } else if (e.toString().contains('DioExceptionType.unknown') || 
+                 e.toString().contains('network')) {
+        _errorMessage = "Network error. Please check your internet connection.";
+      } else {
+        _errorMessage = "Unable to refresh session. Please login again.";
+      }
       developer.log('Token refresh exception: $e');
       return false;
     }
@@ -189,41 +235,89 @@ class LoginViewModel extends BaseChangeNotifier {
 
     try {
       developer.log('Starting biometric login');
+      
+      // Check if biometrics are still available
+      final canUseBiometrics = await BiometricService.canCheckBiometrics();
+      if (!canUseBiometrics) {
+        _errorMessage = "Biometric authentication is no longer available. Please use email/password login.";
+        developer.log(_errorMessage);
+        handleError(message: _errorMessage);
+        return;
+      }
+
       final result = await BiometricService.authenticate(
         reason: "Login with your biometric credentials",
+        stickyAuth: true,
       );
 
       if (result.success) {
         final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
         final token = locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
         final refreshToken = locator<SessionManager>().get<String>(SessionConstants.refreshToken);
+        final userId = locator<SessionManager>().get<String>(SessionConstants.userId);
 
-        developer.log('Biometric auth success, email: $email, token: $token, refreshToken: $refreshToken');
+        developer.log('Biometric auth success, email: $email, userId: $userId, hasToken: ${token != null}, hasRefreshToken: ${refreshToken != null}');
 
-        if (email == null || refreshToken == null) {
-          _errorMessage = "No saved credentials found. Please login manually first.";
+        // Validate required credentials
+        if (email == null || email.isEmpty) {
+          _errorMessage = "No saved email found. Please login manually first.";
           developer.log(_errorMessage);
           handleError(message: _errorMessage);
           return;
         }
 
+        if (refreshToken == null || refreshToken.isEmpty) {
+          _errorMessage = "No saved session found. Please login manually first.";
+          developer.log(_errorMessage);
+          handleError(message: _errorMessage);
+          return;
+        }
+
+        if (userId == null || userId.isEmpty) {
+          _errorMessage = "User session is incomplete. Please login manually first.";
+          developer.log(_errorMessage);
+          handleError(message: _errorMessage);
+          return;
+        }
+
+        // Try to refresh the token
         bool refreshSuccess = await _refreshAccessToken(refreshToken);
         if (refreshSuccess) {
-          developer.log('Token refreshed, proceeding with login');
+          developer.log('Token refreshed successfully, proceeding with login');
           await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
+          
+          // Sync user profile to ensure data is up to date
+          try {
+            await syncUserProfile();
+          } catch (e) {
+            developer.log('Profile sync failed during biometric login: $e');
+            // Continue with login even if profile sync fails
+          }
+          
           navigateOnSuccess();
         } else {
-          _errorMessage = "Unable to refresh session. Please login manually.";
+          _errorMessage = "Session expired. Please login with email/password.";
           developer.log(_errorMessage);
           handleError(message: _errorMessage);
         }
       } else {
-        _errorMessage = result.errorMessage ?? "Biometric authentication failed.";
+        // Handle specific biometric authentication failures
+        if (result.errorMessage?.contains('cancelled') == true) {
+          _errorMessage = "Authentication was cancelled.";
+        } else if (result.errorMessage?.contains('locked') == true) {
+          _errorMessage = result.errorMessage ?? "Biometric authentication is locked.";
+        } else {
+          _errorMessage = result.errorMessage ?? "Biometric authentication failed.";
+        }
         developer.log('Biometric auth failed: $_errorMessage');
         handleError(message: _errorMessage);
       }
     } catch (e) {
-      _errorMessage = "An unexpected error occurred during biometric login: $e";
+      if (e.toString().contains('network') || e.toString().contains('connection')) {
+        _errorMessage = "Network error. Please check your internet connection.";
+      } else {
+        _errorMessage = "An unexpected error occurred. Please try again.";
+      }
       developer.log('Biometric login exception: $e');
       handleError(message: _errorMessage);
     } finally {
@@ -251,5 +345,14 @@ class LoginViewModel extends BaseChangeNotifier {
     await locator<SessionManager>().save(key: SessionConstants.profilePictureUrl, value: profilePictureUrl);
     await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: token);
     await locator<SessionManager>().save(key: SessionConstants.refreshToken, value: refreshToken);
+  }
+
+  void cancelOperation() {
+    if (_isLoading) {
+      _isLoading = false;
+      _errorMessage = 'Operation cancelled';
+      notifyListeners();
+      developer.log('Login operation cancelled');
+    }
   }
 }

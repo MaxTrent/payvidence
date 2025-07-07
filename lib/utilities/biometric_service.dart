@@ -52,6 +52,15 @@ class BiometricService {
     bool stickyAuth = false,
   }) async {
     try {
+      // Check if biometrics are available before attempting authentication
+      final canCheck = await canCheckBiometrics();
+      if (!canCheck) {
+        return const BiometricResult(
+          success: false,
+          errorMessage: "Biometric authentication is not available on this device.",
+        );
+      }
+
       final authenticated = await _localAuth.authenticate(
         localizedReason: reason,
         options: AuthenticationOptions(
@@ -66,8 +75,19 @@ class BiometricService {
       final errorMessage = switch (e.code) {
         auth_error.notAvailable => "Biometric authentication is not available on this device.",
         auth_error.notEnrolled => "No biometrics are enrolled. Please set up biometrics in your device settings.",
-        auth_error.lockedOut => "Biometric authentication is locked out due to too many failed attempts.",
-        auth_error.permanentlyLockedOut => "Biometric authentication is permanently locked out. Please use another authentication method.",
+        auth_error.lockedOut => "Biometric authentication is locked out due to too many failed attempts. Please try again later.",
+        auth_error.permanentlyLockedOut => "Biometric authentication is permanently locked out. Please use email/password login.",
+        'UserCancel' => "Biometric authentication was cancelled.",
+        'SystemCancel' => "Biometric authentication was cancelled by the system.",
+        'TouchIDNotAvailable' => "Touch ID is not available on this device.",
+        'TouchIDNotEnrolled' => "No fingerprints are enrolled. Please set up Touch ID in Settings.",
+        'TouchIDLockout' => "Touch ID is locked out. Please use passcode to unlock.",
+        'FaceIDNotAvailable' => "Face ID is not available on this device.",
+        'FaceIDNotEnrolled' => "Face ID is not set up. Please set up Face ID in Settings.",
+        'FaceIDLockout' => "Face ID is locked out. Please use passcode to unlock.",
+        'BiometricNotAvailable' => "Biometric authentication is not available.",
+        'BiometricNotEnrolled' => "No biometric credentials are enrolled.",
+        'BiometricLockout' => "Biometric authentication is temporarily locked out.",
         _ => "Biometric authentication failed: ${e.message ?? 'Unknown error'}",
       };
       print('BiometricService: Biometric auth error: $errorMessage\n$stackTrace');

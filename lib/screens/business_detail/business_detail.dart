@@ -5,6 +5,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/screens/business_detail/business_detail_vm.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
+import 'package:payvidence/providers/business_providers/current_business_provider.dart';
 import '../../components/app_button.dart';
 import '../../components/custom_shimmer.dart';
 import '../../constants/app_colors.dart';
@@ -29,10 +33,8 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
     final router = AutoRouter.of(context);
 
     useEffect(() {
-      void onRouteChange() => viewModel.fetchBusinessInformation(businessId);
-      router.addListener(onRouteChange);
-      viewModel.fetchBusinessInformation(businessId);
-      return () => router.removeListener(onRouteChange);
+      Future(() => viewModel.fetchBusinessInformation(businessId));
+      return null;
     }, [businessId]);
 
     return ResponsiveWrapper(
@@ -219,6 +221,7 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
 
   Future<dynamic> _buildConfirmDeleteBottomSheet(BuildContext context, BusinessDetailViewModel viewModel, WidgetRef ref) {
     final responsiveData = ResponsiveInherited.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -227,7 +230,7 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
         return Container(
           height: responsiveData.scaleHeight(368),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDarkMode ? const Color(0xFF2C2C2C) : Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(responsiveData.largeRadius)),
           ),
           child: Padding(
@@ -245,11 +248,27 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                 AppButton(
                   buttonText: 'Delete business',
                   onPressed: () {
+                    Navigator.of(context).pop(); // Close bottom sheet first
                     viewModel.deleteBusiness(
-                      navigateOnSuccess: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        // locator<PayvidenceAppRouter>().back();
+                      navigateOnSuccess: () async {
+                        // Check if deleted business was the current one
+                        final currentBusiness = ref.read(getCurrentBusinessProvider);
+                        if (currentBusiness?.id == businessId) {
+                          // Refresh business list first
+                          await ref.refresh(getAllBusinessProvider.future);
+                          final allBusinesses = ref.read(getAllBusinessProvider).value ?? [];
+                          
+                          if (allBusinesses.isNotEmpty) {
+                            // Switch to first available business
+                            try {
+                              ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(allBusinesses.first);
+                              locator<SessionManager>().save(key: SessionConstants.businessId, value: allBusinesses.first.id);
+                            } catch (e) {
+                              print('Auto-switch business error (ignored): $e');
+                            }
+                          }
+                        }
+                        locator<PayvidenceAppRouter>().navigate(const AllBusinessesRoute());
                       },
                     );
                   },
@@ -261,8 +280,8 @@ class BusinessDetail extends HookConsumerWidget with AutoRouteAware {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  backgroundColor: Colors.white,
-                  textColor: Colors.black,
+                  backgroundColor: Colors.transparent,
+                  textColor: isDarkMode ? Colors.white : Colors.black,
                 ),
               ],
             ),

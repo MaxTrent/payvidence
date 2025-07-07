@@ -52,6 +52,10 @@ class CreateAccountViewModel extends BaseChangeNotifier {
             phoneNumber: user.account.phoneNumber?? '',
             // token: user.token ?? ""
         );
+        
+        // Save the signup email for login screen
+        await locator<SessionManager>().save(key: SessionConstants.signupEmail, value: email);
+        
          navigateOnSuccess();
 
       } else {
@@ -99,5 +103,13 @@ class CreateAccountViewModel extends BaseChangeNotifier {
 
     // await locator<SessionManager>()
     //     .save(key: SessionConstants.accessTokenPref, value: token);
+  }
+
+  void cancelOperation() {
+    if (_isLoading) {
+      _isLoading = false;
+      notifyListeners();
+      debugPrint('Create account operation cancelled');
+    }
   }
 }

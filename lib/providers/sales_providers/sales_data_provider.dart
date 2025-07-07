@@ -14,23 +14,46 @@ final salesDataProvider =
 class GetSalesDataNotifier extends AsyncNotifier<Sales> {
   @override
   Future<Sales> build() {
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      return Future.value(Sales(totalSales: 0, totalRevenue: 0, graphData: []));
+    }
+    
     final Map<String, dynamic> filterData = ref.read(salesFilterProvider);
-
-    //final userModel = getUser();
     return locator<ISalesRepository>().fetchSales(
-        ref.watch(getCurrentBusinessProvider)!.id!,
+        currentBusiness!.id!,
         interval: filterData['interval'],
         startDate: filterData['startDate'],
         endDate: filterData['endDate']);
   }
 
   Future<void> setFilter() async {
+    final currentBusiness = ref.read(getCurrentBusinessProvider);
+    if (currentBusiness?.id == null) {
+      state = AsyncData(Sales(totalSales: 0, totalRevenue: 0, graphData: []));
+      return;
+    }
+    
     final Map<String, dynamic> filterData = ref.read(salesFilterProvider);
     state = AsyncData(await locator<ISalesRepository>().fetchSales(
-        ref.watch(getCurrentBusinessProvider)!.id!,
+        currentBusiness!.id!,
         interval: filterData['interval'],
         startDate: filterData['startDate'],
         endDate: filterData['endDate']));
-    //name: filterData['name'] ?? ''));
+  }
+
+  Future<void> refreshSales(String businessId) async {
+    state = const AsyncLoading();
+    try {
+      final Map<String, dynamic> filterData = ref.read(salesFilterProvider);
+      final sales = await locator<ISalesRepository>().fetchSales(
+          businessId,
+          interval: filterData['interval'],
+          startDate: filterData['startDate'],
+          endDate: filterData['endDate']);
+      state = AsyncData(sales);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+    }
   }
 }

@@ -2,17 +2,21 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/model/client_model.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_invoice_provider.dart';
 import 'package:payvidence/providers/receipt_providers/get_all_receipt_provider.dart';
 import 'package:payvidence/providers/client_providers/get_all_client_provider.dart';
 import 'package:payvidence/providers/product_providers/get_all_product_provider.dart';
+import 'package:payvidence/providers/product_providers/current_product_provider.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
+import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/app_button.dart';
+import '../../components/app_naira.dart';
 import '../../components/app_text_field.dart';
 import '../../components/loading_dialog.dart';
 import '../../constants/app_colors.dart';
@@ -23,6 +27,8 @@ import '../../model/product_model.dart';
 import '../../providers/business_providers/current_business_provider.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
+import '../../utilities/number_formatter.dart';
+import '../../utilities/real_time_number_formatter.dart';
 import '../add_client/add_client_viewmodel.dart';
 
 @RoutePage(name: 'GenerateReceiptRoute')
@@ -60,6 +66,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   String? selectedPayment;
   bool? isDraft;
   final List<Widget> _textFields = [];
+  bool isPrefilledProduct = false;
+  bool isLoading = false;
 
   // For client search functionality
   List<ClientModel> filteredClients = [];
@@ -103,11 +111,43 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       productPriceController: productPriceController,
       onPressed: selectProduct,
       index: 1,
+      onRemove: _removeTextField,
     ));
 
     // Listen to client name changes for search
     clientNameController.addListener(_onClientNameChanged);
     clientNameFocusNode.addListener(_onClientNameFocusChanged);
+    
+    // Prefill product data if coming from product details
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentProduct = ref.read(getCurrentProductProvider);
+      if (currentProduct != null) {
+        productNameController.text = currentProduct.name ?? '';
+        // Format price with commas manually
+        final price = currentProduct.price ?? '0';
+        final numPrice = double.tryParse(price) ?? 0;
+        final formattedPrice = numPrice.toStringAsFixed(2).replaceAllMapped(
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
+        productPriceController.text = formattedPrice;
+        products[1] = currentProduct;
+        isPrefilledProduct = true;
+        
+        // Update the first form field to be uneditable
+        _textFields[0] = FormFields(
+          qtyController: qtyController,
+          discountController: discountController,
+          productNameController: productNameController,
+          productPriceController: productPriceController,
+          onPressed: selectProduct,
+          index: 1,
+          invoiceToReceipt: true,
+          onRemove: _removeTextField,
+        );
+        setState(() {});
+      }
+    });
   }
 
   void _onClientNameChanged() {
@@ -195,13 +235,15 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             client.name,
                             style: Theme.of(context).textTheme.displaySmall,
                           ),
-                          subtitle: Text(
-                            client.address.isNotEmpty ? client.address : client.phoneNumber,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              fontSize: Responsive.fontSize(context, 12),
-                              color: Colors.grey,
-                            ),
-                          ),
+                          subtitle: client.address.isNotEmpty || client.phoneNumber.isNotEmpty
+                              ? Text(
+                                  client.address.isNotEmpty ? client.address : client.phoneNumber,
+                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    fontSize: Responsive.fontSize(context, 12),
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : null,
                           onTap: () {
                             _selectExistingClient(client);
                           },
@@ -235,6 +277,45 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     clientNameFocusNode.unfocus();
   }
 
+  void _removeTextField(int index) {
+    if (_textFields.length <= 1) return; // Don't remove if only one product left
+    
+    final actualIndex = index - 1; // Convert to 0-based index
+    
+    // Dispose controllers
+    qtyControllers[actualIndex].dispose();
+    discountControllers[actualIndex].dispose();
+    productNameControllers[actualIndex].dispose();
+    productPriceControllers[actualIndex].dispose();
+    
+    // Remove from lists
+    qtyControllers.removeAt(actualIndex);
+    discountControllers.removeAt(actualIndex);
+    productNameControllers.removeAt(actualIndex);
+    productPriceControllers.removeAt(actualIndex);
+    
+    // Remove from products map
+    products.remove(index);
+    
+    setState(() {
+      _textFields.removeAt(actualIndex);
+      // Update indices for remaining fields
+      for (int i = 0; i < _textFields.length; i++) {
+        final field = _textFields[i] as FormFields;
+        _textFields[i] = FormFields(
+          qtyController: qtyControllers[i],
+          discountController: discountControllers[i],
+          productNameController: productNameControllers[i],
+          productPriceController: productPriceControllers[i],
+          onPressed: selectProduct,
+          index: i + 1,
+          onRemove: _removeTextField,
+          invoiceToReceipt: field.invoiceToReceipt,
+        );
+      }
+    });
+  }
+
   void _addTextField() {
     // Create new TextEditingControllers
     TextEditingController qtyController = TextEditingController();
@@ -256,6 +337,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         productPriceController: productPriceControllers.last,
         onPressed: selectProduct,
         index: _textFields.length + 1,
+        onRemove: _removeTextField,
       ));
     });
   }
@@ -419,26 +501,22 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                     ),
                     SizedBox(height: responsiveData.scaleHeight(40)),
                     ...paymentOptions.map((option) {
-                      return GestureDetector(
+                      return InkWell(
                         onTap: () {
                           setState(() {
                             selectedPayment = option;
                           });
                           Navigator.of(context).pop();
                         },
-                        child: Padding(
+                        child: Container(
+                          width: double.infinity,
                           padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                option.replaceAll(RegExp('_'), ' '),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                              ),
-                            ],
+                          child: Text(
+                            option.replaceAll(RegExp('_'), ' '),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall!
+                                .copyWith(fontSize: Responsive.fontSize(context, 14)),
                           ),
                         ),
                       );
@@ -454,11 +532,20 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   Future<void> createReceipt() async {
+    if (isLoading) return; // Prevent multiple clicks
+    
     String error = findMissingProducts();
     if (error != '') {
       ToastService.showErrorSnackBar(error);
       return;
     }
+    
+    setState(() {
+      isLoading = true;
+    });
+    
+    if (!context.mounted) return;
+    LoadingDialog.show(context);
 
     // Handle client creation if needed
     ClientModel? finalClient = client;
@@ -516,7 +603,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       } else {
         // New product
         final productName = productNameControllers[i].text.trim();
-        final productPrice = double.tryParse(productPriceControllers[i].text.trim()) ?? 0.0;
+        final productPrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
         
         if (productName.isEmpty || productPrice <= 0) {
           ToastService.showErrorSnackBar('Enter valid product name and price for product $index');
@@ -538,38 +625,118 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
       "client_id": finalClient?.id,
       "is_draft": isDraft,
-      "mode_of_payment":
-      widget.isInvoice == true ? null : selectedPayment?.toLowerCase()
     };
-    if (!context.mounted) return;
-    LoadingDialog.show(context);
+    
+    // Only include mode_of_payment if not saving as draft or if payment method is selected
+    if (widget.isInvoice == true) {
+      // For invoices, mode_of_payment is always null
+      requestData["mode_of_payment"] = null;
+    } else if (isDraft != true || selectedPayment != null) {
+      // For receipts: include if not draft OR if payment method is selected
+      requestData["mode_of_payment"] = selectedPayment?.toLowerCase();
+    }
     try {
       final Receipt response = await ref
           .read(getAllReceiptProvider.notifier)
           .addReceipt(requestData);
       if (!context.mounted) return;
       Navigator.of(context).pop(); // pop loading dialog on success
-      ToastService.showSnackBar("Receipt generated successfully");
-      ref.invalidate(widget.isInvoice == true
-          ? getAllInvoiceProvider
-          : getAllReceiptProvider);
-      ref.invalidate(getAllProductProvider);
-      Future.delayed(const Duration(seconds: 2), () {
-        if (ref.read(getCurrentBusinessProvider)?.accountNumber == null) {
-          if (!context.mounted) return;
-
-          Navigator.of(context).pop();
-          locator<PayvidenceAppRouter>().navigate(UpdateBankDetailsRoute());
-        } else {
-          Navigator.of(context).pop();
+      
+      // Show comprehensive success message
+      if (isDraft == true) {
+        ToastService.showSnackBar("Draft saved successfully");
+      } else {
+        // Count new items created
+        int newProductsCount = 0;
+        bool newClientCreated = finalClient != null && client == null && clientNameController.text.trim().isNotEmpty;
+        
+        for (int i = 0; i < _textFields.length; i++) {
+          final index = i + 1;
+          if (!products.containsKey(index)) {
+            newProductsCount++;
+          }
         }
-      });
+        
+        String message = widget.isInvoice == true ? "Invoice generated successfully" : "Receipt generated successfully";
+        
+        if (newClientCreated && newProductsCount > 0) {
+          message += "${newProductsCount} product${newProductsCount > 1 ? 's' : ''} added";
+        } else if (newClientCreated) {
+          message += "";
+        } else if (newProductsCount > 0) {
+          message += ". ${newProductsCount} new product${newProductsCount > 1 ? 's' : ''} added";
+        }
+        
+        ToastService.showSnackBar(message);
+      }
+      
+      ref.invalidate(getAllReceiptProvider);
+      ref.invalidate(getAllInvoiceProvider);
+      ref.invalidate(getAllProductProvider);
+      
+      // Refresh transactions list
+      final businessId = ref.read(getCurrentBusinessProvider)?.id;
+      if (businessId != null) {
+        ref.read(allTransactionsViewModelProvider).forceRefreshTransactions(businessId);
+      }
+      
+      // Navigate to receipt screen if not a draft
+      if (isDraft != true) {
+        // Refresh the receipts list to get the full data
+        await ref.refresh(widget.isInvoice == true
+            ? getAllInvoiceProvider.future
+            : getAllReceiptProvider.future);
+        
+        // Find the newly created receipt with full data
+        final receipts = ref.read(widget.isInvoice == true
+            ? getAllInvoiceProvider
+            : getAllReceiptProvider).value ?? [];
+        final fullReceipt = receipts.firstWhere(
+          (r) => r.id == response.id,
+          orElse: () => response,
+        );
+        
+        locator<PayvidenceAppRouter>().navigate(
+          ReceiptScreenRoute(
+            record: fullReceipt,
+            isInvoice: widget.isInvoice == true,
+            source: isPrefilledProduct ? 'product' : null,
+          ),
+        );
+      } else {
+        // For drafts, just go back
+        Navigator.of(context).pop();
+      }
     } on ApiErrorResponseV2 catch (e) {
-      Navigator.of(context).pop();
+      if (context.mounted) Navigator.of(context).pop();
+      setState(() {
+        isLoading = false;
+      });
       String errorMessage = e.message ?? 'An unknown error has occurred!';
+      
+      // Handle specific error types with user-friendly messages
+      if (errorMessage.contains('not enough stock')) {
+        errorMessage = 'Not enough stock available for this product. Please check quantity.';
+      } else if (errorMessage.contains('timeout')) {
+        errorMessage = 'Connection is slow. Please try again.';
+      } else if (errorMessage.contains('unauthorized')) {
+        errorMessage = 'Session expired. Please log in again.';
+      } else if (errorMessage.startsWith('ApiErrorResponseV2(')) {
+        // Extract just the meaningful part from complex error messages
+        final match = RegExp(r'not enough stock.*?Available: (\d+)').firstMatch(errorMessage);
+        if (match != null) {
+          errorMessage = 'Not enough stock available. Only ${match.group(1)} units left.';
+        } else {
+          errorMessage = 'Something went wrong. Please try again.';
+        }
+      }
+      
       ToastService.showErrorSnackBar(errorMessage);
     } catch (e, stackTrace) {
-      Navigator.of(context).pop();
+      if (context.mounted) Navigator.of(context).pop();
+      setState(() {
+        isLoading = false;
+      });
       ToastService.showErrorSnackBar('An unknown error has occurred!');
     }
   }
@@ -595,13 +762,23 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     final responsiveData = ResponsiveInherited.of(context);
 
     return ResponsiveWrapper(
-      child: GestureDetector(
-        onTap: () {
-          FocusManager.instance.primaryFocus?.unfocus();
-          _hideOverlay();
+      child: PopScope(
+        canPop: !isPrefilledProduct,
+        onPopInvoked: (didPop) {
+          if (!didPop && isPrefilledProduct) {
+            Navigator.of(context).pop();
+          }
         },
-        child: Scaffold(
-          appBar: AppBar(),
+        child: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+            _hideOverlay();
+          },
+          child: KeyboardDismissibleScaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: true,
+
+          ),
           body: Form(
             key: formKey,
             child: Padding(
@@ -746,12 +923,17 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AppButton(
-                            buttonText: 'Generate',
-                            onPressed: () {
+                            buttonText: isLoading ? 'Generating...' : 'Generate',
+                            onPressed: isLoading ? null : () {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
                                 if (clientNameController.text.trim().isEmpty) {
                                   ToastService.showErrorSnackBar("Please enter client name");
+                                  return;
+                                }
+                                // Check payment method only for receipts when generating (not draft)
+                                if (widget.isInvoice == false && selectedPayment == null) {
+                                  ToastService.showErrorSnackBar("Please select a payment method");
                                   return;
                                 }
                                 isDraft = false;
@@ -763,7 +945,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             height: responsiveData.scaleHeight(26),
                           ),
                           GestureDetector(
-                            onTap: () {
+                            onTap: isLoading ? null : () {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
                                 if (clientNameController.text.trim().isEmpty) {
@@ -779,8 +961,11 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                               style: Theme.of(context)
                                   .textTheme
                                   .displayMedium!
-                                  .copyWith(color: primaryColor2),
+                                  .copyWith(color: isLoading ? Colors.grey : primaryColor2),
                             ),
+                          ),
+                          SizedBox(
+                            height: responsiveData.scaleHeight(14),
                           ),
                         ],
                       ),
@@ -789,6 +974,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                 ),
               ),
             ),
+          ),
           ),
         ),
       ),
@@ -805,6 +991,9 @@ class FormFields extends StatefulWidget {
   final int index;
   Product? product;
   final bool? invoiceToReceipt;
+  final bool? productNameEditable;
+  final bool? productPriceEditable;
+  final Function(int index)? onRemove;
 
   FormFields({
     super.key,
@@ -816,6 +1005,9 @@ class FormFields extends StatefulWidget {
     required this.index,
     this.product,
     this.invoiceToReceipt = false,
+    this.productNameEditable,
+    this.productPriceEditable,
+    this.onRemove,
   });
 
   @override
@@ -833,8 +1025,12 @@ class _FormFieldsState extends State<FormFields> {
   @override
   void initState() {
     super.initState();
-    widget.productNameController.addListener(_onProductNameChanged);
-    productNameFocusNode.addListener(_onProductNameFocusChanged);
+    // Only add listeners if product name is editable
+    final isProductNameEditable = widget.productNameEditable ?? !widget.invoiceToReceipt!;
+    if (isProductNameEditable) {
+      widget.productNameController.addListener(_onProductNameChanged);
+      productNameFocusNode.addListener(_onProductNameFocusChanged);
+    }
   }
 
   @override
@@ -845,6 +1041,10 @@ class _FormFieldsState extends State<FormFields> {
   }
 
   void _onProductNameChanged() {
+    // Don't show suggestions if field is disabled
+    final isProductNameEditable = widget.productNameEditable ?? !widget.invoiceToReceipt!;
+    if (!isProductNameEditable) return;
+    
     final query = widget.productNameController.text.trim();
     if (query.isEmpty) {
       setState(() {
@@ -934,12 +1134,20 @@ class _FormFieldsState extends State<FormFields> {
                             product.name ?? '',
                             style: Theme.of(context).textTheme.displaySmall,
                           ),
-                          subtitle: Text(
-                            '₦${product.price ?? '0'}',
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              fontSize: Responsive.fontSize(context, 12),
-                              color: Colors.grey,
-                            ),
+                          subtitle: Row(
+                            children: [
+                              AppNaira(fontSize: 14, color: Colors.grey),
+                              Text(
+                                (double.tryParse(product.price ?? '0') ?? 0).toStringAsFixed(2).replaceAllMapped(
+                                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                                  (Match m) => '${m[1]},',
+                                ),
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  fontSize: Responsive.fontSize(context, 12),
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                           onTap: () {
                             _selectExistingProduct(product);
@@ -968,7 +1176,14 @@ class _FormFieldsState extends State<FormFields> {
     setState(() {
       widget.product = selectedProduct;
       widget.productNameController.text = selectedProduct.name ?? '';
-      widget.productPriceController.text = selectedProduct.price ?? '';
+      // Format price with commas manually
+      final price = selectedProduct.price ?? '0';
+      final numPrice = double.tryParse(price) ?? 0;
+      final formattedPrice = numPrice.toStringAsFixed(2).replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+      widget.productPriceController.text = formattedPrice;
       showProductDropdown = false;
       isExistingProduct = true;
     });
@@ -989,6 +1204,22 @@ class _FormFieldsState extends State<FormFields> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Add remove button for additional products (not the first one)
+        if (widget.index > 1 && widget.onRemove != null)
+          Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
+              onTap: () => widget.onRemove!(widget.index),
+              child: Container(
+                padding: EdgeInsets.all(responsiveData.scaleHeight(4)),
+                child: Icon(
+                  Icons.close,
+                  size: responsiveData.scaleHeight(20),
+                  color: appRed,
+                ),
+              ),
+            ),
+          ),
         Text(
           'Product name',
           style: Theme.of(context).textTheme.displaySmall,
@@ -1003,7 +1234,7 @@ class _FormFieldsState extends State<FormFields> {
             controller: widget.productNameController,
             focusNode: productNameFocusNode,
             keyboardType: TextInputType.text,
-            enabled: !widget.invoiceToReceipt!,
+            enabled: widget.productNameEditable ?? !widget.invoiceToReceipt!,
             validator: (val) {
               if (val?.trim().isEmpty ?? true) {
                 return 'Please enter product name';
@@ -1026,12 +1257,17 @@ class _FormFieldsState extends State<FormFields> {
           hintText: 'Product price',
           controller: widget.productPriceController,
           keyboardType: TextInputType.number,
-          enabled: !widget.invoiceToReceipt! && !isExistingProduct,
+          enabled: widget.productPriceEditable ?? (!widget.invoiceToReceipt! && !isExistingProduct),
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(15),
+            RealTimeNumberFormatter(),
+          ],
           validator: (val) {
             if (val?.trim().isEmpty ?? true) {
               return 'Please enter product price';
             }
-            if (double.tryParse(val!) == null || double.parse(val) <= 0) {
+            final cleanPrice = val!.replaceAll(',', '');
+            if (double.tryParse(cleanPrice) == null || double.parse(cleanPrice) <= 0) {
               return 'Enter a valid price greater than 0';
             }
             return null;
@@ -1060,7 +1296,6 @@ class _FormFieldsState extends State<FormFields> {
             }
             return null;
           },
-          enabled: !widget.invoiceToReceipt!,
         ),
         SizedBox(
           height: responsiveData.scaleHeight(20),
@@ -1090,7 +1325,6 @@ class _FormFieldsState extends State<FormFields> {
                   .copyWith(fontSize: Responsive.fontSize(context, 14)),
             ),
           ),
-          enabled: !widget.invoiceToReceipt!,
         ),
       ],
     );

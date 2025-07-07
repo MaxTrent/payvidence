@@ -8,6 +8,7 @@ import 'package:payvidence/components/app_button.dart';
 import 'package:payvidence/components/loading_indicator.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/change_profile_picture/change_profile_picture_vm.dart';
+import 'package:payvidence/screens/update_personal_details/update_personal_details_vm.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 import '../../gen/assets.gen.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -26,6 +27,14 @@ class ChangeProfilePicture extends HookConsumerWidget {
     final responsiveData = ResponsiveInherited.of(context);
 
     useEffect(() {
+      // Only refresh when navigating to this screen with no selected image
+      if (viewModel.selectedImage == null) {
+        viewModel.refreshProfilePicture();
+      }
+      return null;
+    }, []);
+
+    useEffect(() {
       void listener() {
         isImageSelected.value = viewModel.selectedImage != null;
       }
@@ -33,6 +42,8 @@ class ChangeProfilePicture extends HookConsumerWidget {
       viewModel.addListener(listener);
       return () => viewModel.removeListener(listener);
     }, [viewModel]);
+
+
 
     return ResponsiveWrapper(
       child: GestureDetector(
@@ -85,25 +96,31 @@ class ChangeProfilePicture extends HookConsumerWidget {
                         placeholder: (context, url) => LoadingIndicator(
                           color: isDarkMode ? Colors.white : Colors.black,
                         ),
-                        errorWidget: (context, url, error) => SvgPicture.asset(
-                          Assets.svg.defaultProfilepic,
-                          fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => Container(
                           width: responsiveData.scaleWidth(200),
                           height: responsiveData.scaleHeight(200),
-                          colorFilter: ColorFilter.mode(
-                            isDarkMode ? Colors.white : Colors.black,
-                            BlendMode.srcIn,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isDarkMode ? Colors.grey[800] : const Color(0xFFE8E8E8),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: responsiveData.scaleHeight(80),
+                            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                           ),
                         ),
                       )
-                          : SvgPicture.asset(
-                        Assets.svg.defaultProfilepic,
-                        fit: BoxFit.cover,
+                          : Container(
                         width: responsiveData.scaleWidth(200),
                         height: responsiveData.scaleHeight(200),
-                        colorFilter: ColorFilter.mode(
-                          isDarkMode ? Colors.white : Colors.black,
-                          BlendMode.srcIn,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isDarkMode ? Colors.grey[800] : const Color(0xFFE8E8E8),
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: responsiveData.scaleHeight(80),
+                          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                     ),
@@ -122,7 +139,15 @@ class ChangeProfilePicture extends HookConsumerWidget {
                     } else {
                       viewModel.uploadImage(
                         navigateOnSuccess: () {
-                          locator<PayvidenceAppRouter>().back();
+                          // Clear cache for the new profile picture URL
+                          if (viewModel.currentProfilePictureUrl != null) {
+                            CachedNetworkImage.evictFromCache(viewModel.currentProfilePictureUrl!);
+                          }
+                          // Trigger profile refresh and navigate back
+                          final updateVM = ref.read(updatePersonalDetailsViewModelProvider);
+                          updateVM.fetchUserInformation().then((_) {
+                            locator<PayvidenceAppRouter>().back();
+                          });
                         },
                       );
                     }

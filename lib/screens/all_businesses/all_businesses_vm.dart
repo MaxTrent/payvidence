@@ -33,7 +33,8 @@ class AllBusinessesViewModel extends BaseChangeNotifier {
       if (response.success) {
         final businessData = response.data?["data"] as List<dynamic>?;
         if (businessData != null) {
-          _allBusinesses = businessData.map((data) => Business.fromJson(data as Map<String, dynamic>)).toList();
+          _allBusinesses = businessData.map((data) => Business.fromJson(data as Map<String, dynamic>)).toList()
+            ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
           print("ViewModel: All businesses updated - $_allBusinesses");
         } else {
           print("ViewModel: No business data found in response");

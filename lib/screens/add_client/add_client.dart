@@ -30,25 +30,22 @@ class AddClient extends HookConsumerWidget {
     final areFieldsEmpty = useState(true);
 
     bool checkFieldsEmpty() {
-      return nameController.text.isEmpty ||
-          addressController.text.isEmpty ||
-          phoneNumberController.text.isEmpty;
+      return nameController.text.trim().length < 2;
     }
 
     useEffect(() {
       void updateFieldsEmptyStatus() {
-        areFieldsEmpty.value = checkFieldsEmpty();
+        final isEmpty = checkFieldsEmpty();
+        if (areFieldsEmpty.value != isEmpty) {
+          areFieldsEmpty.value = isEmpty;
+        }
         print("Fields empty: ${areFieldsEmpty.value}");
       }
 
       nameController.addListener(updateFieldsEmptyStatus);
-      addressController.addListener(updateFieldsEmptyStatus);
-      phoneNumberController.addListener(updateFieldsEmptyStatus);
 
       return () {
         nameController.removeListener(updateFieldsEmptyStatus);
-        addressController.removeListener(updateFieldsEmptyStatus);
-        phoneNumberController.removeListener(updateFieldsEmptyStatus);
       };
     }, []);
 
@@ -112,7 +109,7 @@ class AddClient extends HookConsumerWidget {
                         FilteringTextInputFormatter.digitsOnly,
                       ],
                       validator: (val) {
-                        if (!val!.trim().isValidPhone || val.isEmpty) {
+                        if (val != null && val.isNotEmpty && !val.trim().isValidPhone) {
                           return 'Enter a valid phone number';
                         }
                         return null;
@@ -128,10 +125,7 @@ class AddClient extends HookConsumerWidget {
                       hintText: 'Client address',
                       controller: addressController,
                       validator: (val) {
-                        if (val == null || val.isEmpty) {
-                          return 'Address is required';
-                        }
-                        if (val.length < 5) {
+                        if (val != null && val.isNotEmpty && val.length < 5) {
                           return 'Address must be at least 5 characters long';
                         }
                         return null;

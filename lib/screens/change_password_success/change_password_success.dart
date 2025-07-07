@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import '../../components/app_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.dart';
@@ -17,14 +18,18 @@ class ChangePasswordSuccess extends StatelessWidget {
     final responsiveData = ResponsiveInherited.of(context);
 
     return ResponsiveWrapper(
-      child: Scaffold(
-        floatingActionButton: AppButton(
-          buttonText: 'Log in',
-          onPressed: () {
-            locator<PayvidenceAppRouter>()
-                .popUntil((route) => route is OnboardingScreen);
-            locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
-          },
+      child: KeyboardDismissibleScaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(20), vertical: responsiveData.scaleHeight(14) ),
+          child: AppButton(
+            buttonText: 'Log in',
+            onPressed: () {
+              locator<PayvidenceAppRouter>()
+                  .popUntil((route) => route is OnboardingScreen);
+              locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.login);
+            },
+          ),
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),

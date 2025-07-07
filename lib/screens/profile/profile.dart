@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/constants/app_colors.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/screens/profile/profile_vm.dart';
@@ -51,7 +52,7 @@ class Profile extends HookConsumerWidget {
     print('Profile: Theme mode = ${theme.mode}, Brightness = ${Theme.of(context).brightness}');
 
     return ResponsiveWrapper(
-      child: Scaffold(
+      child: KeyboardDismissibleScaffold(
         body: Column(
           children: [
             FadeInWidget(
@@ -81,35 +82,42 @@ class Profile extends HookConsumerWidget {
                                 height: responsiveData.scaleHeight(73),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
+                                  color: Colors.transparent,
                                   border: Border.all(
                                     color: Colors.white,
                                     width: responsiveData.scaleWidth(1),
                                   ),
                                 ),
-                                child: (useUpdatePersonalDetailsViewModel.userInfo?.account.profilePictureUrl != null)
-                                    ? CachedNetworkImage(
-                                  imageUrl: useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!,
-                                  imageBuilder: (context, imageProvider) => Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: imageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
+                                child: (useUpdatePersonalDetailsViewModel.userInfo?.account.profilePictureUrl != null && useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!.isNotEmpty)
+                                    ? ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl: useUpdatePersonalDetailsViewModel.userInfo!.account.profilePictureUrl!,
+                                          fit: BoxFit.cover,
+                                          width: responsiveData.scaleHeight(73),
+                                          height: responsiveData.scaleHeight(73),
+                                          errorWidget: (context, url, error) => Container(
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xFFE8E8E8),
+                                            ),
+                                            child: Icon(
+                                              Icons.person,
+                                              size: responsiveData.scaleHeight(40),
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFFE8E8E8),
                                   ),
-                                  placeholder: (context, url) => SvgPicture.asset(
-                                    Assets.svg.defaultProfilepic,
-                                    fit: BoxFit.cover,
+                                  child: Icon(
+                                    Icons.person,
+                                    size: responsiveData.scaleHeight(40),
+                                    color: Colors.grey[600],
                                   ),
-                                  errorWidget: (context, url, error) => SvgPicture.asset(
-                                    Assets.svg.defaultProfilepic,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                                    : SvgPicture.asset(
-                                  Assets.svg.defaultProfilepic,
-                                  fit: BoxFit.cover,
                                 ),
                               ),
                               Positioned(
@@ -117,6 +125,7 @@ class Profile extends HookConsumerWidget {
                                 right: 0,
                                 child: GestureDetector(
                                   onTap: () {
+                                    // Navigate to change profile picture without refreshing current profile
                                     locator<PayvidenceAppRouter>().navigateNamed(
                                         PayvidenceRoutes.changeProfilePicture);
                                   },

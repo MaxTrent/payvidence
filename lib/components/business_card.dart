@@ -7,6 +7,9 @@ import 'package:payvidence/providers/business_providers/current_business_provide
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/utilities/responsive.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/screens/all_transactions/all_transactions_vm.dart';
 import '../constants/app_colors.dart';
 import '../model/business_model.dart';
 import '../shared_dependency/shared_dependency.dart';
@@ -114,9 +117,18 @@ class BusinessCard extends HookConsumerWidget {
               buttonText: 'Switch to business',
               isDisabled: business.id == currentBusiness?.id,
               onPressed: () {
-                ref
-                    .read(getCurrentBusinessProvider.notifier)
-                    .setCurrentBusiness(business);
+                // Save business ID to session
+                locator<SessionManager>().save(key: SessionConstants.businessId, value: business.id);
+                
+                // Update current business immediately
+                try {
+                  ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(business);
+                } catch (e) {
+                  print('Business switch error (ignored): $e');
+                }
+                
+                // Navigate to home
+                locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.home);
               },
             ),
           ],

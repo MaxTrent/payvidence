@@ -12,10 +12,12 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
   List<Transaction> _transactions = [];
   bool _isLoading = false;
   Transaction? _selectedTransaction;
+  bool _hasLoadedTransactions = false;
 
   List<Transaction> get transactions => _transactions;
   bool get isLoading => _isLoading;
   Transaction? get selectedTransaction => _selectedTransaction;
+  bool get hasLoadedTransactions => _hasLoadedTransactions;
 
   set transactions(List<Transaction> value) {
     _transactions = value;
@@ -30,6 +32,8 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
   }
 
   Future<void> fetchTransactions(String businessId) async {
+    if (_isLoading) return; // Prevent multiple simultaneous calls
+    
     try {
       _isLoading = true;
       notifyListeners();
@@ -42,9 +46,20 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
       if (response.success) {
         final transactionData = response.data!["data"];
         if (transactionData is List) {
-          transactions = transactionData
+          final newTransactions = transactionData
               .map((item) => Transaction.fromJson(item as Map<String, dynamic>))
               .toList();
+          
+          // Remove duplicates based on transaction ID
+          final uniqueTransactions = <String, Transaction>{};
+          for (final transaction in newTransactions) {
+            if (transaction.id != null) {
+              uniqueTransactions[transaction.id!] = transaction;
+            }
+          }
+          
+          transactions = uniqueTransactions.values.toList()
+            ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
         } else {
           print("ViewModel: Unexpected data format - $transactionData");
           handleError(message: "Unexpected data format");
@@ -63,7 +78,20 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
       handleError(message: "Something went wrong. Please try again.");
     } finally {
       _isLoading = false;
+      _hasLoadedTransactions = true;
       notifyListeners();
     }
+  }
+
+  void refreshTransactionsIfNeeded(String businessId) {
+    // Only refresh if we have existing data to avoid unnecessary calls
+    if (_transactions.isNotEmpty) {
+      fetchTransactions(businessId);
+    }
+  }
+
+  void forceRefreshTransactions(String businessId) {
+    _hasLoadedTransactions = false;
+    fetchTransactions(businessId);
   }
 }
