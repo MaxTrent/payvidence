@@ -265,6 +265,11 @@ class Login extends HookConsumerWidget {
                                       .navigateNamed(PayvidenceRoutes.home);
                                   print('navigating back');
                                 },
+                                navigateToOtp: () {
+                                  print("Halfway signup detected, navigating to OTP");
+                                  locator<PayvidenceAppRouter>()
+                                      .navigateNamed(PayvidenceRoutes.otp);
+                                },
                               );
                             } else {
                               print("Form validation failed");

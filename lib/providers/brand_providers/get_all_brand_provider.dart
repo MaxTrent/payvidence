@@ -11,14 +11,19 @@ final getAllBrandProvider =
 
 class GetAllBrandNotifier extends AsyncNotifier<List<BrandModel>> {
   @override
-  Future<List<BrandModel>> build() {
-    //final userModel = getUser();
-    final currentBusiness = ref.read(getCurrentBusinessProvider);
-    if (currentBusiness?.id == null) {
-      return Future.value([]);
+  Future<List<BrandModel>> build() async {
+    try {
+      final currentBusiness = ref.read(getCurrentBusinessProvider);
+      if (currentBusiness?.id == null) {
+        return [];
+      }
+      return await locator<IBrandRepository>()
+          .fetchAllBrand(currentBusiness!.id!);
+    } catch (e) {
+      // Log the error but return empty list to prevent app crashes
+      print('Error fetching brands: $e');
+      return [];
     }
-    return locator<IBrandRepository>()
-        .fetchAllBrand(currentBusiness!.id!);
   }
 
   Future<BrandModel> addBrand(Map<String, dynamic> data) {

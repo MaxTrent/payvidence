@@ -43,7 +43,9 @@ class AllTransactions extends HookConsumerWidget {
 
     useEffect(() {
       Future.microtask(() {
-        viewModel.fetchTransactions(businessId!);
+        if (businessId != null) {
+          viewModel.fetchTransactions(businessId);
+        }
       });
 
       void listener() {

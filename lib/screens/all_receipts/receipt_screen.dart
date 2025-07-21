@@ -121,7 +121,7 @@ class ReceiptScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       AppButton(
-                        buttonText: 'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
+                        buttonText: 'Share ${isInvoice == true ? 'Invoice' : 'Receipt'}',
                         onPressed: () {
                           shareReceipt();
                         },

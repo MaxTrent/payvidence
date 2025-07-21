@@ -25,6 +25,8 @@ class OtpViewModel extends BaseChangeNotifier {
   Future<void> verifyOtp({
     required String otp,
     required Function() navigateOnSuccess,
+    Function()? navigateToLogin,
+    Function()? navigateToEmailVerified,
   }) async {
     _setLoading(true);
     try {
@@ -33,7 +35,15 @@ class OtpViewModel extends BaseChangeNotifier {
       final response = await apiServices.verifyOtp(otp, userId!);
 
       if (response.success) {
-        navigateOnSuccess();
+        // Check if this is a halfway signup case (signupEmail exists)
+        final signupEmail = locator<SessionManager>().get<String>(SessionConstants.signupEmail);
+        if (signupEmail != null && signupEmail.isNotEmpty && navigateToEmailVerified != null) {
+          // Clear signup email after successful verification
+          await locator<SessionManager>().remove(SessionConstants.signupEmail);
+          navigateToEmailVerified();
+        } else {
+          navigateOnSuccess();
+        }
       } else {
         var errorMessage = response.error?.errors?.first.message ??
             response.error?.message ??

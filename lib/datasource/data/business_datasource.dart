@@ -59,9 +59,20 @@ class BusinessDatasource extends IBusinessDatasource {
       return response.fold((fail) {
         throw fail.error;
       }, (success) {
-        List jsonList = success.data['data'] as List;
-        // print(success.data);
-        return jsonList.map((json) => Business.fromJson(json)).toList();
+        // Handle case where data or data['data'] might be null
+        if (success.data == null || !success.data.containsKey('data') || success.data['data'] == null) {
+          return [];
+        }
+        
+        try {
+          List jsonList = success.data['data'] as List;
+          return jsonList.map((json) => Business.fromJson(json)).toList();
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error parsing business data: $e");
+          }
+          return [];
+        }
       });
     } catch (e) {
       if (kDebugMode) {

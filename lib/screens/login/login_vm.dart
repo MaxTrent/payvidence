@@ -95,6 +95,7 @@ class LoginViewModel extends BaseChangeNotifier {
     required String email,
     required String password,
     required Function() navigateOnSuccess,
+    required Function() navigateToOtp,
   }) async {
     _isLoading = true;
     _errorMessage = '';
@@ -107,11 +108,21 @@ class LoginViewModel extends BaseChangeNotifier {
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
         developer.log('Login successful, user: ${user.account.id}');
+        developer.log('Token: ${user.token}, RefreshToken: ${user.refreshToken}');
+
+        // Check if tokens are null (halfway signup case)
+        if (user.token == null || user.refreshToken == null) {
+          developer.log('Tokens are null - halfway signup detected, redirecting to OTP');
+          // Save email and user ID for OTP verification
+          await locator<SessionManager>().save(key: SessionConstants.signupEmail, value: email);
+          await locator<SessionManager>().save(key: SessionConstants.userId, value: user.account.id ?? '');
+          navigateToOtp();
+          return;
+        }
 
         // Save user credentials
         await saveUserCredentials(
           userId: user.account.id ?? '',
-          
           firstName: user.account.firstName,
           lastName: user.account.lastName ?? '',
           email: user.account.email ?? '',

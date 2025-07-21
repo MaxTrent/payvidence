@@ -12,6 +12,7 @@ class RecordProductDetail {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final Product? product;
+  final bool? isService;
 
   RecordProductDetail({
     this.id,
@@ -24,6 +25,7 @@ class RecordProductDetail {
     this.createdAt,
     this.updatedAt,
     this.product,
+    this.isService,
   });
 
   factory RecordProductDetail.fromRawJson(String str) =>
@@ -48,6 +50,7 @@ class RecordProductDetail {
             : DateTime.parse(json["updated_at"] as String),
         product:
         json["product"] == null ? null : Product.fromJson(json["product"]),
+        isService: json["is_service"] as bool? ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,5 +64,6 @@ class RecordProductDetail {
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
     "product": product?.toJson(),
+    "is_service": isService,
   };
 }

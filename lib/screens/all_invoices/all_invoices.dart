@@ -27,6 +27,15 @@ import '../all_receipts/all_receipts.dart';
 @RoutePage(name: 'AllInvoicesRoute')
 class AllInvoices extends HookConsumerWidget {
   const AllInvoices({super.key});
+  
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return _AllInvoicesContent();
+  }
+}
+
+class _AllInvoicesContent extends HookConsumerWidget {
+  _AllInvoicesContent({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,6 +45,7 @@ class AllInvoices extends HookConsumerWidget {
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
     final productNumber = ValueNotifier<int?>(null);
+    final isServiceMode = useState<bool>(false);
     final responsiveData = ResponsiveInherited.of(context);
 
     useEffect(() {
@@ -114,27 +124,116 @@ class AllInvoices extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  hintText: 'Search for invoice',
+                  hintText: isServiceMode.value ? 'Search for service invoice' : 'Search for product invoice',
                   controller: searchController,
                   radius: responsiveData.largeRadius,
                   filled: isDarkMode ? false : true,
                   fillColor: isDarkMode ? Colors.black : appGrey5,
                 ),
               ),
-              SizedBox(height: responsiveData.scaleHeight(20)),
+              SizedBox(height: responsiveData.scaleHeight(16)),
+              // Toggle switch between Products and Services
+              Container(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: responsiveData.scaleWidth(4),
+                    vertical: responsiveData.scaleHeight(2),
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () => isServiceMode.value = false,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: responsiveData.scaleWidth(12),
+                            vertical: responsiveData.scaleHeight(6),
+                          ),
+                          decoration: BoxDecoration(
+                            color: !isServiceMode.value
+                                ? primaryColor2
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                          ),
+                          child: Text(
+                            'Products',
+                            style: TextStyle(
+                              color: !isServiceMode.value
+                                  ? Colors.white
+                                  : isDarkMode ? Colors.white : Colors.black,
+                              fontSize: Responsive.fontSize(context, 12),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => isServiceMode.value = true,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: responsiveData.scaleWidth(12),
+                            vertical: responsiveData.scaleHeight(6),
+                          ),
+                          decoration: BoxDecoration(
+                            color: isServiceMode.value
+                                ? primaryColor2
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                          ),
+                          child: Text(
+                            'Services',
+                            style: TextStyle(
+                              color: isServiceMode.value
+                                  ? Colors.white
+                                  : isDarkMode ? Colors.white : Colors.black,
+                              fontSize: Responsive.fontSize(context, 12),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(16)),
               Expanded(
                 child: allInvoices.when(
                   data: (data) {
                     final actualData = data.where((data) => data.publishedAt != null).toList()
                       ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
-                    final filteredData = searchQuery.value.isEmpty
-                        ? actualData
-                        : actualData
-                        .where((receipt) =>
-                    receipt.recordProductDetails?[0].product?.name
-                        ?.toLowerCase()
-                        .contains(searchQuery.value.toLowerCase()) ??
-                        false)
+                    // Filter by service/product type and search query
+                    final filteredData = actualData
+                        .where((receipt) {
+                          // First filter by service/product type
+                          bool isService = receipt.recordProductDetails.any((detail) => 
+                            detail.isService ?? false);
+                          
+                          if (isServiceMode.value != isService) {
+                            return false;
+                          }
+                          
+                          // Then filter by search query if needed
+                          if (searchQuery.value.isEmpty) {
+                            return true;
+                          }
+                          
+                          if (receipt.recordProductDetails.isEmpty) {
+                            return false;
+                          }
+                          
+                          final productName = receipt.recordProductDetails[0].product?.name;
+                          if (productName == null) {
+                            return false;
+                          }
+                          
+                          return productName.toLowerCase().contains(searchQuery.value.toLowerCase());
+                        })
                         .toList();
 
                     if (filteredData.isEmpty) {
@@ -175,7 +274,7 @@ class AllInvoices extends HookConsumerWidget {
                                         onPressed: () {
                                           ref.read(getCurrentProductProvider.notifier).state = null;
                                           locator<PayvidenceAppRouter>()
-                                              .navigate(GenerateReceiptRoute(isInvoice: true));
+                                              .navigate(SelectTypeRoute(isInvoice: true));
                                         },
                                       ),
                                     ),
@@ -424,7 +523,7 @@ class AllInvoices extends HookConsumerWidget {
                 ? FloatingActionButton(
               onPressed: () {
                 ref.read(getCurrentProductProvider.notifier).state = null;
-                locator<PayvidenceAppRouter>().navigate(GenerateReceiptRoute(isInvoice: true));
+                locator<PayvidenceAppRouter>().navigate(SelectTypeRoute(isInvoice: true));
               },
               backgroundColor: primaryColor2,
               child: Icon(Icons.add, size: responsiveData.scaleHeight(40), color: Colors.white,),

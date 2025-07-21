@@ -30,7 +30,9 @@ class NetworkService {
         baseUrl: baseUrl,
         receiveDataWhenStatusError: true,
         connectTimeout: const Duration(seconds: 20),
-        receiveTimeout: const Duration(seconds: 20));
+        receiveTimeout: const Duration(seconds: 20),
+        // Add validateStatus to accept all status codes and handle them manually
+        validateStatus: (status) => true);
 
     dio.options = options;
     
@@ -213,7 +215,22 @@ class NetworkService {
             message: 'Session expired. Please log in again.')));
       }
 
-      return Left(Failure.fromMap(e.response!.data as Map<String, dynamic>));
+      // Handle different response data types
+      if (e.response!.data is Map<String, dynamic>) {
+        return Left(Failure.fromMap(e.response!.data as Map<String, dynamic>));
+      } else if (e.response!.data is String) {
+        // Handle HTML or plain text error responses
+        return Left(Failure(ApiErrorResponseV2(
+          message: 'Server error: ${e.response!.statusCode} ${e.response!.statusMessage}',
+          errors: [ApiError(message: e.response!.statusMessage ?? 'Unknown error')],
+        )));
+      } else {
+        // Handle other types of responses
+        return Left(Failure(const ApiErrorResponseV2(
+          message: 'Unexpected server response format',
+          errors: [ApiError(message: 'The server response could not be processed')],
+        )));
+      }
     }
   }
 

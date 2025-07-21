@@ -34,8 +34,9 @@ import '../add_client/add_client_viewmodel.dart';
 @RoutePage(name: 'GenerateReceiptRoute')
 class GenerateReceipt extends ConsumerStatefulWidget {
   final bool? isInvoice;
+  final bool? isService;
 
-  const GenerateReceipt({super.key, this.isInvoice = false});
+  const GenerateReceipt({super.key, this.isInvoice = false, this.isService = false});
 
   @override
   ConsumerState<GenerateReceipt> createState() => _GenerateReceiptState();
@@ -109,9 +110,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       discountController: discountController,
       productNameController: productNameController,
       productPriceController: productPriceController,
-      onPressed: selectProduct,
+      onPressed: widget.isService! ? null : selectProduct,
       index: 1,
       onRemove: _removeTextField,
+      productNameEditable: widget.isService! ? true : null,
+      productPriceEditable: widget.isService! ? true : null,
+      isService: widget.isService,
     ));
 
     // Listen to client name changes for search
@@ -134,15 +138,18 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         products[1] = currentProduct;
         isPrefilledProduct = true;
         
-        // Update the first form field to be uneditable
+        // Update the first form field to be uneditable for products, but editable for services
         _textFields[0] = FormFields(
           qtyController: qtyController,
           discountController: discountController,
           productNameController: productNameController,
           productPriceController: productPriceController,
-          onPressed: selectProduct,
+          onPressed: widget.isService! ? null : selectProduct,
           index: 1,
-          invoiceToReceipt: true,
+          invoiceToReceipt: widget.isService! ? false : true,
+          productNameEditable: widget.isService! ? true : false,
+          productPriceEditable: widget.isService! ? true : false,
+          isService: widget.isService,
           onRemove: _removeTextField,
         );
         setState(() {});
@@ -307,10 +314,13 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           discountController: discountControllers[i],
           productNameController: productNameControllers[i],
           productPriceController: productPriceControllers[i],
-          onPressed: selectProduct,
+          onPressed: widget.isService! ? null : selectProduct,
           index: i + 1,
           onRemove: _removeTextField,
           invoiceToReceipt: field.invoiceToReceipt,
+          productNameEditable: widget.isService! ? true : field.productNameEditable,
+          productPriceEditable: widget.isService! ? true : field.productPriceEditable,
+          isService: widget.isService,
         );
       }
     });
@@ -335,9 +345,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         qtyController: qtyControllers.last,
         productNameController: productNameControllers.last,
         productPriceController: productPriceControllers.last,
-        onPressed: selectProduct,
+        onPressed: widget.isService! ? null : selectProduct,
         index: _textFields.length + 1,
         onRemove: _removeTextField,
+        productNameEditable: widget.isService! ? true : null,
+        productPriceEditable: widget.isService! ? true : null,
+        isService: widget.isService,
       ));
     });
   }
@@ -578,12 +591,13 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     }
 
     List<Map<String, dynamic>> productList = [];
+    List<Map<String, dynamic>> serviceList = [];
 
     for (int i = 0; i < _textFields.length; i++) {
       final index = i + 1;
       
       if (qtyControllers[i].text.isEmpty) {
-        ToastService.showErrorSnackBar('Enter the qty purchased for product $index');
+        ToastService.showErrorSnackBar('Enter the qty purchased for ${widget.isService == true ? "service" : "product"} $index');
         return;
       }
 
@@ -592,40 +606,66 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           ? double.parse(discountControllers[i].text)
           : null;
 
-      if (products.containsKey(index)) {
-        // Existing product
-        productList.add({
-          "id": products[index]!.id.toString(),
-          "quantity_purchased": quantity,
-          "discount": discount,
-          "vat": "0",
-        });
-      } else {
-        // New product
-        final productName = productNameControllers[i].text.trim();
-        final productPrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
+      if (widget.isService == true) {
+        // Service entry - always use direct entry
+        final serviceName = productNameControllers[i].text.trim();
+        final servicePrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
         
-        if (productName.isEmpty || productPrice <= 0) {
-          ToastService.showErrorSnackBar('Enter valid product name and price for product $index');
+        if (serviceName.isEmpty || servicePrice <= 0) {
+          ToastService.showErrorSnackBar('Enter valid service name and price for service $index');
           return;
         }
 
-        productList.add({
-          "name": productName,
-          "price": productPrice,
+        serviceList.add({
+          "name": serviceName,
+          "price": servicePrice,
           "quantity_purchased": quantity,
           "discount": discount,
-          "vat": "0",
         });
+      } else {
+        // Product entry
+        if (products.containsKey(index)) {
+          // Existing product
+          productList.add({
+            "id": products[index]!.id.toString(),
+            "quantity_purchased": quantity,
+            "discount": discount,
+            "vat": "0",
+          });
+        } else {
+          // New product
+          final productName = productNameControllers[i].text.trim();
+          final productPrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
+          
+          if (productName.isEmpty || productPrice <= 0) {
+            ToastService.showErrorSnackBar('Enter valid product name and price for product $index');
+            return;
+          }
+
+          productList.add({
+            "name": productName,
+            "price": productPrice,
+            "quantity_purchased": quantity,
+            "discount": discount,
+            "vat": "0",
+          });
+        }
       }
     }
+    
     Map<String, dynamic> requestData = {
-      "products": productList,
       "record_type": widget.isInvoice == true ? "invoice" : "receipt",
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
       "client_id": finalClient?.id,
-      "is_draft": isDraft,
+      "is_draft": widget.isService == true ? false : isDraft, // Services cannot be saved as draft
     };
+    
+    // Add products or services to the request data
+    if (widget.isService == true) {
+      requestData["services"] = serviceList;
+    } else {
+      requestData["products"] = productList;
+    }
     
     // Only include mode_of_payment if not saving as draft or if payment method is selected
     if (widget.isInvoice == true) {
@@ -748,7 +788,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       final hasProductName = productNameControllers[i].text.trim().isNotEmpty;
       
       if (!hasExistingProduct && !hasProductName) {
-        return "Missing product $index name";
+        return "Missing ${widget.isService! ? 'service' : 'product'} $index name";
       }
     }
     return "";
@@ -792,7 +832,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                         height: responsiveData.scaleHeight(16),
                       ),
                       Text(
-                        'Generate ${widget.isInvoice == true ? "invoice" : "receipt"}',
+                        'Generate ${widget.isInvoice == true ? "invoice" : "receipt"} for ${widget.isService == true ? "service" : "product"}',
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
                       SizedBox(
@@ -843,7 +883,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             children: [
                               SizedBox(height: responsiveData.scaleHeight(12)),
                               Text(
-                                'PRODUCT ${idx + 2} DETAILS',
+                                '${widget.isService == true ? "SERVICE" : "PRODUCT"} ${idx + 2} DETAILS',
                                 style: TextStyle(
                                   fontSize: Responsive.fontSize(context, 15),
                                   fontWeight: FontWeight.w500,
@@ -904,7 +944,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                               color: primaryColor2,
                             ),
                             Text(
-                              'Add another product',
+                              'Add another ${widget.isService == true ? "service" : "product"}',
                               style: Theme.of(context)
                                   .textTheme
                                   .displayMedium!
@@ -944,26 +984,28 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                           SizedBox(
                             height: responsiveData.scaleHeight(26),
                           ),
-                          GestureDetector(
-                            onTap: isLoading ? null : () {
-                              if (formKey.currentState!.validate()) {
-                                formKey.currentState!.save();
-                                if (clientNameController.text.trim().isEmpty) {
-                                  ToastService.showErrorSnackBar("Please enter client name");
-                                  return;
+                          // Only show save as draft for products, not for services
+                          if (!widget.isService!) 
+                            GestureDetector(
+                              onTap: isLoading ? null : () {
+                                if (formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
+                                  if (clientNameController.text.trim().isEmpty) {
+                                    ToastService.showErrorSnackBar("Please enter client name");
+                                    return;
+                                  }
+                                  isDraft = true;
+                                  createReceipt();
                                 }
-                                isDraft = true;
-                                createReceipt();
-                              }
-                            },
-                            child: Text(
-                              'Save as draft',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .copyWith(color: isLoading ? Colors.grey : primaryColor2),
+                              },
+                              child: Text(
+                                'Save as draft',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(color: isLoading ? Colors.grey : primaryColor2),
+                              ),
                             ),
-                          ),
                           SizedBox(
                             height: responsiveData.scaleHeight(14),
                           ),
@@ -987,12 +1029,13 @@ class FormFields extends StatefulWidget {
   final TextEditingController discountController;
   final TextEditingController productNameController;
   final TextEditingController productPriceController;
-  final Future<Product?> Function(int index) onPressed;
+  final Future<Product?> Function(int index)? onPressed;
   final int index;
   Product? product;
   final bool? invoiceToReceipt;
   final bool? productNameEditable;
   final bool? productPriceEditable;
+  final bool? isService;
   final Function(int index)? onRemove;
 
   FormFields({
@@ -1001,12 +1044,13 @@ class FormFields extends StatefulWidget {
     required this.discountController,
     required this.productNameController,
     required this.productPriceController,
-    required this.onPressed,
+    this.onPressed,
     required this.index,
     this.product,
     this.invoiceToReceipt = false,
     this.productNameEditable,
     this.productPriceEditable,
+    this.isService = false,
     this.onRemove,
   });
 
@@ -1221,7 +1265,7 @@ class _FormFieldsState extends State<FormFields> {
             ),
           ),
         Text(
-          'Product name',
+          widget.isService == true ? 'Service name' : 'Product name',
           style: Theme.of(context).textTheme.displaySmall,
         ),
         SizedBox(
@@ -1230,7 +1274,7 @@ class _FormFieldsState extends State<FormFields> {
         CompositedTransformTarget(
           link: _productLayerLink,
           child: AppTextField(
-            hintText: 'Type or select product name',
+            hintText: widget.isService == true ? 'Enter service name' : 'Type or select product name',
             controller: widget.productNameController,
             focusNode: productNameFocusNode,
             keyboardType: TextInputType.text,
@@ -1247,14 +1291,14 @@ class _FormFieldsState extends State<FormFields> {
           height: responsiveData.scaleHeight(20),
         ),
         Text(
-          'Product price',
+          widget.isService == true ? 'Service price' : 'Product price',
           style: Theme.of(context).textTheme.displaySmall,
         ),
         SizedBox(
           height: responsiveData.scaleHeight(8),
         ),
         AppTextField(
-          hintText: 'Product price',
+          hintText: widget.isService == true ? 'Service price' : 'Product price',
           controller: widget.productPriceController,
           keyboardType: TextInputType.number,
           enabled: widget.productPriceEditable ?? (!widget.invoiceToReceipt! && !isExistingProduct),
