@@ -1077,10 +1077,17 @@ class EditBusinessRouteArgs {
 
 /// generated route for
 /// [_i30.EmailVerifiedScreen]
-class EmailVerifiedRoute extends _i67.PageRouteInfo<void> {
-  const EmailVerifiedRoute({List<_i67.PageRouteInfo>? children})
-      : super(
+class EmailVerifiedRoute extends _i67.PageRouteInfo<EmailVerifiedRouteArgs> {
+  EmailVerifiedRoute({
+    _i68.Key? key,
+    String? email,
+    List<_i67.PageRouteInfo>? children,
+  }) : super(
           EmailVerifiedRoute.name,
+          args: EmailVerifiedRouteArgs(
+            key: key,
+            email: email,
+          ),
           initialChildren: children,
         );
 
@@ -1089,9 +1096,29 @@ class EmailVerifiedRoute extends _i67.PageRouteInfo<void> {
   static _i67.PageInfo page = _i67.PageInfo(
     name,
     builder: (data) {
-      return const _i30.EmailVerifiedScreen();
+      final args = data.argsAs<EmailVerifiedRouteArgs>(
+          orElse: () => const EmailVerifiedRouteArgs());
+      return _i30.EmailVerifiedScreen(
+        key: args.key,
+        email: args.email,
+      );
     },
   );
+}
+
+class EmailVerifiedRouteArgs {
+  const EmailVerifiedRouteArgs({
+    this.key,
+    this.email,
+  });
+
+  final _i68.Key? key;
+  final String? email;
+
+  @override
+  String toString() {
+    return 'EmailVerifiedRouteArgs{key: $key, email: $email}';
+  }
 }
 
 /// generated route for

@@ -50,11 +50,15 @@ class LoginViewModel extends BaseChangeNotifier {
     // Prioritize signup email over saved login email
     final signupEmail = locator<SessionManager>().get<String>(SessionConstants.signupEmail);
     if (signupEmail != null && signupEmail.isNotEmpty) {
-      // Clear signup email after using it once
-      await locator<SessionManager>().remove(SessionConstants.signupEmail);
+      // Don't remove the signup email yet - we'll remove it after successful login
+      developer.log('Using signup email for login: $signupEmail');
+      // Also update the saved login email to ensure consistency
+      await locator<SessionManager>().save(key: SessionConstants.savedLoginEmail, value: signupEmail);
       return signupEmail;
     }
-    return locator<SessionManager>().get<String>(SessionConstants.savedLoginEmail);
+    final savedEmail = locator<SessionManager>().get<String>(SessionConstants.savedLoginEmail);
+    developer.log('Using saved login email: $savedEmail');
+    return savedEmail;
   }
 
   Future<void> saveEmailForNextLogin(String email) async {
@@ -134,6 +138,9 @@ class LoginViewModel extends BaseChangeNotifier {
 
         // Save email for next login
         await saveEmailForNextLogin(email);
+        
+        // Now that login is successful, we can safely remove the signup email
+        await locator<SessionManager>().remove(SessionConstants.signupEmail);
 
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
         await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: user.token);

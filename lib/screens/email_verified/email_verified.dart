@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:payvidence/components/app_button.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
 import 'package:payvidence/utilities/responsive.dart';
@@ -13,7 +15,9 @@ import '../onboarding/onboarding.dart';
 
 @RoutePage(name: 'EmailVerifiedRoute')
 class EmailVerifiedScreen extends HookWidget {
-  const EmailVerifiedScreen({super.key});
+  final String? email;
+  
+  const EmailVerifiedScreen({super.key, this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +52,21 @@ class EmailVerifiedScreen extends HookWidget {
                 SizedBox(height: responsiveData.scaleHeight(32)),
                 AppButton(
                   buttonText: 'Continue to Login',
-                  onPressed: () {
+                  onPressed: () async {
+                    // Get email from route parameter or session storage
+                    final emailToSave = email ?? locator<SessionManager>().get<String>(SessionConstants.signupEmail);
+                    
+                    if (emailToSave != null && emailToSave.isNotEmpty) {
+                      // Save the email for login screen
+                      await locator<SessionManager>().save(
+                        key: SessionConstants.savedLoginEmail, 
+                        value: emailToSave
+                      );
+                    }
+                    
+                    // Clear signup email after saving
+                    await locator<SessionManager>().remove(SessionConstants.signupEmail);
+                    
                     locator<PayvidenceAppRouter>().popUntil(
                         (route) => route is OnboardingScreen);
                     locator<PayvidenceAppRouter>()

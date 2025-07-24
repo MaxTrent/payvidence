@@ -238,8 +238,8 @@ class UpdateBankDetails extends ConsumerWidget {
                         SizedBox(height: responsiveData.scaleHeight(8)),
                         AppTextField(
                           hintText: 'Account name',
-                          filled: true,
-                          fillColor: textFieldGrey,
+                          // filled: true,
+                          // fillColor: textFieldGrey,
                           controller: accountNameController,
                           validator: (val) => Validator.validateEmpty(val),
                         ),

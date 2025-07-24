@@ -38,8 +38,7 @@ class OtpViewModel extends BaseChangeNotifier {
         // Check if this is a halfway signup case (signupEmail exists)
         final signupEmail = locator<SessionManager>().get<String>(SessionConstants.signupEmail);
         if (signupEmail != null && signupEmail.isNotEmpty && navigateToEmailVerified != null) {
-          // Clear signup email after successful verification
-          await locator<SessionManager>().remove(SessionConstants.signupEmail);
+          // Don't clear signup email yet - let email_verified screen handle it
           navigateToEmailVerified();
         } else {
           navigateOnSuccess();

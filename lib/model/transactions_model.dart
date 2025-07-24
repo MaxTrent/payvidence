@@ -80,10 +80,19 @@ class Transaction {
       business: json['business'] != null
           ? Business.fromJson(json['business'] as Map<String, dynamic>)
           : const Business(), // Fallback to empty Business if null
-      recordProductDetails: (json['record_product_details'] as List<dynamic>)
-          .map((item) =>
-          RecordProductDetail.fromJson(item as Map<String, dynamic>))
-          .toList(),
+      recordProductDetails: json['record_product_details'] != null
+          ? (json['record_product_details'] as List<dynamic>)
+              .map((item) => RecordProductDetail.fromJson(item as Map<String, dynamic>))
+              .toList()
+          : json['record_item_details'] != null
+              ? (json['record_item_details'] as List<dynamic>)
+                  .map((item) => RecordProductDetail.fromJson(item as Map<String, dynamic>))
+                  .toList()
+              : json['items'] != null
+                  ? (json['items'] as List<dynamic>)
+                      .map((item) => RecordProductDetail.fromJson(item as Map<String, dynamic>))
+                      .toList()
+                  : [],
     );
   }
 

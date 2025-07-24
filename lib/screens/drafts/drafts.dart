@@ -328,7 +328,9 @@ class DraftTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${draft.recordProductDetails[0].quantity ?? ''} units sold',
+                        draft.recordProductDetails[0].isService ?? false
+                            ? '${draft.recordProductDetails[0].quantity ?? ''} sessions'
+                            : '${draft.recordProductDetails[0].quantity ?? ''} units sold',
                         style: Theme.of(context)
                             .textTheme
                             .displaySmall!

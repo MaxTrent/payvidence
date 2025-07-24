@@ -36,6 +36,7 @@ class AllTransactions extends HookConsumerWidget {
     final businessId =
     locator<SessionManager>().get<String>(SessionConstants.businessId);
     final filterType = useState('All');
+    final isServiceMode = useState<bool?>(null); // null represents 'All'
     final searchQuery = useState('');
     final theme = useThemeMode();
     final isDarkMode = theme.mode == ThemeMode.dark;
@@ -59,21 +60,41 @@ class AllTransactions extends HookConsumerWidget {
     }, [businessId, searchController]);
 
     final filteredTransactions = viewModel.transactions.where((transaction) {
-      final isReceipt =
-          transaction.status != 'pending';
+      final isReceipt = transaction.status != 'pending';
       final isInvoice = transaction.status == 'pending';
       final matchesFilter = filterType.value == 'All' ||
           (filterType.value == 'Receipt' && isReceipt) ||
           (filterType.value == 'Invoice' && isInvoice);
+      
+      // Filter by service/product type if not 'All'
+      if (isServiceMode.value != null && transaction.recordProductDetails.isNotEmpty) {
+        bool isService = transaction.recordProductDetails.any((detail) => 
+          detail.isService ?? false);
+        
+        if (isServiceMode.value != isService) {
+          return false;
+        }
+      }
 
-      final firstProductDetail = transaction.recordProductDetails.isNotEmpty
-          ? transaction.recordProductDetails.first
-          : null;
-      final productName = firstProductDetail?.product?.name ?? '';
-      final matchesSearch = searchQuery.value.isEmpty ||
-          productName.toLowerCase().contains(searchQuery.value.toLowerCase());
-
-      return matchesFilter && matchesSearch;
+      // Search in client name if product details are missing
+      if (searchQuery.value.isEmpty) {
+        return matchesFilter;
+      }
+      
+      final query = searchQuery.value.toLowerCase();
+      
+      // Check product/service name if available
+      if (transaction.recordProductDetails.isNotEmpty) {
+        final firstProductDetail = transaction.recordProductDetails.first;
+        final productName = firstProductDetail.product?.name?.toLowerCase() ?? '';
+        if (productName.contains(query)) {
+          return matchesFilter;
+        }
+      }
+      
+      // Check client name as fallback
+      final clientName = transaction.client.name?.toLowerCase() ?? '';
+      return clientName.contains(query) && matchesFilter;
     }).toList();
 
     Future<void> onRefresh() async {
@@ -111,7 +132,8 @@ class AllTransactions extends HookConsumerWidget {
                             BlendMode.srcIn,
                           ),),
                         ),
-                        hintText: 'Search for transaction',
+                        hintText: isServiceMode.value == null ? 'Search for transaction' : 
+                                 (isServiceMode.value == true) ? 'Search for service' : 'Search for product',
                         controller: searchController,
                         radius: responsiveData.largeRadius,
                         filled: isDarkMode ? false: true,
@@ -140,7 +162,104 @@ class AllTransactions extends HookConsumerWidget {
                   ],
                 ),
               ),
-              SizedBox(height: responsiveData.scaleHeight(24)),
+              SizedBox(height: responsiveData.scaleHeight(16)),
+              // Toggle switch between Products and Services
+              Container(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: responsiveData.scaleWidth(4),
+                    vertical: responsiveData.scaleHeight(2),
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          isServiceMode.value = null; // null represents 'All'
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: responsiveData.scaleWidth(12),
+                            vertical: responsiveData.scaleHeight(6),
+                          ),
+                          decoration: BoxDecoration(
+                            color: isServiceMode.value == null
+                                ? primaryColor2
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                          ),
+                          child: Text(
+                            'All',
+                            style: TextStyle(
+                              color: isServiceMode.value == null
+                                  ? Colors.white
+                                  : isDarkMode ? Colors.white : Colors.black,
+                              fontSize: Responsive.fontSize(context, 12),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => isServiceMode.value = false,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: responsiveData.scaleWidth(12),
+                            vertical: responsiveData.scaleHeight(6),
+                          ),
+                          decoration: BoxDecoration(
+                            color: isServiceMode.value == false
+                                ? primaryColor2
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                          ),
+                          child: Text(
+                            'Products',
+                            style: TextStyle(
+                              color: isServiceMode.value == false
+                                  ? Colors.white
+                                  : isDarkMode ? Colors.white : Colors.black,
+                              fontSize: Responsive.fontSize(context, 12),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => isServiceMode.value = true,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: responsiveData.scaleWidth(12),
+                            vertical: responsiveData.scaleHeight(6),
+                          ),
+                          decoration: BoxDecoration(
+                            color: isServiceMode.value == true
+                                ? primaryColor2
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                          ),
+                          child: Text(
+                            'Services',
+                            style: TextStyle(
+                              color: isServiceMode.value == true
+                                  ? Colors.white
+                                  : isDarkMode ? Colors.white : Colors.black,
+                              fontSize: Responsive.fontSize(context, 12),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(16)),
               Expanded(
                 child: viewModel.isLoading
                     ? ListView.separated(
@@ -164,7 +283,11 @@ class AllTransactions extends HookConsumerWidget {
                                       Text(
                                         filterType.value != 'All' && viewModel.transactions.isNotEmpty
                                             ? 'No ${filterType.value}s found!'
-                                            : 'No transaction yet!',
+                                            : isServiceMode.value == null
+                                                ? 'No transactions yet!'
+                                                : isServiceMode.value == true
+                                                    ? 'No service transactions found!'
+                                                    : 'No product transactions found!',
                                         style: Theme.of(context).textTheme.displayLarge,
                                         textAlign: TextAlign.center,
                                       ),
@@ -172,7 +295,9 @@ class AllTransactions extends HookConsumerWidget {
                                       Text(
                                         filterType.value != 'All' && viewModel.transactions.isNotEmpty
                                             ? 'Try adjusting your filter or search.'
-                                            : 'Start generating receipts and invoices for your business. All transactions will show here.',
+                                            : viewModel.transactions.isEmpty
+                                                ? 'Start generating receipts and invoices for your business. All transactions will show here.'
+                                                : 'Try adjusting your search or filter settings.',
                                         textAlign: TextAlign.center,
                                         style: Theme.of(context)
                                             .textTheme
@@ -193,23 +318,30 @@ class AllTransactions extends HookConsumerWidget {
                               separatorBuilder: (ctx, idx) => SizedBox(height: responsiveData.scaleHeight(12)),
                               itemBuilder: (context, index) {
                                 final transaction = filteredTransactions[index];
-                                final firstProductDetail = transaction.recordProductDetails.first;
+                                final firstProductDetail = transaction.recordProductDetails.isNotEmpty
+                                    ? transaction.recordProductDetails.first
+                                    : null;
                                 final isInvoice = transaction.status == 'pending';
 
                                 // Handle null product case
-                                final product = firstProductDetail.product;
-                                final productName = product?.name ?? 'Unknown Product';
+                                final product = firstProductDetail?.product;
+                                final isService = firstProductDetail?.isService ?? false;
+                                final productName = product?.name ?? 'Unknown ' + (isService ? 'Service' : 'Product');
                                 final imageUrl = product?.logoUrl ?? "";
-                                final amount = product != null
-                                    ? (double.tryParse(product.price ?? '0') ?? 0)
+                                
+                                // Use transaction total if product price is not available
+                                final amount = (firstProductDetail != null && firstProductDetail.price != null)
+                                    ? (double.tryParse(firstProductDetail.price ?? '0') ?? 0)
+                                      .toString()
+                                      .toCommaSeparated()
+                                    : transaction.total.toString().toCommaSeparated();
+                                    
+                                final dateTime = transaction.createdAt
                                     .toString()
-                                    .toCommaSeparated()
-                                    : '0';
-                                final dateTime = product?.createdAt
-                                    ?.toString()
-                                    .toFormattedIsoDate() ??
-                                    '';
-                                final unitSold = product?.quantitySold?.toString() ?? '0';
+                                    .toFormattedIsoDate();
+                                    
+                                final unitSold = firstProductDetail?.quantity?.toString() ?? 
+                                    product?.quantitySold?.toString() ?? '0';
 
                                 return SlideInWidget(
                                   begin: const Offset(0, 0.3),
@@ -261,6 +393,7 @@ class AllTransactions extends HookConsumerWidget {
                                           : 'Receipt',
                                       unitSold: unitSold,
                                       imageUrl: imageUrl,
+                                      isService: isService,
                                     ),
                                   ),
                                 );
@@ -274,9 +407,9 @@ class AllTransactions extends HookConsumerWidget {
       ),
     );
   }
-
+  
   Future<dynamic> buildFilterBottomSheet(
-      BuildContext context, ValueNotifier<String?> filterType, bool isDarkMode) {
+      BuildContext context, ValueNotifier<String> filterType, bool isDarkMode) {
     final responsiveData = ResponsiveInherited.of(context);
 
     return showModalBottomSheet(
@@ -342,7 +475,7 @@ class AllTransactions extends HookConsumerWidget {
                     SizedBox(height: responsiveData.scaleHeight(12)),
                     Center(
                       child: Text(
-                        'Select transaction type you’ll like to see.',
+                        "Select transaction type you'll like to see.",
                         style: Theme.of(context).textTheme.displaySmall,
                       ),
                     ),
@@ -404,6 +537,32 @@ class AllTransactions extends HookConsumerWidget {
                       ),
                     ),
                     Divider(height: responsiveData.scaleHeight(1)),
+                    InkWell(
+                      onTap: () {
+                        filterType.value = 'All';
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: responsiveData.scaleHeight(24)),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.all_inclusive,
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                            SizedBox(width: responsiveData.scaleWidth(16)),
+                            Text(
+                              'All',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],

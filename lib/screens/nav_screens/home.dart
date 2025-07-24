@@ -349,7 +349,9 @@ class HomeScreen extends HookConsumerWidget {
                             ?.toString()
                             .toFormattedIsoDate() ??
                             '';
-                        final unitSold = product?.quantitySold?.toString() ?? '0';
+                        // Get the correct quantity from the record product detail first, then fall back to product
+                        final unitSold = firstProductDetail.quantity?.toString() ?? product?.quantitySold?.toString() ?? '0';
+                        final isService = firstProductDetail.isService ?? false;
 
                         final tile = GestureDetector(
                           onTap: () {
@@ -376,6 +378,7 @@ class HomeScreen extends HookConsumerWidget {
                                 : 'Receipt',
                             unitSold: unitSold,
                             imageUrl: imageUrl,
+                            isService: isService,
                           ),
                         );
                         

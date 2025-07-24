@@ -33,25 +33,78 @@ class RecordProductDetail {
 
   String toRawJson() => json.encode(toJson());
 
-  factory RecordProductDetail.fromJson(Map<String, dynamic> json) =>
-      RecordProductDetail(
-        id: json["id"] as String?,
-        saleRecordId: json["sale_record_id"] as String?,
-        productId: json["product_id"] as String?,
-        quantity: json["quantity"] as int?,
-        price: json["price"] as String?,
-        discount: json["discount"]?.toString(),
-        total: json["total"] as String?,
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"] as String),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"] as String),
-        product:
-        json["product"] == null ? null : Product.fromJson(json["product"]),
-        isService: json["is_service"] as bool? ?? false,
-      );
+  factory RecordProductDetail.fromJson(Map<String, dynamic> json) {
+    // Handle quantity which might be an int or a string
+    int? quantity;
+    if (json["quantity"] != null) {
+      if (json["quantity"] is int) {
+        quantity = json["quantity"] as int;
+      } else if (json["quantity"] is String) {
+        quantity = int.tryParse(json["quantity"] as String);
+      }
+    } else if (json["quantity_purchased"] != null) {
+      if (json["quantity_purchased"] is int) {
+        quantity = json["quantity_purchased"] as int;
+      } else if (json["quantity_purchased"] is String) {
+        quantity = int.tryParse(json["quantity_purchased"] as String);
+      }
+    }
+    
+    // Handle item_type to determine if it's a service
+    bool isService = false;
+    if (json["is_service"] != null) {
+      isService = json["is_service"] as bool? ?? false;
+    } else if (json["item_type"] != null) {
+      isService = (json["item_type"] as String?)?.toLowerCase() == "service";
+    } else if (json["service_id"] != null) {
+      isService = true;
+    }
+    
+    // Handle product ID which might be product_id or service_id
+    String? productId = json["product_id"] as String?;
+    if (productId == null && isService) {
+      productId = json["service_id"] as String?;
+    }
+    
+    // Debug: Print available keys for product name debugging
+    print("RecordProductDetail JSON keys: ${json.keys.toList()}");
+    if (!isService && json["product_id"] != null) {
+      print("Product ID: ${json["product_id"]}");
+    }
+    
+    return RecordProductDetail(
+      id: json["id"] as String?,
+      saleRecordId: json["sale_record_id"] as String?,
+      productId: productId,
+      quantity: quantity,
+      price: json["price"]?.toString(),
+      discount: json["discount"]?.toString(),
+      total: json["total"]?.toString(),
+      createdAt: json["created_at"] == null
+          ? null
+          : DateTime.parse(json["created_at"].toString()),
+      updatedAt: json["updated_at"] == null
+          ? null
+          : DateTime.parse(json["updated_at"].toString()),
+      product: json["product"] != null ? Product.fromJson(json["product"]) :
+              json["item"] != null ? Product.fromJson(json["item"]) :
+              json["name"] != null ? Product(
+                name: json["name"] as String?,
+                price: json["price"]?.toString(),
+                quantitySold: json["quantity_purchased"] is int ? json["quantity_purchased"] : 
+                             json["quantity_purchased"] is String ? int.tryParse(json["quantity_purchased"]) : null,
+              ) : isService && json["item"] != null ? Product(
+                id: json["service_id"] as String?,
+                name: (json["item"] as Map<String, dynamic>)["name"] as String? ?? "Service",
+                price: json["price"]?.toString(),
+              ) : Product(
+                id: json["product_id"] as String?,
+                name: null, // We'll look up the name using the product provider
+                price: json["price"]?.toString(),
+              ),
+      isService: isService,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "id": id,

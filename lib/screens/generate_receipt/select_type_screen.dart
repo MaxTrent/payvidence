@@ -24,56 +24,59 @@ class SelectTypeScreen extends ConsumerWidget {
 
     return ResponsiveWrapper(
       child: KeyboardDismissibleScaffold(
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: Text(
             'Select Type',
             style: Theme.of(context).textTheme.displayLarge,
           ),
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: responsiveData.scaleHeight(24)),
-              Text(
-                'What would you like to generate?',
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-              SizedBox(height: responsiveData.scaleHeight(8)),
-              Text(
-                'Select whether you want to generate a ${isInvoice! ? "invoice" : "receipt"} for products or services.',
-                style: Theme.of(context).textTheme.displaySmall,
-              ),
-              SizedBox(height: responsiveData.scaleHeight(40)),
-              _buildOptionCard(
-                context,
-                responsiveData,
-                isDarkMode,
-                'Products',
-                'Generate ${isInvoice! ? "invoice" : "receipt"} for physical products with inventory tracking.',
-                () {
-                  ref.read(getCurrentProductProvider.notifier).state = null;
-                  locator<PayvidenceAppRouter>().navigate(
-                    GenerateReceiptRoute(isInvoice: isInvoice, isService: false)
-                  );
-                },
-              ),
-              SizedBox(height: responsiveData.scaleHeight(16)),
-              _buildOptionCard(
-                context,
-                responsiveData,
-                isDarkMode,
-                'Services',
-                'Generate ${isInvoice! ? "invoice" : "receipt"} for services without inventory tracking.',
-                () {
-                  ref.read(getCurrentProductProvider.notifier).state = null;
-                  locator<PayvidenceAppRouter>().navigate(
-                    GenerateReceiptRoute(isInvoice: isInvoice, isService: true)
-                  );
-                },
-              ),
-            ],
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsiveData.paddingHorizontal),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: responsiveData.scaleHeight(24)),
+                Text(
+                  'What would you like to generate?',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                SizedBox(height: responsiveData.scaleHeight(8)),
+                Text(
+                  'Select whether you want to generate a ${isInvoice! ? "invoice" : "receipt"} for products or services.',
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+                SizedBox(height: responsiveData.scaleHeight(40)),
+                _buildOptionCard(
+                  context,
+                  responsiveData,
+                  isDarkMode,
+                  'Products',
+                  'Generate ${isInvoice! ? "invoice" : "receipt"} for physical products',
+                  () {
+                    ref.read(getCurrentProductProvider.notifier).state = null;
+                    locator<PayvidenceAppRouter>().navigate(
+                      GenerateReceiptRoute(isInvoice: isInvoice, isService: false)
+                    );
+                  },
+                ),
+                SizedBox(height: responsiveData.scaleHeight(16)),
+                _buildOptionCard(
+                  context,
+                  responsiveData,
+                  isDarkMode,
+                  'Services',
+                  'Generate ${isInvoice! ? "invoice" : "receipt"} for services',
+                  () {
+                    ref.read(getCurrentProductProvider.notifier).state = null;
+                    locator<PayvidenceAppRouter>().navigate(
+                      GenerateReceiptRoute(isInvoice: isInvoice, isService: true)
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

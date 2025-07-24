@@ -37,6 +37,10 @@ class ReceiptDatasource extends IReceiptDatasource {
       return response.fold((fail) {
         throw fail.error;
       }, (success) {
+        // Check if success.data is null or if it doesn't contain 'data' key
+        if (success.data == null || success.data["data"] == null) {
+          throw ApiErrorResponseV2(message: "Server returned invalid response");
+        }
         return Receipt.fromJson(success.data["data"]);
       });
     } catch (e) {

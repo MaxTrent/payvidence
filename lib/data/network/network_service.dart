@@ -11,6 +11,7 @@ import '../local/session_constants.dart';
 import '../local/session_manager.dart';
 import 'api_response.dart';
 import 'interceptors/connection_interceptor.dart';
+import 'interceptors/token_refresh_interceptor.dart';
 
 enum RequestMethod { get, post, patch, delete }
 
@@ -45,7 +46,11 @@ class NetworkService {
       };
     }
     
+    // Add connection interceptor first to handle network issues and unauthorized errors
     dio.interceptors.add(ConnectionStatusInterceptor());
+    
+    // Add token refresh interceptor to handle token refresh
+    dio.interceptors.add(TokenRefreshInterceptor(dio));
 
     if (kDebugMode) {
       dio.interceptors
@@ -178,6 +183,35 @@ class NetworkService {
           break;
       }
 
+      // Check for error status codes
+      if (response.statusCode! >= 400) {
+        PerformanceMonitor.endTimer(operation);
+        
+        // Handle 500 errors specifically
+        if (response.statusCode! == 500) {
+          return Left(Failure(ApiErrorResponseV2(
+            message: "Server error: Internal Server Error",
+            errors: [ApiError(message: "The server encountered an error processing your request")],
+          )));
+        }
+        
+        // Handle other error responses
+        if (response.data is Map<String, dynamic>) {
+          return Left(Failure.fromMap(response.data as Map<String, dynamic>));
+        } else if (response.data is String) {
+          return Left(Failure(ApiErrorResponseV2(
+            message: 'Server error: ${response.statusCode} ${response.statusMessage}',
+            errors: [ApiError(message: response.statusMessage ?? 'Unknown error')],
+          )));
+        } else {
+          return Left(Failure(ApiErrorResponseV2(
+            message: 'Unexpected server response: ${response.statusCode}',
+            errors: [ApiError(message: 'The server response could not be processed')],
+          )));
+        }
+      }
+      
+      // Process successful response
       dynamic data;
       if (response.data is Map) {
         data = response.data as Map<dynamic, dynamic>;
@@ -210,6 +244,8 @@ class NetworkService {
       if (e.response!.statusCode == 401 &&
           e.response!.data is Map &&
           e.response!.data['message'] == 'unauthorized') {
+        // The token refresh interceptor should have already tried to refresh the token
+        // If we still get here, it means the refresh failed
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: false);
         return Left(Failure(const ApiErrorResponseV2(
             message: 'Session expired. Please log in again.')));

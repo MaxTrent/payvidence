@@ -53,9 +53,12 @@ class Login extends HookConsumerWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         viewModel.loadSavedEmail().then((savedEmail) {
           if (savedEmail != null && savedEmail.isNotEmpty) {
+            print('Setting email in controller: $savedEmail');
             emailController.text = savedEmail;
             isEmailValid.value = checkEmailValid(savedEmail);
             areFieldsEmpty.value = checkFieldsEmpty();
+          } else {
+            print('No saved email found');
           }
         });
       });

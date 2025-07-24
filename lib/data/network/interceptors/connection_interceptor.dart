@@ -2,7 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:payvidence/routes/payvidence_app_router.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/shared_dependency/shared_dependency.dart';
+import 'package:payvidence/data/local/session_constants.dart';
+import 'package:payvidence/data/local/session_manager.dart';
+import 'package:payvidence/utilities/auth_navigation_helper.dart';
 import 'dart:io';
+import 'dart:developer' as developer;
 
 class ConnectionStatusInterceptor extends InterceptorsWrapper {
   @override
@@ -37,15 +41,10 @@ class ConnectionStatusInterceptor extends InterceptorsWrapper {
   Future<void> _handleUnauthorized(DioException err) async {
     if (err.response?.data is Map && 
         err.response?.data['message'] == 'unauthorized') {
-      final router = locator<PayvidenceAppRouter>();
-      final current = router.current.name;
-
-
-      if (current != 'OnboardingScreenRoute' && current != 'LoginRoute' && current != 'LoginRouteWrapper') {
-        Future.microtask(() {
-          router.replaceAll([OnboardingScreenRoute()]);
-        });
-      }
+      developer.log('401 Unauthorized detected: ${err.requestOptions.path}');
+      
+      // Use the dedicated helper to handle logout and navigation
+      await AuthNavigationHelper.forceLogoutAndNavigateToOnboarding();
     }
   }
 

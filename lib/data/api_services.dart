@@ -260,11 +260,12 @@ class ApiServices {
 
   Future<ApiResult> updateClient(
       String businessId, String clientId, String? newName, String? newPhoneNumber, String? newAddress) async {
-    var requestData = {
-      "name": newName,
-      "address": newAddress,
-      "phone_number": newPhoneNumber
-    };
+    var requestData = <String, dynamic>{};
+    
+    // Only include fields that are not null
+    if (newName != null) requestData["name"] = newName;
+    if (newPhoneNumber != null) requestData["phone_number"] = newPhoneNumber;
+    if (newAddress != null) requestData["address"] = newAddress;
 
     var response = await locator<NetworkService>().patch(
         PayvidenceEndpoints.updateClient(businessId, clientId),

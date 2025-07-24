@@ -22,6 +22,7 @@ import 'package:payvidence/utilities/animations.dart';
 import 'package:payvidence/utilities/toast_service.dart';
 import '../../components/simple_bottom_sheet.dart';
 import '../../providers/product_providers/current_product_provider.dart';
+import '../../providers/product_providers/get_all_product_provider.dart';
 import '../all_receipts/all_receipts.dart';
 
 @RoutePage(name: 'AllInvoicesRoute')
@@ -45,7 +46,7 @@ class _AllInvoicesContent extends HookConsumerWidget {
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
     final productNumber = ValueNotifier<int?>(null);
-    final isServiceMode = useState<bool>(false);
+    final isServiceMode = useState<bool?>(null); // null represents 'All'
     final responsiveData = ResponsiveInherited.of(context);
 
     useEffect(() {
@@ -124,7 +125,8 @@ class _AllInvoicesContent extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  hintText: isServiceMode.value ? 'Search for service invoice' : 'Search for product invoice',
+                  hintText: isServiceMode.value == null ? 'Search for invoice' : 
+                           (isServiceMode.value == true) ? 'Search for service invoice' : 'Search for product invoice',
                   controller: searchController,
                   radius: responsiveData.largeRadius,
                   filled: isDarkMode ? false : true,
@@ -132,76 +134,121 @@ class _AllInvoicesContent extends HookConsumerWidget {
                 ),
               ),
               SizedBox(height: responsiveData.scaleHeight(16)),
-              // Toggle switch between Products and Services
-              Container(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: responsiveData.scaleWidth(4),
-                    vertical: responsiveData.scaleHeight(2),
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+              // Toggle switch between Products and Services - only shown when both types exist
+              allInvoices.maybeWhen(
+                data: (data) {
+                  final hasProducts = data.any((item) => 
+                    item.publishedAt != null && 
+                    !(item.recordProductDetails.any((detail) => detail.isService ?? false)));
+                  
+                  final hasServices = data.any((item) => 
+                    item.publishedAt != null && 
+                    item.recordProductDetails.any((detail) => detail.isService ?? false));
+                  
+                  // Always show toggle if there's at least one invoice
+                  return Column(
                     children: [
-                      GestureDetector(
-                        onTap: () => isServiceMode.value = false,
+                      Container(
+                        alignment: Alignment.centerLeft,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: responsiveData.scaleWidth(12),
-                            vertical: responsiveData.scaleHeight(6),
+                            horizontal: responsiveData.scaleWidth(4),
+                            vertical: responsiveData.scaleHeight(2),
                           ),
                           decoration: BoxDecoration(
-                            color: !isServiceMode.value
-                                ? primaryColor2
-                                : Colors.transparent,
+                            color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
                             borderRadius: BorderRadius.circular(responsiveData.smallRadius),
                           ),
-                          child: Text(
-                            'Products',
-                            style: TextStyle(
-                              color: !isServiceMode.value
-                                  ? Colors.white
-                                  : isDarkMode ? Colors.white : Colors.black,
-                              fontSize: Responsive.fontSize(context, 12),
-                              fontWeight: FontWeight.w500,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  isServiceMode.value = null; // null represents 'All'
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsiveData.scaleWidth(12),
+                                    vertical: responsiveData.scaleHeight(6),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isServiceMode.value == null
+                                        ? primaryColor2
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                                  ),
+                                  child: Text(
+                                    'All',
+                                    style: TextStyle(
+                                      color: isServiceMode.value == null
+                                          ? Colors.white
+                                          : isDarkMode ? Colors.white : Colors.black,
+                                      fontSize: Responsive.fontSize(context, 12),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => isServiceMode.value = false,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsiveData.scaleWidth(12),
+                                    vertical: responsiveData.scaleHeight(6),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isServiceMode.value == false
+                                        ? primaryColor2
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                                  ),
+                                  child: Text(
+                                    'Products',
+                                    style: TextStyle(
+                                      color: isServiceMode.value == false
+                                          ? Colors.white
+                                          : isDarkMode ? Colors.white : Colors.black,
+                                      fontSize: Responsive.fontSize(context, 12),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => isServiceMode.value = true,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsiveData.scaleWidth(12),
+                                    vertical: responsiveData.scaleHeight(6),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isServiceMode.value == true
+                                        ? primaryColor2
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(responsiveData.smallRadius),
+                                  ),
+                                  child: Text(
+                                    'Services',
+                                    style: TextStyle(
+                                      color: isServiceMode.value == true
+                                          ? Colors.white
+                                          : isDarkMode ? Colors.white : Colors.black,
+                                      fontSize: Responsive.fontSize(context, 12),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => isServiceMode.value = true,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: responsiveData.scaleWidth(12),
-                            vertical: responsiveData.scaleHeight(6),
-                          ),
-                          decoration: BoxDecoration(
-                            color: isServiceMode.value
-                                ? primaryColor2
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(responsiveData.smallRadius),
-                          ),
-                          child: Text(
-                            'Services',
-                            style: TextStyle(
-                              color: isServiceMode.value
-                                  ? Colors.white
-                                  : isDarkMode ? Colors.white : Colors.black,
-                              fontSize: Responsive.fontSize(context, 12),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
+                      SizedBox(height: responsiveData.scaleHeight(16)),
                     ],
-                  ),
-                ),
+                  );
+                },
+                orElse: () => SizedBox(height: 0),
               ),
-              SizedBox(height: responsiveData.scaleHeight(16)),
               Expanded(
                 child: allInvoices.when(
                   data: (data) {
@@ -210,21 +257,24 @@ class _AllInvoicesContent extends HookConsumerWidget {
                     // Filter by service/product type and search query
                     final filteredData = actualData
                         .where((receipt) {
-                          // First filter by service/product type
-                          bool isService = receipt.recordProductDetails.any((detail) => 
-                            detail.isService ?? false);
-                          
-                          if (isServiceMode.value != isService) {
+                          // Skip receipts with empty product details
+                          if (receipt.recordProductDetails.isEmpty) {
                             return false;
+                          }
+                          
+                          // First filter by service/product type if not 'All'
+                          if (isServiceMode.value != null) {
+                            bool isService = receipt.recordProductDetails.any((detail) => 
+                              detail.isService ?? false);
+                            
+                            if (isServiceMode.value != isService) {
+                              return false;
+                            }
                           }
                           
                           // Then filter by search query if needed
                           if (searchQuery.value.isEmpty) {
                             return true;
-                          }
-                          
-                          if (receipt.recordProductDetails.isEmpty) {
-                            return false;
                           }
                           
                           final productName = receipt.recordProductDetails[0].product?.name;
@@ -251,14 +301,18 @@ class _AllInvoicesContent extends HookConsumerWidget {
                                   SvgPicture.asset(Assets.svg.emptyInvoice),
                                   SizedBox(height: responsiveData.scaleHeight(40)),
                                   Text(
-                                    searchQuery.value.isEmpty ? 'No invoice yet!' : 'No invoices found!',
+                                    isServiceMode.value == null
+                                        ? 'No invoices yet!'
+                                        : isServiceMode.value == true
+                                            ? 'No service invoices found!'
+                                            : 'No product invoices found!',
                                     style: Theme.of(context).textTheme.displayLarge,
                                   ),
                                   SizedBox(height: responsiveData.scaleHeight(10)),
                                   Text(
-                                    searchQuery.value.isEmpty
+                                    actualData.isEmpty
                                         ? 'Generate invoice for your business pending sales. All invoices generated will show here.'
-                                        : 'Try a different search term.',
+                                        : 'Try adjusting your search or filter settings.',
                                     textAlign: TextAlign.center,
                                     style: Theme.of(context)
                                         .textTheme

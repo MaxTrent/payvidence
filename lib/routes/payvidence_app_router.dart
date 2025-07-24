@@ -188,12 +188,19 @@ class PayvidenceAppRouter extends RootStackRouter {
 class AuthRouteGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
-    var isUserLoggedIn =
-    locator<SessionManager>().get<bool>(SessionConstants.isUserLoggedIn);
-
-    if (isUserLoggedIn == true) {
+    var isUserLoggedIn = locator<SessionManager>().get<bool>(SessionConstants.isUserLoggedIn);
+    var accessToken = locator<SessionManager>().get<String>(SessionConstants.accessTokenPref);
+    var refreshToken = locator<SessionManager>().get<String>(SessionConstants.refreshToken);
+    
+    // Check if user is logged in AND has valid tokens
+    if (isUserLoggedIn == true && accessToken != null && accessToken.isNotEmpty && 
+        refreshToken != null && refreshToken.isNotEmpty) {
       resolver.next();
     } else {
+      // If tokens are missing but user is marked as logged in, clear the session
+      if (isUserLoggedIn == true) {
+        await locator<SessionManager>().clear();
+      }
       resolver.redirect(OnboardingScreenRoute());
     }
   }
