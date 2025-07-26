@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:payvidence/model/business_model.dart';
 import 'package:payvidence/utilities/base_notifier.dart';
+import 'package:payvidence/providers/business_providers/current_business_provider.dart';
+import 'package:payvidence/providers/business_providers/get_all_business_provider.dart';
 
 // final businessDetailViewModel = ChangeNotifierProvider((ref)=> BusinessDetailViewModel(ref));
 
@@ -120,6 +122,7 @@ Future<void> updateBusinessInfo(
     }) async {
   _setLoading(true);
   try {
+    print('Updating business with logo: ${logo?.path}, signature: ${signature?.path}');
     final response = await apiServices.updateBusiness(
       businessId,
       name: name,
@@ -136,7 +139,20 @@ Future<void> updateBusinessInfo(
 
     if (response.success) {
       final updatedData = response.data!["data"] as Map<String, dynamic>;
-      businessInfo = Business.fromJson(updatedData);
+      final updatedBusiness = Business.fromJson(updatedData);
+      print('Updated business logo URL: ${updatedBusiness.logoUrl}');
+      print('Updated business signature URL: ${updatedBusiness.issuerSignatureUrl}');
+      businessInfo = updatedBusiness;
+      
+      // Update current business if this is the current business
+      final currentBusiness = ref.read(getCurrentBusinessProvider);
+      if (currentBusiness?.id == businessId) {
+        ref.read(getCurrentBusinessProvider.notifier).setCurrentBusiness(updatedBusiness);
+      }
+      
+      // Refresh all businesses to update the list
+      ref.invalidate(getAllBusinessProvider);
+      
       _selectedLogoImage = null;
       _selectedSignatureImage = null;
       showSuccess(message: "Business details updated successfully");
