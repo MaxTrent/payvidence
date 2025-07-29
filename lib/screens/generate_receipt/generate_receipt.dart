@@ -74,7 +74,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   bool isPrefilledProduct = false;
   bool isLoading = false;
 
-  // For client search functionality
+
   List<ClientModel> filteredClients = [];
   bool showClientDropdown = false;
   final FocusNode clientNameFocusNode = FocusNode();
@@ -106,10 +106,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   void initState() {
     super.initState();
     qtyControllers.add(qtyController);
-    // Set default value of 1 for service frequency
-    if (widget.isService == true) {
-      qtyController.text = '1';
-    }
+
     discountControllers.add(discountController);
     productNameControllers.add(productNameController);
     productPriceControllers.add(productPriceController);
@@ -180,9 +177,24 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 
     final allClients = ref.read(getAllClientsProvider).value ?? [];
     final filtered = allClients
-        .where((client) =>
-        client.name.toLowerCase().contains(query.toLowerCase()))
+        .where((client) {
+          final clientName = client.name.toLowerCase();
+          final searchQuery = query.toLowerCase();
+          return clientName.startsWith(searchQuery) || clientName.contains(searchQuery);
+        })
         .toList();
+
+    filtered.sort((a, b) {
+      final aName = a.name.toLowerCase();
+      final bName = b.name.toLowerCase();
+      final searchQuery = query.toLowerCase();
+      
+      if (aName == searchQuery && bName != searchQuery) return -1;
+      if (bName == searchQuery && aName != searchQuery) return 1;
+      if (aName.startsWith(searchQuery) && !bName.startsWith(searchQuery)) return -1;
+      if (bName.startsWith(searchQuery) && !aName.startsWith(searchQuery)) return 1;
+      return aName.compareTo(bName);
+    });
 
     setState(() {
       filteredClients = filtered;
@@ -225,7 +237,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: const Offset(0, 60), // Positions dropdown below text field
+                offset: const Offset(0, 60),
                 child: Material(
                   elevation: 4,
                   borderRadius: BorderRadius.circular(8),
@@ -242,28 +254,38 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                       itemCount: filteredClients.length,
                       itemBuilder: (context, index) {
                         final client = filteredClients[index];
-                        return ListTile(
-                          dense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 2,
-                          ),
-                          title: Text(
-                            client.name,
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                          subtitle: client.address.isNotEmpty || client.phoneNumber.isNotEmpty
-                              ? Text(
-                                  client.address.isNotEmpty ? client.address : client.phoneNumber,
-                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    fontSize: Responsive.fontSize(context, 12),
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : null,
+                        return InkWell(
                           onTap: () {
                             _selectExistingClient(client);
                           },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  client.name,
+                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                if (client.address.isNotEmpty || client.phoneNumber.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: Text(
+                                      client.address.isNotEmpty ? client.address : client.phoneNumber,
+                                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                        fontSize: Responsive.fontSize(context, 12),
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -289,7 +311,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       client = selectedClient;
       clientNameController.text = selectedClient.name;
       
-      // Fill in phone number and address if available
+
       if (selectedClient.phoneNumber.isNotEmpty) {
         clientPhoneController.text = selectedClient.phoneNumber;
       }
@@ -305,28 +327,28 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   void _removeTextField(int index) {
-    if (_textFields.length <= 1) return; // Don't remove if only one product left
+    if (_textFields.length <= 1) return;
     
-    final actualIndex = index - 1; // Convert to 0-based index
+    final actualIndex = index - 1;
     
-    // Dispose controllers
+
     qtyControllers[actualIndex].dispose();
     discountControllers[actualIndex].dispose();
     productNameControllers[actualIndex].dispose();
     productPriceControllers[actualIndex].dispose();
     
-    // Remove from lists
+
     qtyControllers.removeAt(actualIndex);
     discountControllers.removeAt(actualIndex);
     productNameControllers.removeAt(actualIndex);
     productPriceControllers.removeAt(actualIndex);
     
-    // Remove from products map
+
     products.remove(index);
     
     setState(() {
       _textFields.removeAt(actualIndex);
-      // Update indices for remaining fields
+
       for (int i = 0; i < _textFields.length; i++) {
         final field = _textFields[i] as FormFields;
         _textFields[i] = FormFields(
@@ -347,18 +369,18 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   void _addTextField() {
-    // Create new TextEditingControllers
     TextEditingController qtyController = TextEditingController();
+    if (widget.isService == true) {
+      qtyController.text = '1';
+    }
     TextEditingController discountController = TextEditingController();
     TextEditingController productNameController = TextEditingController();
     TextEditingController productPriceController = TextEditingController();
 
-    // Add the controllers to the lists
     qtyControllers.add(qtyController);
     discountControllers.add(discountController);
     productNameControllers.add(productNameController);
     productPriceControllers.add(productPriceController);
-    // Add a new FormFields widget to the list
     setState(() {
       _textFields.add(FormFields(
         discountController: discountControllers.last,
@@ -565,7 +587,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   Future<void> createReceipt() async {
-    if (isLoading) return; // Prevent multiple clicks
+    if (isLoading) return;
     
     String error = findMissingProducts();
     if (error != '') {
@@ -580,7 +602,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     if (!context.mounted) return;
     LoadingDialog.show(context);
 
-    // Handle client creation or update
+
     ClientModel? finalClient = client;
     final clientName = clientNameController.text.trim();
     final clientPhone = clientPhoneController.text.trim();
@@ -749,7 +771,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           : null;
 
       if (widget.isService == true) {
-        // Service entry - always use direct entry
+
         final serviceName = productNameControllers[i].text.trim();
         final servicePrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
         
@@ -758,12 +780,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           return;
         }
 
-        // Create service entry without discount if it's null or empty
+
         // Always default service frequency to 1 when sending to backend
         Map<String, dynamic> serviceEntry = {
           "name": serviceName,
           "price": servicePrice,
-          "quantity_purchased": 1, // Default to 1 regardless of what user entered
+          "quantity_purchased": 1,
         };
         
         // Store the service name in the products map to ensure it's available for display
@@ -903,12 +925,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       
       // Navigate to receipt screen if not a draft
       if (isDraft != true) {
-        // Refresh the receipts list to get the full data
+
         await ref.refresh(widget.isInvoice == true
             ? getAllInvoiceProvider.future
             : getAllReceiptProvider.future);
         
-        // Find the newly created receipt with full data
+
         final receipts = ref.read(widget.isInvoice == true
             ? getAllInvoiceProvider
             : getAllReceiptProvider).value ?? [];
@@ -1101,7 +1123,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                         controller: clientAddressController,
                         keyboardType: TextInputType.streetAddress,
                         validator: (val) {
-                          // Address is optional, so no validation needed
+
                           return null;
                         },
                       ),
@@ -1216,10 +1238,10 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                                   if (business?.bankName == null || business?.bankName?.isEmpty == true || 
                                       business?.accountNumber == null || business?.accountNumber?.isEmpty == true || 
                                       business?.accountName == null || business?.accountName?.isEmpty == true) {
-                                    // Navigate to add bank details screen
+
                                     final result = await locator<PayvidenceAppRouter>().push(UpdateBankDetailsRoute());
                                     if (result != true) {
-                                      // User cancelled adding bank details
+
                                       return;
                                     }
                                   }
