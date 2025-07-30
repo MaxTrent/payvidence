@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:payvidence/model/business_model.dart';
 import 'package:payvidence/model/client_model.dart';
+import 'package:payvidence/model/product_model.dart';
 import 'package:payvidence/model/record_product_details.dart';
 
 class Receipt {
@@ -36,7 +37,15 @@ class Receipt {
 
   String toRawJson() => json.encode(toJson());
 
-  factory Receipt.fromJson(Map<String, dynamic> json) => Receipt(
+  factory Receipt.fromJson(Map<String, dynamic> json) {
+    // Debug print for receipt data
+    print("Receipt JSON keys: ${json.keys.toList()}");
+    if (json["record_product_details"] != null) {
+      print("First product detail keys: ${(json["record_product_details"] as List).isNotEmpty ? 
+            (json["record_product_details"][0] as Map<String, dynamic>).keys.toList() : []}");
+    }
+    
+    return Receipt(
     id: json["id"],
     clientId: json["client_id"],
     businessId: json["business_id"],
@@ -61,11 +70,18 @@ class Receipt {
     recordProductDetails: json["record_product_details"] != null
         ? List<RecordProductDetail>.from(json["record_product_details"]!
             .map((x) => RecordProductDetail.fromJson(x)))
+        : json["record_item_details"] != null
+        ? List<RecordProductDetail>.from(json["record_item_details"]!
+            .map((x) => RecordProductDetail.fromJson(x)))
         : json["products"] != null
         ? List<RecordProductDetail>.from(json["products"]!
             .map((x) => RecordProductDetail.fromJson(x)))
+        : json["items"] != null
+        ? List<RecordProductDetail>.from(json["items"]!
+            .map((x) => RecordProductDetail.fromJson(x)))
         : [],
   );
+  }
 
   Map<String, dynamic> toJson() => {
     "id": id,

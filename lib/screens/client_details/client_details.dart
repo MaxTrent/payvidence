@@ -82,7 +82,7 @@ class ClientDetails extends HookConsumerWidget {
     }
 
     Future<bool> onWillPop() async {
-      if (viewModel.isEditing && hasChanges()) {
+      if (hasChanges()) {
         if (formKey.currentState!.validate()) {
           viewModel.updateClient(
             businessId: businessId,
@@ -102,7 +102,7 @@ class ClientDetails extends HookConsumerWidget {
 
     return ResponsiveWrapper(
       child: PopScope(
-        canPop: !viewModel.isEditing || !hasChanges(),
+        canPop: !hasChanges(),
         onPopInvoked: (didPop) async {
           if (!didPop && viewModel.isEditing && hasChanges()) {
             await onWillPop();
@@ -221,31 +221,21 @@ class ClientDetails extends HookConsumerWidget {
                         children: [
                           AppButton(
                             isProcessing: viewModel.isLoading,
-                            buttonText: viewModel.isEditing
-                                ? 'Save'
-                                : 'Update client details',
-                            onPressed: () {
-                              if (!viewModel.isEditing) {
-                                viewModel.toggleEditing();
-                                nameFocusNode.requestFocus();
-                              } else if (hasChanges()) {
-                                if (formKey.currentState!.validate()) {
-                                  viewModel.updateClient(
-                                    businessId: businessId,
-                                    clientId: clientId,
-                                    newName: nameController.text,
-                                    newPhoneNumber: phoneNumberController.text,
-                                    newAddress: addressController.text,
-                                    navigateOnSuccess: () {
-                                      locator<PayvidenceAppRouter>().back();
-                                    },
-                                  );
-                                }
-                              } else {
-                                print("No changes detected, exiting edit mode");
-                                viewModel.toggleEditing();
+                            buttonText: 'Save',
+                            onPressed: hasChanges() ? () {
+                              if (formKey.currentState!.validate()) {
+                                viewModel.updateClient(
+                                  businessId: businessId,
+                                  clientId: clientId,
+                                  newName: nameController.text,
+                                  newPhoneNumber: phoneNumberController.text,
+                                  newAddress: addressController.text,
+                                  navigateOnSuccess: () {
+                                    locator<PayvidenceAppRouter>().back();
+                                  },
+                                );
                               }
-                            },
+                            } : null, // Disable button when there are no changes
                           ),
                           SizedBox(height: responsiveData.scaleHeight(8)),
                           AppButton(

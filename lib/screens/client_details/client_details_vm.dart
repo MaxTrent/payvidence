@@ -12,7 +12,7 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
 
   ClientModel? _client;
   bool _isLoading = false;
-  bool _isEditing = false;
+  bool _isEditing = true;
 
   ClientModel? get clientInfo => _client;
   bool get isLoading => _isLoading;
@@ -38,7 +38,7 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
   Future<void> fetchClientDetails(String businessId, String clientId) async {
     try {
       _isLoading = true;
-      _isEditing = false;
+      _isEditing = true;
       notifyListeners();
 
       print("ViewModel: Fetching client information");
@@ -123,7 +123,7 @@ class ClientDetailsViewModel extends BaseChangeNotifier {
         return;
       }
 
-      // Only send fields that have changed
+      // Only send fields that have changed (but allow empty strings for phone/address)
       String? nameToSend = newName != _client!.name ? newName : null;
       String? phoneToSend = newPhoneNumber != (_client!.phoneNumber ?? '') ? newPhoneNumber : null;
       String? addressToSend = newAddress != (_client!.address ?? '') ? newAddress : null;

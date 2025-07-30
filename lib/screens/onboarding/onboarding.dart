@@ -113,7 +113,7 @@ class OnboardingScreen extends HookConsumerWidget {
                               ),
                             ),
                             SizedBox(height: responsiveData.scaleHeight(26)),
-                            GestureDetector(
+                            InkWell(
                               onTap: () {
                                 locator<PayvidenceAppRouter>()
                                     .navigateNamed(PayvidenceRoutes.login);

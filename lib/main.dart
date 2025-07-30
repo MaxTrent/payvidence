@@ -15,6 +15,8 @@ import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/scroll_behaviour.dart';
 import 'package:payvidence/utilities/theme_mode.dart';
 import 'package:payvidence/utilities/toast_service.dart';
+import 'package:payvidence/utilities/token_validation_service.dart';
+import 'package:payvidence/utilities/global_error_handler.dart';
 import 'constants/app_theme.dart';
 import 'env_config.dart';
 import 'firebase_options.dart';
@@ -40,6 +42,9 @@ Future<void> main() async {
   }
 
   AppLogger.setLogger(showLogs: kDebugMode);
+  
+  // Initialize global error handler
+  GlobalErrorHandler.initialize();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -73,6 +78,14 @@ class MyApp extends HookWidget {
     final theme = useThemeMode();
     final appRouter = locator<PayvidenceAppRouter>();
     final firebaseMessaging = FirebaseMessaging.instance;
+
+    // Validate token on app startup
+    useEffect(() {
+      Future.microtask(() async {
+        await TokenValidationService.validateTokenOnStartup();
+      });
+      return null;
+    }, const []);
 
     firebaseMessaging.requestPermission(
       alert: true,

@@ -46,20 +46,29 @@ class AllTransactionsViewModel extends BaseChangeNotifier {
       if (response.success) {
         final transactionData = response.data!["data"];
         if (transactionData is List) {
-          final newTransactions = transactionData
-              .map((item) => Transaction.fromJson(item as Map<String, dynamic>))
-              .toList();
+          final newTransactions = <Transaction>[];
+          
+          for (final item in transactionData) {
+            try {
+              if (item is Map<String, dynamic>) {
+                final transaction = Transaction.fromJson(item);
+                newTransactions.add(transaction);
+              }
+            } catch (e) {
+              print("Error parsing transaction: $e");
+              // Continue with next transaction instead of failing completely
+              continue;
+            }
+          }
           
           // Remove duplicates based on transaction ID
           final uniqueTransactions = <String, Transaction>{};
           for (final transaction in newTransactions) {
-            if (transaction.id != null) {
-              uniqueTransactions[transaction.id!] = transaction;
-            }
+            uniqueTransactions[transaction.id] = transaction;
           }
           
           transactions = uniqueTransactions.values.toList()
-            ..sort((a, b) => (b.createdAt ?? DateTime(1970)).compareTo(a.createdAt ?? DateTime(1970)));
+            ..sort((a, b) => (b.createdAt).compareTo(a.createdAt));
         } else {
           print("ViewModel: Unexpected data format - $transactionData");
           handleError(message: "Unexpected data format");

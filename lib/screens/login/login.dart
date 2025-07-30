@@ -53,9 +53,12 @@ class Login extends HookConsumerWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         viewModel.loadSavedEmail().then((savedEmail) {
           if (savedEmail != null && savedEmail.isNotEmpty) {
+            print('Setting email in controller: $savedEmail');
             emailController.text = savedEmail;
             isEmailValid.value = checkEmailValid(savedEmail);
             areFieldsEmpty.value = checkFieldsEmpty();
+          } else {
+            print('No saved email found');
           }
         });
       });
@@ -264,6 +267,11 @@ class Login extends HookConsumerWidget {
                                   locator<PayvidenceAppRouter>()
                                       .navigateNamed(PayvidenceRoutes.home);
                                   print('navigating back');
+                                },
+                                navigateToOtp: () {
+                                  print("Halfway signup detected, navigating to OTP");
+                                  locator<PayvidenceAppRouter>()
+                                      .navigateNamed(PayvidenceRoutes.otp);
                                 },
                               );
                             } else {

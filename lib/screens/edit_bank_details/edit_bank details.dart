@@ -137,8 +137,8 @@ class EditBankDetails extends HookConsumerWidget {
                       SizedBox(height: responsiveData.scaleHeight(8)),
                       AppTextField(
                         hintText: 'Account name',
-                        fillColor: isDarkMode ? Colors.white24 : textFieldGrey,
-                        filled: true,
+                        /*fillColor: isDarkMode ? Colors.white24 : textFieldGrey,
+                        filled: true,*/
                         keyboardType: TextInputType.name,
                         textCapitalization: TextCapitalization.words,
                         controller: accountNameController,

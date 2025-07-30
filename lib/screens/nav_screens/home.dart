@@ -127,11 +127,10 @@ class HomeScreen extends HookConsumerWidget {
                   getAllBusiness.when(
                     data: (data) {
                       if (data.isEmpty) {
-                        // Don't show loading indicator, let redirect happen
                         return const SizedBox.shrink();
                       }
                       
-                      // If currentBusiness is null, show loading
+
                       if (currentBusiness == null) {
                         return const Center(
                           child: LoadingIndicator(),
@@ -140,48 +139,57 @@ class HomeScreen extends HookConsumerWidget {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: responsiveData.smallRadius * 1.6,
-                                backgroundColor: Colors.black,
-                                backgroundImage: currentBusiness.logoUrl != null
-                                    ? NetworkImage(currentBusiness.logoUrl!)
-                                    : null,
-                                child: currentBusiness.logoUrl == null
-                                    ? const Icon(Icons.business, color: Colors.white) 
-                                    : null,
-                              ),
-                              SizedBox(width: responsiveData.scaleWidth(10)),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    (() {
-                                      final name = ref.watch(getCurrentBusinessProvider)?.name ?? '...';
-                                      return name.length > 14 ? '${name.substring(0, 14)}...' : name;
-                                    })(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall!
-                                        .copyWith(fontSize: Responsive.fontSize(context, 14)),
-                                  ),
-                                  Row(
-                                    children: [
-                                      SvgPicture.asset(Assets.svg.ribbon),
-                                      SizedBox(width: responsiveData.scaleWidth(2)),
-                                      Text(
-                                        'Starter plan',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displaySmall!
-                                            .copyWith(fontSize: Responsive.fontSize(context, 12)),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
+                          GestureDetector(
+                            onTap: () {
+                              if (currentBusiness?.id != null) {
+                                locator<PayvidenceAppRouter>().push(
+                                  BusinessDetailRoute(businessId: currentBusiness!.id!)
+                                );
+                              }
+                            },
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: responsiveData.smallRadius * 1.6,
+                                  backgroundColor: Colors.black,
+                                  backgroundImage: currentBusiness.logoUrl != null
+                                      ? NetworkImage(currentBusiness.logoUrl!)
+                                      : null,
+                                  child: currentBusiness.logoUrl == null
+                                      ? const Icon(Icons.business, color: Colors.white) 
+                                      : null,
+                                ),
+                                SizedBox(width: responsiveData.scaleWidth(10)),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      (() {
+                                        final name = ref.watch(getCurrentBusinessProvider)?.name ?? '...';
+                                        return name.length > 14 ? '${name.substring(0, 14)}...' : name;
+                                      })(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(fontSize: Responsive.fontSize(context, 14)),
+                                    ),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(Assets.svg.ribbon),
+                                        SizedBox(width: responsiveData.scaleWidth(2)),
+                                        Text(
+                                          'Starter plan',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displaySmall!
+                                              .copyWith(fontSize: Responsive.fontSize(context, 12)),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(width: responsiveData.scaleWidth(15)),
                           GestureDetector(
@@ -189,14 +197,14 @@ class HomeScreen extends HookConsumerWidget {
                               locator<PayvidenceAppRouter>().push(const AllBusinessesRoute());
                             },
                             child: Container(
-                              height: responsiveData.scaleHeight(40),
-                              width: responsiveData.scaleWidth(157),
+                              // height: responsiveData.scaleHeight(40),
+                              // width: responsiveData.scaleWidth(157),
                               decoration: BoxDecoration(
                                 color: appGrey2,
                                 borderRadius: BorderRadius.circular(responsiveData.smallRadius * 1.2),
                               ),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(12)),
+                                padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(12), vertical: responsiveData.scaleHeight(12)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
@@ -210,6 +218,7 @@ class HomeScreen extends HookConsumerWidget {
                                         color: Colors.black,
                                       ),
                                     ),
+                                    SizedBox(width: responsiveData.scaleWidth(6),),
                                     SvgPicture.asset(Assets.svg.store),
                                   ],
                                 ),
@@ -349,7 +358,9 @@ class HomeScreen extends HookConsumerWidget {
                             ?.toString()
                             .toFormattedIsoDate() ??
                             '';
-                        final unitSold = product?.quantitySold?.toString() ?? '0';
+                        // Get the correct quantity from the record product detail first, then fall back to product
+                        final unitSold = firstProductDetail.quantity?.toString() ?? product?.quantitySold?.toString() ?? '0';
+                        final isService = firstProductDetail.isService ?? false;
 
                         final tile = GestureDetector(
                           onTap: () {
@@ -376,6 +387,7 @@ class HomeScreen extends HookConsumerWidget {
                                 : 'Receipt',
                             unitSold: unitSold,
                             imageUrl: imageUrl,
+                            isService: isService,
                           ),
                         );
                         

@@ -29,13 +29,16 @@ import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/number_formatter.dart';
 import '../../utilities/real_time_number_formatter.dart';
+import '../../utilities/validators.dart';
 import '../add_client/add_client_viewmodel.dart';
+import '../client_details/client_details_vm.dart';
 
 @RoutePage(name: 'GenerateReceiptRoute')
 class GenerateReceipt extends ConsumerStatefulWidget {
   final bool? isInvoice;
+  final bool? isService;
 
-  const GenerateReceipt({super.key, this.isInvoice = false});
+  const GenerateReceipt({super.key, this.isInvoice = false, this.isService = false});
 
   @override
   ConsumerState<GenerateReceipt> createState() => _GenerateReceiptState();
@@ -48,6 +51,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   final productNameController = TextEditingController();
   final productPriceController = TextEditingController();
   final clientNameController = TextEditingController();
+  final clientPhoneController = TextEditingController();
+  final clientAddressController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   List<TextEditingController> discountControllers = [];
   List<TextEditingController> qtyControllers = [];
@@ -69,7 +74,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   bool isPrefilledProduct = false;
   bool isLoading = false;
 
-  // For client search functionality
+
   List<ClientModel> filteredClients = [];
   bool showClientDropdown = false;
   final FocusNode clientNameFocusNode = FocusNode();
@@ -90,6 +95,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       controller.dispose();
     }
     clientNameController.dispose();
+    clientPhoneController.dispose();
+    clientAddressController.dispose();
     clientNameFocusNode.dispose();
     overlayEntry?.remove();
     super.dispose();
@@ -99,6 +106,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   void initState() {
     super.initState();
     qtyControllers.add(qtyController);
+
     discountControllers.add(discountController);
     productNameControllers.add(productNameController);
     productPriceControllers.add(productPriceController);
@@ -109,9 +117,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       discountController: discountController,
       productNameController: productNameController,
       productPriceController: productPriceController,
-      onPressed: selectProduct,
+      onPressed: widget.isService! ? null : selectProduct,
       index: 1,
       onRemove: _removeTextField,
+      productNameEditable: widget.isService! ? true : null,
+      productPriceEditable: widget.isService! ? true : null,
+      isService: widget.isService,
     ));
 
     // Listen to client name changes for search
@@ -134,15 +145,18 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         products[1] = currentProduct;
         isPrefilledProduct = true;
         
-        // Update the first form field to be uneditable
+        // Update the first form field to be uneditable for products, but editable for services
         _textFields[0] = FormFields(
           qtyController: qtyController,
           discountController: discountController,
           productNameController: productNameController,
           productPriceController: productPriceController,
-          onPressed: selectProduct,
+          onPressed: widget.isService! ? null : selectProduct,
           index: 1,
-          invoiceToReceipt: true,
+          invoiceToReceipt: widget.isService! ? false : true,
+          productNameEditable: widget.isService! ? true : false,
+          productPriceEditable: widget.isService! ? true : false,
+          isService: widget.isService,
           onRemove: _removeTextField,
         );
         setState(() {});
@@ -163,9 +177,24 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
 
     final allClients = ref.read(getAllClientsProvider).value ?? [];
     final filtered = allClients
-        .where((client) =>
-        client.name.toLowerCase().contains(query.toLowerCase()))
+        .where((client) {
+          final clientName = client.name.toLowerCase();
+          final searchQuery = query.toLowerCase();
+          return clientName.startsWith(searchQuery) || clientName.contains(searchQuery);
+        })
         .toList();
+
+    filtered.sort((a, b) {
+      final aName = a.name.toLowerCase();
+      final bName = b.name.toLowerCase();
+      final searchQuery = query.toLowerCase();
+      
+      if (aName == searchQuery && bName != searchQuery) return -1;
+      if (bName == searchQuery && aName != searchQuery) return 1;
+      if (aName.startsWith(searchQuery) && !bName.startsWith(searchQuery)) return -1;
+      if (bName.startsWith(searchQuery) && !aName.startsWith(searchQuery)) return 1;
+      return aName.compareTo(bName);
+    });
 
     setState(() {
       filteredClients = filtered;
@@ -208,7 +237,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: const Offset(0, 60), // Positions dropdown below text field
+                offset: const Offset(0, 60),
                 child: Material(
                   elevation: 4,
                   borderRadius: BorderRadius.circular(8),
@@ -225,28 +254,38 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                       itemCount: filteredClients.length,
                       itemBuilder: (context, index) {
                         final client = filteredClients[index];
-                        return ListTile(
-                          dense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 2,
-                          ),
-                          title: Text(
-                            client.name,
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                          subtitle: client.address.isNotEmpty || client.phoneNumber.isNotEmpty
-                              ? Text(
-                                  client.address.isNotEmpty ? client.address : client.phoneNumber,
-                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    fontSize: Responsive.fontSize(context, 12),
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : null,
+                        return InkWell(
                           onTap: () {
                             _selectExistingClient(client);
                           },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  client.name,
+                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                if (client.address.isNotEmpty || client.phoneNumber.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: Text(
+                                      client.address.isNotEmpty ? client.address : client.phoneNumber,
+                                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                        fontSize: Responsive.fontSize(context, 12),
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -271,6 +310,16 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     setState(() {
       client = selectedClient;
       clientNameController.text = selectedClient.name;
+      
+
+      if (selectedClient.phoneNumber.isNotEmpty) {
+        clientPhoneController.text = selectedClient.phoneNumber;
+      }
+      
+      if (selectedClient.address.isNotEmpty) {
+        clientAddressController.text = selectedClient.address;
+      }
+      
       showClientDropdown = false;
     });
     _hideOverlay();
@@ -278,28 +327,28 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   void _removeTextField(int index) {
-    if (_textFields.length <= 1) return; // Don't remove if only one product left
+    if (_textFields.length <= 1) return;
     
-    final actualIndex = index - 1; // Convert to 0-based index
+    final actualIndex = index - 1;
     
-    // Dispose controllers
+
     qtyControllers[actualIndex].dispose();
     discountControllers[actualIndex].dispose();
     productNameControllers[actualIndex].dispose();
     productPriceControllers[actualIndex].dispose();
     
-    // Remove from lists
+
     qtyControllers.removeAt(actualIndex);
     discountControllers.removeAt(actualIndex);
     productNameControllers.removeAt(actualIndex);
     productPriceControllers.removeAt(actualIndex);
     
-    // Remove from products map
+
     products.remove(index);
     
     setState(() {
       _textFields.removeAt(actualIndex);
-      // Update indices for remaining fields
+
       for (int i = 0; i < _textFields.length; i++) {
         final field = _textFields[i] as FormFields;
         _textFields[i] = FormFields(
@@ -307,37 +356,43 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           discountController: discountControllers[i],
           productNameController: productNameControllers[i],
           productPriceController: productPriceControllers[i],
-          onPressed: selectProduct,
+          onPressed: widget.isService! ? null : selectProduct,
           index: i + 1,
           onRemove: _removeTextField,
           invoiceToReceipt: field.invoiceToReceipt,
+          productNameEditable: widget.isService! ? true : field.productNameEditable,
+          productPriceEditable: widget.isService! ? true : field.productPriceEditable,
+          isService: widget.isService,
         );
       }
     });
   }
 
   void _addTextField() {
-    // Create new TextEditingControllers
     TextEditingController qtyController = TextEditingController();
+    if (widget.isService == true) {
+      qtyController.text = '1';
+    }
     TextEditingController discountController = TextEditingController();
     TextEditingController productNameController = TextEditingController();
     TextEditingController productPriceController = TextEditingController();
 
-    // Add the controllers to the lists
     qtyControllers.add(qtyController);
     discountControllers.add(discountController);
     productNameControllers.add(productNameController);
     productPriceControllers.add(productPriceController);
-    // Add a new FormFields widget to the list
     setState(() {
       _textFields.add(FormFields(
         discountController: discountControllers.last,
         qtyController: qtyControllers.last,
         productNameController: productNameControllers.last,
         productPriceController: productPriceControllers.last,
-        onPressed: selectProduct,
+        onPressed: widget.isService! ? null : selectProduct,
         index: _textFields.length + 1,
         onRemove: _removeTextField,
+        productNameEditable: widget.isService! ? true : null,
+        productPriceEditable: widget.isService! ? true : null,
+        isService: widget.isService,
       ));
     });
   }
@@ -372,25 +427,25 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     try {
       final businessId = ref.read(getCurrentBusinessProvider)?.id;
       if (businessId == null) {
-
         return null;
       }
 
       bool success = false;
       String? newClientId;
-
+      
+      // Get phone and address from controllers
+      final phoneNumber = clientPhoneController.text.trim();
+      final address = clientAddressController.text.trim();
 
       ref.read(addClientViewModelProvider).addClient(
         name: name,
-        address: null,
-        phoneNumber: null,
+        address: address.isNotEmpty ? address : null,
+        phoneNumber: phoneNumber.isNotEmpty ? phoneNumber : null,
         businessId: businessId,
         navigateOnSuccess: () {
-
           success = true;
           final response = ref.read(addClientLastResponseProvider);
           newClientId = response?.data?['data']?['id'] as String?;
-
         },
       );
 
@@ -418,8 +473,8 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         id: newClientId!,
         businessId: businessId,
         name: name,
-        phoneNumber: '',
-        address: '',
+        phoneNumber: phoneNumber,
+        address: address,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -532,7 +587,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
   }
 
   Future<void> createReceipt() async {
-    if (isLoading) return; // Prevent multiple clicks
+    if (isLoading) return;
     
     String error = findMissingProducts();
     if (error != '') {
@@ -547,13 +602,19 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
     if (!context.mounted) return;
     LoadingDialog.show(context);
 
-    // Handle client creation if needed
+
     ClientModel? finalClient = client;
-    if (finalClient == null && clientNameController.text.trim().isNotEmpty) {
+    final clientName = clientNameController.text.trim();
+    final clientPhone = clientPhoneController.text.trim();
+    final clientAddress = clientAddressController.text.trim();
+    
+    print('Client update check: finalClient=${finalClient?.name}, clientName=$clientName');
+    
+    if (finalClient == null && clientName.isNotEmpty) {
       // Check if the typed name matches any existing client
       final allClients = ref.read(getAllClientsProvider).value ?? [];
       final existingClient = allClients.firstWhere(
-            (c) => c.name.toLowerCase() == clientNameController.text.trim().toLowerCase(),
+            (c) => c.name.toLowerCase() == clientName.toLowerCase(),
         orElse: () => ClientModel(
           id: '',
           businessId: '',
@@ -566,24 +627,141 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       );
 
       if (existingClient.id.isNotEmpty) {
+        print('Found existing client: ${existingClient.name}');
+        print('Current phone: "${existingClient.phoneNumber}", New phone: "$clientPhone"');
+        print('Current address: "${existingClient.address}", New address: "$clientAddress"');
+        
+        // Check if client info has been updated
+        bool needsUpdate = false;
+        
+        if (clientPhone != existingClient.phoneNumber) {
+          needsUpdate = true;
+          print('Phone number changed: "${existingClient.phoneNumber}" -> "$clientPhone"');
+        }
+        
+        if (clientAddress != existingClient.address) {
+          needsUpdate = true;
+          print('Address changed: "${existingClient.address}" -> "$clientAddress"');
+        }
+        
+        print('Need update: $needsUpdate');
+        
+        if (needsUpdate) {
+          // Update existing client with new information
+          try {
+            final businessId = ref.read(getCurrentBusinessProvider)?.id;
+            if (businessId != null) {
+              print('Updating client with businessId: $businessId, clientId: ${existingClient.id}');
+              
+              final clientDetailsVM = ref.read(clientDetailsViewModelViewModelProvider);
+              clientDetailsVM.clientInfo = existingClient;
+              
+              bool updateSuccess = false;
+              
+              await clientDetailsVM.updateClient(
+                businessId: businessId,
+                clientId: existingClient.id,
+                newName: existingClient.name,
+                newPhoneNumber: clientPhone,
+                newAddress: clientAddress,
+                navigateOnSuccess: () {
+                  updateSuccess = true;
+                  print('Client update successful');
+                  ref.read(getAllClientsProvider.notifier).fetchClients();
+                },
+              );
+              
+              // Wait for the update to complete
+              await Future.doWhile(() async {
+                if (clientDetailsVM.isLoading) {
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  return true;
+                }
+                return false;
+              });
+              
+              print('Update completed, success: $updateSuccess');
+            }
+          } catch (e) {
+            print('Failed to update client: $e');
+          }
+        }
+        
         finalClient = existingClient;
       } else {
         // Create new client
-        finalClient = await createClient(clientNameController.text.trim());
+        finalClient = await createClient(clientName);
         if (finalClient == null) {
           ToastService.showErrorSnackBar('Failed to create client');
           return;
         }
       }
+    } else if (finalClient != null) {
+      // Check if selected client info has been updated
+      print('Checking selected client for updates');
+      print('Selected client phone: "${finalClient.phoneNumber}", New phone: "$clientPhone"');
+      print('Selected client address: "${finalClient.address}", New address: "$clientAddress"');
+      
+      bool needsUpdate = false;
+      
+      if (clientPhone != finalClient.phoneNumber) {
+        needsUpdate = true;
+        print('Selected client phone changed: "${finalClient.phoneNumber}" -> "$clientPhone"');
+      }
+      
+      if (clientAddress != finalClient.address) {
+        needsUpdate = true;
+        print('Selected client address changed: "${finalClient.address}" -> "$clientAddress"');
+      }
+      
+      if (needsUpdate) {
+        try {
+          final businessId = ref.read(getCurrentBusinessProvider)?.id;
+          if (businessId != null) {
+            print('Updating selected client with businessId: $businessId, clientId: ${finalClient.id}');
+            
+            final clientDetailsVM = ref.read(clientDetailsViewModelViewModelProvider);
+            clientDetailsVM.clientInfo = finalClient;
+            
+            await clientDetailsVM.updateClient(
+              businessId: businessId,
+              clientId: finalClient.id,
+              newName: finalClient.name,
+              newPhoneNumber: clientPhone,
+              newAddress: clientAddress,
+              navigateOnSuccess: () {
+                print('Selected client update successful');
+                ref.read(getAllClientsProvider.notifier).fetchClients();
+              },
+            );
+            
+            // Wait for the update to complete
+            await Future.doWhile(() async {
+              if (clientDetailsVM.isLoading) {
+                await Future.delayed(const Duration(milliseconds: 100));
+                return true;
+              }
+              return false;
+            });
+          }
+        } catch (e) {
+          print('Failed to update selected client: $e');
+        }
+      }
     }
 
     List<Map<String, dynamic>> productList = [];
+    List<Map<String, dynamic>> serviceList = [];
 
     for (int i = 0; i < _textFields.length; i++) {
       final index = i + 1;
       
       if (qtyControllers[i].text.isEmpty) {
-        ToastService.showErrorSnackBar('Enter the qty purchased for product $index');
+        if (widget.isService == true) {
+          ToastService.showErrorSnackBar('Enter the service frequency for service $index');
+        } else {
+          ToastService.showErrorSnackBar('Enter the quantity purchased for product $index');
+        }
         return;
       }
 
@@ -592,46 +770,107 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
           ? double.parse(discountControllers[i].text)
           : null;
 
-      if (products.containsKey(index)) {
-        // Existing product
-        productList.add({
-          "id": products[index]!.id.toString(),
-          "quantity_purchased": quantity,
-          "discount": discount,
-          "vat": "0",
-        });
-      } else {
-        // New product
-        final productName = productNameControllers[i].text.trim();
-        final productPrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
+      if (widget.isService == true) {
+
+        final serviceName = productNameControllers[i].text.trim();
+        final servicePrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
         
-        if (productName.isEmpty || productPrice <= 0) {
-          ToastService.showErrorSnackBar('Enter valid product name and price for product $index');
+        if (serviceName.isEmpty || servicePrice <= 0) {
+          ToastService.showErrorSnackBar('Enter valid service name and price for service $index');
           return;
         }
 
-        productList.add({
-          "name": productName,
-          "price": productPrice,
-          "quantity_purchased": quantity,
-          "discount": discount,
-          "vat": "0",
-        });
+
+        // Always default service frequency to 1 when sending to backend
+        Map<String, dynamic> serviceEntry = {
+          "name": serviceName,
+          "price": servicePrice,
+          "quantity_purchased": 1,
+        };
+        
+        // Store the service name in the products map to ensure it's available for display
+        final newService = Product(
+          name: serviceName,
+          price: servicePrice.toString(),
+          quantitySold: quantity
+        );
+        products[index] = newService;
+        
+        // Only add discount if it has a value
+        if (discount != null) {
+          serviceEntry["discount"] = discount;
+        }
+        
+        serviceList.add(serviceEntry);
+      } else {
+        // Product entry
+        if (products.containsKey(index)) {
+          // Existing product
+          // Create product entry with required fields
+          Map<String, dynamic> productEntry = {
+            "id": products[index]!.id.toString(),
+            "quantity_purchased": quantity,
+            "vat": "0",
+          };
+          
+          // Only add discount if it has a value
+          if (discount != null) {
+            productEntry["discount"] = discount;
+          }
+          
+          productList.add(productEntry);
+        } else {
+          // New product
+          final productName = productNameControllers[i].text.trim();
+          final productPrice = double.tryParse(NumberFormatter.unformatNumber(productPriceControllers[i].text.trim())) ?? 0.0;
+          
+          if (productName.isEmpty || productPrice <= 0) {
+            ToastService.showErrorSnackBar('Enter valid product name and price for product $index');
+            return;
+          }
+
+          // Create new product entry with required fields
+          Map<String, dynamic> newProductEntry = {
+            "name": productName,
+            "price": productPrice,
+            "quantity_purchased": quantity,
+            "vat": "0",
+          };
+          
+          // Store the product name in the products map to ensure it's available for display
+          final newProduct = Product(
+            name: productName,
+            price: productPrice.toString(),
+            quantitySold: quantity
+          );
+          products[index] = newProduct;
+          
+          // Only add discount if it has a value
+          if (discount != null) {
+            newProductEntry["discount"] = discount;
+          }
+          
+          productList.add(newProductEntry);
+        }
       }
     }
+    
     Map<String, dynamic> requestData = {
-      "products": productList,
       "record_type": widget.isInvoice == true ? "invoice" : "receipt",
       "business_id": ref.read(getCurrentBusinessProvider)!.id!,
       "client_id": finalClient?.id,
-      "is_draft": isDraft,
+      "is_draft": widget.isService == true ? false : isDraft, // Services cannot be saved as draft
     };
     
-    // Only include mode_of_payment if not saving as draft or if payment method is selected
-    if (widget.isInvoice == true) {
-      // For invoices, mode_of_payment is always null
-      requestData["mode_of_payment"] = null;
-    } else if (isDraft != true || selectedPayment != null) {
+    // Add products or services to the request data
+    if (widget.isService == true) {
+      requestData["services"] = serviceList;
+    } else {
+      requestData["products"] = productList;
+    }
+    
+    // Only include mode_of_payment for receipts, not for invoices
+    if (widget.isInvoice != true && (isDraft != true || selectedPayment != null)) {
       // For receipts: include if not draft OR if payment method is selected
       requestData["mode_of_payment"] = selectedPayment?.toLowerCase();
     }
@@ -660,11 +899,15 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         String message = widget.isInvoice == true ? "Invoice generated successfully" : "Receipt generated successfully";
         
         if (newClientCreated && newProductsCount > 0) {
-          message += "${newProductsCount} product${newProductsCount > 1 ? 's' : ''} added";
+          message += widget.isService == true 
+              ? "${newProductsCount} service${newProductsCount > 1 ? 's' : ''} added" 
+              : "${newProductsCount} product${newProductsCount > 1 ? 's' : ''} added";
         } else if (newClientCreated) {
           message += "";
         } else if (newProductsCount > 0) {
-          message += ". ${newProductsCount} new product${newProductsCount > 1 ? 's' : ''} added";
+          message += widget.isService == true 
+              ? ". ${newProductsCount} new service${newProductsCount > 1 ? 's' : ''} added" 
+              : ". ${newProductsCount} new product${newProductsCount > 1 ? 's' : ''} added";
         }
         
         ToastService.showSnackBar(message);
@@ -682,12 +925,12 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       
       // Navigate to receipt screen if not a draft
       if (isDraft != true) {
-        // Refresh the receipts list to get the full data
+
         await ref.refresh(widget.isInvoice == true
             ? getAllInvoiceProvider.future
             : getAllReceiptProvider.future);
         
-        // Find the newly created receipt with full data
+
         final receipts = ref.read(widget.isInvoice == true
             ? getAllInvoiceProvider
             : getAllReceiptProvider).value ?? [];
@@ -721,6 +964,13 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
         errorMessage = 'Connection is slow. Please try again.';
       } else if (errorMessage.contains('unauthorized')) {
         errorMessage = 'Session expired. Please log in again.';
+      } else if (errorMessage.contains('Server Error') || errorMessage.contains('500')) {
+        // Handle 500 Internal Server Error specifically for services
+        if (widget.isService == true) {
+          errorMessage = 'Unable to generate service ${widget.isInvoice! ? "invoice" : "receipt"}. Please check your inputs and try again.';
+        } else {
+          errorMessage = 'Server error occurred. Please try again later.';
+        }
       } else if (errorMessage.startsWith('ApiErrorResponseV2(')) {
         // Extract just the meaningful part from complex error messages
         final match = RegExp(r'not enough stock.*?Available: (\d+)').firstMatch(errorMessage);
@@ -748,7 +998,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
       final hasProductName = productNameControllers[i].text.trim().isNotEmpty;
       
       if (!hasExistingProduct && !hasProductName) {
-        return "Missing product $index name";
+        return "Missing ${widget.isService! ? 'service' : 'product'} $index name";
       }
     }
     return "";
@@ -792,7 +1042,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                         height: responsiveData.scaleHeight(16),
                       ),
                       Text(
-                        'Generate ${widget.isInvoice == true ? "invoice" : "receipt"}',
+                        'Generate ${widget.isInvoice == true ? "invoice" : "receipt"} for ${widget.isService == true ? "service" : "product"}',
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
                       SizedBox(
@@ -820,8 +1070,6 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                           focusNode: clientNameFocusNode,
                           keyboardType: TextInputType.name,
                           inputFormatters: [
-                            // LengthLimitingTextInputFormatter(11),
-                            // FilteringTextInputFormatter.digitsOnly,
                             FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]'))
                           ],
                           validator: (val) {
@@ -835,6 +1083,53 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                       SizedBox(
                         height: responsiveData.scaleHeight(20),
                       ),
+                      Text(
+                        'Client phone number',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      AppTextField(
+                        hintText: 'Phone number',
+                        controller: clientPhoneController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(11),
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        validator: (val) {
+                          if (val != null && val.trim().isNotEmpty) {
+                            // Only validate if not empty
+                            if (!val.trim().isValidPhone) {
+                              return 'Enter a valid phone number';
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(20),
+                      ),
+                      Text(
+                        'Client address',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(8),
+                      ),
+                      AppTextField(
+                        hintText: 'Address',
+                        controller: clientAddressController,
+                        keyboardType: TextInputType.streetAddress,
+                        validator: (val) {
+
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: responsiveData.scaleHeight(20),
+                      ),
                       ListView.separated(
                         physics: const NeverScrollableScrollPhysics(),
                         separatorBuilder: (ctx, idx) {
@@ -843,7 +1138,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                             children: [
                               SizedBox(height: responsiveData.scaleHeight(12)),
                               Text(
-                                'PRODUCT ${idx + 2} DETAILS',
+                                '${widget.isService == true ? "SERVICE" : "PRODUCT"} ${idx + 2} DETAILS',
                                 style: TextStyle(
                                   fontSize: Responsive.fontSize(context, 15),
                                   fontWeight: FontWeight.w500,
@@ -904,7 +1199,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                               color: primaryColor2,
                             ),
                             Text(
-                              'Add another product',
+                              'Add another ${widget.isService == true ? "service" : "product"}',
                               style: Theme.of(context)
                                   .textTheme
                                   .displayMedium!
@@ -924,7 +1219,7 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                         children: [
                           AppButton(
                             buttonText: isLoading ? 'Generating...' : 'Generate',
-                            onPressed: isLoading ? null : () {
+                            onPressed: isLoading ? null : () async {
                               if (formKey.currentState!.validate()) {
                                 formKey.currentState!.save();
                                 if (clientNameController.text.trim().isEmpty) {
@@ -936,6 +1231,22 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                                   ToastService.showErrorSnackBar("Please select a payment method");
                                   return;
                                 }
+                                
+                                // Check if bank details are required for invoices
+                                if (widget.isInvoice == true) {
+                                  final business = ref.read(getCurrentBusinessProvider);
+                                  if (business?.bankName == null || business?.bankName?.isEmpty == true || 
+                                      business?.accountNumber == null || business?.accountNumber?.isEmpty == true || 
+                                      business?.accountName == null || business?.accountName?.isEmpty == true) {
+
+                                    final result = await locator<PayvidenceAppRouter>().push(UpdateBankDetailsRoute());
+                                    if (result != true) {
+
+                                      return;
+                                    }
+                                  }
+                                }
+                                
                                 isDraft = false;
                                 createReceipt();
                               }
@@ -944,26 +1255,28 @@ class _GenerateReceiptState extends ConsumerState<GenerateReceipt> {
                           SizedBox(
                             height: responsiveData.scaleHeight(26),
                           ),
-                          GestureDetector(
-                            onTap: isLoading ? null : () {
-                              if (formKey.currentState!.validate()) {
-                                formKey.currentState!.save();
-                                if (clientNameController.text.trim().isEmpty) {
-                                  ToastService.showErrorSnackBar("Please enter client name");
-                                  return;
+                          // Only show save as draft for products, not for services
+                          if (!widget.isService!) 
+                            GestureDetector(
+                              onTap: isLoading ? null : () {
+                                if (formKey.currentState!.validate()) {
+                                  formKey.currentState!.save();
+                                  if (clientNameController.text.trim().isEmpty) {
+                                    ToastService.showErrorSnackBar("Please enter client name");
+                                    return;
+                                  }
+                                  isDraft = true;
+                                  createReceipt();
                                 }
-                                isDraft = true;
-                                createReceipt();
-                              }
-                            },
-                            child: Text(
-                              'Save as draft',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .copyWith(color: isLoading ? Colors.grey : primaryColor2),
+                              },
+                              child: Text(
+                                'Save as draft',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(color: isLoading ? Colors.grey : primaryColor2),
+                              ),
                             ),
-                          ),
                           SizedBox(
                             height: responsiveData.scaleHeight(14),
                           ),
@@ -987,12 +1300,13 @@ class FormFields extends StatefulWidget {
   final TextEditingController discountController;
   final TextEditingController productNameController;
   final TextEditingController productPriceController;
-  final Future<Product?> Function(int index) onPressed;
+  final Future<Product?> Function(int index)? onPressed;
   final int index;
   Product? product;
   final bool? invoiceToReceipt;
   final bool? productNameEditable;
   final bool? productPriceEditable;
+  final bool? isService;
   final Function(int index)? onRemove;
 
   FormFields({
@@ -1001,12 +1315,13 @@ class FormFields extends StatefulWidget {
     required this.discountController,
     required this.productNameController,
     required this.productPriceController,
-    required this.onPressed,
+    this.onPressed,
     required this.index,
     this.product,
     this.invoiceToReceipt = false,
     this.productNameEditable,
     this.productPriceEditable,
+    this.isService = false,
     this.onRemove,
   });
 
@@ -1221,7 +1536,7 @@ class _FormFieldsState extends State<FormFields> {
             ),
           ),
         Text(
-          'Product name',
+          widget.isService == true ? 'Service name' : 'Product name',
           style: Theme.of(context).textTheme.displaySmall,
         ),
         SizedBox(
@@ -1230,7 +1545,7 @@ class _FormFieldsState extends State<FormFields> {
         CompositedTransformTarget(
           link: _productLayerLink,
           child: AppTextField(
-            hintText: 'Type or select product name',
+            hintText: widget.isService == true ? 'Enter service name' : 'Type or select product name',
             controller: widget.productNameController,
             focusNode: productNameFocusNode,
             keyboardType: TextInputType.text,
@@ -1247,14 +1562,14 @@ class _FormFieldsState extends State<FormFields> {
           height: responsiveData.scaleHeight(20),
         ),
         Text(
-          'Product price',
+          widget.isService == true ? 'Service price' : 'Product price',
           style: Theme.of(context).textTheme.displaySmall,
         ),
         SizedBox(
           height: responsiveData.scaleHeight(8),
         ),
         AppTextField(
-          hintText: 'Product price',
+          hintText: widget.isService == true ? 'Service price' : 'Product price',
           controller: widget.productPriceController,
           keyboardType: TextInputType.number,
           enabled: widget.productPriceEditable ?? (!widget.invoiceToReceipt! && !isExistingProduct),
@@ -1276,30 +1591,37 @@ class _FormFieldsState extends State<FormFields> {
         SizedBox(
           height: responsiveData.scaleHeight(20),
         ),
-        Text(
-          'Quantity purchased',
-          style: Theme.of(context).textTheme.displaySmall,
-        ),
-        SizedBox(
-          height: responsiveData.scaleHeight(8),
-        ),
-        AppTextField(
-          hintText: 'Quantity purchased',
-          controller: widget.qtyController,
-          keyboardType: TextInputType.number,
-          validator: (val) {
-            if (val!.trim().isEmpty) {
-              return 'Enter quantity purchased';
-            }
-            if (int.tryParse(val)! <= 0) {
-              return 'Enter a value greater than 0';
-            }
-            return null;
-          },
-        ),
-        SizedBox(
-          height: responsiveData.scaleHeight(20),
-        ),
+        // Only show quantity field for products, not for services
+        // Show different fields based on whether it's a service or product
+        if (widget.isService != true) ...[  
+          // For products
+          Text(
+            'Quantity purchased',
+            style: Theme.of(context).textTheme.displaySmall,
+          ),
+          SizedBox(
+            height: responsiveData.scaleHeight(8),
+          ),
+          AppTextField(
+            hintText: 'Quantity purchased',
+            controller: widget.qtyController,
+            keyboardType: TextInputType.number,
+            validator: (val) {
+              if (val!.trim().isEmpty) {
+                return 'Enter quantity purchased';
+              }
+              if (int.tryParse(val)! <= 0) {
+                return 'Enter a value greater than 0';
+              }
+              return null;
+            },
+          ),
+          SizedBox(
+            height: responsiveData.scaleHeight(20),
+          ),
+        ],
+        
+        // Discount field for both products and services
         Text(
           'Discount percentage (if any)',
           style: Theme.of(context).textTheme.displaySmall,
@@ -1310,6 +1632,23 @@ class _FormFieldsState extends State<FormFields> {
         AppTextField(
           hintText: 'Discount percentage',
           controller: widget.discountController,
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(3),
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          validator: (val) {
+            if (val != null && val.isNotEmpty) {
+              final discount = int.tryParse(val);
+              if (discount == null) {
+                return 'Enter a valid number';
+              }
+              if (discount > 100) {
+                return 'Discount cannot exceed 100%';
+              }
+            }
+            return null;
+          },
           suffixIcon: Padding(
             padding: EdgeInsets.fromLTRB(
               responsiveData.scaleWidth(16),
@@ -1325,7 +1664,8 @@ class _FormFieldsState extends State<FormFields> {
                   .copyWith(fontSize: Responsive.fontSize(context, 14)),
             ),
           ),
-        ),
+        )
+        // Discount field is now handled in the conditional above
       ],
     );
   }

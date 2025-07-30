@@ -24,7 +24,8 @@ class OtpScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formKey = useMemoized(() => GlobalKey<FormState>(), []);
-    final email = locator<SessionManager>().get<String>(SessionConstants.userEmail);
+    final email = locator<SessionManager>().get<String>(SessionConstants.signupEmail) ?? 
+                   locator<SessionManager>().get<String>(SessionConstants.userEmail);
     final viewModel = ref.read(otpViewModelProvider);
     final pinController = useTextEditingController();
     final seconds = useState(17);
@@ -82,7 +83,7 @@ class OtpScreen extends HookConsumerWidget {
                   ),
                   SizedBox(height: responsiveData.scaleHeight(8)),
                   Text(
-                    'A code has been sent to $email',
+                    'A code has been sent to ${email ?? 'your email'}',
                     style: Theme.of(context).textTheme.displaySmall!,
                   ),
                   SizedBox(height: responsiveData.scaleHeight(32)),
@@ -128,6 +129,18 @@ class OtpScreen extends HookConsumerWidget {
                                     (route) => route is OnboardingScreen);
                             locator<PayvidenceAppRouter>()
                                 .navigateNamed(PayvidenceRoutes.accountSuccess);
+                          },
+                          navigateToLogin: () {
+                            locator<PayvidenceAppRouter>().popUntil(
+                                    (route) => route is OnboardingScreen);
+                            locator<PayvidenceAppRouter>()
+                                .navigateNamed(PayvidenceRoutes.login);
+                          },
+                          navigateToEmailVerified: () {
+                            locator<PayvidenceAppRouter>().popUntil(
+                                    (route) => route is OnboardingScreen);
+                            locator<PayvidenceAppRouter>()
+                                .navigateNamed(PayvidenceRoutes.emailVerified);
                           },
                         );
                       } else {

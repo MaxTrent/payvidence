@@ -15,16 +15,18 @@ class TransactionTile extends HookWidget {
   String amount;
   String receiptOrInvoice;
   String imageUrl;
+  bool isService;
 
-  TransactionTile(
-      {super.key,
-        required this.amount,
-        required this.dateTime,
-        required this.productName,
-        required this.receiptOrInvoice,
-        required this.unitSold,
-        required this.imageUrl
-      });
+  TransactionTile({
+      super.key,
+      required this.amount,
+      required this.dateTime,
+      required this.productName,
+      required this.receiptOrInvoice,
+      required this.unitSold,
+      required this.imageUrl,
+      this.isService = false
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +81,13 @@ class TransactionTile extends HookWidget {
                 ),
                 Row(
                   children: [
-                    Text('$unitSold units sold',
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                            fontSize: Responsive.fontSize(context, 14),
-                            color: appGrey4)),
+                    Text(
+                      isService ? 'Completed' : '$unitSold units sold',
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: Responsive.fontSize(context, 14),
+                          color: appGrey4),
+                    ),
                     SizedBox(
                       width: responsiveData.scaleWidth(10),
                     ),

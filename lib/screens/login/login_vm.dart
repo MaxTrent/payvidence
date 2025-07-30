@@ -50,11 +50,15 @@ class LoginViewModel extends BaseChangeNotifier {
     // Prioritize signup email over saved login email
     final signupEmail = locator<SessionManager>().get<String>(SessionConstants.signupEmail);
     if (signupEmail != null && signupEmail.isNotEmpty) {
-      // Clear signup email after using it once
-      await locator<SessionManager>().remove(SessionConstants.signupEmail);
+      // Don't remove the signup email yet - we'll remove it after successful login
+      developer.log('Using signup email for login: $signupEmail');
+      // Also update the saved login email to ensure consistency
+      await locator<SessionManager>().save(key: SessionConstants.savedLoginEmail, value: signupEmail);
       return signupEmail;
     }
-    return locator<SessionManager>().get<String>(SessionConstants.savedLoginEmail);
+    final savedEmail = locator<SessionManager>().get<String>(SessionConstants.savedLoginEmail);
+    developer.log('Using saved login email: $savedEmail');
+    return savedEmail;
   }
 
   Future<void> saveEmailForNextLogin(String email) async {
@@ -95,6 +99,7 @@ class LoginViewModel extends BaseChangeNotifier {
     required String email,
     required String password,
     required Function() navigateOnSuccess,
+    required Function() navigateToOtp,
   }) async {
     _isLoading = true;
     _errorMessage = '';
@@ -107,11 +112,21 @@ class LoginViewModel extends BaseChangeNotifier {
       if (response.success) {
         var user = User.fromJson(response.data!["data"]);
         developer.log('Login successful, user: ${user.account.id}');
+        developer.log('Token: ${user.token}, RefreshToken: ${user.refreshToken}');
+
+        // Check if tokens are null (halfway signup case)
+        if (user.token == null || user.refreshToken == null) {
+          developer.log('Tokens are null - halfway signup detected, redirecting to OTP');
+          // Save email and user ID for OTP verification
+          await locator<SessionManager>().save(key: SessionConstants.signupEmail, value: email);
+          await locator<SessionManager>().save(key: SessionConstants.userId, value: user.account.id ?? '');
+          navigateToOtp();
+          return;
+        }
 
         // Save user credentials
         await saveUserCredentials(
           userId: user.account.id ?? '',
-          
           firstName: user.account.firstName,
           lastName: user.account.lastName ?? '',
           email: user.account.email ?? '',
@@ -123,6 +138,9 @@ class LoginViewModel extends BaseChangeNotifier {
 
         // Save email for next login
         await saveEmailForNextLogin(email);
+        
+        // Now that login is successful, we can safely remove the signup email
+        await locator<SessionManager>().remove(SessionConstants.signupEmail);
 
         await locator<SessionManager>().save(key: SessionConstants.isUserLoggedIn, value: true);
         await locator<SessionManager>().save(key: SessionConstants.accessTokenPref, value: user.token);

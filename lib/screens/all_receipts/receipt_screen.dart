@@ -121,7 +121,7 @@ class ReceiptScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       AppButton(
-                        buttonText: 'Share ${isInvoice == true ? 'invoice' : 'receipt'}',
+                        buttonText: 'Share ${isInvoice == true ? 'Invoice' : 'Receipt'}',
                         onPressed: () {
                           shareReceipt();
                         },
@@ -419,7 +419,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 color: Colors.white),
                             children: [
                               const TextSpan(text: 'RATE ('),
-                              WidgetSpan(
+                              const WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child: AppNaira(fontSize: 10, color: Colors.white),
                               ),
@@ -458,7 +458,7 @@ class ContainerWithClippedCircles extends StatelessWidget {
                                 color: Colors.white),
                             children: [
                               const TextSpan(text: 'AMT. ('),
-                              WidgetSpan(
+                              const WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
                                 child: AppNaira(fontSize: 10, color: Colors.white),
                               ),
@@ -485,8 +485,6 @@ class ContainerWithClippedCircles extends StatelessWidget {
                             row.product?.name ?? '',
                             textAlign: TextAlign.left,
                             softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
                             style: Theme.of(context)
                                 .textTheme
                                 .displaySmall!
@@ -912,14 +910,39 @@ class ContainerWithClippedCircles extends StatelessWidget {
                 ),
               ),
               SizedBox(height: responsiveData.scaleHeight(24)),
-              Text(
-                "Generated with Payvidence",
+              RichText(
                 textAlign: TextAlign.center,
-                style: GoogleFonts.marckScript(
-                  fontSize: capFontSize(12, 16), // Reduced from 16, capped at 16
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                    fontSize: capFontSize(12, 16),
+                    color: Colors.black,
+                  ),
+                  children: [
+                    const TextSpan(
+                      text: 'Created with ',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: 'Payvidence',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.top,
+                      child: Text(
+                        '®',
+                        style: TextStyle(
+                          fontSize: capFontSize(13, 15),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: responsiveData.scaleHeight(12)),
