@@ -41,6 +41,9 @@ class Transaction {
   final String status;
   final String? modeOfPayment;
   final double total;
+  final String? cancellationReason;
+  final bool? isCancelled;
+  final bool? canBeCancelled;
   final DateTime? publishedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -55,6 +58,9 @@ class Transaction {
     required this.status,
     this.modeOfPayment,
     required this.total,
+    this.cancellationReason,
+    this.isCancelled,
+    this.canBeCancelled,
     this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
@@ -71,6 +77,9 @@ class Transaction {
       status: json['status'] as String,
       modeOfPayment: json['mode_of_payment'] as String?,
       total: double.parse(json['total'] as String),
+      cancellationReason: json['cancelled_reason'] as String?,
+      isCancelled: json['is_cancelled'] as bool?,
+      canBeCancelled: json['can_be_cancelled'] as bool?,
       publishedAt: json['published_at'] != null
           ? DateTime.parse(json['published_at'] as String)
           : null,
@@ -104,6 +113,9 @@ class Transaction {
       'status': status,
       'mode_of_payment': modeOfPayment,
       'total': total.toString(),
+      'cancelled_reason': cancellationReason,
+      'is_cancelled': isCancelled,
+      'can_be_cancelled': canBeCancelled,
       'published_at': publishedAt?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),

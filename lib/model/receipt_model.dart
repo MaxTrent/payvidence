@@ -11,6 +11,11 @@ class Receipt {
   final String? status;
   final String? modeOfPayment;
   final String? total;
+  final String? cancellationReason;
+  final String? recordType;
+  final bool? isDraft;
+  final bool? isCancelled;
+  final bool? canBeCancelled;
   final DateTime? publishedAt;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -25,6 +30,11 @@ class Receipt {
     this.status,
     this.modeOfPayment,
     this.total,
+    this.cancellationReason,
+    this.recordType,
+    this.isDraft,
+    this.isCancelled,
+    this.canBeCancelled,
     this.publishedAt,
     this.createdAt,
     this.updatedAt,
@@ -52,6 +62,11 @@ class Receipt {
     status: json["status"],
     modeOfPayment: json["mode_of_payment"],
     total: json["total"],
+    cancellationReason: json["cancelled_reason"],
+    recordType: json["record_type"],
+    isDraft: json["is_draft"],
+    isCancelled: json["is_cancelled"],
+    canBeCancelled: json["can_be_cancelled"],
     publishedAt: json["published_at"] == null
         ? null
         : DateTime.parse(json["published_at"]),
@@ -90,6 +105,11 @@ class Receipt {
     "status": status,
     "mode_of_payment": modeOfPayment,
     "total": total,
+    "cancellation_reason": cancellationReason,
+    "record_type": recordType,
+    "is_draft": isDraft,
+    "is_cancelled": isCancelled,
+    "can_be_cancelled": canBeCancelled,
     "published_at": publishedAt?.toIso8601String(),
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),

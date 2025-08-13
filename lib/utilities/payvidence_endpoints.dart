@@ -43,6 +43,7 @@ class PayvidenceEndpoints {
 
 //Transaction Endpoints
   static String get getAllTransactions => '/api/sale-record';
+  static String cancelTransaction(String transactionId) => '/api/sale-record/$transactionId/cancel';
 
 //Client Endpoints
   static String createClient(String businessId) =>

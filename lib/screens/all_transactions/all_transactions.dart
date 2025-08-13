@@ -379,9 +379,15 @@ class AllTransactions extends HookConsumerWidget {
                                         total: transaction.total.toString(),
                                         createdAt: transaction.createdAt,
                                         modeOfPayment: transaction.modeOfPayment,
+                                        cancellationReason: transaction.cancellationReason,
+                                        isCancelled: transaction.isCancelled,
+                                        canBeCancelled: transaction.canBeCancelled,
                                       );
-                                      locator<PayvidenceAppRouter>().push(
-                                        ReceiptScreenRoute(record: receipt, isInvoice: isInvoice, source: 'transactions'),
+                                      locator<PayvidenceAppRouter>().navigate(
+                                        TransactionDetailsRoute(
+                                          transaction: receipt,
+                                          isInvoice: isInvoice,
+                                        ),
                                       );
                                     },
                                     child: TransactionTile(
@@ -394,6 +400,7 @@ class AllTransactions extends HookConsumerWidget {
                                       unitSold: unitSold,
                                       imageUrl: imageUrl,
                                       isService: isService,
+                                      isCancelled: transaction.isCancelled ?? false,
                                     ),
                                   ),
                                 );
