@@ -341,6 +341,7 @@ class HomeScreen extends HookConsumerWidget {
                                 : 'Receipt',
                             unitSold: '0',
                             imageUrl: '',
+                            isCancelled: transaction.isCancelled ?? false,
                           );
                           final isLast = transactionsViewModel.transactions.take(5).toList().indexOf(transaction) == transactionsViewModel.transactions.take(5).length - 1;
                           return isLast ? [tile] : [tile, SizedBox(height: responsiveData.scaleHeight(12))];
@@ -373,9 +374,15 @@ class HomeScreen extends HookConsumerWidget {
                               total: transaction.total.toString(),
                               createdAt: transaction.createdAt,
                               modeOfPayment: transaction.modeOfPayment,
+                              cancellationReason: transaction.cancellationReason,
+                              isCancelled: transaction.isCancelled,
+                              canBeCancelled: transaction.canBeCancelled,
                             );
-                            locator<PayvidenceAppRouter>().push(
-                              ReceiptScreenRoute(record: receipt, isInvoice: isInvoice, source: 'home'),
+                            locator<PayvidenceAppRouter>().navigate(
+                              TransactionDetailsRoute(
+                                transaction: receipt,
+                                isInvoice: isInvoice,
+                              ),
                             );
                           },
                           child: TransactionTile(
@@ -388,6 +395,7 @@ class HomeScreen extends HookConsumerWidget {
                             unitSold: unitSold,
                             imageUrl: imageUrl,
                             isService: isService,
+                            isCancelled: transaction.isCancelled ?? false,
                           ),
                         );
                         

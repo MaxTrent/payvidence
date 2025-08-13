@@ -449,8 +449,8 @@ class _AllInvoicesContent extends HookConsumerWidget {
                               child: GestureDetector(
                                 onTap: () {
                                   locator<PayvidenceAppRouter>().navigate(
-                                    ReceiptScreenRoute(
-                                      record: filteredData[index],
+                                    TransactionDetailsRoute(
+                                      transaction: filteredData[index],
                                       isInvoice: true,
                                     ),
                                   );

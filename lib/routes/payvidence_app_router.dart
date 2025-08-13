@@ -182,6 +182,15 @@ class PayvidenceAppRouter extends RootStackRouter {
         AutoRoute(
         page: EmailVerifiedRoute.page,
         path: PayvidenceRoutes.emailVerified),
+        AutoRoute(
+        page: TransactionDetailsRoute.page,
+        path: PayvidenceRoutes.transactionDetails),
+        AutoRoute(
+        page: CancelTransactionRoute.page,
+        path: PayvidenceRoutes.cancelTransaction),
+        AutoRoute(
+        page: ReceiptPreviewRoute.page,
+        path: PayvidenceRoutes.receiptPreview),
       ];
 }
 
@@ -274,4 +283,7 @@ class PayvidenceRoutes {
   static String get editBusiness => '/editBusiness/:businessId';
   static String get editBankDetails => '/editBankDetails/:businessId';
   static String get emailVerified => '/emailVerified';
+  static String get transactionDetails => '/transactionDetails';
+  static String get cancelTransaction => '/cancelTransaction';
+  static String get receiptPreview => '/receiptPreview';
 }

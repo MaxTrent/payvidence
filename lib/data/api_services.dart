@@ -363,4 +363,17 @@ class ApiServices {
     return ApiResult.fromJson(response);
   }
 
+  Future<ApiResult> cancelTransaction(String transactionId, String reason) async {
+    var requestData = {
+      "reason": reason,
+    };
+
+    var response = await locator<NetworkService>().post(
+        PayvidenceEndpoints.cancelTransaction(transactionId),
+        data: requestData,
+        useToken: true);
+
+    return ApiResult.fromJson(response);
+  }
+
 }

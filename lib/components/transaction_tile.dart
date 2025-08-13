@@ -16,6 +16,7 @@ class TransactionTile extends HookWidget {
   String receiptOrInvoice;
   String imageUrl;
   bool isService;
+  bool isCancelled;
 
   TransactionTile({
       super.key,
@@ -25,7 +26,8 @@ class TransactionTile extends HookWidget {
       required this.receiptOrInvoice,
       required this.unitSold,
       required this.imageUrl,
-      this.isService = false
+      this.isService = false,
+      this.isCancelled = false,
   });
 
   @override
@@ -40,27 +42,51 @@ class TransactionTile extends HookWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            height: responsiveData.scaleHeight(56),
-            width: responsiveData.scaleHeight(56),
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.grey[800] : Colors.grey[800],
-            ),
-            child: imageUrl.isNotEmpty
-                ? Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
+          Stack(
+            children: [
+              Container(
+                height: responsiveData.scaleHeight(56),
+                width: responsiveData.scaleHeight(56),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? Colors.grey[800] : Colors.grey[800],
+                ),
+                child: imageUrl.isNotEmpty
+                    ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          Assets.png.payvidenceLogo.path,
+                          fit: BoxFit.contain,
+                        );
+                      },
+                    )
+                    : Image.asset(
                       Assets.png.payvidenceLogo.path,
                       fit: BoxFit.contain,
-                    );
-                  },
-                )
-                : Image.asset(
-                  Assets.png.payvidenceLogo.path,
-                  fit: BoxFit.contain,
+                    ),
+              ),
+              if (isCancelled)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(3)),
+                  child: Container(
+                    height: responsiveData.scaleHeight(23),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(responsiveData.radius)
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Cancelled',
+                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: Responsive.fontSize(context, 12), 
+                          color: appRed
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
+            ],
           ),
           SizedBox(
             width: responsiveData.scaleWidth(14),

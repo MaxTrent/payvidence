@@ -471,8 +471,8 @@ class _AllReceiptsContent extends HookConsumerWidget {
                               child: GestureDetector(
                                 onTap: () {
                                   locator<PayvidenceAppRouter>().navigate(
-                                    ReceiptScreenRoute(
-                                      record: filteredData[index],
+                                    TransactionDetailsRoute(
+                                      transaction: filteredData[index],
                                       isInvoice: false,
                                     ),
                                   );
@@ -657,28 +657,52 @@ class ReceiptTile extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          height: responsiveData.scaleHeight(72),
-          width: responsiveData.scaleHeight(72),
-          decoration: BoxDecoration(
-            color: isDarkMode ? Colors.grey[800] : Colors.grey[700],
-          ),
-          child: (receipt.recordProductDetails[0].product?.logoUrl != null && 
-                 receipt.recordProductDetails[0].product!.logoUrl!.isNotEmpty)
-              ? Image.network(
-                receipt.recordProductDetails[0].product!.logoUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
+        Stack(
+          children: [
+            Container(
+              height: responsiveData.scaleHeight(72),
+              width: responsiveData.scaleHeight(72),
+              decoration: BoxDecoration(
+                color: isDarkMode ? Colors.grey[800] : Colors.grey[700],
+              ),
+              child: (receipt.recordProductDetails[0].product?.logoUrl != null && 
+                     receipt.recordProductDetails[0].product!.logoUrl!.isNotEmpty)
+                  ? Image.network(
+                    receipt.recordProductDetails[0].product!.logoUrl!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        Assets.png.payvidenceLogo.path,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  )
+                  : Image.asset(
                     Assets.png.payvidenceLogo.path,
                     fit: BoxFit.cover,
-                  );
-                },
-              )
-              : Image.asset(
-                Assets.png.payvidenceLogo.path,
-                fit: BoxFit.cover,
+                  ),
+            ),
+            if (receipt.isCancelled == true)
+              Padding(
+                padding:  EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(3)),
+                child: Container(
+                  height: responsiveData.scaleHeight(23),
+                  // width: responsiveData.scaleHeight(72),
+
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(responsiveData.radius)
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Cancelled',
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontSize: Responsive.fontSize(context, 12), color: appRed)
+
+                    ),
+                  ),
+                ),
               ),
+          ],
         ),
         SizedBox(width: responsiveData.scaleWidth(14)),
         Expanded(

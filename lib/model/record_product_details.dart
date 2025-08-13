@@ -4,6 +4,7 @@ import 'package:payvidence/model/product_model.dart';
 class RecordProductDetail {
   final String? id;
   final String? saleRecordId;
+  final String? recordId;
   final String? productId;
   final int? quantity;
   final String? price;
@@ -17,6 +18,7 @@ class RecordProductDetail {
   RecordProductDetail({
     this.id,
     this.saleRecordId,
+    this.recordId,
     this.productId,
     this.quantity,
     this.price,
@@ -75,6 +77,7 @@ class RecordProductDetail {
     return RecordProductDetail(
       id: json["id"] as String?,
       saleRecordId: json["sale_record_id"] as String?,
+      recordId: json["record_id"] as String?,
       productId: productId,
       quantity: quantity,
       price: json["price"]?.toString(),
@@ -109,6 +112,7 @@ class RecordProductDetail {
   Map<String, dynamic> toJson() => {
     "id": id,
     "sale_record_id": saleRecordId,
+    "record_id": recordId,
     "product_id": productId,
     "quantity": quantity,
     "price": price,
