@@ -205,6 +205,7 @@ class TransactionDetails extends HookConsumerWidget {
                     ReceiptScreenRoute(
                       record: transaction,
                       isInvoice: isInvoice,
+                      source: 'transaction_details',
                     ),
                   );
                 },

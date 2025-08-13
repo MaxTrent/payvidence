@@ -64,6 +64,8 @@ class ReceiptScreen extends ConsumerWidget {
               Navigator.of(context).pop();
             } else if (source == 'transactions') {
               locator<PayvidenceAppRouter>().navigate(const AllTransactionsRoute());
+            } else if (source == 'transaction_details') {
+              Navigator.of(context).pop();
             } else if (source == 'product') {
               locator<PayvidenceAppRouter>().navigate(ProductRoute());
             } else {
