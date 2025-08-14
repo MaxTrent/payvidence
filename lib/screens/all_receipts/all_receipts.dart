@@ -50,7 +50,7 @@ class _AllReceiptsContent extends HookConsumerWidget {
     final searchController = useTextEditingController();
     final searchQuery = useState<String>('');
     final productNumber = ValueNotifier<int?>(null);
-    final isServiceMode = useState<bool?>(null); // null represents 'All'
+    final isServiceMode = useState<bool?>(null);
     final responsiveData = ResponsiveInherited.of(context);
 
     useEffect(() {
