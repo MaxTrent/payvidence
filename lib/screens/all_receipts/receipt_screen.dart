@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:payvidence/model/receipt_model.dart';
 import 'package:payvidence/routes/payvidence_app_router.gr.dart';
 import 'package:payvidence/utilities/extensions.dart';
+import 'package:payvidence/utilities/number_to_words.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:ui' as ui;
@@ -766,7 +767,38 @@ class ContainerWithClippedCircles extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: responsiveData.scaleHeight(38)),
+              SizedBox(height: responsiveData.scaleHeight(24)),
+              // Amount in words section
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(18)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "TOTAL AMOUNT IN WORDS:",
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayLarge!
+                          .copyWith(
+                          fontSize: capFontSize(12, 16),
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(height: responsiveData.scaleHeight(8)),
+                    Text(
+                      NumberToWords.convert(grandTotal).toUpperCase(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall!
+                          .copyWith(
+                          fontSize: capFontSize(11, 15),
+                          color: Colors.black,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: responsiveData.scaleHeight(24)),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: responsiveData.scaleWidth(18)),
                 child: Row(
