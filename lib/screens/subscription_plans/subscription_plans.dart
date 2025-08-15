@@ -230,10 +230,10 @@ class SubscriptionPlans extends HookConsumerWidget {
             status: plan.businessAccountsAllowed.toString()),
         PlanList(
             description: 'Receipt generation per month',
-            status: plan.receiptGenerationPerMonth.toString()),
+            status: plan.receiptGenerationDisplay),
         PlanList(
             description: 'Invoice generation per month',
-            status: plan.invoiceGenerationPerMonth.toString()),
+            status: plan.invoiceGenerationDisplay),
         PlanList(description: 'Sales report', status: plan.salesReport ? 'Yes' : 'No'),
         PlanList(description: 'Receipt sharing', status: plan.receiptSharing ? 'Yes' : 'No'),
         PlanList(description: 'Receipts printing', status: plan.receiptPrinting ? 'Yes' : 'No'),

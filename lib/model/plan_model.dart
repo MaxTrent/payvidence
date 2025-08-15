@@ -26,8 +26,8 @@ class Plan {
   final String id;
   final String name;
   final int businessAccountsAllowed;
-  final int invoiceGenerationPerMonth;
-  final int receiptGenerationPerMonth;
+  final int? invoiceGenerationPerMonth;
+  final int? receiptGenerationPerMonth;
   final bool salesReport;
   final bool receiptSharing;
   final bool receiptPrinting;
@@ -74,10 +74,8 @@ class Plan {
       id: json['id'] as String,
       name: json['name'] as String,
       businessAccountsAllowed: json['business_accounts_allowed'] as int,
-      invoiceGenerationPerMonth:
-          int.parse(json['invoice_generation_per_month'] as String),
-      receiptGenerationPerMonth:
-          int.parse(json['receipt_generation_per_month'] as String),
+      invoiceGenerationPerMonth: _parseIntOrNull(json['invoice_generation_per_month']),
+      receiptGenerationPerMonth: _parseIntOrNull(json['receipt_generation_per_month']),
       salesReport: json['sales_report'] as bool,
       receiptSharing: json['receipt_sharing'] as bool,
       receiptPrinting: json['receipt_printing'] as bool,
@@ -98,13 +96,20 @@ class Plan {
     );
   }
 
+  // Helper methods
+  bool get hasUnlimitedInvoices => invoiceGenerationPerMonth == null;
+  bool get hasUnlimitedReceipts => receiptGenerationPerMonth == null;
+  
+  String get invoiceGenerationDisplay => hasUnlimitedInvoices ? 'Unlimited' : (invoiceGenerationPerMonth?.toString() ?? 'Unlimited');
+  String get receiptGenerationDisplay => hasUnlimitedReceipts ? 'Unlimited' : (receiptGenerationPerMonth?.toString() ?? 'Unlimited');
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
       'business_accounts_allowed': businessAccountsAllowed,
-      'invoice_generation_per_month': invoiceGenerationPerMonth.toString(),
-      'receipt_generation_per_month': receiptGenerationPerMonth.toString(),
+      'invoice_generation_per_month': invoiceGenerationPerMonth?.toString() ?? 'unlimited',
+      'receipt_generation_per_month': receiptGenerationPerMonth?.toString() ?? 'unlimited',
       'sales_report': salesReport ? 1 : 0,
       'receipt_sharing': receiptSharing ? 1 : 0,
       'receipt_printing': receiptPrinting ? 1 : 0,
@@ -137,4 +142,16 @@ List<Plan> parsePlanList(dynamic data) {
         .toList();
   }
   throw Exception('Expected a list of plans');
+}
+
+// Helper function to parse int or return null for "unlimited"
+int? _parseIntOrNull(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is String) {
+    final trimmedValue = value.trim().toLowerCase();
+    if (trimmedValue == 'unlimited' || trimmedValue.isEmpty) return null;
+    return int.tryParse(value);
+  }
+  return null;
 }
