@@ -376,4 +376,16 @@ class ApiServices {
     return ApiResult.fromJson(response);
   }
 
+  Future<ApiResult> deleteAccount(String password) async {
+    var requestData = {
+      "password": password,
+    };
+
+    var response = await locator<NetworkService>().delete(
+        PayvidenceEndpoints.getAccount,
+        data: requestData);
+
+    return ApiResult.fromJson(response);
+  }
+
 }

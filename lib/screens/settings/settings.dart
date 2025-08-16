@@ -7,6 +7,7 @@ import 'package:payvidence/screens/profile/profile.dart';
 import 'package:payvidence/utilities/responsive.dart';
 import 'package:payvidence/utilities/responsive_wrapper.dart';
 import 'package:payvidence/utilities/animations.dart';
+import 'package:payvidence/utilities/delete_account_helper.dart';
 import '../../gen/assets.gen.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
@@ -86,6 +87,17 @@ class Settings extends HookWidget {
                   },
                   title: 'Notifications setting',
                   icon: Assets.svg.notificationBing,
+                ),
+              ),
+              SlideInWidget(
+                begin: const Offset(0, 0.3),
+                delay: const Duration(milliseconds: 300),
+                child: ProfileOptionTile(
+                  isDarkMode: isDarkMode,
+                  onTap: () => DeleteAccountHelper.showDeleteAccountDialog(context),
+                  title: 'Delete account',
+                  icon: Assets.svg.delete,
+                  color: Colors.red,
                 ),
               ),
               SizedBox(height: responsiveData.scaleHeight(28)),
