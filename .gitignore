@@ -44,4 +44,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Android fingerprint files
+**/configure_fingerprint.bin
+
 .env
