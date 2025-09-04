@@ -7,6 +7,7 @@ import 'package:payvidence/components/keyboard_dismissible_scaffold.dart';
 import 'package:payvidence/providers/brand_providers/current_brand_provider.dart';
 import 'package:payvidence/providers/brand_providers/get_all_brand_provider.dart';
 import 'package:payvidence/utilities/toast_service.dart';
+import 'package:payvidence/utilities/subscription_error_handler.dart';
 import '../../components/app_button.dart';
 import '../../components/app_text_field.dart';
 import '../../components/category_tile.dart';
@@ -155,7 +156,12 @@ class Brands extends HookConsumerWidget {
                                           try {
                                             await ref.read(getAllBrandProvider.notifier).deleteBrand(data[index].id!);
                                           } catch (e) {
-                                            ToastService.showErrorSnackBar('Failed to delete brand. It is associated with a receipt/invoice');
+                                            if (SubscriptionErrorHandler.isSubscriptionError(e)) {
+                                              SubscriptionErrorHandler.handleSubscriptionError(context, 
+                                                customMessage: 'Deleting brands requires a Pro subscription.');
+                                            } else {
+                                              ToastService.showErrorSnackBar('Failed to delete brand. It is associated with a receipt/invoice');
+                                            }
                                           }
                                         }
                                       },

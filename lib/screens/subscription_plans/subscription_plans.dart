@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -16,6 +17,8 @@ import '../../routes/payvidence_app_router.dart';
 import '../../routes/payvidence_app_router.gr.dart';
 import '../../shared_dependency/shared_dependency.dart';
 import '../../utilities/theme_mode.dart';
+import '../../utilities/subscription_payment_service.dart';
+import '../../utilities/toast_service.dart';
 import '../choose_subscription_plan/choose_subscription_plan_vm.dart';
 
 @RoutePage(name: 'SubscriptionPlansRoute')
@@ -73,15 +76,7 @@ class SubscriptionPlans extends HookConsumerWidget {
                       (plan) => plan.name == selectedTier.value,
                   orElse: () => choosePlanVm.plans.first,
                 );
-                subscriptionPlansVm.createSubscription(
-                  planId: selectedPlan.id,
-                  navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
-                    locator<PayvidenceAppRouter>().push(PaymentWebViewRoute(
-                        paymentLink: paymentLink,
-                        callbackUrl: callbackUrl,
-                        cancelAction: cancelAction));
-                  },
-                );
+                _handleSubscription(selectedPlan, subscriptionPlansVm);
               },
             ),
           ),
@@ -155,6 +150,33 @@ class SubscriptionPlans extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _handleSubscription(Plan selectedPlan, dynamic subscriptionPlansVm) async {
+    if (Platform.isIOS) {
+      try {
+        await SubscriptionPaymentService.processSubscriptionPayment(
+          planId: selectedPlan.id,
+          amount: selectedPlan.amount.toStringAsFixed(2),
+          planName: selectedPlan.name,
+        );
+        ToastService.showSnackBar('Subscription activated successfully!');
+        locator<PayvidenceAppRouter>().navigateNamed(PayvidenceRoutes.mySubscription);
+      } catch (e) {
+        ToastService.showErrorSnackBar('Payment failed: $e');
+      }
+    } else {
+      // Use existing Paystack flow for Android
+      subscriptionPlansVm.createSubscription(
+        planId: selectedPlan.id,
+        navigateOnSuccess: (paymentLink, callbackUrl, cancelAction) {
+          locator<PayvidenceAppRouter>().push(PaymentWebViewRoute(
+              paymentLink: paymentLink,
+              callbackUrl: callbackUrl,
+              cancelAction: cancelAction));
+        },
+      );
+    }
   }
 
   Widget _buildTierButton({
